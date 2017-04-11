@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>SPA Starter</title>
+    <title>SPA Starter</title>
 
-	<!--1. 加载样式表-->
-	<link rel="stylesheet" type="text/css" href="css/spa.css">
-	<link rel="stylesheet" type="text/css" href="css/spa.shell.css">
+    <!--1. 加载样式表-->
+    <link rel="stylesheet" type="text/css" href="css/spa.css">
+    <link rel="stylesheet" type="text/css" href="css/spa.shell.css">
 
-	<!--2. 加载第三方JavaScript-->
-	<script src="js/jq/jquery-3.2.0.js"></script>
-	<script src="js/jq/jquery.uriAnchor.js"></script>
+    <!--2. 加载第三方JavaScript-->
+    <script src="js/jq/jquery-3.2.0.js"></script>
+    <script src="js/jq/jquery.uriAnchor.js"></script>
 
-	<!--3. 加载自己的JavaScript库，应该按照名字空间的深度进行排序，这点很重要。
-	因为在声明spa的子名字空间时，spa名字空间对象必须已经声明。-->
-	<script src="js/spa.js"></script>
-	<script src="js/spa.shell.js"></script>
-	<script>
-		// 一旦DOM可用时，初始化应用。
-		//这里将$(document).ready(function(){});简写成$(function(){});
-		$(function(){spa.initModule($('#spa'));});
-	</script>
+    <!--3. 加载自己的JavaScript库，应该按照名字空间的深度进行排序，这点很重要。
+    因为在声明spa的子名字空间时，spa名字空间对象必须已经声明。-->
+    <script src="js/spa.js"></script>
+    <script src="js/spa.shell.js"></script>
+    <script>
+        // 一旦DOM可用时，初始化应用。
+        //这里将$(document).ready(function(){});简写成$(function(){});
+        $(function () {
+            spa.initModule($('#spa'));
+        });
+    </script>
 </head>
 <body>
-	<div id="spa"></div>
+    <div id="spa"></div>
 </body>
 </html>
