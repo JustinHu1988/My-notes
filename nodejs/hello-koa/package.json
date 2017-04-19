@@ -14,6 +14,9 @@
     "license": "Apache-2.0",
     "repository":{
         "type": "git",
-        "url": 
+        "url": "https://github.com/JustinHu1988/Xmind-note/tree/master/nodejs/hello-koa"
+    },
+    "dependencies":{
+        "koa": "2.0.0"
     }
 }
