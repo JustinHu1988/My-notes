@@ -29,6 +29,7 @@ router.get(`/`, async (ctx, next) => {
         </form>`;
 });
 // 疑问，submit按钮是如何发送post请求的，所带body内容的格式又是什么？
+// 回答：form标签里的 action="/signin" method="post"
 
 router.post(`/signin`, async (ctx, next)=>{
     var name = ctx.request.body.name || ``,
@@ -52,3 +53,4 @@ app.use(router.routes());
 
 app.listen(3000);
 console.log(`app started at port 3000...`);
+
