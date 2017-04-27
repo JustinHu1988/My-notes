@@ -1,22 +1,21 @@
 var fn_index = async (ctx, next) => {
-    ctx.response.body = `<h1>Index</h1>
-    <form action="/signin" method="post">
-        <p>Name: <input name="name" value="koa"></p>
-        <p>Password: <input name="password" type="password"></p>
-        <p><input type="submit" value="Submit"></p>
-    </form>`;
-};
+    ctx.render('index.html', {title: "Welcome"});
+};//koa并没有在ctx对象上提供render方法，因此还需要自建函数
+
 
 var fn_signin = async (ctx, next) => {
-    var name = ctx.request.body.name || ``,
+    var email = ctx.request.body.email || ``,
         password = ctx.request.body.password || ``;
-    
-    console.log(`signin with name: ${name}, password: ${password}`);
-    if(name===`koa` && password===`12345`){
-        ctx.response.body = `<h1>Welcome, ${name}!</h1>`;
-    } else{
-        ctx.response.body = `<h1>Login failed!</h1>
-            <p><a href="/">Try again</a></p>`;
+
+    if(email === 'admin@example.com' && password === '123456'){
+        ctx.render(`signin-ok.html`, {
+            title: `Sign In Successed`,
+            name: `Mr ${email}`
+        });
+    }else{
+        ctx.render(`signin-failed.html`, {
+            title: `Sign In Failed`
+        });
     }
 }
 
