@@ -197,6 +197,30 @@ algorithms.
 
 If an array is sorted, then we can use a simple technique known as binary search to search an n-element array in only O(lg`n`) time.
 
+So first, we need know how to get the array to be sorted.
+
+Four algorithms:
+1. selection sort
+2. insertion sort
+3. merge sort
+4. quick sort
+
+Each sorting algorithm will have its advantages and its disadvantages.
+All of the sorting algorithms that we'll see in this chapter take either `θ(n`<sup>`2`</sup>`)` or `θ(nlgn)` time in the worst case.
+
+Therefore:
+1. If you were going to perform only a few searches, you'd better off just running linear search.
+2. But if you were going to search many times, you might be better off first sorting the array and then searching by running binary search.
+
+
+
+
+
+
+
+
+
+
 
 
 
