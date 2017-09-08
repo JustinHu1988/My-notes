@@ -4,7 +4,7 @@
 
 ## How to characterize running times
 
-**Example: LINEAR-SEARCH**
+**Example 1st: LINEAR-SEARCH**
 ```
 Procedure LINEAR-SEARCH(A; n; x)
 
@@ -13,7 +13,8 @@ A: an array.
 n: the number of elements in A to search through.
 x: the value being searched for.
 
-Output: Either an index i for which A[i]=x, or the special value NOT-FOUND, which could be any invalid index into the array, such as 0 or any negative integer.
+Output: Either an index i for which A[i]=x, or the special value NOT-FOUND, which could
+        be any invalid index into the array, such as 0 or any negative integer.
 ------
 1. Set answer to NOT-FOUND.
 2. For each index i, going from 1 to n, in order:
@@ -21,7 +22,8 @@ Output: Either an index i for which A[i]=x, or the special value NOT-FOUND, whic
 3.Return the value of answer as the output.
 ```
 
-> two factors：
+Two factors：
+
 1. input size
 2. order of growth
 
@@ -36,28 +38,30 @@ The size of `n` and `x` are insignificant as the array `A` get large.
 
 ### Second: order of growth
 
->**Assumptions:**
-1. Each individual operation - whether it's an arithmetic operation, a comparison, assigning to a variable, indexing into an array, or calling or returning from a procedure - takes some fixed amount of time that is independent of the input size. Let's say that each execution of step `i` takes `t`<sub>`i`</sub> time, where `t`<sub>`i`</sub> is some constant that does not depend on `n`.
-2. We need to take account that some steps execute multiple times.
+> Assumptions:**
 
+> Each individual operation - whether it's an arithmetic operation, a comparison, assigning to a variable, indexing into an array, or calling or returning from a procedure - takes some fixed amount of time that is independent of the input size. Let's say that each execution of step `i` takes *t^i^* time, where *t^i^* is some constant that does not depend on `n`.
+
+> We need to take account that some steps execute multiple times.
 
 In LINEAR-SEARCH, the running time is somewhere between:
 
-t<sub>1</sub> + t'<sub>2</sub>(n+1) + t"<sub>2</sub>n + t'<sub>2A</sub>n + t"<sub>2A</sub>·0 + t<sub>3</sub>
+$t_{1} + t'_{2}\cdot(n+1) + t''_{2}\cdot{n} + t'_{2A}\cdot{n} + t''_{2A}\cdot{0} + t_{3}$
 
 and
 
-t<sub>1</sub> + t'<sub>2</sub>(n+1) + t"<sub>2</sub>n + t'<sub>2A</sub>n + t"<sub>2A</sub>·n + t<sub>3</sub>
+$t_{1} + t'_{2}\cdot(n+1) + t''_{2}\cdot{n} + t'_{2A}\cdot{n} + t''_{2A}\cdot{n} + t_{3}$
 
-> Note:
-1. t'<sub>2</sub>(n+1): the test of `i` against `n` happens `n+1` times;
-2. t"<sub>2</sub>n: incrementing `i` happens `n` times;
-3. t'<sub>2A</sub>n: testing whether `A[i] = x`;
-4. t"<sub>2A</sub>: setting answer to `i`;
+**Note**:
+
+1. $t'_{2} (n+1)$: the test of $i$ against $n$ happens $n+1$ times;
+2. $t''_{2} n$: incrementing $i$ happens $n$ times;
+3. $t'_{2A} n$: testing whether $A[i] = x$;
+4. $t''_{2A}$: setting answer to $i$;
 
 **Rewrite** these bounds, collecting terms that multiply by `n` together, and collecting the rest of the terms:
-1. **lower bound**: (t'<sub>2</sub> + t"<sub>2</sub> + t'<sub>2A</sub>)n + (t<sub>3</sub> + t<sub>1</sub> + t'<sub>2</sub>)
-2. **upper bound**: (t'<sub>2</sub> + t"<sub>2</sub> + t'<sub>2A</sub> + t"<sub>2A</sub>)n + (t<sub>3</sub> + t<sub>1</sub> + t'<sub>2</sub>)
+1. **lower bound**: $(t'_{2} + t''_{2} + t'_{2A})\cdot{n} + (t_{3} + t_{1} + t'_{2})$
+2. **upper bound**: $(t'_2 + t''_2 + t'_{2A} + t''_{2A})\cdot{n} + (t_3 + t_1 + t'_2)$
 
 Notice that both of these bounds are of the form `cn+d`, where `c` and `d` are constant that do not depend on `n`.
 
@@ -67,11 +71,11 @@ So, they are both *linear functions* of `n`.
 #### θ-notation
 We use a special notation to indicate that a running time is bounded from above by some linear function of `n` and from below by some linear function of `n`. We write that running time is `θ(n)` (theta of n).
 
-`θ(n)` will discard the low-order term and the coefficients of `n`. Although we lose precision by characterizing the running time as `θ(n)`, we gain the advantages of highlighting the order if growth of the running time and suppressing tedious detail.
+`θ(n)` will discard the low-order term and the coefficients of `n`. Although we lose precision by characterizing the running time as *θ(n)*, we gain the advantages of highlighting the order if growth of the running time and suppressing tedious detail.
 
 `θ` notation can applies to functions in general, not just those that describe running times of algorithms, and it  applies to functions other than linear ones.
 
-For example, we can write: n<sup>2</sup>/4 + 100n + 50 = θ(n<sup>2</sup>).
+For example, we can write: n^2^/4 + 100n + 50 = θ(n^2^).
 
 #### O-notation and Ω-notation
 
@@ -96,7 +100,7 @@ In the best case, when `A[1]` equals x, BETTER-LINEAR-SEARCH takes just a consta
 So we cannot use θ-notation for a blanket statement that covers all cases of the running time of BETTER-LINEAR-SEARCH.
 
 ##### O-notation
-Now, we use **`O(g(n))`(big-oh of g(n)) to indicate that a running time is never worse than a constant times function `g(n)`**. For `f(n)=O(g(n))`, once `n` becomes sufficiently large, `f(n)` is **bounded from above** by some constant times `g(n)`.
+Now, we use ***O(g(n))* (big-oh of g(n)) to indicate that a running time is never worse than a constant times function *g(n)***. For *f(n)=O(g(n))* , once *n* becomes sufficiently large, *f(n)* is **bounded from above** by some constant times `g(n)`.
 
 For BETTER-LINEAR-SEARCH, we can say that its running time in all cases is `O(n)`; Although the running time might be better than a linear function of n, it's never worse.
 
@@ -129,7 +133,7 @@ Although we'd expect SENTINEL-LINEAR-SEARCH to be faster in practice, it would b
 
 ## 2.3 Loop invariants
 
-Loop invariant: a common method of showing correctness of an algorithm.
+**Loop invariant**: a common method of showing correctness of an algorithm.
 
 An assertion that we demonstrate to be true each time we start a loop iteration.
 
@@ -158,7 +162,6 @@ Output: the value of n!;
 
 1. If n=0, then return 1 as the output;
 2. Otherwise, return n·FACTORIAL(n-1).
-
 ```
 
 For recursion to work, two properties must hold:
@@ -175,18 +178,17 @@ Inputs: Same as LINEAR-SEARCH, but with an added parameter i;
 Output: The index of an element equaling x in the subarray from A[i] through A[n], or NOT-FOUND if x does not appear in this subarray.
 
 1. If i>n, then return NOT-FOUND;
-2. Otherwise(i<=n), if A[i] = x, then return i;
-3. Otherwise(i<=n adn A[i]≠x), return RECURSIVE-LINEAR-SEARCH(A,n,i+1,x).
-
+2. Otherwise(i<=n), if A[i] = x, then return i;
+3. Otherwise(i<=n and A[i]≠x), return RECURSIVE-LINEAR-SEARCH(A,n,i+1,x).
 ```
 
 ## 2.5 Further reading
 
 1. Chapters 2 and 3 of CLRS [CLRS09] cover much of the material in
-this chapter.
+  this chapter.
 2. An early algorithms textbook by Aho, Hopcroft, and Ullman
-[AHU74] influenced the field to use asymptotic notation to analyze
-algorithms.
+  [AHU74] influenced the field to use asymptotic notation to analyze
+  algorithms.
 3. There has been quite a bit of work in proving programs correct;
    if you would like to delve into this area, try the books by Gries
    [Gri81] and Mitchell [Mit96].
@@ -212,11 +214,43 @@ Therefore:
 1. If you were going to perform only a few searches, you'd better off just running linear search.
 2. But if you were going to search many times, you might be better off first sorting the array and then searching by running binary search.
 
+Sorting is an important problem in its own right, not just as a preprocessing step for binary search.
+
+
+**KEY and Satellite data:**
+
+In addition to the **key**(which we'll call a sort key when we're sorting), the elements that we sort usually include as well what we call **satellite data**. Satellite data is the information that is associated with the sort key and should travel with it when elements are moved around.
 
 
 
+## 3.1 Binary search
+Binary search has the advantage that it takes only `O(lgn)` time to search an n-element array.
 
 
+In a computer, we perform binary search on an array. At any point, we are considering only a subarray, that is, the portion of the array between and including two indices; let's call them `p` and `r`.
+
+```
+Procedure BINARY-SEARCH(A, n, x)
+------
+Inputs and Output: Same as LINEAR-SEARCH
+------
+1. Set p to 1, and set r to n;
+2. While p<=r, do the following:
+    A. Set q to Math.floor((p+r)/2);
+    B. If A[q] = x, then return q;
+    C. Otherwise, if A[q] < x, then set p to q+1;
+    D. Otherwise, if A[q] > x, then set r to q-1;
+3. Return NOT-FOUND.
+```
+
+We can also write binary search as a recursive procedure:
+
+```
+Procedure RECURSIVE-BINARY-SEARCH(A,p,r,x)
+_______
+Inputs and Outputs: 
+_______
+```
 
 
 
