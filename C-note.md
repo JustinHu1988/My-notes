@@ -5,16 +5,16 @@
 The contents of Chapter 3:
 
  - Keywords:
-    - `int`, short, long, unsigned, char, float, double, _Bool, _Complex, _Imaginary
+    - `int`, `short`,`long`, `unsigned`, `char`, `float`, `double`, `_Bool`,` _Complex`, `_Imaginary`
  - Operator
     - `sizeof`
  - Function
     - `scanf()`
  - The basic data types that C uses
- - The distinctions between integer types and floating-point types
+ - The distinctions between *integer types* and *floating-point types*
  - Writing constants and declaring variables of those types
- - How to use the printf() and scanf() functions to read and write values of different types
- - in this chatper, you practice manipulating data, not just read data.
+ - How to use the `printf()` and `scanf()` functions to read and write values of different types
+ - in this chapter, you practice *manipulating data*, not just read data.
 
 
 
@@ -81,7 +81,7 @@ In C, an integer is never written with a decimal point.
 
 ## 3.4 Basic C Data Types
 
-### 3.4.1 int
+### 3.4.1 **`int`**
 
 C integer types vary in the range of values offered and in wherher negative numbers can be used.
 
@@ -89,7 +89,7 @@ C integer types vary in the range of values offered and in wherher negative numb
 
 - the `int` type is a signed integer, can be positive, negative or zero.
 - The range in possible values depends on the computer system.
-- Typically, **an int uses one machine word for storage**.
+- Typically, **an `int` uses one machine word for storage**.
   - if word is 16-bit, will allow a range in values from -32768 to 32767.
   - now the personal computer have 64-bit processors, so the range is huge.
 - ISO C specifies that the minimum range for type `int` should be from -32768 to 32767.
@@ -109,7 +109,7 @@ C integer types vary in the range of values offered and in wherher negative numb
 
 When you write a number without a decimal point and without an exponent, C recongnizes it as an integer.
 
-####  Printing int Values
+####  **Printing** `int` Values
 
 `%d` notation is called a "format specifier", it indicates the form that `printf()` uses to display a value.
 
@@ -121,9 +121,7 @@ int main(void){
 }
 ```
 
-**If you make mistake on `printf()`:**
-
-Example
+*If you make mistake on `printf()`, for example:*
 
  ```C
 #include <stdio.h>
@@ -139,7 +137,7 @@ Doing it wrong: 10 minus 16 is 1650287143
 */
  ```
 
-**Note**: 
+*Note*: 
 
 * the program used ten to provide a value for the first `%d` and used whatever values happened to be lying around in memory for the next two!
 * The number you get could be different from those shown here. Not only might the menory contents be different, but different compilers will manage memory locations differently.
@@ -176,11 +174,273 @@ int main(void){
 
 Note that the `0` and `0x` prefixes are not displayed in the output unless you include the `#` as part of the specifier.
 
+### 3.4.2 Other Integer Types
+
+C offers three adjective keywords to modify the basic integer type:
+
+- `short`
+- `long`
+- `unsigned`
+
+#### Range
+
+Normally Range:
+
+- `short`: 16 bits
+- `int`:  16 bits or 32bits
+- `long`: 32 bits
+- `long long`: 64 bits
+
+Minimum range for each basic data type (C standard):
+
+- `short`/`int`: `[–32,767 -- 32,767]`
+- `unsigned short`/`unsigned int`/`unsigned`: `[0 -- 65,535]`
+- `long` :  `[–2,147,483,647 -- 2,147,483,647]`
+- `unsigned long`：`[0 -- 4,294,967,295]`
+- `long long`:  `[–9,223,372,036,854,775,807 -- 9,223,372,036,854,775,807]`
+- `unsigned long long`: `[0 -- 18,446,744,073,709,551,615]`
+
+*Why use different integer types?*
+
+- If you are writing code on a machine for which `int` and `long` are the same size, and you do need 32-bit integers, you should use `long` instead of `int` so that the program will function correctly if transferred to a 16-bit machine.
+- use `long long` if you need 64-bit integer values.
+- saving storage space is important *only if* your program uses arrays of integers that are large in relation to a system's available memory, Use `short` to save storage space.
+- Another reason to use `short` is that it may correspond in size to hardware registers used by particular components in a computer.
+
+##### Integer Overflow
+
+- When it reaches its maximum value, it starts over at the beginning.
+
+```c
+// Example:
+int i = 2147483647;
+unsigned int j = 4294967295;
+printf("%d, %d, %d\n", i, i+1, i+2);  // 2147483647 -2147483648 -2147483647
+printf("%d, %d, %d\n", j, j+1, j+2);  // 4294967295 0 1
+```
+
+#### `long` Constants and `long long` Constants
+
+- Decimal, Octal and hexadecimal constants are treated as type `int` unless the value is too large.
+- if the value is larger than `int` maximum, then the compiler tries in order `unsigned int` -> `long` -> `unsigned long` -> `long long` -> `unsigned long long`.
+
+*Sometimes you might want the compiler to store a small number as a `long` integer*:
+
+1. Programming that involves explicit use of memory addresses on an IBM PC, for instance, can create such a need. 
+
+2. Some standard C functions require type long values.
+
+   ​
+
+- `l`/`L`: To cause a small constant to be treated as type `long`, you can append an `l` (lowercase L) or `L` as a suffix.
+- `ll`/`LL`: Similarly, you can use an `ll` or `LL` suffix to indicate a long long value.
+- `u`/`U`: unsigned.
+
+Example: `3ll`, `5ull`, `9llu`, `10lu`, `020l`, `0x10l`
+
+#### **Printing** `short`, `long`, `long long` and `unsigned` Types
+
+- `%u`: `unsigned int`
+- `%ld`: `long int`
+- `%lx`: long integer in hexadecimal format
+- `%lo`: long integer in octal format
+- `%h`: `short int`
+- `%ho`: short integer in octal format
+- `%lu`: `unsigned long int`
+- `%lld`: signed long long type
+- `%llu`: `unsigned long long`
+
+```c
+// Example:
+unsigned un = 3000000000; /* system with 32-bit int */
+short end = 200; /* and 16-bit short */
+long big = 65537;
+long long verybig = 12345678908642;
+printf("un = %u and not %d\n", un, un);  // un = 3000000000 and not -1294967296
+printf("end = %hd and %d\n", end, end);  // end = 200 and 200
+printf("big = %ld and not %hd\n", big, big);  // big = 65537 and not 1
+printf("verybig = %lld and not %ld\n", verybig, verybig);  // verybig = 12345678908642 and not 1942899938
+// note: for 64-bits system, this is not the answer
+```
+
+*Note*: 
+
+- although C allows both uppercase and lowercase letters for constant suffixes, these format specifiers use just lowercase.
+- the `int` type is intended to be the integer size that the computer handles most efficiently.
 
 
 
+### 3.4.3 Using Characters: Type **`char`**
+
+**`char` is an integer type**: 
+
+- `char` type is used for storing characters such as letters and punctuation mark, but technically it is an integer type.
+- Because the `char` type actually stores integers, not characters.
+- To handle characters, the computer uses a *"numerical code"* in which certain integers represent certain characters.
+
+**Numerical code**:
+
+- ASCII code
+- Unicode
+- ...
+
+*The C language defines a byte to be the number of bits used by type `char`*, so one can have a system with a 16-bit or 32-bit byte and `char` type.
+
+#### 3.4.3.1 Declaring Type `char` Variables
+
+```c
+// Example:
+char response;
+char itable, latan;
+```
+
+#### 3.4.3.2 Character Constants and Initialization
+
+*Character表示规则*:
+
+- 如果单独表示字符常量／转义字符，需要加单引号。
+- 如果在双引号的字符串里添加转义字符，则不需要再加单引号。
+
+##### Character Constants
+
+A single character contained between *single quotes* is a C character constant. Such as `'A'`, `'B'`, etc. When the compiler sees `'A'`, it converts the `'A'` to the proper code value.
+
+```c
+// Example:
+char broiled;   // declare a char variable
+broiled = 'T';  // OK, 'T' is a Character Constant
+broiled = T;    // no, thinks T is a variable
+broiled = "T";  // no, thinks "T" is a string
+broiled = '\077' // represent a character by its octal ASCII code.
+```
+
+Because characters are really stored as numeric values, you can also use the numerical code to assign values:
+
+```c
+char grade = 65;    // ok for ASCII, but poor style
+```
+
+In this example, 65 is type `int`, but, because the value is smaller than the maximum char size, it can be assigned to grade without any problems. Because 65 is the ASCII code for the letter `A`, this example assigns the value `A` to grade.
+
+Note, however, that this example assumes that the system is using ASCII code.
+
+*Using `'A'` instead of 65 produces code that works on any system.* Therefore, it's much better to use character constants than numeric code values.
+
+Note: Oddly, *C treats character constants as type `int` rather than type `char`.* For example, on an ASCII system with a 32-bit `int` and an 8-bit `char`, the code:
+
+```c
+char grade = 'B';
+```
+
+represents `'B'` as the numerical value 66 stored in a 32-bit unit, but `grade` winds up with `66` stored in an 8-bit unit. This characteristic of character constants makes it possible to define a character constant such as 'FATE', with four separate 8-bit ASCII codes stored in a 32-bit unit. However, attempting to assign such a character constant to a `char` variable results in only the last 8 bits being used, so the variable gets the value 'E'. *(???????????????)*
 
 
 
+#### 3.4.3.3 Nonprinting Characters
 
+C offers three ways to represent nonprinting characters:
+
+1. use the ASCII code.
+2. use special symbol sequences --- **escape sequences**. 
+
+| Sequence | Meaning            | Sequence | Meaning                                  |
+| -------- | ------------------ | -------- | ---------------------------------------- |
+| `\a`     | Alert(ANSI C)      | `\v`     | Vertical tab                             |
+| `\b`     | Backspace          | `\\`     | Backslash(`\`)                           |
+| `\f`     | Form feed          | `\'`     | Single quote(`'`)                        |
+| `\n`     | Newline            | `\"`     | Double quote(`"`)                        |
+| `\r`     | Carriage return    | `\0oo`   | Octal value(`o` represents an octal digit) |
+| `\t`     | Horizontal tab     | `\xhh`   | Hexadecimal value. (`h` represents a hexadecimal digit) |
+| `\?`     | Question mark(`?`) |          |                                          |
+
+ - when assigned to a character variable, escape sequences must be enclosed in single quotes.
+
+```c
+char nerf = '\n';  // newline
+```
+
+- `\a`: alert. Using the alert character in a program displayed on a screen should produce a beep without moving the screen cursor.
+- `\b`,`\f`,`\n`,`\r`,`\t`,`\v`: common output device control characters.
+- `\0oo`: special representations of the ASCII code. To represent a character by its octal ASCII code.
+
+3. `\xhh`: using a hexadecimal form for character constants
+
+ When you use ASCII code, note the *difference between "number characters" and "numbers"*. the character `4` is represented by ASCII code value `52`.
+
+
+
+##### Q&A:
+
+1. when should use single quotes for characters(including escape sequences), when shouldn't?
+
+   When a character, be it an escape sequence or not, is part of a string of characters enclosed in double quotes, don't enclose it in single quotes.
+
+2. *when should I use the ASCII code, and when should I use the escape sequences?*
+
+   If you have a choice between using one of the special escape sequences, say `\f`, or an equivalent ASCII code, say `\014`, use the `\f`, this is more mnemonic, and more portable.
+
+3. If I need to use numeric code, why use, say, `\032` instead of `032`? (both octal)
+
+   Using `\032` makes it clear to the code reader that you intend to represent a character code. and, an escape sequence such as `\032` can be embedded in part of C string.
+
+
+
+#### 3.4.3.4 **Printing** Characters
+
+`%c`: The `printf()` function uses `%c` to indicate that a character should be printed.
+
+Recall that a character variable is stored as a 1-byte integer value. Therefore, *if you print the value of a `char` variable with the usual `%d` specifier, you get an integer*.
+
+```c
+// Example
+char ch;
+printf("Please enter a character:\n");
+scanf("%c", &ch);
+printf("The code for %c is %d.\n", ch, ch);
+/*
+Please enter a character:
+a
+The code for a is 97.
+*/
+// the ampersand (&) causes the character to be assigned to the variable ch.
+```
+
+#### 3.4.3.5 Signed or Unsigned?
+
+Some C implementations make `char` a signed type. This means a `char` can hold values typically in the range –128 through 127. Other implementations make `char` an unsigned type, which provides a range of 0 through 255. Your compiler manual should tell you which type your char is, or you can check the `limits.h` header file, discussed in the next chapter.
+
+As of C90, C enabled you to use the keywords `signed` and `unsigned` with `char`. Then, regardless of what your default `char` is, `signed char` would be signed, and `unsigned char` would be unsigned. These versions of char are useful if you're using the type to handle small integers. For character use, just use the standard char type without modifiers.
+
+
+
+### 3.4.4 the `_Bool` Type
+
+In C99, the `_Bool` type is added to represent Boolean values:
+
+- `1` for `true`;
+- `0` for `false`;
+
+The `_Bool` type really is just *an integer type*, but one that *only requires 1 bit of memory*.
+
+Program use Boolean values to choose which code to execute next.
+
+
+
+### 3.4.5 Portable Types: `stdint.h` and `inttypes.h`
+
+- exact-width integer type:
+  - `int32_t` ...
+- minimum width type:
+  - `int_least8_t` ...
+  - `int_fast8_t` will be defined as an alternative name for the integer type on your system that allows the fastest calculations for 8-bit signed values
+- fastest minimum width type:
+  - `int_fast8_t ` ...
+- biggest possible integer type on a system:
+  - `intmax_t`: the largest available signed integer type;
+  - `uintmax_t`: the largest available unsigned integer type;
+  - These types cloud be bigger than `long long` and `unsigned long` because C implementations are permitted to define types beyond the required ones.
+
+C99 and C11 not only provide these new, portable type names, they also provide assistance with input and output:
+
+- current standard provides some string macros to be used to display the portable types.(see Chapter 4).
 

@@ -1,8 +1,41 @@
-# Algorithms Unlocked
+**Notes for Algorithms Unlocked**
 
-# Chapter 2:
+# Chapter 1: What Are Algorithms and Why Should You Care?
 
-## How to characterize running times
+*What is a computer algorithm?*
+
+A computer algorithm is a set of steps to accomplish a task that is described precisely enough that a computer can run it.
+
+*What do we want from a computer algorithm?*
+
+Computer algorithms solve computational problems.
+
+* Given an input to a problem, it should always produce a **correct** solution to the problem;
+* It should use computational **resources** efficiently while doing so.
+
+## Correctness
+
+1. Sometimes, we can accept that a computer algorithm might produce an incorrect answer, as long as we can control how often it does so. For example: **Encryption**
+2. Correctness is a tricky issue with another class of algorithms -- **approximation algorithms**.
+   * For some problems, we have no algorithm that finds an optimal solution in any reasonable amount of time, but we know of an approximation algorithm that, in a reasonable amount of time, can find a solution that is almost optimal (the quantitative measure of the solution found by the approximation algorithm is within some known factor of the optimal solution's quantitative measure).
+   * As long as we specify what the desired factor is, we can say that a correct solution from an approximation algorithm is any solution that is within that factor of the optimal solution.
+
+## Resource usage
+
+In this book, we focus on just one resource: **time**.
+
+*How do we judge the time required by an algorithm?*
+
+There are two factors：
+
+1. **Input size**
+2. **Order of growth of the running time**
+
+
+
+
+
+# Chapter 2: Describe and Evaluate Computer Algorithms
 
 **Example 1st: LINEAR-SEARCH**
 ```
@@ -13,8 +46,7 @@ A: an array.
 n: the number of elements in A to search through.
 x: the value being searched for.
 
-Output: Either an index i for which A[i]=x, or the special value NOT-FOUND, which could
-        be any invalid index into the array, such as 0 or any negative integer.
+Output: Either an index i for which A[i]=x, or the special value NOT-FOUND, which could be any invalid index into the array, such as 0 or any negative integer.
 ------
 1. Set answer to NOT-FOUND.
 2. For each index i, going from 1 to n, in order:
@@ -22,12 +54,7 @@ Output: Either an index i for which A[i]=x, or the special value NOT-FOUND, whic
 3.Return the value of answer as the output.
 ```
 
-Two factors：
-
-1. input size
-2. order of growth
-
-### First: input-size
+## First: input-size
 Input:
 1. An array `A` of n elements
 2. number `n`
@@ -36,12 +63,11 @@ Input:
 The size of `n` and `x` are insignificant as the array `A` get large.
 
 
-### Second: order of growth
+## Second: order of growth
 
-> Assumptions:**
-
-> Each individual operation - whether it's an arithmetic operation, a comparison, assigning to a variable, indexing into an array, or calling or returning from a procedure - takes some fixed amount of time that is independent of the input size. Let's say that each execution of step `i` takes *t^i^* time, where *t^i^* is some constant that does not depend on `n`.
-
+> **Assumptions:**
+> Each individual operation - whether it's an arithmetic operation, a comparison, assigning to a variable, indexing into an array, or calling or returning from a procedure - takes some fixed amount of time that is independent of the input size. Let's say that each execution of step $i$ takes $t^i$ time, where $t^i$ is some constant that does not depend on `n`.
+>
 > We need to take account that some steps execute multiple times.
 
 In LINEAR-SEARCH, the running time is somewhere between:
@@ -52,36 +78,38 @@ and
 
 $t_{1} + t'_{2}\cdot(n+1) + t''_{2}\cdot{n} + t'_{2A}\cdot{n} + t''_{2A}\cdot{n} + t_{3}$
 
-**Note**:
+*Note*:
 
 1. $t'_{2} (n+1)$: the test of $i$ against $n$ happens $n+1$ times;
 2. $t''_{2} n$: incrementing $i$ happens $n$ times;
 3. $t'_{2A} n$: testing whether $A[i] = x$;
 4. $t''_{2A}$: setting answer to $i$;
 
-**Rewrite** these bounds, collecting terms that multiply by `n` together, and collecting the rest of the terms:
+*Rewrite* these bounds, collecting terms that multiply by `n` together, and collecting the rest of the terms:
 1. **lower bound**: $(t'_{2} + t''_{2} + t'_{2A})\cdot{n} + (t_{3} + t_{1} + t'_{2})$
 2. **upper bound**: $(t'_2 + t''_2 + t'_{2A} + t''_{2A})\cdot{n} + (t_3 + t_1 + t'_2)$
 
 Notice that both of these bounds are of the form `cn+d`, where `c` and `d` are constant that do not depend on `n`.
 
-So, they are both *linear functions* of `n`.
+So, they are both linear functions of `n`.
 
 
-#### θ-notation
-We use a special notation to indicate that a running time is bounded from above by some linear function of `n` and from below by some linear function of `n`. We write that running time is `θ(n)` (theta of n).
+### **θ-notation**
+We use a special notation to indicate that a running time is *bounded from above* by some linear function of `n` *and from below* by some linear function of `n`. We write that running time is $θ(n)$ (theta of n).
 
-`θ(n)` will discard the low-order term and the coefficients of `n`. Although we lose precision by characterizing the running time as *θ(n)*, we gain the advantages of highlighting the order if growth of the running time and suppressing tedious detail.
+*For $f(n)=θ(g(n))$, $θ(g(n))$ will discard the low-order term and the coefficients of $f(n)$.*
 
-`θ` notation can applies to functions in general, not just those that describe running times of algorithms, and it  applies to functions other than linear ones.
+*Although we lose precision by characterizing the running time as $θ(g(n))$, we gain the advantages of highlighting the order if growth of the running time and suppressing tedious detail*.
 
-For example, we can write: n^2^/4 + 100n + 50 = θ(n^2^).
+*θ-notation can applies to functions in general, not just those that describe running times of algorithms, and it  applies to functions other than linear ones.*
 
-#### O-notation and Ω-notation
+For example, we can write: $n^2/4 + 100n + 50 = θ(n^2)$.
+
+### O-notation and Ω-notation
 
 Now let's look at BETTER-LINEAR-SEARCH:
 
-**Example: BETTER-LINEAR-SEARCH**
+**Example 2nd: BETTER-LINEAR-SEARCH**
 ```
 Procedure BETTER-LINEAR-SEARCH(A,n,x)
 Inputs and Output: Same as LINEAR-SEARCH.
@@ -91,27 +119,27 @@ Inputs and Output: Same as LINEAR-SEARCH.
 2. Return NOT-FOUND as the output.
 ```
 
-This one is a little trickier than LINEAR-SEARCH because **we don't know in advance how many times the loop will iterate**.
+This one is a little trickier than LINEAR-SEARCH because *we don't know in advance how many times the loop will iterate*.
 
-If `A[1]` equals `x`, then it will iterate just once; if `x` is not present in the array, then the loop will iterate all n times, which is the maximum possible. So *in the worst case*, BETTER-LINEAR-SEARCH takes `θ(n)` time to search an array of n elements.
+If `A[1]` equals `x`, then it will iterate just once; if `x` is not present in the array, then the loop will iterate all n times, which is the maximum possible. So in the worst case, BETTER-LINEAR-SEARCH takes $θ(n)$ time to search an array of n elements.
 
-In the best case, when `A[1]` equals x, BETTER-LINEAR-SEARCH takes just a constant amount of time: it sets `i` to 1. This amount of time does not depend on `n`. So the  best-case running time of this is `θ(1)`.
+In the best case, when `A[1]` equals x, BETTER-LINEAR-SEARCH takes just a constant amount of time: it sets `i` to 1. This amount of time does not depend on `n`. So the  best-case running time of this is $θ(1)$.
 
-So we cannot use θ-notation for a blanket statement that covers all cases of the running time of BETTER-LINEAR-SEARCH.
+So *we cannot use θ-notation for a blanket statement that covers all cases of the running time of BETTER-LINEAR-SEARCH*.
 
-##### O-notation
-Now, we use ***O(g(n))* (big-oh of g(n)) to indicate that a running time is never worse than a constant times function *g(n)***. For *f(n)=O(g(n))* , once *n* becomes sufficiently large, *f(n)* is **bounded from above** by some constant times `g(n)`.
+#### **O-notation**
+Now, we use *$O(g(n))$ (big-oh of g(n)) to indicate that a running time is never worse than a constant times function $g(n)$*. For $f(n)=O(g(n))$ , once `n` becomes sufficiently large, $f(n)$ is *bounded from above* by some constant times $g(n)$.
 
-For BETTER-LINEAR-SEARCH, we can say that its running time in all cases is `O(n)`; Although the running time might be better than a linear function of n, it's never worse.
+For BETTER-LINEAR-SEARCH, we can say that its running time in all cases is $O(n)$; Although the running time might be better than a linear function of `n`, it's never worse.
 
-##### Ω-notation
-We use **`Ω(g(n))`(big-omega of g(n)) to indicate that its running time is never better than a constant times function `g(n)`**. For `f(n)=Ω(g(n))`, once `n` becomes sufficiently large, `f(n)` is bounded from below by some constant times `g(n)`.
+#### **Ω-notation**
+We use *$Ω(g(n))$ (big-omega of g(n)) to indicate that its running time is never better than a constant times function $g(n)$.* For $f(n)=Ω(g(n))$, once `n` becomes sufficiently large, $f(n)$ is *bounded from below* by some constant times $g(n)$.
 
 
 
 θ-notation, O-notation and Ω-notation is **asymptotic notation**. They give us the luxury of dropping low-order terms and constant factors so that we can ignore tedious details and focus on what's important: how the function grows with `n`.
 
-**Example: SENTINEL-LINEAR-SEARCH**
+**Example 3rd: SENTINEL-LINEAR-SEARCH**
 ```
 Procedure SENTINEL-LINEAR-SEARCH(A,n,x)
 Input and Output: Same as LINEAR-SEARCH.
@@ -131,9 +159,9 @@ Although we'd expect SENTINEL-LINEAR-SEARCH to be faster in practice, it would b
 
 
 
-## 2.3 Loop invariants
+## 2.3 **Loop invariants**
 
-**Loop invariant**: a common method of showing correctness of an algorithm.
+Loop invariant: *a common method of showing correctness of an algorithm*.
 
 An assertion that we demonstrate to be true each time we start a loop iteration.
 
@@ -143,13 +171,13 @@ For a loop invariant to help us argue correctness, we have to show three things 
 2. **Maintenance:** If it is true before an iteration of the loop, it remains true before the next iteration.
 3. **Termination:** The loop will terminates, and when it does, the loop invariant, along with the reason that the loop terminated, gives us a useful property.
 
-(可以类比数学归纳法)
+*(可以类比数学归纳法)*
 
 
-## 2.4 Recursion
+## 2.4 **Recursion**
 With the technique of recursion, we solve a problem by solving smaller instances of the same problem.
 
-**Example**: computing `n!`("n-factorial").
+*Example*: computing `n!`("n-factorial").
 
 Predefine: `n!=1` if `n=0`, and `n! = n·(n-1)·(n-2)···3·2·1`.
 
@@ -157,16 +185,15 @@ Predefine: `n!=1` if `n=0`, and `n! = n·(n-1)·(n-2)···3·2·1`.
 Procedure FACTORIAL(n)
 
 Input: A integer n;
-
 Output: the value of n!;
 
 1. If n=0, then return 1 as the output;
 2. Otherwise, return n·FACTORIAL(n-1).
 ```
 
-For recursion to work, two properties must hold:
+**For recursion to work, two properties must hold**:
 1. There must be one or more **base cases**, where we compute the solution directly without recursion.
-2. Each recursive call of the procedure must be on a *smaller instance of the same problem* that will eventually reach a base case.
+2. Each recursive call of the procedure must be on a **smaller instance of the same problem** that will eventually reach a base case.
 
 
 We can often rewrite algorithms that use a loop in a recursive style. Here is linear search, without a sentinel, written recursively:
@@ -174,7 +201,6 @@ We can often rewrite algorithms that use a loop in a recursive style. Here is li
 Procedure RECURSIVE-LINEAR-SEARCH(A,n,i,x)
 
 Inputs: Same as LINEAR-SEARCH, but with an added parameter i;
-
 Output: The index of an element equaling x in the subarray from A[i] through A[n], or NOT-FOUND if x does not appear in this subarray.
 
 1. If i>n, then return NOT-FOUND;
@@ -195,36 +221,39 @@ Output: The index of an element equaling x in the subarray from A[i] through A[n
 
 
 
-# 3 Algorithms for Sorting and Searching
+
+
+# Chapter 3: Algorithms for Sorting and Searching
 
 If an array is sorted, then we can use a simple technique known as binary search to search an n-element array in only O(lg`n`) time.
 
 So first, we need know how to get the array to be sorted.
 
-Four algorithms:
+**Four algorithms**:
 1. selection sort
 2. insertion sort
 3. merge sort
 4. quick sort
 
 Each sorting algorithm will have its advantages and its disadvantages.
-All of the sorting algorithms that we'll see in this chapter take either `θ(n`<sup>`2`</sup>`)` or `θ(nlgn)` time in the worst case.
+
+*All of the sorting algorithms that we'll see in this chapter take either $θ(n^2)$ or $θ(nlgn)$ time in the worst case.*
 
 Therefore:
-1. If you were going to perform only a few searches, you'd better off just running linear search.
-2. But if you were going to search many times, you might be better off first sorting the array and then searching by running binary search.
+1. *If you were going to perform only a few searches, you'd better off just running linear search.*
+2. *But if you were going to search many times, you might be better off first sorting the array and then searching by running binary search.*
 
 Sorting is an important problem in its own right, not just as a preprocessing step for binary search.
 
 
-**KEY and Satellite data:**
+**Key** and **Satellite data:**
 
-In addition to the **key**(which we'll call a sort key when we're sorting), the elements that we sort usually include as well what we call **satellite data**. Satellite data is the information that is associated with the sort key and should travel with it when elements are moved around.
+In addition to the *key*(which we'll call a *sort key* when we're sorting), the elements that we sort usually include as well what we call *satellite data*. Satellite data is the information that is associated with the sort key and should travel with it when elements are moved around.
 
 
 
 ## 3.1 Binary search
-Binary search has the advantage that it takes only `O(lgn)` time to search an n-element array.
+*Binary search has the advantage that it takes only $O(lgn)$ time to search an n-element array.*
 
 
 In a computer, we perform binary search on an array. At any point, we are considering only a subarray, that is, the portion of the array between and including two indices; let's call them `p` and `r`.
@@ -248,8 +277,15 @@ We can also write binary search as a recursive procedure:
 ```
 Procedure RECURSIVE-BINARY-SEARCH(A,p,r,x)
 _______
-Inputs and Outputs: 
+Inputs and Outputs: Inputs A and x are the same as LINEAR-SEARCH, as is the output. The inputs p and r delineate the subarray A[p..r] under consideration.
 _______
+1. If p > r, then return NOT-FOUND.
+2. Otherwise (p <= r), do the following:
+	A. Set q to Math.floor((r+q)/2);
+	B. If A[q] = x, then return q;
+	C. Otherwise(A[q]≠x):
+		C1. If A[q] > x, then return RECURSIVE-BINARY-SEARCH(A,p,q-1,x);
+		C2. Otherwise A[q] < x, return RECURSIVE-BINARY-SEARCH(A,q+1,r,x);
 ```
 
 
