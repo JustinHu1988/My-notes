@@ -215,6 +215,48 @@ Example:
 谓语决定句子的核心意思。
 
 1. 简单句的核心意思在谓语上。
-   - 例：Widely reported, if somewhat distrusted, *accounts* by figures like the famous traveler from Venice, Marco Polo, of the willingness of people in China to trade with Europeans and of the immensity of the wealth to be gained by such contact made the idea irresistible.
-2. 主从复合句的核心意思在主句谓语上。
+   - 例：Widely reported, if somewhat distrusted, *accounts* by figures like the famous traveler from Venice, Marco Polo, of the willingness of people in China to trade with Europeans and of the immensity of the wealth to be gained by such contact *made* the idea irresistible.
+
+     made是谓语，前面整个一段是主语。
+
+     而主语的中心词是accounts，意为“描述、记录”，其他部分是定语，对accounts进行多重修饰：
+
+     - 前置定语：Widely reported, if somewhat distrusted
+
+
+     - *by* figures like the famous traveler from Venice, Marco Polo
+     - *of* the willingness of people in China to trade with Europeans and *of* the immensity of the wealth to be gained by such contact
+
+     根据*尾重原则*，by短语放在了两个of短语之前。
+
+2. *主从复合句的核心意思在主句谓语上*。
+
+   Taylor, 79, *died* of congestive heart failure at Cedars-Sinai Medical Center, where she had been hospitalized for about six weeks.
+
+   ​
+
+
+### 宾语
+
+
+
+
+
+### 补足语
+
+
+
+
+
+### 状语（修饰成分1）
+
+
+
+### 定语（修饰成分2）
+
+
+
+### 同位语（名词短语的补语成分）
+
+
 

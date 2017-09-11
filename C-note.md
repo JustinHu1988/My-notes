@@ -422,25 +422,130 @@ In C99, the `_Bool` type is added to represent Boolean values:
 
 The `_Bool` type really is just *an integer type*, but one that *only requires 1 bit of memory*.
 
-Program use Boolean values to choose which code to execute next.
+*Program use Boolean values to choose which code to execute next*.
 
 
 
 ### 3.4.5 Portable Types: `stdint.h` and `inttypes.h`
 
+#### `stdint.h`
+
+C define some new names for integer types in a header file called `stdint.h` that can *have the same meaning regardless of the system*.
+
 - exact-width integer type:
+
   - `int32_t` ...
+
+  > What if a system can't support exact-width types (such as a system don't support 32-bit)?  We can use minimum width type.
+
 - minimum width type:
-  - `int_least8_t` ...
+  - `int_least8_t` : an alias for the smallest available type that can hold an 8-bit signed integer value. If the smallest type on a particular system were 16 bits, the `int8_t`type would not be defined, but `int_least8_t` type would be available, perhaps implemented as a 16-bit integer.
   - `int_fast8_t` will be defined as an alternative name for the integer type on your system that allows the fastest calculations for 8-bit signed values
+
+  > Some people are more concerned with speed than with space. So there is also a fastest type
+
 - fastest minimum width type:
-  - `int_fast8_t ` ...
+  - `int_fast8_t ` : will be defined as an alternative name for teh integer type on your system that allows the fastest calculations for 8-bit signed values. 
+
 - biggest possible integer type on a system:
   - `intmax_t`: the largest available signed integer type;
   - `uintmax_t`: the largest available unsigned integer type;
-  - These types cloud be bigger than `long long` and `unsigned long` because C implementations are permitted to define types beyond the required ones.
 
-C99 and C11 not only provide these new, portable type names, they also provide assistance with input and output:
+  > These types cloud be bigger than `long long` and `unsigned long` because C implementations are permitted to define types beyond the required ones.
+
+#### **`inttypes.h`**
+
+C99 and C11  also provide assistance with input and output.
+
+*`printf()` requires specific specifiers for particular types*, such as how to display a `int32_t` value?
+
+We will *need `inttypes.h` header file*. (It includes `stdint.h`, so the program only needs to include `inttypes.h`)
 
 - current standard provides some string macros to be used to display the portable types.(see Chapter 4).
+- for example, `inttypes.h` will define `PRId32` as a string represent the appropriate specifier(`d` or `l`) for a 32-bit signed value. 
+
+
+```c
+/* altnames.c -- portable names for integer types */
+#include <stdio.h>
+#include <inttypes.h>  // supports portable types
+int main(void){
+    int32_t me32; // me32 is a 32-bit signed variable
+    me32 = 45933945;
+    printf("First, assume int32_t is int: ");
+    printf("me32 = %d\n", me32);
+    printf("Next, let's not make any assumptions.\n");
+    printf("Instead, us a \"macro\" from inttypes.h: ");
+    printf("me32 = %" PRId32 "\n", me32);
+    
+    return 0;
+}
+/* output:
+First, assume int32_t is int: me32 = 45933945
+Next, let's not make any assumptions.
+Instead, us a "macro" from inttypes.h: me32 = 45933945
+*/
+```
+
+In the final `printf()` argument, the `PRId32` is replaced by its `inttypes.h` definition of "`d`", making the line this:
+
+```c
+printf("me16 = %" "d" "\n", me16);
+```
+
+But *C combines consecutive quoted strings into a single quoted string*, making the line this:
+
+```c
+printf("me16 = %d\n", me16);
+```
+
+> Reference Section VI "Extended Integer Types" in Appendix B
+
+### 3.4.6 Types `float`, `double` and `long double`
+
+Financial and mathematically oriented programs often make use of *floating-point* numbers.
+
+In C, such numbers are called type `float`, `double`, or `long double`.
+
+Floating-point enables you to represent a much greater range of numbers, including decimal fractions.
+
+- *Representation:* use **exponential notation**, similar to *scientific notation*.
+
+| Number        | Scientific Notation | Exponential Notation |
+| ------------- | ------------------- | -------------------- |
+| 1,000,000,000 | $= 1.0\times{10^9}$ | =1.0e9               |
+| 123,000       | $=1.23\times{10^5}$ | =1.23e5              |
+| 322.56        | $=3.2256\times10^2$ | =3.2256e2            |
+| 0.000056      | $=5.6\times10^{-5}$ | =5.6e-5              |
+
+- *Range* (minimum range in C standard): 
+  1. `float`:  represent *at least six significant figures* and allow a range of *at least $10^{-37}$ to $10^{37}$*. 
+  2. `double`(for double precision) : has *at least ten significant figures* and allow a range of at least $10^{-37}$ to $10^{37}$ .
+  3. `long double`: intent to provide for even more precision than `double`. But C only guarantees that `long double` is at least as precise as `double`.
+- *Store:* 
+  - `float`: Often, systems use *32 bits* to store a floating-point number.
+    - *8 bits* are used to give the exponent its value and sign
+    - *24 bits* are used to represent the non exponent part (called the *mantissa* or *significand*) and its sign.
+  - `double`: use *64 bits*.
+    - Some systems use all 32 additional bits for the non exponent part. This increases hte number of significant figures and reduces round-off errors;
+    - Other systems use some of the bits to accommodate a larger exponent, this increases the range of numbers that can be accommodated.
+    - Either approach leads to *at least 13 significant figures*, more than meeting the minimum standard.
+
+#### 3.4.6.1 Declaring Floating-Point Variables
+
+Use the same manner as their integer cousins.
+
+```c
+// example:
+float noah, jonah;
+double trouble;
+float planck = 6.63e-34;
+long double gnp;  
+```
+
+#### 3.4.6.2 Floating-Point Constants (Literals)
+
+
+
+
 

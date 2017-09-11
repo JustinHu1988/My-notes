@@ -177,7 +177,7 @@ For a loop invariant to help us argue correctness, we have to show three things 
 ## 2.4 **Recursion**
 With the technique of recursion, we solve a problem by solving smaller instances of the same problem.
 
-*Example*: computing `n!`("n-factorial").
+*Example*: computing $n!$("n-factorial").
 
 Predefine: `n!=1` if `n=0`, and `n! = n·(n-1)·(n-2)···3·2·1`.
 
@@ -225,7 +225,7 @@ Output: The index of an element equaling x in the subarray from A[i] through A[n
 
 # Chapter 3: Algorithms for Sorting and Searching
 
-If an array is sorted, then we can use a simple technique known as binary search to search an n-element array in only O(lg`n`) time.
+If an array is sorted, then we can use a simple technique known as binary search to search an n-element array in only **$O(lgn)$** time.
 
 So first, we need know how to get the array to be sorted.
 
@@ -237,7 +237,7 @@ So first, we need know how to get the array to be sorted.
 
 Each sorting algorithm will have its advantages and its disadvantages.
 
-*All of the sorting algorithms that we'll see in this chapter take either $θ(n^2)$ or $θ(nlgn)$ time in the worst case.*
+*All of the sorting algorithms that we'll see in this chapter take either **$θ(n^2)$** or **$θ(nlgn)$** time in the worst case.*
 
 Therefore:
 1. *If you were going to perform only a few searches, you'd better off just running linear search.*
@@ -288,11 +288,58 @@ _______
 		C2. Otherwise A[q] < x, return RECURSIVE-BINARY-SEARCH(A,q+1,r,x);
 ```
 
+The running time of binary search is *$O(lgn)$* :
+
+- In the worst case, when the value `x` is not present in the array, we halved and halved until the subarray under consideration was empty, yielding a running time of $θ(lgn)$.
+- In the best case, when `x` is found in the first iteration of the loop, the running time is  $θ(1)$.
+
+*It is possible to beat $θ(lgn)$ worst-case time for searching*, but only if we organize data in more elaborate ways and make certain assumptions about the keys.
+
+## 3.2 Selection sort
+
+The simplest sorting algorithm, but far from the fastest.
+
+```
+Procedure SELECTION-SORT(A,n)
+
+Inputs:
+ - A: an array;
+ - n: the number of elements in A to sort.
+ 
+Result: The elements of A are sorted into nondecreasing order.
+
+1. For i = 1 to n-1:
+	A. Set `smallest` to `i`; 
+	B. For j = i + 1 to n:
+		i. If A[j]<A[smallest], then set `smallest` to j;
+	C. Swap A[i] with A[smallest].
+```
+
+The running time of SELECTION-SORT is $θ(n^2)$.
+
+The total number of inner-loop iterations is:
+
+$$(n-1)+(n-2)+(n-3)+ \cdots +2+1 = \frac{n(n+1)}{2}$$
+
+Notice that this running time  $θ(n^2)$ is a blanket statement that covers all cases. Regardless of the actual element values, the inner loop runs $θ(n^2)$ times.
+
+Here's another way to see that the running time is  $θ(n^2)$, without using the arithmetic series. We'll show separately that the running time is both  $O(n^2)$ and  $Ω(n^2)$. (Page 35).
+
+Two final thoughts about selection sort:
+
+1. Its asymptotic running time of  $θ(n^2)$ is the worst of the sorting algorithms.
+
+2. The  $θ(n^2)$ running time comes from the comparisons in step `1Bi`. But the number of times that it *moves* array elements is only $θ(n)$, because step `1C` runs on $n-1$ times. 
+
+   *If moving array elements is particularly time-consuming* — perhaps because they are large or stored on a slow device such as a disk — *then selection sort might be a reasonable algorithm to use*.
 
 
 
+## 3.3 Insertion sort
 
+In selection sort, when we decided which book to put into the $i$th slot, the books in the first $i$ slots were the first $i$ books overall, sorted alphabetically by author name.
 
+In insertion sort, the books in the first $i$ slots will be *the same books that were originally in the first i slots, but now sorted by author name*.
 
 
 
