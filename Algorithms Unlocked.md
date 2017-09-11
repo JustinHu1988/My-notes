@@ -230,10 +230,10 @@ If an array is sorted, then we can use a simple technique known as binary search
 So first, we need know how to get the array to be sorted.
 
 **Four algorithms**:
-1. selection sort
-2. insertion sort
-3. merge sort
-4. quick sort
+1. selection sort （选择排序）
+2. insertion sort （插入排序）
+3. merge sort （归并排序）
+4. quick sort （快速排序）
 
 Each sorting algorithm will have its advantages and its disadvantages.
 
@@ -315,11 +315,11 @@ Result: The elements of A are sorted into nondecreasing order.
 	C. Swap A[i] with A[smallest].
 ```
 
-The running time of SELECTION-SORT is $θ(n^2)$.
+The running time of SELECTION-SORT is *$θ(n^2)$.*
 
 The total number of inner-loop iterations is:
 
-$$(n-1)+(n-2)+(n-3)+ \cdots +2+1 = \frac{n(n+1)}{2}$$
+$$(n-1)+(n-2)+(n-3)+ \cdots +2+1 = \frac{n(n-1)}{2}$$
 
 Notice that this running time  $θ(n^2)$ is a blanket statement that covers all cases. Regardless of the actual element values, the inner loop runs $θ(n^2)$ times.
 
@@ -339,9 +339,42 @@ Two final thoughts about selection sort:
 
 In selection sort, when we decided which book to put into the $i$th slot, the books in the first $i$ slots were the first $i$ books overall, sorted alphabetically by author name.
 
-In insertion sort, the books in the first $i$ slots will be *the same books that were originally in the first i slots, but now sorted by author name*.
+In insertion sort, the books in the first $i$ slots will be *the same books that were originally in the first $i$ slots, but now sorted by author name*.
 
+```
+Procedure INSERTION-SORT(A,n)
 
+Inputs and Result: Same as SELECTION-SORT.
+
+1. For i = 2 to n:
+	A. Set `key` to `A[i]`, and set `j` to `i-1`;
+	B. While j>0 and A[j]>key, do the following:
+		i. Set A[j+1] to A[j].
+		ii. Decrement j.
+	C. Set A[j] to key.
+```
+
+The test in step `1B` relies on the `and` operator being *short circuiting*(短路): 
+
+- If the expression on the left, `j>0` is false; then it does not evaluate the expression on the right `A[j]>key`.
+
+For the INSERTION-SORT procedure, the number of times that the inner loop iterates depends on both the index `i` of the outer loop and the values in the array elements.
+
+Running time of INSERTION-SORT is *$O(n^2)$*:
+
+- The best case will be $θ(n)$ ;
+- The worst case will be $θ(n^2)$; ($\frac {n(n-1)} {2}$) 
+
+In the worst case, INSERTION-SORT and SELECTION-SORT have running times that are asymptotically the same.
+
+**Compare INSERTION-SORT with  SELECTION-SORT**:
+
+- *Insertion sort is an excellent choice when the array starts out as "almost sorted"*. 
+  - Suppose that each array element starts out within `k` positions of where it ends up in the sorted array. If `k` is a constant, then the running time of insertion sort would be only $θ(n)$.
+  - In fact, we can even tolerate some elements moving a long distance in the array, as long as there are not too many such elements. In particular, if `l` elements can move anywhere in the array, and the remaining `n-l` elements can move at most `k` position, then the total number of shifts is at most $l(n-l) + (n-l)k= (k+l) n - (k+l) l$, Which is *$θ(n)$* if both `k` and `l` are constants.
+- *Selection sort moves elements $θ(n)$ times no matter what, but insertion sort could move elements up to  $θ(n^2)$ times*. So if moving an element is particularly time-consuming and you have no reason to expect that insertion sort's input approaches the best-case situation, then you might be better off running selection sort instead of insertion sort.
+
+## 3.4 Merge sort
 
 
 
