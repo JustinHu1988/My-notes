@@ -1,4 +1,4 @@
-# Chapter 3 :  Data and C
+œ# Chapter 3 :  Data and C
 
 ## 3.1 Basic
 
@@ -544,6 +544,96 @@ long double gnp;
 ```
 
 #### 3.4.6.2 Floating-Point Constants (Literals)
+
+**Basic forms**:
+
+- Right: `-1.56E+12`, `2.87e-3`, `3.14159`, `.2`, `4e16`, `.8E-5`, `100.` ...
+
+- Worng:  ~~`1.56 E+12`~~
+
+  Don't use spaces in a floating-point constant.
+
+*By default, the compiler assumes floating-point constants are `double` precision*.
+
+For example, `some` is a `float` variable and that you have the following statement:
+
+```c
+some = 4.0 * 2.0;
+```
+
+Then 4.0 and 2.0 are stored as `double`, typically using 64 bits for each. The product is calculated using double precision arithmetic, and only then is the answer trimmed to regular `float` size. This ensures greater precision for your calculations, but it can slow down a program.
+
+*C enables you to override this default by using an `f` or `F` suffix to make the compiler treat a floating-point constant as type `float`.*
+
+Example: `2.3f`, `9.11E9F`.
+
+*An `l` or `L` suffix mess a number type `long double`.*
+
+Example: `54.3l`, `4.32e4L`.
+
+If the floating-point number has no suffix, it is type `double`.
+
+**Hexadecimal Form**:
+
+- Since C99, C can use *a hexadecimal prefix*(`0x` or `0X`) with *hexadecimal digits*, a *`p` or `P`* instead of `e` or `E`, and *an exponent that is a power of 2* instead of a power of 10.
+- Example: `0xa.1fp10` (=10364.0 in base 10 notation)
+
+#### 3.4.6.3 Printing Floating-Point values
+
+- `%f`:print `float` and `double` numbers *in decimal notation*
+- `%e`:print `float` and `double` *in exponential notation*.
+- `%a`:print `float` and `double` *in hexadecimal format* (if system support).
+- `%Lf`,`%Le`,`%La`: `long double` type for every notation.
+
+*C automatically expands type `float` values to type `double` when they are passed as arguments to any function, such as `printf()`, that does't explicitly prototype the argument type.*
+
+So, both `float` and `double` use `%f`,`%e`,`%a` for output.
+
+```c
+/* showf_pt.c -- displays float value in two ways */
+#include <stdio.h>
+int main(void){
+  float aboat = 32000.0;
+  double abet = 2.14e9;
+  long double dip = 5.32e-5;
+  
+  printf("%f can be written %e\n", aboat, aboat);
+  // next line requires C99 or later compliance
+  printf("And it's %a in hexadecimal, powers of 2 notation\n", aboat);
+  printf("%f can be written %e\n", abet, abet);
+  printf("%Lf can be written %Le\n", dip, dip);
+  return 0;
+}
+/** output:
+32000.000000 can be written 3.200000e+04
+And it's 0x1.f4p+14 in hexadecimal, powers of 2 notation
+2140000000.000000 can be written 2.140000e+09
+0.000053 can be written 5.320000e-05
+*/
+```
+
+This example illustrates the default output. (Next chapter discusses how to control the appearance of this output).
+
+#### 3.4.6.4 Floating-Point Overflow and Underflow
+
+**Overflow**:
+
+```c
+// Example:
+float toobig = 3.4E38 * 100.0f;
+long double nottoobig = 3.4E38 * 100.0f;
+printf("%e\n %Le\n", toobig, nottoobig);
+/* output
+inf
+3.400000e+40
+*/
+```
+
+This is an example of *overflow* (for `toobig`). 
+
+Now C specifies that `toobig` gets assigned a special value that stands for *infinity* and that `printf()` display either `inf` or `infinity` for the value.
+
+**Underflow**:
 
 
 

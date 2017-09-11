@@ -226,7 +226,7 @@ Example:
 
      - *by* figures like the famous traveler from Venice, Marco Polo
      - *of* the willingness of people in China to trade with Europeans and *of* the immensity of the wealth to be gained by such contact
-
+    
      根据*尾重原则*，by短语放在了两个of短语之前。
 
 2. *主从复合句的核心意思在主句谓语上*。
@@ -237,6 +237,89 @@ Example:
 
 
 ### 宾语
+
+#### 1. 形式结构
+
+与主语一样，宾语也是名词性的，包括名词性短语和名词性从句。
+
+常见结构：
+
+1. 名词／名词短语
+2. 动名词
+3. 动词不定式
+4. 名词从句，即连词that，whether以及wh-连词引导的宾语从句
+
+#### 2. 句中位置
+
+*动词和介词可以接宾语*，且宾语一般跟在动词和介词后边。
+
+不过在特定句子中，宾语也可以出现在动词和介词前面。
+
+因此，宾语在句中位置可以分为：
+
+1. 在动词或介词后
+2. 在动词或介词前
+
+##### 2.1 宾语在动词后
+
+1. 单宾语：动词＋宾语
+
+2. 双宾语：
+
+   1. 动词＋间接宾语＋直接宾语
+   2. 动词＋直接宾语＋介词（to/for）＋间接宾语
+
+   由此可见，直接宾语都是在动词后面，而间接宾语可以在动词后或者介词后。
+
+   不过，并不是所有间接宾语都可以采用上面两种结构。*动词将会决定可以采用何种结构*。
+
+   **根据间接宾语的位置特点，可以将动词分为五类**：
+
+   - 间接宾语既可以在动词后，也可以在介词后——介词to：
+
+     常见动词：*give, bring, send, teach, tell, take ...*
+
+     - I gave *John* that new book.
+     - I gave that new book *to John*.
+
+   - 间接宾语既可以在动词后，也可以在介词后——介词for：
+
+     常见动词：*buy, build, cook, find, get, make ...*
+
+     - I bought *John* that new book.
+     - I bought that new book *for John*.
+
+   - 间接宾语只能在介词后——介词to：
+
+     常见动词：*explain, describe, donate, communicate, report, announce, declare, say, shout, scream, murmur, whisper, repeat, recommend ...*
+
+     - I recommended that new book *to John*.
+
+   - 间接宾语只能在介词后——介词for：
+
+     常见动词：*design, create, construct, obtain, purchase ...*
+
+     - John designed a new logo *for the company*.
+
+   - 间接宾语只能在动词后：
+
+     常见动词：*cost, bet, fine, forgive, spare, charge, deny, refuse ...*
+
+     - That new book cost *John* 50 dollars.
+
+   **宾语后置**：
+
+   在动词和直接宾语之间可能插入其他句子成分，导致动词与宾语分离：
+
+   - Many people *consider* impossible *what really is possible*.
+
+     这句话中的consider的宾语是从句what really is possible。形容词impossible是宾语补足语，被提前。这种现象称为宾语后置，如果看不出来则会造成难以理解。
+
+   - Therefore we need to *address* in a broader and more comprehensive manner *these fuel prices that are unusually high at this time*.
+
+     谓语动词address与宾语 these fuel prices that are unusually high at this time被介词短语 in a broader and more comprehensive manner分隔。这个介词短语充当方式状语。
+
+##### 2.2 宾语在动词前
 
 
 
