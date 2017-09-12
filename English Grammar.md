@@ -321,9 +321,48 @@ Example:
 
 ##### 2.2 宾语在动词前
 
+1. 定语从句，被修饰的名词在定语从句中作从句谓语的宾语。
 
+   - This is *the book* that I *bought* yesterday.
 
+   - In the United States there are *other customs* in addition to a disregard of titles that visitors accustomed to considerable attention and service at home may *find* insulting at first.
 
+     从句谓语find的宾语是other customs。insulting在这里作宾语补足语。
+
+2. 不定式作后置定语，被修饰的名词作不定式中动词的宾语。
+
+   - I have a paper *to write*.
+
+     - write的宾语实际上指向paper。*这句话其实可以认为是定语从句I have a paper that I should write.的简化写法*。
+     - 既然从句的主语省略了，从句谓语也要转化成非谓语动词。
+     - 那么，为什么要转化为不定式：因为*不定式具有情态含义*。例如to write可以具有should write或can write这样的情态含义。*而动名词和分词不具备这样的情态含义*。
+
+     因此，我们还可以写出不同的例句：
+
+   - I need a pen *to write with*.
+
+   - I need some paper *to write on*.
+
+   - If I were aboard, I'd travel around the country as much as I could and try to find as many *people* as possible, not only to *practice the language on* but to have *discussions with*, and I'd hope to make some real friends.
+
+#### 3. 句法功能
+
+1. 宾语和主语：如果宾语和主语有互指关系，宾语一般要求用反身代词，且在人称、单复数和性别方面受主语支配。
+   - I have given *myself* a gift.
+2. 宾语和动词：宾语受动词支配，包括宾语的有无以及是单宾语还是双宾语。（双宾语句子中，间接宾语通常可以省略。省略直接宾语则较为少见）
+
+相对于主语和谓语来说，宾语处于从属地位，其句法功能也受主语和谓语的影响。
+
+#### 4. 语义特征
+
+1. 间接宾语：
+
+   1. 动作的受益者（物品的接受者）：一般位于动词后
+   2. 地点：一般位于介词后
+
+2. 直接宾语：
+
+   被转移的客体（具体的或抽象的），直接宾语是动作的直接作用对象。
 
 ### 补足语
 

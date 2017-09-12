@@ -376,15 +376,121 @@ In the worst case, INSERTION-SORT and SELECTION-SORT have running times that are
 
 ## 3.4 Merge sort
 
+Merge sort has a running time of only  *$θ(nlg n)$* in all cases.
+
+Merge sort does have some *disadvantages*:
+
+1. the *constant factor* that we hide in the asymptotic notation *is higher* than for the other two algorithms above. Of course, once the array size `n` gets large enough, that doesn't really matter.
+2. Merge sort *does not work in place*: It has to make complete copies of the entire input array. If space is at a premium, you might not want to use merge sort.
+
+We employ a common algorithmic paradigm known as **divide-and-conquer** in merge sort.
+
+*Divide-and-conquer algorithm:*
+
+1. *Divide* the problem into a number of subproblems that are smaller instances of the same problem.
+2. *Conquer* the subproblems by solving them recursively. If they are small enough, solve the subproblems as *base cases*.
+3. *Combine* the solutions to the subproblems into the solution for the original problem.
 
 
 
+Apply divide-and-conquer on bookshelf sorting problem:
+
+1. Divide by finding the number `q` of the slot midway between `p` and `r`. We do so in the same way that we found the midpoint in binary search: add `p` and `q`, divide by 2, and take the floor.
+2. Conquer by recursively sorting the books in each of the two subproblems created by the divide step:  recursively sort the books that are in slots `p` through `q`, and recursively sort the books that are in slots `q+1` through `r`.
+3. Combine by merging the sorted book that are in slots `p` through `q` and slots `q+1` through `r`. so that all the books in slots `p` through `r` are sorted.
+
+Base case: when fewer than two books need to be sorted(that is , when `p>=r`),since a set of books with no books or one book is already trivially sorted.
+
+```
+Procedure MERGE-SORT(A,p,r)
+
+Inputs:
+ - A: an array.
+ - p,r: starting and ending indices of a subarray of A.
+ 
+Result: The elements of the subarray A[p..r] are sorted into nondecreasing order.
+
+1. If p>=r, then the subarray A[p..r] has at most one element, and so it is already sorted. Just return without doing anything.
+2. Otherwise, do the following:
+	A. Set q to Math.floor((p+r)/2).
+	B. Recursively call MERGE-SORT(A,p,q).
+	C. Recursively call MERGE-SORT(A,q+1,r).
+	D. Call MERGE(A,p,q,r).
+```
+
+![](images/img-for-merge-algrithms-unlocked.png)
+
+Now we focus on MERGE procedure, *how efficient is this merge procedure*?
+
+1. Copying the elements to be merged from array A into temporary arrays (and then merge them back into A).
+
+   1. Let $n_1=q-p+1$ be the number of elements in A[p..q] and $n_2=r-q$ be the number of elements in A[q+1..r].
+   2. We create temporary arrays B with $n_1$ elements and C with $n_2$ elements, and we copy the elements in A[p..q], in order, into B, and likewise the elemnts in A[q+1..r], inorder, into C. Now we can merge these elements back into A[p..q] without fear of overwriting our only copies of them.
+
+2. Merge them back into A.
+
+   1. Compare the smallest element in both B and C that not yet copied back to A. 
+
+   2. Copying the smaller one of the two back into A.
+
+   3. Update indices into the arrays.
+
+      Note: In constant time, we can determine which element is smaller, copy it back into the correct position of A[p..r], and update indices into the arrays.
+
+   *So, to merge `n` elements, we move elements `2n` times and compare pairs of elements at most `n` times.*
+
+```
+Procedure MERGE(A,p,q,r)
+
+Inputs:
+ - A: an array;
+ - p,q,r: indices into A. Each of the subarrays A[p..q] and A[q+1..r] is assumed to be already sorted.
+ 
+Result: The subarray A[p..r] contains the elements originally in A[p..q] and A[q+1..r], but now the entire subarray A[p..r] is sorted.
+
+1. Set n1 = q-p+1, and set n2 = r-q.
+2. Let B[1..n1+1] and C[1..n2+1] be new arrays.
+3. Copy A[p..q] into B[1..n1] and copy A[q+1..r] into C[1..n2].
+4. Set both B[n1+1] and C[n2+1] to ∞.
+5. Set both i and j to 1.
+6. For k = p to r:
+	A. If B[i]<=C[j], then set A[k] to B[i] and increment i.
+	B. Otherwise (B[i]>C[j]),set A[k] to C[j] and increment j.
+```
+
+> In practice, we represent ∞ by a value that compares as greater than any sort key.
+
+If we are merging `n` elements altogether, it takes *$θ(n)$* time to copy the elements into arrays B and C, and constant time per element to copy it back into A[p..r], for a total merging time of only *$θ(n)$* .
+
+**Here is how we analyze merge sort:**
+
+- Let's say that sorting a subarray of n elements takes time $T(n)$, which is a function that increases with $n$ . 
+
+- The time $T(n)$ comes from the three components of the divide-and-conquer paradigm, whose times we add together:
+
+  1. Dividing takes constant time, because it amounts to just computing the index `q`.
+  2. Conquering consists of the two recursive calls on subarrays, each with $n/2$ elements. By how we defined the time to sort a subarray, each of the two recursive calls takes time $T(n/2)$.
+  3. Combinging the results of the two recursive calls by merging the sorted subarrays takes  $θ(n)$ time.
+
+- Because the constant time for dividing is a low-order term compared with the $θ(n)$ time for combining, we can absorb the dividing time into the combinging time and say that dividing and combining , together, take $θ(n)$ time. The conquer step costs $T(n/2)+T(n/2)$, or $2 T (n/2)$.
+
+- Now, we can write a equation for $T(n)$:
+
+  - *$$T(n) = 2T (n/2) +  θ(n)$$*   (More accurately:$$T(n) = 2T (n/2) +  f(n)$$ )
+
+  This is an **recurrence equation**(递归式), or just *recurrence*.
+
+  The problem is that we want to express $T(n)$ in a non-recursive manner.
+
+- It can be a real pain in the neck to convert a function expressed as a recurrence into non-recursive form, but for a broad class of recurrence equations we can apply a cookbook method known as the "**master method**". The master method applies to many (but not all) recurrences of the form $$T(n) = aT (n/b) +  f(n)$$ , where `a` and `b` are positive integer constants.
+
+- Fortunately, it applies to our merge-sort recurrence, and it gives the result that *$T(n)$ is $θ(nlgn)$*. 
+
+*This $θ(nlgn)$ running time applies to all cases of merge sort* — best case, worst case, and all cases in between. *Each element is copied  $θ(nlgn)$ times*. As you can see from examining the MERGE method, when it is called with $p=1$ and $r=n$, it makes copies of all `n` elements, and *so merge sort definitely does not run in place*.
 
 
 
-
-
-
+## 3.5 Quicksort
 
 
 

@@ -547,7 +547,7 @@ long double gnp;
 
 **Basic forms**:
 
-- Right: `-1.56E+12`, `2.87e-3`, `3.14159`, `.2`, `4e16`, `.8E-5`, `100.` ...
+- Right: `-1.56E+12`, `2.87e-3`, `3.14159`, `.2`, `4e16`, `.8E-5`, `100.`, `2.3f`, `9.11E9F`, `54.3l`, `4.32e4L` ...
 
 - Worng:  ~~`1.56 E+12`~~
 
@@ -633,7 +633,16 @@ This is an example of *overflow* (for `toobig`).
 
 Now C specifies that `toobig` gets assigned a special value that stands for *infinity* and that `printf()` display either `inf` or `infinity` for the value.
 
-**Underflow**:
+**Underflow**: 
+
+A  `float` number is stored as:
+
+1. an exponent part
+2. an value part, or mantissa（尾数）
+
+There will be some small  `float` number that has the smallest possible exponent and also the smallest value that still uses all the bits available to represent the mantissa. So, for a certain `float` number `x` like this, it will be the smallest number that still is represented to the full precision available.
+
+Now divide `x` by 2. Normally , this reduces teh exponent, but the exponent already is as small as it can get. So, instead, *the computer moves the bits in the mantissa over, vacating the first position and losing the last binary digit*.
 
 
 
