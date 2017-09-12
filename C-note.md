@@ -642,7 +642,76 @@ A  `float` number is stored as:
 
 There will be some small  `float` number that has the smallest possible exponent and also the smallest value that still uses all the bits available to represent the mantissa. So, for a certain `float` number `x` like this, it will be the smallest number that still is represented to the full precision available.
 
-Now divide `x` by 2. Normally , this reduces teh exponent, but the exponent already is as small as it can get. So, instead, *the computer moves the bits in the mantissa over, vacating the first position and losing the last binary digit*.
+Now divide `x` by 2. Normally , this reduces the exponent, but the exponent already is as small as it can get. So, instead, *the computer moves the bits in the mantissa over, vacating the first position and losing the last binary digit*.
+
+**Subnormal**:
+
+- C refers to floating-point values that have lost the full precision of the type as *subnormal*. So dividing the smallest positive normal floating-point value by 2 results in a subnormal value.
+- The *C library now provides functions that let you check whether your computations are producing subnormal values*. 
+
+**`NaN`**: not-a-number.
+
+- another special floating-point value.
+- `printf()` display as `nan`, `NaN` or something similar.
+
+###### Floating-Point Round-off Errors
+
+```c
+// Example
+/* floaterr.c--demonstrates round-off error */
+#include <stdio.h>
+int main(void)
+{
+    float a,b;
+    b = 2.0e20 + 1.0;
+    a = b - 2.0e20;
+    printf("%f \n", a);
+    return 0;
+}
+/* The output is this:
+4008175468544.000000
+*/
+```
+
+The reason for these odd results is that the computer doesn't keep track of enough decimal places to do the operation correctly. 
+
+###### Floating-Point Representation
+
+Institute of Electrical and Electronics Engineers (*IEEE*) developed a standard for floating-point representation and computation.
+
+
+
+### 3.4.7 Complex and Imaginary Types
+
+Many computations in science and engineering use complex and imaginary numbers.
+
+There are three complex types:
+
+- `float _Complex`
+- `double _Complex`
+- `long double _Complex`
+
+A `float _Complex` variable would contain two `float` values, one representing the real part of a complex number and one representing the imaginary part.
+
+Similarly, there are three imaginary types:
+
+- `float _Imaginary`
+- `double _Imaginary`
+- `long double _Imaginary`
+
+**`complex.h`**:
+
+Including the `complex.h` header file lets you substitute the word:
+
+-  `complex` for `_Complex` 
+- `imaginary` for `_Imagiary`, 
+- and it allow you to use the symbol `I` to represent the square root of -1. 
+
+
+
+### 3.4.8 Beyond the Basic Types
+
+
 
 
 

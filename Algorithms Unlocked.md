@@ -492,7 +492,14 @@ If we are merging `n` elements altogether, it takes *$θ(n)$* time to copy the e
 
 ## 3.5 Quicksort
 
+Quicksort uses divide-and-conquer in a slightly different way than merge sort.
 
+It has a couple of other significant differences from merge sort:
+
+- *Quicksort works in place*.
+- Quicksort's asymptotic running time differs between the worst case and the average case. In particular, *quicksort's worst-case running time is $θ(n^2)$, but its average-case running time is better: $θ(nlgn)$.*
+
+Quicksort also *has good constant factors* (better than merge sort's), and it is often *a good sorting algorithm to use in practice*.  
 
 
 
