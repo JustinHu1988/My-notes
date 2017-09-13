@@ -418,7 +418,9 @@ Result: The elements of the subarray A[p..r] are sorted into nondecreasing order
 	D. Call MERGE(A,p,q,r).
 ```
 
-![](images/img-for-merge-algrithms-unlocked.png)
+Figure Example:
+
+<img src="images/img-for-merge-algrithms-unlocked.png" width="500"/>
 
 Now we focus on MERGE procedure, *how efficient is this merge procedure*?
 
@@ -456,6 +458,7 @@ Result: The subarray A[p..r] contains the elements originally in A[p..q] and A[q
 6. For k = p to r:
 	A. If B[i]<=C[j], then set A[k] to B[i] and increment i.
 	B. Otherwise (B[i]>C[j]),set A[k] to C[j] and increment j.
+	
 ```
 
 > In practice, we represent ∞ by a value that compares as greater than any sort key.
@@ -500,6 +503,110 @@ It has a couple of other significant differences from merge sort:
 - Quicksort's asymptotic running time differs between the worst case and the average case. In particular, *quicksort's worst-case running time is $θ(n^2)$, but its average-case running time is better: $θ(nlgn)$.*
 
 Quicksort also *has good constant factors* (better than merge sort's), and it is often *a good sorting algorithm to use in practice*.  
+
+How quick sort uses  divide-and-conquer:
+
+```
+Procedure QUICKSORT(A, p, r)
+
+Inputs and Result: Same as MERGE-SORT.
+
+1. If p>=r, then just return without doing anything.
+2. Otherwise, do the following:
+	A. Call PARTITION(A,p,r), and set q to its result.
+	B. Recursively call QUICKSORT(A,p,q-1).
+	C. Recursively call QUICKSORT(A,q+1,r).
+```
+
+Figure Example for QUICKSORT:
+
+<img src="images/img-for-quicksort-algrithms-unlocked.png" width="250" />
+
+The key to quicksort is **partitioning**. Just as we were able to merge `n` elements in $θ(n)$ time, we can partition `n` elements in $θ(n)$ time.
+
+*To partition a subarray A[p..r]:* 
+
+1. first choose A[r] (the rightmost element) as the pivot.
+2. go through the subarray from left to right, comparing each element with the pivot. We maintain indices `q` and `u` into the subarray that divide it up as follows:
+   1. The subarray `A[p..q-1]` corresponds to group L: each element is less than or equal to the pivot;
+   2. The subarray `A[q..u-1]` corresponds to group R: each element is greater than the pivot.
+   3. The subarray `A[u..r-1]` corresponds to group U: we don't yet know how they compare with the pivot.
+   4. The element `A[r]` corresponds to group P: it holds the pivot.
+3. At  each step, we compare `A[u]`, the leftmost element in group U,  with the pivot.
+   1. If `A[u]` is greater than the pivot, then we increment `u` to move the dividing line between groups R and U to the right.
+   2. If instead `A[u]` is less than or equal to the pivot, then we swap the elements in `A[q]`(the leftmost element in group R) and `A[u]` and then increment both `q` and `u` to move the dividing lines between groups L and R and groups R and U to the right. 
+
+```
+Procedure PARTITION(A, p, r)
+
+Inputs: Same as MERGE-SORT.
+
+Result: Rearranges the elements of A[p..r] so that every element in A[p..q-1] is less than or equal to A[q] and every element in A[q+1..r] is greater than q. Returns the index q to the caller.
+
+1. Set q to p.
+2. For u = p to r-1 do:
+	A. if A[u] <= A[r], then swap A[q] with A[u] and then increment q.
+3. Swap the value in A[q] with the value in A[r] and then return q.
+```
+
+Figure Example for PARTITION:
+
+<img src="images/img-for-quicksort-partitioned-algrithms-unlocked.png" width="600"/>
+
+*Running time for PARTITION:*
+
+- since each comparison takes constant time and each swap takes constant time, the total time for PARTITION on an n-element subarray is *$θ(n)$.*
+
+**Running time for QUICKSORT** :
+
+- As with merge sort, let's say that sorting a subarray of `n` elements takes time $T(n)$, a function that increases with `n`.
+
+- Dividing, done by the PARTITION procedure, takes $θ(n)$ time. 
+
+- *But the time for QUICKSORT depends on how even the partitioning turns out to be*.
+
+- *In worst case*, the partition sizes are really unbalanced. *If every element other than the pivot is less than it*, then Partition ends up leaving the pivot in `A[r]` and return the index `r` to QUICKSORT, which QUICKSORT stores in the variable `q`. In this case, we will need $T(n-1)$ time for A[p..q-1] partition. So:
+
+  - *$$T(n) = T(n-1) + θ(n)$$*
+  - We can't solve this recurrence using the master method, but it has the solution that *$T(n)$ is $θ(n^2)$*. That's no better than selection sort!
+  - *How can we get such an uneven split?*
+    - If every pivot is greater than all other elements, then the array must have started out already sorted.
+    - It also turns out that we get an uneven split every time if the array starts out in reverse sorted order. 
+
+- *In best case*, we got an even split every time, each of the subarrays would have at most $n/2$ elements. The recurrence would be the same as the recurrence for merge sort:
+
+  - *$$T(n) = 2T(n/2) + θ(n)$$*
+  - In this case, $T(n)$ is *$θ(nlgn)$*.
+
+- *In average case*:
+
+  If the elements of the input array come in a random order, then on average we get splits that are close enough to even that QUICKSORT takes *$θ(nlgn)$* time.
+
+  ​
+
+**Now, suppose that you have a worst enemy**:
+
+Your enemy has already known that you always pick the last element in each subarray as the pivot, and has arranged the array so that you always get the worst-case split. How can you foil your enemy?
+
+Solution: *Don't always pick the last element as the pivot.* 
+
+- In this case, previous PARTITION procedure won't work.
+- So, before running the PARTITION procedure, swap `A[r]` with a randomly chosen element in `A[p..r]`. Now you've chosen your pivot randomly and you can run the PARTITION procedure.
+- In fact, you *can still improve your chance of getting a split that's close to even*. *Instead of choosing one element in `A[p..r]` at random, choose three elements at random and swap teh median of the three with `A[r]`.* 
+  - By the median of the three, we mean the one whose value is between the other two. (If two or more of the randomly chosen elements are equal, break ties arbitrarily ????) .
+
+*How many times does QUICKSORT swap elements?*
+
+- That depends on whether you count "swapping" an element to the same position it started in as a swap. You could certainly check to see whether this is the case and avoid the swap if it is.
+- So let’s call it a swap only when an element really moves in the array as a result of swapping, that is, when $q\ne u$ in step `2A` or when $q\ne r$ in step 3 of PARTITION. 
+  - The best case for minimizing swaps is also one of the worst cases for asymptotic running time: when the array is already sorted. Then no swaps occur.
+  - The most swaps occur when `n` is even and the input array looks like
+    `n, n-2,n-4,…,4,2,1,3,5,…,n-3,n-1`.  Then $n^2=4$ swaps occur, and the asymptotic running time is still the worst case $θ(n^2)$.
+
+​			
+​		
+
+## 3.6 Recap
 
 
 
