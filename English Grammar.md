@@ -186,7 +186,7 @@ Example:
 
 #### 2. 句法功能
 
-*谓语动词决定句子结构。*
+**谓语动词决定句子结构。**
 
 1. 谓语决定句子的宾语和补足语；
 
@@ -221,13 +221,14 @@ Example:
 
      而主语的中心词是accounts，意为“描述、记录”，其他部分是定语，对accounts进行多重修饰：
 
-     - 前置定语：Widely reported, if somewhat distrusted
+     - 前置定语：Widely reported, if somewhat distrusted;
 
+     - *by* figures like the famous traveler from Venice, Marco Polo;
 
-     - *by* figures like the famous traveler from Venice, Marco Polo
-     - *of* the willingness of people in China to trade with Europeans and *of* the immensity of the wealth to be gained by such contact
-    
-     根据*尾重原则*，by短语放在了两个of短语之前。
+     - *of* the willingness of people in China to trade with Europeans and *of* the immensity of the wealth to be gained by such contact;
+
+       根据**尾重原则**，by短语放在了两个of短语之前。
+
 
 2. *主从复合句的核心意思在主句谓语上*。
 

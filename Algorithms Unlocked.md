@@ -351,14 +351,20 @@ Inputs and Result: Same as SELECTION-SORT.
 	B. While j>0 and A[j]>key, do the following:
 		i. Set A[j+1] to A[j].
 		ii. Decrement j.
-	C. Set A[j] to key.
+	C. Set A[j+1] to key.
 ```
+
+Figure Example for `key` move:
+
+<img src="images/img-for-insertion-sort-key-move-algrithms-unlocked.png">
 
 The test in step `1B` relies on the `and` operator being *short circuiting*(短路): 
 
 - If the expression on the left, `j>0` is false; then it does not evaluate the expression on the right `A[j]>key`.
 
 For the INSERTION-SORT procedure, the number of times that the inner loop iterates depends on both the index `i` of the outer loop and the values in the array elements.
+
+> (SELETION-SORT's running time depends only on the index `i` of the outer loop).
 
 Running time of INSERTION-SORT is *$O(n^2)$*:
 
@@ -497,14 +503,14 @@ If we are merging `n` elements altogether, it takes *$θ(n)$* time to copy the e
 
 Quicksort uses divide-and-conquer in a slightly different way than merge sort.
 
-It has a couple of other significant differences from merge sort:
+Differences from merge sort:
 
 - *Quicksort works in place*.
 - Quicksort's asymptotic running time differs between the worst case and the average case. In particular, *quicksort's worst-case running time is $θ(n^2)$, but its average-case running time is better: $θ(nlgn)$.*
 
 Quicksort also *has good constant factors* (better than merge sort's), and it is often *a good sorting algorithm to use in practice*.  
 
-How quick sort uses  divide-and-conquer:
+How quicksort uses  divide-and-conquer:
 
 ```
 Procedure QUICKSORT(A, p, r)
@@ -603,10 +609,56 @@ Solution: *Don't always pick the last element as the pivot.*
   - The most swaps occur when `n` is even and the input array looks like
     `n, n-2,n-4,…,4,2,1,3,5,…,n-3,n-1`.  Then $n^2=4$ swaps occur, and the asymptotic running time is still the worst case $θ(n^2)$.
 
-​			
-​		
+    ​	
+    ​
 
 ## 3.6 Recap
+
+### Search algorithms
+
+| Algorithm         | Worst-case running time | Best-case running time | Requires sorted array? |
+| ----------------- | :---------------------: | :--------------------: | :--------------------: |
+| **Linear search** |         $θ(n)$          |         $θ(1)$         |           no           |
+| **Binary search** |        $θ(lgn)$         |         $θ(1)$         |          yes           |
+
+### Sorting algorithms
+
+| Algorithm          | Worst-case running time | Best-case running time | Worst-case swaps | In-place? |
+| ------------------ | :---------------------: | :--------------------: | :--------------: | :-------: |
+| **Selection sort** |        $θ(n^2)$         |        $θ(n^2)$        |      $θ(n)$      |    yes    |
+| **Insertion sort** |        $θ(n^2)$         |         $θ(n)$         |     $θ(n^2)$     |    yes    |
+| **Merge sort**     |        $θ(nlgn)$        |       $θ(nlgn)$        |    $θ(nlgn)$     |    no     |
+| **Quicksort**      |        $θ(n^2)$         |       $θ(nlgn)$        |     $θ(n^2)$     |    yes    |
+
+These tables do not show *average-case running times,* because with the notable exception of quicksort, they match the worst-case running time.
+
+
+
+### Sorting algorithms compare in practice
+
+*For these four sorting algorithms,* **Randomized quicksort** *was the champion for n>=64*. Here are the ratios of the running times of other algorithms to randomized quicksort's running times on various input size:
+
+<img src="images/img-for-ratio-sorting-01-algrithms-unlocked.png">
+
+*Randomized quicksort looks pretty good, but we can beat it*.
+
+Insertion sort works well when no element has to move very far in the array. So, once the sub-problem sizes in the recursive algorithms get down to some size `k`, no elements has to move more than `k-1` positions. Instead of continuing to recursively call randomized quicksort once the sub-problem sizes become small, what happens if we instead run insertion sort, suitably modified to sort a subarray rather than the entire array?
+
+Indeed, *with such a hybrid method, we can sort even faster than randomized quicksort*.
+
+In certain circumstance, a subarray size of 22 was the optimal crossover point on MacBook Pro; and a subarray size of 17 was the optimal crossover point on some PC. Here are ratios of running times of the **hybrid algorithm** to randomized quicksort on both machines, for the same problem sizes:
+
+<img src="images/hybrid algorithm to randomized quicksort.png">
+
+*Is it possible to beat $θ(nlgn)$ time for sorting?*
+
+- It depends. 
+- If the only way that we can determine where to place elements is by comparing elements, doing different things based on the results of the comparisons, then no, we cannot beat$θ(nlgn)$ time. 
+- If we know something about the elements that we can take advantage of, we can do better.
+
+
+
+# Chapter 4 A Lower Bound for Sorting and How to Beat It
 
 
 
