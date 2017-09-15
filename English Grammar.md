@@ -367,6 +367,40 @@ Example:
 
 ### 补足语
 
+#### 1. 概述
+
+##### 分类
+
+1. 句子层面的补足语：
+
+   1. 宾语补足语（object complement）
+      - 需要*宾补动词*（factitive verb）。不是所有动词后都可以接宾语补足语。
+      - 验证： *可以在宾语和宾补之间添加系动词，来验证补充关系是否成立*。
+   2. 主语补足语（subject complement）
+      - 需要*系动词*（linking verb）。
+
+2. *短语层面的补足语（介词短语）*：
+
+   动词、名词、形容词分别与自己的补语构成动词短语、名词短语、形容词短语。
+
+   1. 动词补足语
+      - 对动词语义起补充说明作用的*介词短语*，被称为动词补足语。
+      - She *threw* the bottle *into* the sea.
+        - into the sea是对动词threw进行补充，如果没有这个介词短语，则句义不完整。
+   2. 名词补足语
+      - 对名词语义起补充说明作用的*介词短语*，称作名词补足语。
+      - John's *criticism of the teacher* made him very unpopular.
+        - John's criticism of the teacher是主语，其中of the teacher是对名词criticism的补充。
+        - made是谓语，him是宾语，very unpopular是宾语补足语。
+   3. 形容词补足语
+      - 对形容词语义起补充说明作用的*介词短语*，称作形容词补足语。
+      - John was very *critical  of the teacher*.
+        - 形容词critical作主语补足语，而介词短语of the teacher是critical的形容词补足语。
+
+##### 形式结构
+
+
+
 
 
 

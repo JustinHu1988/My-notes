@@ -653,12 +653,106 @@ In certain circumstance, a subarray size of 22 was the optimal crossover point o
 *Is it possible to beat $θ(nlgn)$ time for sorting?*
 
 - It depends. 
-- If the only way that we can determine where to place elements is by comparing elements, doing different things based on the results of the comparisons, then no, we cannot beat$θ(nlgn)$ time. 
+- If the only way that we can determine where to place elements is by comparing elements, doing different things based on the results of the comparisons, then no, we cannot beat $θ(nlgn)$ time. 
 - If we know something about the elements that we can take advantage of, we can do better.
 
 
 
 # Chapter 4 A Lower Bound for Sorting and How to Beat It
+
+In practice, quicksort is the fastest of the four, but if you absolutely had to guard against bad worst-case behavior, you would choose merge sort.
+
+Is there have a algorithm can beat $θ(nlgn)$ time in the worst case?
+
+The answer depends on the rules of the game: how is the sorting algorithm allowed to use the sort keys when determining the sorted order?
+
+## 4.1 Rules for sorting
+
+*In previous four algorithms of sorting, they determine the sorted order based only on comparing pairs of sort keys*.
+
+
+
+Suppose that we know two things  about the elements we are sorting:
+
+1. Each sort key is either 1 or 2;
+2. The elements consist of only sort keys — no satellite data.
+
+In this simple situation, we can sort n elements in only $θ(n)$ time.
+
+```
+Procedure REALLY-SIMPLE-SORT(A,n)
+
+Inputs:
+ - A: an array in which each element is either 1 or 2.
+ - n: the number of elements in A to sort.
+ 
+Result: The elements of A are sorted into nondecreasing order.
+
+1. Set k to 0.
+2. For i = 1 to n:
+	A. If A[i]=1, then increment k;
+3. For i = 1 to k:
+	A. Set A[i] to 1;
+4. For i = k+1 to n:
+	A. Set A[i] to 2.
+```
+
+Notice that REALLY-SIMPLE-SORT *never compares two array elements with each other*. It compares each array element with the value 1, but never with another array element.
+
+So *in this restricted situation, we can sort without comparing pairs of sort keys*.
+
+
+
+## 4.2 The lower bound on comparison sorting
+
+Now that you have some idea about how the rules of the game may vary, let’s see a lower bound on how fast we can sort.
+
+**Comparison sort** : algorithm that determines the sorted order only by comparing pairs of elements.
+
+> The four sorting algorithms from the previous chapter are comparison sorts, but REALLY-SIMPLE-SORT is not.
+
+**Lower bound** : In the worst case, any comparison sorting algorithm for n elements requires $Ω(nlgn)$ comparisons between pairs of elements.
+
+1. This lower bound is *about the worst case*.
+   - This lower bound is an **existential lower bound**, because it says that there exists an input that requires $Ω(nlgn)$ comparisons.
+   - Another type of lower bound is a **universal lower bound**,  which applies to all inputs.
+   - For sorting, the only universal lower bound we have is $Ω(n)$, since we have to look at each element at least once. (This $Ω(n)$ means $Ω(n)$ time, not $Ω(n)$ comparisons, because there are some sort algorithms do not comparing pairs of elements. )
+2. This lower bound does not depend on the particular algorithm, as long as it's a comparison sorting algorithm.
+   - The lower bound applies to every comparison sorting algorithm, no matter how simple or complex.
+
+
+
+## 4.3 Beating the lower bound with counting sort
+
+
+
+
+​			
+​		
+​	
+
+ 
+
+
+​			
+​		
+​	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
