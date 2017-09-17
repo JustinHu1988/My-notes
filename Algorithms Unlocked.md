@@ -722,7 +722,7 @@ Now that you have some idea about how the rules of the game may vary, let’s se
 
 
 
-## 4.3 Beating the lower bound with counting sort
+## 4.3 Beating the lower bound with Counting sort
 
 We can *generalize the method of REALLY-SIMPLE-SORT to handle `m` different possible values for the sort keys*, as long as they are integers in a range of `m` consecutive integers, say, `0` to `m-1`, and we can also allow the elements to have satellite data.
 
@@ -767,7 +767,7 @@ Inputs:
  - equal: the array returned by COUNT-KEYS-EQUAL.
  - m: defines the index range of equal: 0 to m-1.
 
-Output: An array less[0..m-1] such that for j=0,1,2,...,m-1, less[j] contains the sum equal[0]+equal[1]++equal[j-1].
+Output: An array less[0..m-1] such that for j=0,1,2,...,m-1, less[j] contains the sum equal[0]+equal[1]+···+equal[j-1].
 
 1. Let less[0..m-1] be a new array.
 2. Set less[0] to 0.
@@ -776,7 +776,105 @@ Output: An array less[0..m-1] such that for j=0,1,2,...,m-1, less[j] contains th
 4. Return the less array.
 ```
 
+COUNT-KEYS-LESS procedure runs in $θ(n)$ time
 
+Once we have the less array,  we can create a sorted array, though not in place:
+
+```
+Procedure REARRANGE(A, less, n, m)
+
+Inputs:
+ - A: an array of integers in the range 0 to m-1;
+ - less: the array returned by COUNT-KEYS-LESS;
+ - n: the number of elements in A;
+ - m: defines the range of the values in A.
+
+Output: A array B containing the elements of A, sorted.
+
+1. let B[1..n] and next[0..m-1] be new arrays.
+2. For j = 0 to m-1:
+	A. Set next[j] to less[j]+1;
+3. For i = 1 to n:
+	A. Set key to A[i];
+	B. Set index to next[key];
+	C. Set B[index] to A[i];
+	D. Increment next[key];
+4. Return the B array.
+```
+
+<img src="images/algrithms-unlocked-img-chapter04-for-less-rearrange.png" width="400" />
+
+REARRANGE runs in $θ(m+n)$ time, which is $θ(n)$ if $m$ is a constant.
+
+*Now we can put the three procedures together to create* **counting sort** : 
+
+```
+Procedure COUNTING-SORT(A,n,m)
+
+Inputs:
+ - A: an array of integers in the range 0 to m-1;
+ - n: the number elements in A;
+ - m: defines the range of the values in A;
+ 
+Output: A array B containing the elements of A, sorted.
+
+1. Call COUNT-KEYS-EQUAL(A,n,m), and assign its result to equal.
+2. Call COUNT-KEYS-LESS(equal,m) and assign its result to less.
+3. Call REARRANGE(A,less,n,m) and assign its result to B.
+4. Return the B array.
+```
+
+*COUNTING-SORT runs time $θ(m+n)$, or  $θ(n)$ when $m$ is a constant.*
+
+*Counting sort beats the lower bound of  $Ω(nlgn)$ for comparison sorting because it never compares sort keys against each other.* Instead, it uses sort keys to index into arrays, which it can do because the sort keys are small integers. *If the sort keys were real numbers with fractional parts, or they were character strings, then we could not use counting sort*.
+
+*This procedure is a bit inefficient in how they use arrays, you can combine the `equal`, `less` and `next` arrays into one array.*
+
+> **Example** :  One example would be if I were sorting exams by grade. The grades range from 0 to 100, but the number of students varies. I could use counting sort to sort the exams of n students in $θ(n)$ time, since m=101 (remember that the range being sorted is 0 to m-1) is a constant.
+
+In practice, however, counting sort truns out to be useful as part of yet another sorting algorithm: *radix sort*.
+
+In addition to running in linear time when m is a constant, counting sort has another important property: it is **stable**. *In a stable sort, elements with the same sort key appear in the output array in the same order as they do in the input array*. In other
+words, a stable sort breaks ties between two elements with equal sort keys by placing first in the output array whichever element appears first in the input array.
+
+
+
+## Radix sort
+
+
+
+​	
+
+
+​			
+​		
+​	
+
+
+​			
+​		
+​	
+
+
+​			
+​		
+​	
+
+
+​			
+​		
+​			
+​	
+​	
+​		
+
+
+
+
+
+
+​			
+​	
 
 
 

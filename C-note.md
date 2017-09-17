@@ -704,14 +704,150 @@ Similarly, there are three imaginary types:
 Including the `complex.h` header file lets you substitute the word:
 
 -  `complex` for `_Complex` 
-- `imaginary` for `_Imagiary`, 
-- and it allow you to use the symbol `I` to represent the square root of -1. 
+-  `imaginary` for `_Imagiary`, 
+-  and it allow you to use the symbol `I` to represent the square root of -1. 
 
 
 
 ### 3.4.8 Beyond the Basic Types
 
+C doesn't have one, but it can still deal quite well with strings. 
 
+C does have other types derived from the basic types. These types include `arrays`, `pointers`, `structures`, and `unions`.
+
+For instance, a `pointer` points to the location of a variable or other data object. The `&` prefix used with the `scanf()` function creates a pointer telling `scanf()` where to place information.
+
+
+
+### Summary: The Basic Data Types
+
+###### Summary 01: The Basic Data Types
+
+- Keyword:
+
+  - The basic data types are set up using 11 keywords:
+
+    `int`, `long`, `short`, `unsigned`, `char`, `float`, `double`, `signed`, `_Bool`, `_Complex` and `_Imaginary`.
+
+- Signed Integers:
+
+  - These can have positive or negative values:
+    - `int`
+    - `short int` or `short``
+    - ``long` or `long int`
+    - long long` or `long long int`
+
+- Unsigned Integers:
+
+  These have zero or positive values only.
+
+- Characters: `char`.
+
+- Boolean: `_Bool`.
+
+- Real Floating Point:
+
+  These can have positive or negative values:
+
+  - `float`
+  - `double`
+  - `long double`
+
+- Complex and Imaginary Floating Point:
+
+  The imaginary types are optional, the real and imaginary components are based on the corresponding real types:
+
+  - `float _Complex`
+  - `double _Complex`
+  - `long double _Complex`
+  - `float _Imaginary`
+  - `double _Imaginary`
+  - `long double _Imaginary`
+
+###### Summary 02: How to Declare a Simple Variable
+
+1. Choose the type you need.
+
+2. Choose a name for the variable using the allowed characters.
+
+3. Use the following format for a declaration statement:
+
+   ```
+   type-specifier variable-name;
+   ```
+
+   The `type-specifier` is formed from one or more of the type keywords; here are examples of declarations:
+
+   ```
+   int erest;
+   unsigned short cash;
+   ```
+
+4. You can declare more than one variable of the same type by separating the variable names with commas. Here's an example:
+
+   ```
+   char ch, init, ans;
+   ```
+
+5. You can initialize a variable in a declaration statement:
+
+   ```
+   float mass = 6.0E24;
+   ```
+
+   ​
+
+### 3.4.9 Type Sizes
+
+What type sizes does your system use? c99 provides a %zd specifier for sizes.
+
+C has a built-in operator called `sizeof` that gives sizes in bytes, C99 and C11 provide a `%zd` specifier for this type used by `sizeof`. Noncompliant compilers may require `%u` or `%lu` instead.
+
+```c
+// The typesize.c Program
+#include <stdio.h>
+int main(void){
+  /* c99 provides a %zd specifier for sizes */
+  printf("Type int has a type of %zd bytes.\n", sizeof(int));
+  printf("Type char has a type of %zd bytes.\n", sizeof(char));
+  printf("Type long has a type of %zd bytes.\n", sizeof(long));
+  printf("Type long long has a type of %zd bytes.\n", 
+         sizeof(long long));
+  printf("Type double has a type of %zd bytes.\n", 
+         sizeof(double));
+  printf("Type long double has a type of %zd bytes.\n", 
+         sizeof(long double));
+  return 0;
+}
+/*
+Type int has a type of 4 bytes.
+Type char has a type of 1 bytes.
+Type long has a type of 8 bytes.
+Type long long has a type of 8 bytes.
+Type double has a type of 8 bytes.
+Type long double has a type of 16 bytes.
+*/
+//notice in the last few lines how a printf() statement can be spread over two lines. You can do this as long as the break does not occur in the quoted section or in the middle of a word
+```
+
+*You can check the `limits.h` and `float.h` header files for more detailed information on type limits.*
+
+
+
+## 3.5 Using Data Types
+
+When you develop a program, note teh variables you need and which type they should be.
+
+When you initialize a variable of one numeric type to a value of a different type, C converts the value to match the variable. This means you may lose some data. For example :
+
+```c
+int cost = 12.99;  // cost will be 12
+float pi = 3.1415926536;  // 3.141593, a float is guaranteed to represent only the first six digits, so `pi` may lose some data.
+```
+
+## 3.6 Arguments and Pitfalls
+
+Arguments:
 
 
 
