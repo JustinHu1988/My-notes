@@ -717,12 +717,72 @@ Now that you have some idea about how the rules of the game may vary, let’s se
    - This lower bound is an **existential lower bound**, because it says that there exists an input that requires $Ω(nlgn)$ comparisons.
    - Another type of lower bound is a **universal lower bound**,  which applies to all inputs.
    - For sorting, the only universal lower bound we have is $Ω(n)$, since we have to look at each element at least once. (This $Ω(n)$ means $Ω(n)$ time, not $Ω(n)$ comparisons, because there are some sort algorithms do not comparing pairs of elements. )
-2. This lower bound does not depend on the particular algorithm, as long as it's a comparison sorting algorithm.
-   - The lower bound applies to every comparison sorting algorithm, no matter how simple or complex.
+2. This lower bound $Ω(nlgn)$ does not depend on the particular algorithm, as long as it's a comparison sorting algorithm.
+   - *This lower bound applies to every comparison sorting algorithm, no matter how simple or complex.*
 
 
 
 ## 4.3 Beating the lower bound with counting sort
+
+We can *generalize the method of REALLY-SIMPLE-SORT to handle `m` different possible values for the sort keys*, as long as they are integers in a range of `m` consecutive integers, say, `0` to `m-1`, and we can also allow the elements to have satellite data.
+
+Suppose:
+
+- we know that the sort keys are integers in the range `0` to `m-1`;
+- we know that exactly three elements have sort keys equal to `5` and that exactly six elements have sort keys less than `5`( that is, in the range 0 to 4).
+- Then we know that, in the sorted array, the elements with sort keys equal to 5 should occupy positions 7,8 and 9.
+
+Therefore, we want *compute*, *for each possible sort-key value, how many elements have sort keys less than that value* and *how many elements have sort keys equal to that value*.
+
+We can compute how many elements have sort keys less than each possible sort-key value by first computing how many elements have sort keys equal to that value:
+
+```
+Procedure COUNT-KEYS-EQUAL(A,n,m)
+
+Inputs:
+ - A: an array of integers in the range 0 to m-1.
+ - n: the number of elements in A.
+ - m: defines the range of the values in A.
+ 
+Output: An array equal[0..m-1] such that equal[j] contains the number of elements of A that equal j, for j = 0,1,2,...,m-1.
+
+1. Let equal[0..m-1] be a new array.
+2. Set all values in equal to 0.
+3. For i = 1 to n:
+	A. Set key to A[i].
+	B. Increment equal[key].
+4. Return the equal array.
+```
+
+Notice that **COUNT-KEYS-EQUAL** never compares sort keys with each other. It uses sort keys only to index into the `equal` array.
+
+Since first loop makes `m` iterations, and the second loop makes `n` iterations, and each iteration of each loop takes constant time, COUNT-KEYS-EQUAL takes *$θ(m+n)$* time. If `m` is a constant, then COUNT-KEYS-EQUAL takes *$θ(n)$* time. 
+
+Now we can use the `equal` array to compute a running sum to find out how may elements have sort keys less than each value:
+
+```
+Procedure COUNT-KEYS-LESS(equal,m)
+
+Inputs:
+ - equal: the array returned by COUNT-KEYS-EQUAL.
+ - m: defines the index range of equal: 0 to m-1.
+
+Output: An array less[0..m-1] such that for j=0,1,2,...,m-1, less[j] contains the sum equal[0]+equal[1]++equal[j-1].
+
+1. Let less[0..m-1] be a new array.
+2. Set less[0] to 0.
+3. For j = 1 to m-1:
+	A. Set less[j] to less[j-1] + equal[j-1];
+4. Return the less array.
+```
+
+
+
+
+
+
+
+
 
 
 
