@@ -722,7 +722,7 @@ Now that you have some idea about how the rules of the game may vary, let’s se
 
 
 
-## 4.3 Beating the lower bound with Counting sort
+## 4.3 Beating the lower bound with **Counting sort**
 
 We can *generalize the method of REALLY-SIMPLE-SORT to handle `m` different possible values for the sort keys*, as long as they are integers in a range of `m` consecutive integers, say, `0` to `m-1`, and we can also allow the elements to have satellite data.
 
@@ -834,20 +834,35 @@ Output: A array B containing the elements of A, sorted.
 
 In practice, however, counting sort truns out to be useful as part of yet another sorting algorithm: *radix sort*.
 
-In addition to running in linear time when m is a constant, counting sort has another important property: it is **stable**. *In a stable sort, elements with the same sort key appear in the output array in the same order as they do in the input array*. In other
-words, a stable sort breaks ties between two elements with equal sort keys by placing first in the output array whichever element appears first in the input array.
+In addition to running in linear time when m is a constant, counting sort has another important property: it is **stable**. *In a stable sort, elements with the same sort key appear in the output array in the same order as they do in the input array*. In other words, a stable sort breaks ties between two elements with equal sort keys by placing first in the output array whichever element appears first in the input array.
 
 
 
-## Radix sort
+## 4.4 **Radix sort**
 
+If we want to *sort strings of characters of some fixed length*, we can use radix sort algorithm.
 
+*Using a stable sorting method is important for Radix sort*. Counting sort is one of stable sorting methods.
+
+*Radix sort algorithm*:
+
+1. Assume that we can think of each sort key as a `d-digit` number, where each digit is in the range `0` to `m-1`. 
+2. **Run a stable sort on each digit, going from right to left**. If we use counting sort as the stable sort, then the time to sort on one dight is $θ(m+n)$, and the time to sort all `d` digits is  **$θ(d(m+n))$**.  If `m` is a constant, then the time for radix sort is *$θ(dn)$*. If `d` is also a constant, then the time for radix sort is only $θ(n)$.
 
 ​	
 
+## 4.5 Further reading
 
-​			
+Chapter 8 of CLRS expands on all the material in this chapter.
+
+
+
+# Chapter 5 Directed Acyclic Graphs
+
+
+
 ​		
+
 ​	
 
 
