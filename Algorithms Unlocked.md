@@ -849,7 +849,7 @@ If we want to *sort strings of characters of some fixed length*, we can use radi
 1. Assume that we can think of each sort key as a `d-digit` number, where each digit is in the range `0` to `m-1`. 
 2. **Run a stable sort on each digit, going from right to left**. If we use counting sort as the stable sort, then the time to sort on one dight is $θ(m+n)$, and the time to sort all `d` digits is  **$θ(d(m+n))$**.  If `m` is a constant, then the time for radix sort is *$θ(dn)$*. If `d` is also a constant, then the time for radix sort is only $θ(n)$.
 
-​	
+  ​
 
 ## 4.5 Further reading
 
@@ -858,6 +858,38 @@ Chapter 8 of CLRS expands on all the material in this chapter.
 
 
 # Chapter 5 Directed Acyclic Graphs
+
+
+
+## 5.1 Directed acyclic graphs
+
+*Directed graphs* (有向图):
+
+- vertex
+- directed edge
+  - Each directed edge is an ordered pair of the form `(u,v)`, where `u` and `v` are vertices.
+  - When a directed graph contains a directed edge `(u,v)`, we say that:
+    -  *`v` is adjacent to `u`* ;
+    - *`(u,v)` leaves `u` and enters `v`*;
+
+**Directed acyclic graph**, or **dag** (有向非循环图):
+
+- There is no way to "cycle" from a vertex back to itself.
+- *Use* :
+  - Dags are great for modeling dependencies where one task must occur before another.
+  - Another us for dags arises when planning projects, such as building a house or cooking.
+
+## 5.2 Topological sorting
+
+拓扑排序
+
+*A **topological sort** of a dag produces a linear order such that if `(u,v)` is an edge in the dag, then `u` appears before `v` in the linear order.*
+
+Topological sorting differs from sorting in the sense that we used in Chapter 3 and 4.
+
+The linear order produced by a topological sort is *not necessarily unique*. 
+
+
 
 
 
