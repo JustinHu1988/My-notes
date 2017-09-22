@@ -1,4 +1,4 @@
-### 就近修饰
+## 就近修饰
 
 Modifiers are usually placed as close as possible to the words they describe.
 
@@ -15,15 +15,17 @@ Modifiers are usually placed as close as possible to the words they describe.
   - The chair of the school board `announced` a plan to `build` two new elementary schools *during an interview with a local news reporter*.
   - *During an interview with a local news reporter*, the chair of the school board *announced* a plan to build two new elementary schools.
 
-### 多重修饰
+
+
+## 多重修饰
 
 一个中心词可能会有多个修饰语。比如一个动词带多个状语，或者一个名词带多个后置定语，此时就会出现多重修饰关系。
 
-多重修饰现象，使得修饰语与修饰对象被分隔，可能会让人误判修饰关系。这提醒我们在分析长难句时，不要僵化地运用就近修饰原则。
+多重修饰现象，使得修饰语与修饰对象被分隔，可能会让人误判修饰关系。这提醒我们在分析长难句时，*不要僵化地运用就近修饰原则*。
 
 
 
-### 物称主语和人称主语
+## 物称主语和人称主语
 
 英语注重客观事物对人的作用和影响，注重客体意识，思维的目标往往指向外界，探究外部客观环境世界对人的影响，这种思维方式反映到语言上就是*英语多用无生命、抽象的名词作主语*。
 
@@ -43,7 +45,8 @@ Example:
 
 
 
-### 主语
+
+## 主语
 
 #### 1. 形式结构
 
@@ -174,7 +177,8 @@ Example:
 
 
 
-### 谓语
+
+## 谓语
 
 谓语或者说谓语动词，是句子最核心的成分。
 
@@ -234,10 +238,27 @@ Example:
 
    Taylor, 79, *died* of congestive heart failure at Cedars-Sinai Medical Center, where she had been hospitalized for about six weeks.
 
-   ​
+
+#### 4. 动词类型
+
+*从句子构造角度分三类，分别对应五种基本句型*：
+
+1. *系动词（linking v.）*
+   1. 主+谓（系）+主补
+2. *不及物动词（vi.）*
+   1. 主+谓
+3. *及物动词（vt.）*
+   1. 主+谓+宾
+   2. 主+谓+宾+宾补
+   3. 主+谓+间宾+直宾
+
+> 这三种动词并非严格区分，*一个动词可能同时具备多种用法，区别只是哪种用法比较常见、哪种用法比较少见*。因此，*与其说某个动词时系动词，不如说某个动词具有系动词用法*。
 
 
-### 宾语
+
+
+
+## 宾语
 
 #### 1. 形式结构
 
@@ -365,7 +386,11 @@ Example:
 
    被转移的客体（具体的或抽象的），直接宾语是动作的直接作用对象。
 
-### 补足语
+   ​
+
+
+
+## 补足语
 
 #### 1. 概述
 
@@ -421,18 +446,168 @@ Example:
 - 短语层面的补足语（介词短语）位于相应名词、动词和形容词后面。
 
 
+##### 句法功能
+
+1. 一致性：主补与主语一致，宾补与宾语一致。
+
+   - *Their daughter* has become *an English teacher*.
+   - John made *Jack and Peter* his assistant*s*.
+
+2. 被动：
+
+   1. 主系表（SVC）没有被动句。
+
+      John became a teacher.
+
+      ~~A teacher was become by John.~~ 
+
+   2. 复合宾语（SVOC）有被动句，直接宾语成为被动句主语。
+
+      His friends call *him* John.
+
+      *He* is called John by his friends.
+
+3. 主补与表语：表语是主补的一种，不接在系动词后的主补不叫表语。
+
+   1. He is called *John* by his friends.
+
+      这句话中，John是补充说明he的主补，但is called是被动结构，不是系动词，因此John不是表语。
+
+##### *补语形式*
+
+1. 名词
+2. 形容词
+3. 方位副词
+4. 介词短语
+5. 三种非谓语动词
+   1. 不定式
+   2. 现在分词doing
+   3. 过去分词done
+
+#### 2. 详述
+
+##### 1. 主语补足语
+
+本节，我们将展示各种系动词，从最典型的系动词到最不典型的系动词。
+
+1. be, seem, become
+
+   1. be动词是最纯粹的系动词，只有连接主语和补语的作用。
+
+      其他系动词，相当于*“be+相应的含义”*。
+
+   2. seem，最接近be的典型系动词。因为：
+
+      1. seem可以被be代替而句子逻辑语义关系不变；
+
+      2. seem一般只有系动词用法，没有不及物或及物动词用法。
+
+         He seems a rich man.
+
+         He is a rich man.
+
+   3. Become, 也是典型的系动词，没有不及物动词用法。
+
+      ​	He became very angry.
+
+      不过become偶尔可作及物动词，因此seem比become更纯粹。
+
+2. 某些不及物动词后也可以接主语补足语
+
+   1. appear+主补
+
+      1. 用作系动词时，appear和seem同义，但appear不如seem纯碎，常用作不及物动词。
+
+      2. 作系动词时，appear比seem更正式，seem在口语中多见。
+
+         例句：
+
+         1. He *appears* very angry.
+
+            appear作系动词，意为“似乎”。
+
+         2. He suddenly *appeared* from behind a tree.
+
+            appear作不及物动词，意为“出现”，后接状语。
+
+      3. *大部分系动词都和appear一样，身兼多职*。例如：*feel, grow, look, stay* 等。
+
+         例句：
+
+         1. During exams, students *look* nervous.
+
+            系动词look意为“看起来”。
+
+         2. *Stay* hungry, *stay* foolish.
+
+            系动词stay意为“保持”。
+
+      4. *系动词go和come：都表示“改变至”或“保持”某种状态，但go一般表示贬义、消极，come表示褒义、积极*。例：
+
+         - go bankrupt
+         - go mad
+         - The dream has come true.
+         - Don't worry, it'll come right in the end.
+
+   2. die+主补
+
+      像die这类动词，典型用法是不及物动词，而作系动词则比较少见，并且通常受到限制，比如要有固定搭配。
+
+      1. die+形容词
+
+         - The man who *dies* rich *dies* disgraced.
+
+           *一般来说，我们应该用副词修饰动词。那么这里为什么使用形容词rich而不是副词richly？因为这个形容词不是修饰动词的，而是主补，着重说明主语the man的特征*。因此这句话的意思相当于：The man who is rich when he dies should feel disgraced.
+
+         - *Lei Feng* died *young*.（主系表）
+
+           Lei Feng died *at a young age*.(主谓状)
+
+           *die后面不一定要用形容词，也可以用副词，关键是看后续成分是要修饰主语、还是要修饰动词die。*
+
+      2. die+名词短语
+
+         - They chose to die *a hero* not to live *a coward*.
+         - Jane Austin died *a spinster*.
+
+         **同源宾语**：
+
+         - Michael Jackson died *a sudden death*.
+
+           不及物动词按理不能接宾语，但A sudden death是一种特殊宾语，因为这里的death和die是同词源的。所以a sudden death不是补充说明主语的，而与动词die关系更密切。除了同源宾语外，不及物动词die不能接其他正常的宾语。
+
+           live也有这个功能：
+
+           He lived *a dog's life*.
+
+         其他不及物动词作系动词：marry：Some marry young.
+
+   3. die和appear的区别：
+
+      - die作系动词和不及物动词的词义是一样的。
+      - appear作系动词和不及物动词的词义不同，come和go也是。
+
+3. 更少见的是，某些及物动词后或完整的句子后边可以接主补。
+
+   1. make+主补
+
+      make的常见用法是及物动词，较少用作系动词：
+
+      - Don't just make it, make it great.
+      - ​
 
 
 
-### 状语（修饰成分1）
+
+## 状语（修饰成分1）
 
 
 
-### 定语（修饰成分2）
+## 定语（修饰成分2）
 
 
 
-### 同位语（名词短语的补语成分）
+## 同位语（名词短语的补语成分）
 
 
 
