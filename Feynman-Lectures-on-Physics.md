@@ -19,3 +19,6 @@ What is our over-all picture of the world?
 **atomic hypothesis**:
 
 All things are made of atoms -- little particles that move around in perpetual motion, attracting each other when they are a little distance apart, but repelling upon being squeezed into one another.
+
+
+

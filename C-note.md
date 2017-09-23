@@ -1,4 +1,4 @@
-œ# Chapter 3 :  Data and C
+# Chapter 3 :  Data and C
 
 ## 3.1 Basic
 
@@ -62,21 +62,16 @@ In C, an integer is never written with a decimal point.
 - **e-notation**: 3.16E7 = 3.16*10^7
 - **store**: Floating-point representation involves breaking up a number into *a fractional part* and *a exponent part*.
     - so, 7.00 would not be stored in the same manner as the integer 7, even though both have the same value.
-    - The decimal analogy would be to write 7.0 as 0.7E1, 0.7 is the fractional part, and the 1 is the exponent part. (A computer would use binary numbers and powers of two instead of powers of 10 for internal storage. See more in *Chapter 15*).
+    - The decimal analogy would be to write 7.0 as 0.7E1, 0.7 is the fractional part, and the 1 is the exponent part. (A computer would use binary numbers and powers of two instead of powers of 10 for internal storage. See more in *Chapter 15*). 
 
 #### Practical differences:
 
 - An integer has no fractional part; A floating-point number can have a fractional part.
-
 - Floating-point numbers can represent a much larger range of values than integers can.
-
 - For some arithmetic operations, such as subtracting one large number from another, floating-point numbers are subject to greater loss of precision.
-
 - Computer floating-point numbers can't represent all the values in a range. Instead, floating-point values are often approximations  of a true value. (Because there is an infinite number of real numbers in any range.)  For example, 7.0 might be stored as a 6.99999 float value.
-
 - Floating-point operations were once much slower than integer operations. However, today many CPUs incorporate floating-point processors that close the gap.
 
-  ​
 
 
 ## 3.4 Basic C Data Types
