@@ -169,15 +169,47 @@ When the 8080 is running at its maximum speed of 2MHz, each clock cycle is 500 n
 
 ### The Instruction Set of 8080
 
+The final computer in Chapter 17 had only 12 instructions. 
+
+An 8-bit microprocessor could easily have as many as 256 instructions, each **opcode** corresponding to particular 8-bit value. (It could actually have more if some instructions have 2-byte opcodes).
+
+The 8080 have 244 opcodes, that might seem like a lot, but all in all, the 8080 doesn't really do all that much more than the computer in Chapter 17. For example, if you need to do multiplication or division using an 8080, you still need to write your own little program to do it.
 
 
 
+The Chapter 17 computer had two important instructions that we initially called *Load* and *Store*. Each of these instructions occupied 3 bytes of memory.
 
+- The first byte of a `Load` instruction was the opcode, and the 2 bytes that followed the opcode indicated a 16-bit address. The processor loaded the byte at that address into the accumulator.
+- Similarly, the `Store` instruction saved the contents of the accumulator in the address indicated in the instruction.
 
+Later on, we discovered that we could abbreviate these two opcodes using mnemonics:
 
+```
+LOD A,[aaaa]
+STO [aaaa],A
+```
 
+In this example, `A` stands for the accumulator and `aaaa` indicates a 16-bit memory address, usually written as 4 hexadecimal digits. *The 8-bit **accumulator** in the 8080 is also called `A`*. 
 
+And the 8080 includes two instructions that do exactly the same thing as the `Load` and `Store` instructions. 
 
+*The 8080 opcodes for these two instructions are `3Ah` and `32h`, and each opcode is follow by a 16-bit address*. The 8080 mnemonics are  `LDA`( Load Accumulator) and `STA`(stand for Store Accumulator ):
+
+| Opcode |  Instruction   | mnemonics |
+| :----: | :------------: | :-------: |
+| `3Ah`  | `LDA A,[aaaa]` |   `LDA`   |
+| `32h`  | `STA [aaaa],A` |   `STA`   |
+
+In addition to the accumulator, the *8080 contains six **registers** that can also hold 8-bit values inside the microprocessor*. These registers are very similar to the accumulator; indeed, *the accumulator is considered to be a special type of register*. 
+
+Like the accumulator, the other six registers are latches; the processor can move bytes from memory into registers, and from registers back into memory. The other registers, however, aren't as versatile as the accumulator. When you add two 8-bit numbers, for example, the result always goes into the accumulator rather than into one of the other registers.
+
+*The six additional registers in the 8080 are named `B`, `C`, `D`, `E`, `H` and `L`.* 
+
+> Why `H` and `L`?
+>
+> - very often the 8-bit quantities in `H` and `L` are treated in tandem as a 16-bit register pair name `HL`, *`H` being the high-order byte and `L` being the low-order byte*. 
+> - *This 16-bit value is often used to address memory*. 
 
 
 
