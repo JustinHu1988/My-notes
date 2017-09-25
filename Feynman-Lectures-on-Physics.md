@@ -22,3 +22,14 @@ All things are made of atoms -- little particles that move around in perpetual m
 
 
 
+*Angstrom* (`Å`) ~(埃，长度单位)~ :
+
+- we call $10^{-10}m$ an angstrom.
+- so, if some atoms or $1$ or $2\times10^{-10}$ m in radius, we say they are `1Å` or `2Å` in radius.
+
+Heat: 
+
+- Atoms are continually jiggling and bouncing, turning and twisting around one another. These motions of atoms is what we represent as heat.
+
+
+

@@ -64,7 +64,7 @@ For example, first IC in the 7400 series is number 7400: `Quadruple 2-Input Posi
 
 By the early 1970s, it became possible to use ICs to create an entire computer processor on a single circuit board.
 
-In November 1971, *Intel 4004*, the first "computer on a chip", or *microprocessor* became available. 4004 contained 2300 transistors.
+In November 1971, *Intel 4004*, the *first* *microprocessor* became available. 4004 contained 2300 transistors.
 
 Beside the number of its transistors, there are three other important characteristics of the 4004. These three measures are often used as **standard for comparison among microprocessors**:
 
@@ -91,6 +91,107 @@ And then, in a five-month period in 1974, both Intel and Motorola came out with 
 
 
 # Chapter 19. Two Classic Microprocessors
+
+The *microprocessor — a consolidation of all the components of a central processing unit (CPU) of a computer on a single chip of silicon* — was born in1971 (Intel 4004).
+
+To obtain the clearest view of what a microprocessor does, let's look at the first *ready-for-prime-time microprocessors*. These microprocessors appeared in 1974:
+
+- **8080**: Intel, April 1974;
+  - 8-bit, 6000 transistors, 2MHz clock speed, addresses 64 kilobytes of memory.
+- **6800**: Motorola, August 1974;
+  - 8-bit, 4000 transistors, 1MHz, addresses 64KB of memory.
+  - in 1977 version, clock speed increased to 1.5MHz and 2MHz.
+
+In chapter 17, we learned what inside the microprocessor. In this chapter, Let's focus on *how it interacts with the outside world*.
+
+Both the 8080 and 6800 are 40-pin integrated circuits.
+
+<img src="images/code-chapter19-40-pin-IC.png" width="200">
+
+This packaging protects the silicon chip and also provides access to all of the chip's input and output points through pins.
+
+### The function of 40 pins of the 8080
+
+<img src="images/code-chapter19-40-pin-8080-function.png" width="400">
+
+> Arrow signs:
+>
+> - An arrow from the chip indicates an *output* signal, controlled by the microprocessor that other chips in the computer respond to. 
+> - An arrow into the chip indicates an *input* signal. This is a signal that comes from another chip in the computer that the mrcroprocessor respond to.
+> - some pins are both inputs and outputs.
+
+1. *Power supply* pins:
+
+   - In this picture, 8080 requires three power supply voltages: pin-20, pin-11, pin-28. (In 1976, Intel release 8085 chip, simplified these power requirement.)
+
+2. *Oscillator signals* pins:
+
+   - The 8080 requires two different synchronized 2-MHz clock inputs labeled *$Ø_1$* and *$Ø_2$* on pins 22 and 15.
+   - These signals are most conveniently supplied by another chip made by Intel known as the *8224 Clock Signal Generator*, and you can connect an 18-MHz quartz crystal to this chip, and it basically does the rest.
+
+3. *Address memory* pins:
+
+   - A micorporcessor always has multiple output signals that address memory. The number of signals it has for this purpose is directly related to the amount of memory the microprocessor can address.
+   - The 8080 has 16 signals labeled *A~0~* through *A~15~*, which give it the ability to address 2^16^, or 65536 bytes of memory.
+
+4. *8-bit*:
+
+   - The 8080 can reads data from memory and writes data to memory 8 bits at a time. The chip include eight signals labeled *D~0~* through *D~7~*.
+   - These singals are the only ones on the chip that are *both inputs and outputs*. 
+
+5. *Control signals* pins: 
+
+   - For Example:
+     - $RESET$ : used to reset the microprocessor.
+     - $\overline{WR}$ :indicates that the microprocessor needs to write a byte of memory into RAM.
+
+
+   - Other signals appear on the D~0~ through D~7~ pins at a particular time while the chip reads instructions.
+   - 8080 generally use the *8228 System Controller* chip to latch these additional control signals.
+
+
+
+After the 8080 chip is reset, it reads the byte located at memory address `0000h` into the microprocessor. It does this by outputing 16 zeros on the address signals A~0~ through A~15~. The byte it reads should be an 8080 instruction, and the processof reading this byte is known as an *instruction fetch*.
+
+In the computer we built in Chapter 17, all instructions(except HLT) were 3 bytes in length, consisting of an *opcode* and a *2-byte address*. In the 8080, instructions can be 1 byte, 2 bytes, or 3 bytes in length.
+
+After processing the first instruction, the 8080 accesses the second instruction in memory, and so forth.
+
+Together, these instructions constitute a computer program that can do something interesting.
+
+
+
+When the 8080 is running at its maximum speed of 2MHz, each clock cycle is 500 nanoseconds. The instruction in the Chapter 17 computer all required 4 clock cycles. Each 8080 instruction requires anywhere from 4 to 18 clock cycles. This means that each instruction is exectued in 2 to 9 microseconds.
+
+
+
+*Probably the best way to understand what a particular microprocessor is capable of doing is to examine its complete instruction set in a systematic manner.*
+
+### The Instruction Set of 8080
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

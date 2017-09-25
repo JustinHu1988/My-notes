@@ -591,10 +591,31 @@ Example:
 
    1. make+主补
 
-      make的常见用法是及物动词，较少用作系动词：
+      make的常见用法是及物动词，较少用作系动词。
+
+      及物动词用法：
 
       - Don't just make it, make it great.
-      - ​
+      - I'm sure you will make me a good teacher. (make宾补动词)
+
+      系动词用法：
+
+      - ​I'm sure you will make a good teacher. (make系动词)
+      - They would make a good couple. 
+
+      make用法总结：
+
+      - 单宾：She made a good cake.
+      - 双宾：She made John a good cake.
+      - 宾补：She made John a good husband.
+      - 系动词：She made a good wife.
+      - 间宾+主补：She made John a good wife. （罕见）
+
+4. 身兼三职的系动词：系动词、及物动词和不及物动词用法
+
+   1. grow+主补：
+
+      ​
 
 
 
