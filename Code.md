@@ -291,7 +291,7 @@ Several of these instructions, such as `MOV A,A` don't do anything useful.
 
 ##### Bit pattern of the `MOV` opcodes
 
-The `MOV` opcode consists of the 8 bits:
+*The `MOV` opcode consists of the 8 bits*:
 
 ```
 01dddsss
@@ -311,6 +311,6 @@ These 3-bit codes are:
 - 111 = Accumulator
 
 
-
+*For example, the instruction `MOV L,E` is associated with opcode `01101011` or `6Bh`.* You can check the preceding table to verify that.
 
 
