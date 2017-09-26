@@ -175,7 +175,7 @@ An 8-bit microprocessor could easily have as many as 256 instructions, each **op
 
 The 8080 have 244 opcodes, that might seem like a lot, but all in all, the 8080 doesn't really do all that much more than the computer in Chapter 17. For example, if you need to do multiplication or division using an 8080, you still need to write your own little program to do it.
 
-
+#### `LDA` and `STA`
 
 The Chapter 17 computer had two important instructions that we initially called *Load* and *Store*. Each of these instructions occupied 3 bytes of memory.
 
@@ -211,17 +211,104 @@ Like the accumulator, the other six registers are latches; the processor can mov
 > - very often the 8-bit quantities in `H` and `L` are treated in tandem as a 16-bit register pair name `HL`, *`H` being the high-order byte and `L` being the low-order byte*. 
 > - *This 16-bit value is often used to address memory*. 
 
+Registers are very useful. The fewer times a program needs to access memory, generally the faster it will run.
+
+#### `MOV`
+
+No fewer than 63 opcodes are devoted to a single 8080 instruction called `MOV`, which is short for *Move*. 
+
+This instruction is just *a single byte*. The instruction usually moves the contents of one register into another(or the same) register. 
+
+The large number of `MOV` instructions is a normal consequence of designing a microprocessor with seven registers(including the accumulator).
+
+The first 32 `MOV` instructions:
+
+| Opcode | Instruction  | Opcode | Instruction  |
+| :----: | :----------: | :----: | :----------: |
+| `40h`  |  `MOV B,B`   | `50h`  |  `MOV D,B`   |
+| `41h`  |  `MOV B,C`   | `51h`  |  `MOV D,C`   |
+| `42h`  |  `MOV B,D`   | `52h`  |  `MOV D,D`   |
+| `43h`  |  `MOV B,E`   | `53h`  |  `MOV D,E`   |
+| `44h`  |  `MOV B,H`   | `54h`  |  `MOV D,H`   |
+| `45h`  |  `MOV B,L`   | `55h`  |  `MOV D,L`   |
+| `46h`  | `MOV B,[HL]` | `56h`  | `MOV D,[HL]` |
+| `47h`  |  `MOV B,A`   | `57h`  |  `MOV D,A`   |
+| `48h`  |  `MOV C,B`   | `58h`  |  `MOV E,B`   |
+| `49h`  |  `MOV C,C`   | `59h`  |  `MOV E,C`   |
+| `4Ah`  |  `MOV C,D`   | `5Ah`  |  `MOV E,D`   |
+| `4Bh`  |  `MOV C,E`   | `5Bh`  |  `MOV E,E`   |
+| `4Ch`  |  `MOV C,H`   | `5Ch`  |  `MOV E,H`   |
+| `4Dh`  |  `MOV C,L`   | `5Dh`  |  `MOV E,L`   |
+| `4Eh`  | `MOV C,[HL]` | `5Eh`  | `MOV E,[HL]` |
+| `4Fh`  |  `MOV C,A`   | `5Fh`  |  `MOV E,A`   |
+
+These are handy instructions to have. 	Whenever you have a value in one register, you know you can move it to another register.
+
+##### Direct addressing and indexed addressing
+
+Notice also the four instructions that use the `HL` registers pair, such as: `MOV B,[HL]`.
+
+The `LDA` instruction shown earlier transfers a byte from memory into the accumulator; the 16-bit address of the byte directly follows the `LDA` opcode. *This `MOV` instruction transfers a byte from memory into register `B`*. But *the address of the byte to be loaded into the register is stored in the register pair `HL` registers*.
+
+> *How did `HL` come to hold a 16-bit memory address?*
+
+To summarize, these two instructions :
+
+```
+LDA A,[aaaa]
+MOV B,[HL]
+```
+
+*Both load a byte from memory into the microprocessor, but they use two different methods to address memory*. The first method is called **direct addressing** and the second method is called **indexed addressing**.
 
 
 
+The second batch of 32 `MOV` instructions shows that the memory location addressed by `HL` can also be a destination:
 
+| Opcode | Instruction  | Opcode | Instruction  |
+| :----: | :----------: | :----: | :----------: |
+| `40h`  |  `MOV B,B`   | `50h`  |  `MOV D,B`   |
+| `60h`  |  `MOV H,B`   | `70h`  | `MOV [HL],B` |
+| `61h`  |  `MOV H,C`   | `71h`  | `MOV [HL],C` |
+| `62h`  |  `MOV H,D`   | `72h`  | `MOV [HL],D` |
+| `63h`  |  `MOV H,E`   | `73h`  | `MOV [HL],E` |
+| `64h`  |  `MOV H,H`   | `74h`  | `MOV [HL],H` |
+| `65h`  |  `MOV H,L`   | `75h`  | `MOV [HL],L` |
+| `66h`  | `MOV H,[HL]` | `76h`  |    `HLT`     |
+| `67h`  |  `MOV H,A`   | `77h`  | `MOV [HL],A` |
+| `68h`  |  `MOV L,B`   | `78h`  |  `MOV A,B`   |
+| `69h`  |  `MOV L,C`   | `79h`  |  `MOV A,C`   |
+| `6Ah`  |  `MOV L,D`   | `7Ah`  |  `MOV A,D`   |
+| `6Bh`  |  `MOV L,E`   | `7Bh`  |  `MOV A,E`   |
+| `6Ch`  |  `MOV L,H`   | `7Ch`  |  `MOV A,H`   |
+| `6Dh`  |  `MOV L,L`   | `7Dh`  |  `MOV A,L`   |
+| `6Eh`  | `MOV L,[HL]` | `7Eh`  | `MOV A,[HL]` |
+| `6Fh`  |  `MOV L,A`   | `7Fh`  |  `MOV A,A`   |
 
+Several of these instructions, such as `MOV A,A` don't do anything useful.
 
+*But the instruction `MOV [HL],[HL]` doesn't exist*. The opcode that would otherwise correspond to that instruction is actually a `HLT`(Halt) instruction.
 
+##### Bit pattern of the `MOV` opcodes
 
+The `MOV` opcode consists of the 8 bits:
 
+```
+01dddsss
+```
 
+in which the letters `ddd` represent a 3-bit code that refers to a destination, and `sss` is a 3-bit code that refers to a source.
 
+These 3-bit codes are:
+
+- 000 = Register `B`
+- 001 = Register `C`
+- 010 = Register `D`
+- 011 = Register `E`
+- 100 = Register `H`
+- 101 = Register ` L`
+- 110 = *Contents of memory at address `HL`*
+- 111 = Accumulator
 
 
 
