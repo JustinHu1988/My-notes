@@ -870,14 +870,14 @@ Chapter 8 of CLRS expands on all the material in this chapter.
   - Each directed edge is an ordered pair of the form `(u,v)`, where `u` and `v` are vertices.
   - When a directed graph contains a directed edge `(u,v)`, we say that:
     -  *`v` is adjacent to `u`* ;
-    - *`(u,v)` leaves `u` and enters `v`*;
+    -  *`(u,v)` leaves `u` and enters `v`*;
 
 **Directed acyclic graph**, or **dag** (有向非循环图):
 
 - There is no way to "cycle" from a vertex back to itself.
 - *Use* :
   - Dags are great for modeling dependencies where one task must occur before another.
-  - Another us for dags arises when planning projects, such as building a house or cooking.
+  - Another use for dags arises when planning projects, such as building a house or cooking.
 
 ## 5.2 Topological sorting
 
@@ -895,7 +895,9 @@ The linear order produced by a topological sort is *not necessarily unique*.
 
 ​		
 
-​	
+
+
+
 
 
 ​			

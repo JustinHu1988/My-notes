@@ -112,7 +112,7 @@ This packaging protects the silicon chip and also provides access to all of the 
 
 ### The function of 40 pins of the 8080
 
-<img src="images/code-chapter19-40-pin-8080-function.png" width="400">
+<img src="images/code-chapter19-40-pin-8080-function.png" width="360">
 
 > Arrow signs:
 >
@@ -175,7 +175,7 @@ An 8-bit microprocessor could easily have as many as 256 instructions, each **op
 
 The 8080 have 244 opcodes, that might seem like a lot, but all in all, the 8080 doesn't really do all that much more than the computer in Chapter 17. For example, if you need to do multiplication or division using an 8080, you still need to write your own little program to do it.
 
-#### `LDA` and `STA`
+#### 1. `LDA` and `STA`
 
 The Chapter 17 computer had two important instructions that we initially called *Load* and *Store*. Each of these instructions occupied 3 bytes of memory.
 
@@ -213,7 +213,7 @@ Like the accumulator, the other six registers are latches; the processor can mov
 
 Registers are very useful. The fewer times a program needs to access memory, generally the faster it will run.
 
-#### `MOV`
+#### 2. `MOV`
 
 No fewer than 63 opcodes are devoted to a single 8080 instruction called `MOV`, which is short for *Move*. 
 
@@ -297,7 +297,7 @@ Several of these instructions, such as `MOV A,A` don't do anything useful.
 01dddsss
 ```
 
-in which the letters `ddd` represent a 3-bit code that refers to a destination, and `sss` is a 3-bit code that refers to a source.
+in which *the letters `ddd` represent a 3-bit code that refers to a destination, and `sss` is a 3-bit code that refers to a source.*
 
 These 3-bit codes are:
 
@@ -312,5 +312,104 @@ These 3-bit codes are:
 
 
 *For example, the instruction `MOV L,E` is associated with opcode `01101011` or `6Bh`.* You can check the preceding table to verify that.
+
+So probably somewhere inside the 8080, the 3 bits labeled `sss` are used in a 8-Line-to-1-Line Data Selector, and the 3 bits labeled `ddd` are used to control a 3-Line-to-8-Line Decoder that determines which register latches a value.
+
+#### 3. `STAX` and `LDAX`
+
+It's also possible to use registers `B` and `C` as a 16-bit register pair `BC`, and registers `D` and `E` as a 16-bit register pair `DE`. If either register pair contains the address of memory location that you want to use to load or store a byte, you can use the following instructions:
+
+| Opcode |  Instruction  | Opcode |  Instruction  |
+| :----: | :-----------: | :----: | :-----------: |
+| `02h`  | `STAX [BC],A` | `0Ah`  | `LDAX A,[BC]` |
+| `12h`  | `STAX [DE],A` | `1Ah`  | `LDAX A,[DE]` |
+
+#### 4. `MVI`
+
+`MVI` is another type of Move, called *Move Immediate*. 
+
+Move Immediate instruction is composed of 2 bytes:
+
+- the first is the *opcode*;
+- the second is *a byte of data*; that byte is transferred from memory into one of the registers or to the memory location addressed by the `HL` register pair:
+
+| Opcode | Instruction | Opcode |  Instruction  |
+| :----: | :---------: | :----: | :-----------: |
+| `06h`  | `MVI B,xx`  | `26h`  |  `MVI H,xx`   |
+| `0Eh`  | `MVI C,xx`  | `2Eh`  |  `MVI L,xx`   |
+| `16h`  | `MVI D,xx`  | `36h`  | `MVI [HL],xx` |
+| `1Eh`  | `MVI E,xx`  | `3Eh`  |  `MVI A,xx`   |
+
+For example, after the instruction `MVI E,37h`, the register `E` contains the byte `37h`. This is considered to be a third method of addressing memory, called **immediate addressing**.
+
+> Three methods of addressing memory:
+>
+> 1. direct addressing: `MOV A,[aaaa]`
+> 2. indexed addressing: `MOV B,[HL]`
+> 3. immediate addressing: `MVI E,37h`
+
+#### 5. `ADD`, `ADC`, `SUB`, `SBB`
+
+A collection of 32 opcodes do the four basic arithmetical operations we're familiar with from the processor we developed in Chapter 17. These are:
+
+- `ADD`: addition
+- `ADC`: addition with carry
+- `SUB`: subtraction
+- `SBB`: subtraction with borrow
+
+In all cases, the accumulator is one of the two operands and is also the destination for the result:
+
+| Opcode | Instruction  | Opcode | Instruction  |
+| :----: | :----------: | :----: | :----------: |
+| `80h`  |  `ADD A,B`   | `90h`  |  `SUB A,B`   |
+| `81h`  |  `ADD A,C`   | `91h`  |  `SUB A,C`   |
+| `82h`  |  `ADD A,D`   | `92h`  |  `SUB A,D`   |
+| `83h`  |  `ADD A,E`   | `93h`  |  `SUB A,E`   |
+| `84h`  |  `ADD A,H`   | `94h`  |  `SUB A,H`   |
+| `85h`  |  `ADD A,L`   | `95h`  |  `SUB A,L`   |
+| `86h`  | `ADD A,[HL]` | `96h`  | `SUB A,[HL]` |
+| `87h`  |  `ADD A,A`   | `97h`  |  `SUB A,A`   |
+| `88h`  |  `ADC A,B`   | `98h`  |  `SBB A,B`   |
+| `89h`  |  `ADC A,C`   | `99h`  |  `SBB A,C`   |
+| `8Ah`  |  `ADC A,D`   | `9Ah`  |  `SBB A,D`   |
+| `8Bh`  |  `ADC A,E`   | `9Bh`  |  `SBB A,E`   |
+| `8Ch`  |  `ADC A,H`   | `9Ch`  |  `SBB A,H`   |
+| `8Dh`  |  `ADC A,L`   | `9Dh`  |  `SBB A,L`   |
+| `8Eh`  | `ADC A,[HL]` | `9Eh`  | `SBB A,[HL]` |
+| `8Fh`  |  `ADC A,A`   | `9Fh`  |  `SBB A,A`   |
+
+If `A` contains the byte `35h`, and register `H` contains the byte `10h`, and `L` contains the byte `7Ch`, and the memory location `107Ch` contains the byte `4Ah`, the instruction
+
+```
+ADD A,[HL]
+```
+
+adds the byte in the accumulator(`35h`) and the byte addressed by the register pair `HL`(`4Ah`) and stores the result `7Fh` in the accumulator.
+
+*The `ADC` and `SBB` instruction allow the 8080 to add and subtract 16-bit, 24-bit, 32-bit, and larger numbers.*
+
+For example, suppose the register pairs `BC` and `DE` both contain 16-bit numbers. You want to add them and put the result in `BC`. Here's how to do it:
+
+```
+MOV A,C  ;Low-order byte
+ADD A,E
+MOV C,A
+MOV A,B  ;High-order byte
+ADC A,D
+MOV B,A
+```
+
+*The two addition instructions are `ADD` for the low-order byte and `ADC` for the high-order byte. Any carry bit that results from the first addition is included in the second addition.* 
+
+But because you can add only with the accumulator, this little snippet of code requires no fewer than 4 `MOV` instructions. Lots of `MOV` instructions usually show up in 8080 code.
+
+
+
+8080 flags.
+
+
+
+
+
 
 
