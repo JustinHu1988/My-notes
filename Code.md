@@ -405,9 +405,19 @@ But because you can add only with the accumulator, this little snippet of code r
 
 
 
-8080 flags.
+**8080 flags**:
 
+In our processor in Chapter 17, we had a *Carry flag* and a *Zero flag*.
 
+The 8080 has three more: *Sign*, *Parity*, and *Auxiliary Carry*.
+
+All the flags are stored in yet another 8-bit register called the **Program Status Word (PSW)**. 
+
+Instructions such as `LDA`, `STA` or `MOV` don't affect the flags at all. The `ADD`, `SUB` `ADC`, and `SBB` instructions do affect the flags, however,  in the following way:
+
+- The Sign flag is set to `1` if the most significant bit of the result is `1`, meaning that the result is negative.
+- The Zero flag is set to `1` if the result is `0`.
+- ​
 
 
 
