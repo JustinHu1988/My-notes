@@ -417,7 +417,30 @@ Instructions such as `LDA`, `STA` or `MOV` don't affect the flags at all. The `A
 
 - The Sign flag is set to `1` if the most significant bit of the result is `1`, meaning that the result is negative.
 - The Zero flag is set to `1` if the result is `0`.
-- ​
+- The Parity flag is set to `1` if the result has even parity, which means that the number of `1` bits in the result is even.
+  - Parity is sometimes used as a crude form of error checking.
+- The Carry flag is set to `1` if an `ADD` or `ADC` operation results in a carry or if a `SUB` and `SBB` does not result in a carry. (this is different from the implementation of the Carry flag in the Chapter 17 computer.)
+- The Auxiliary Carry flag is `1` if the operation results in a carry from the low nibble into the high nibble. This flag is used only for the DAA(Decimal Adjust Accumulator) instruction.
+
+
+Two instructions affect the carry flag directly:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
