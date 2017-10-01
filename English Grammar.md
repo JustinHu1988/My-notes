@@ -615,12 +615,190 @@ Example:
 
    1. grow+主补：
 
-      ​
+      - He grew very angry.
+      - He grew a lot of flowers in his garden.
+      - The flowers grew well.
+      - He has really grown since I last saw him.
+
+   2. smell+ 主补：
+
+      - She is smelling the flowers.
+      - The flowers smell good.
+      - I've got a cold and I can't smell.
+
+      > 表示嗅觉能力差时，最好使用副词poorly来修饰不及物动词smell：
+      >
+      > - As the wolf is growing older and older, it smells poorly.
+      >
+      > 如果用badly，更多会被理解成“浑身发臭”，因为smell作为不及物动词还可表示stink。
+      >
+      > - The wolf smells badly.
+      >
+      > 另外，应为中我们可以说smell bad，此时smell是系动词，其后的bad是形容词作主补。
+      >
+      > - The meat smells bad. (这肉不新鲜了)
+
+5. *系动词的语义分类*
+
+   1. 单纯表示主语特征、状态的：
+
+      Feel, look, sound, taste, smell, seem, appear ...
+
+   2. 表示主语由一种状态转变为另一种状态的：
+
+      Become, grow, get, turn, fall, go, come ...
+
+   3. 表示主语保持或继续某种状态的：
+
+      Continue, remain, stay, keep ...
+
+6. *各种句型+主补*
+
+   英语中有一些*位置特殊*的主语补足语——*在完整句子后面添加主语补足语*。
+
+   1. 主语+谓语+主补
+
+      既然没宾语，这里的谓语动词可能是：
+
+      1. *不及物动词*
+         - I slept *naked* last night.
+      2. *被动语态*
+         - They were buried *alive*.
+         - You were born *an original*, do not die *a copy*. (名词短语作主补)
+         - No one's born *being good at things*; you become *good at things* through hard work. (形容词短语作主补)
+         - All men are created *equal*. (这里用equal做主补，修饰主语，体现的是all men are equal“所有被创造的人”是平等的。 如果换成副词equally，修饰动词，则意思会变成“所有人被创造的方式或过程”是平等的，意思有关键的不同)
+
+   2. 主语+谓语+状语+主补
+
+      - We stood at God's feet *equal*.
+      - Last night I slept uneasily, *ansious about today's meeting*.
+      - He arrived in the US *a penniless 21-year-old*.
+      - She returned from abroad *a different person*.
+      - I left as a stranger, and came back *a husband*.
+
+   3. 主语+谓语+宾语+主补
+
+      有时，也可以在及物动词后边接主补。
+
+      - The children took a swim *naked* in the river.
+      - John ran the business *single-handed*.
+
+      一般来说， 宾语后应该接宾语补足语，所以这种结构比较特殊。
+
+
+##### 2. 宾语补足语
+
+有宾语才有宾补，因此动词需要是及物动词。
+
+宾补要出现在特定动词的后边。*可以带宾语补足语的动词有三类*：
+
+1. 感官动词
+
+   See, hear, observe, watch, feel, find ...
+
+2. 使役动词
+
+   Let, make, have, get ...
+
+3. 要求类动词
+
+   Wish, would like, want, order, ask … 
+
+4. 其他
+
+   appoint, believe, call, choose, sonsider, declare, elect, keep, leave, name, nominate, prove, suppose ...
+
+*非典型位置上的宾补*：
+
+- God create all men *equal*.
+
+-  The waiter gave me my coffee *black*. (这句话可以暗含，我要的本来不是黑咖啡）
+
+  *对比*：
+
+  - I drink my coffee *black*.（表示我有喝“黑”咖啡的习惯）
+  - ~~I drink my black coffee.~~（这句不太正确，用一般现在时，但却描述的是一次具体的喝咖啡行为，可以修改为I'm drinking my black coffee.）
+
+
+
+##### 3. 动词补足语
+
+*动词补足语和介词短语作状语的区别*：
+
+- 与动词是*固定搭配*的介词短语，可看成动词的补足语；
+- 与动词不是固定搭配的介词短语，可看成动词的状语。
+
+例：
+
+- She _threw_ the bottle *into the sea*.
+
+- I *balance* courage for getting what I want *with* consideration for what others want.
+
+- The report *identifies* the under treatment of pain and the aggressive use of "ineffectual and forced medical procedures that may prolong and even dishonor the period of dying" *as* the twin problems of end-of-life care.
+
+  ​
+
+##### 4. 名词补足语
+
+名词补足语和名词的后置定语的区别：
+
+- 与名词是固定搭配的介词短语，可以看成名词补足语；
+- 与名词不是固定搭配的介词短语，可以看成名词的后置定语。
+
+例：
+
+- Tylor's *definition* of culture *as that complex whole* was accepted by most scholars. (of culture是后置定语，as that complex whole是名词definition的补足语，*因为definition的动词形式define与其可以构成固定搭配define...as...*)
+- Stress is a *reaction*, physical, mental, or emotional, *to demands or changes in your life*.
+
+
+
+##### 5. 形容词补足语
+
+试比较：
+
+- The booklet provides all the necessary information about the college.
+- The booklet provides all the *necessary* information *for* applying to the college.(for…做形容词补足语)
+
+
+
+某些形容词必须接介词短语作补足语：
+
+- John is *averse to* playing computer games.(averse to something / averse to doing something)
+- John is *short of* money. (Short of something)
+
 
 
 
 
 ## 状语（修饰成分1）
+
+#### 1. 形式结构
+
+状语可以是：
+
+- 副词短语
+- 介词短语
+- 状语从句
+- 名词短语
+
+#### 2. 语义特征
+
+从实用角度：
+
+1. 首先，确定某个结构是状语还是定语（这类混淆主要出现在介词短语上）；
+2. 确定是状语之后，还要搞清楚状语修饰的对象。
+
+#### 3. 状语还是宾语？                                                                                                                                                                                                                                                                                       
+
+
+
+
+
+
+
+
+
+
 
 
 

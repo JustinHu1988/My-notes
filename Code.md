@@ -405,7 +405,7 @@ But because you can add only with the accumulator, this little snippet of code r
 
 
 
-**8080 flags**:
+#### 6. **8080 flags** : `STC`, `CMC`
 
 In our processor in Chapter 17, we had a *Carry flag* and a *Zero flag*.
 
@@ -424,6 +424,152 @@ Instructions such as `LDA`, `STA` or `MOV` don't affect the flags at all. The `A
 
 
 Two instructions affect the carry flag directly:
+
+| Opcode | Instruction | Meaning               |
+| ------ | ----------- | --------------------- |
+| `37h`  | `STC`       | Set Carry flag to 1   |
+| `3Fh`  | `CMC`       | Complement Carry flag |
+
+
+
+#### 7. `AND`, `OR`, `XOR`, `CMP`
+
+The computer in Chapter 17 performed `ADD`, `ADC`, `SUB`, `SBB`, but the 8080 does *Boolean `AND`, `OR`, and `XOR` operations* as well.
+
+*Both arithmetic and logical operations are performed by the processor's Arithmetic Logic Unit(**ALU**).*
+
+| Opcode | Instruction  | Opcode | Instruction  |
+| :----: | :----------: | :----: | :----------: |
+| `A0h`  |  `AND A,B`   | `B0h`  |   `OR A,B`   |
+| `A1h`  |  `AND A,C`   | `B1h`  |   `OR A,C`   |
+| `A2h`  |  `AND A,D`   | `B2h`  |   `OR A,D`   |
+| `A3h`  |  `AND A,E`   | `B3h`  |   `OR A,E`   |
+| `A4h`  |  `AND A,H`   | `B4h`  |   `OR A,H`   |
+| `A5h`  |  `AND A,L`   | `B5h`  |   `OR A,L`   |
+| `A6h`  | `AND A,[HL]` | `B6h`  | `OR A,[HL]`  |
+| `A7h`  |  `AND A,A`   | `B7h`  |   `OR A,A`   |
+| `A8h`  |  `XOR A,B`   | `B8h`  |  `CMP A,B`   |
+| `A9h`  |  `XOR A,C`   | `B9h`  |  `CMP A,C`   |
+| `AAh`  |  `XOR A,D`   | `BAh`  |  `CMP A,D`   |
+| `ABh`  |  `XOR A,E`   | `BBh`  |  `CMP A,E`   |
+| `ACh`  |  `XOR A,H`   | `BCh`  |  `CMP A,H`   |
+| `ADh`  |  `XOR A,L`   | `BDh`  |  `CMP A,L`   |
+| `AEh`  | `XOR A,[HL]` | `BEh`  | `CMP A,[HL]` |
+| `AFh`  |  `XOR A,A`   | `BFh`  |  `CMP A,A`   |
+
+
+
+The `AND`, `XOR`, and `OR` instructions perform *bitwise operations*. This means that the logical operation is performed on each pair of bits separately. For example:
+
+```
+MVI A,0Fh
+MVI B,55h
+AND A,B
+```
+
+The value in the accumulator will be `05h`, If the third instruction were an `OR`, the result would be `5Fh`. If the instruction were `XOR`, the result would be `5Ah`.
+
+
+
+*The `CMP`(Compare) instruction is just like the `SUB` instruction except that the result isn't stored in the accumulator*.
+
+In other words, the `CMP` performs a subtraction and then throws away the result. What's the point? The flags! *The flags tell you the relationship between the 2 bytes that you compared*. For example:
+
+```
+MVI B,25h
+CMP A,B
+```
+
+*After this instruction, the contents of `A` remain unchanged. However, the Zero flag is set if the value in `A` equals `25h`. The Carry flag is set if the value in `A` is less than `25h`*.
+
+
+
+#### 8. `ADI`, `ACI`, `SUI`, `SBI`, `ANI`, `XRI`, `ORI`, `CPI`
+
+*The eight arithmetic and logic operations also have versions that operate on an immediate byte*:
+
+| Opcode | Instruction | Opcode | Instruction |
+| :----: | :---------: | :----: | :---------: |
+| `C6h`  | `ADI A,xxh` | `E6h`  | `ANI A,xxh` |
+| `CEh`  | `ACI A,xxh` | `EEh`  | `XRI A,xxh` |
+| `D6h`  | `SUI A,xxh` | `F6h`  | `ORI A,xxh` |
+| `DEh`  | `SBI A,xxh` | `FEh`  | `CPI A,xxh` |
+
+For example, the two lines shown above can be replaced with:
+
+```
+CPI A,25h
+```
+
+
+
+#### 9. `DAA`, `CMA`
+
+| Opcode | Instruction | Opcode | Instruction |
+| ------ | ----------- | ------ | ----------- |
+| `27h`  | `DAA`       | `2Fh`  | `CMA`       |
+
+1. `CMA` stands for *Complement Accumulator*. It performs a one's complement of the value in the accumulator. Every `0` becomes a `1` and every `1` becomes a `0`. *You can also complement the accumulator using the instruction: `XRI A,FFh`.* 
+
+2. `DAA` stands for *Decimal Adjust Accumulator*. It is probably the most sophisticated single instruction in the 8080. A whole little section of the microprocessor is dedicated specifically to performing this instruction.
+
+   The `DAA` instruction helps a programmer implement decimal arithmetic using a method of representing numbers known as **binary-coded decimal**, or **BCD**. In BCD, *each nibble of data may range only from `0000` through `1001`, corresponding to decimal digits `0` through `9`.* The 8 bits of a byte can store two decimal digits in BCD format.
+
+   *Example*:
+
+   - Suppose the accumulator contains the BCD value `27h`, it actually refers to the decimal value `27`. (Normally, the hexadecimal value `27h` has the decimal equivalent `39`). 
+
+   - Suppose also that register `B` contains the BCD value `94h`.
+
+   - If you execute the instruction:
+
+     ```
+     MVI A,27h
+     MVI B,94h
+     ADD A,B
+     ```
+
+     The accumulator will contain the value `BBh`, which, of course, isn't a BCD value because the nibbles of BCD bytes never exceed `9`.
+
+   - But now, execute the instruction:
+
+     ```
+     DAA
+     ```
+
+   - Now the accumulator contains `21h`, and the Carry flag is set. That's because the decimal sum of 27 and 94 equals 121. This can be handy if you need to do BCD arithmetic.
+
+
+
+#### 10. `INR`, `DCR`
+
+We often need to add `1` to a particular value or subtract `1` from a value .
+
+In Chapter 17, when we need to subtract 1 from a value, we did it by adding `FFh`, which is the two's complement value of `-1`. 
+
+The 8080 includes special instructions for increasing a register or memory location by `1`(`INR`) or decreasing by `1`(`DCR`).
+
+| Opcode | Instruction | Opcode | Instruction |
+| :----: | :---------: | :----: | :---------: |
+| `04h`  |   `INR B`   | `05h`  |   `DCR B`   |
+| `0Ch`  |   `INR C`   | `0Dh`  |   `DCR C`   |
+| `14h`  |   `INR D`   | `15h`  |   `DCR D`   |
+| `1Ch`  |   `INR E`   | `1Dh`  |   `DCR E`   |
+| `24h`  |   `INR H`   | `25h`  |   `DCR H`   |
+| `2Ch`  |   `INR L`   | `2Dh`  |   `DCR L`   |
+| `34h`  | `INR [HL]`  | `35h`  | `DCR [HL]`  |
+| `3Ch`  |   `INR A`   | `3Dh`  |   `DCR A`   |
+
+*The single-byte `INR` and `DCR` instructions affect all flags except the Carry flag*.
+
+
+
+#### 11. Rotate instructions: `RLC`, `RRC`, `RAL`, `RAR`
+
+
+
+
+
 
 
 
