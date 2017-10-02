@@ -788,13 +788,31 @@ Example:
 1. 首先，确定某个结构是状语还是定语（这类混淆主要出现在介词短语上）；
 2. 确定是状语之后，还要搞清楚状语修饰的对象。
 
-#### 3. 状语还是宾语？                                                                                                                                                                                                                                                                                       
+#### 3. 状语vs宾语                                                                                                                                                                                                                                                                                       
 
+1. 例句：
 
+- Your <u>today</u> is the  <u>yesterday</u> that you will have regrets about *tomorrow*. (第一个是主语，第二个是宾语，第三个是状语)
 
+2. *宾语受动词所影响，而状语则影响动词*。
 
+3. 模糊区域：
 
+   1. 当出现**量度名词短语**时，可能既可以作为状语看待，也可以作为宾语看待：
 
+      例：
+
+      - I weigh 62kg. （62kg可以是宾语，也可以是状语，因此可以用两种方式提问）
+        - How much do you weigh?
+        - What do you weigh?
+      - It costs 6000 yuan.
+        - How much does it cost?
+        - What does it cost?
+
+#### 4. 状语vs补足语
+
+- He acted stupid.
+- He acted stupidly.
 
 
 

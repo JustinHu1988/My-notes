@@ -566,11 +566,51 @@ The 8080 includes special instructions for increasing a register or memory locat
 
 #### 11. Rotate instructions: `RLC`, `RRC`, `RAL`, `RAR`
 
+The 8080 also includes four *Rotate instrucitons*. These instructions shift the contents of the accumulator 1 bit to the left or right:
+
+| Opcode | Instruciton | Meaning                                |
+| ------ | ----------- | -------------------------------------- |
+| `07h`  | `RLC`       | Rotate accumulator left                |
+| `0Fh`  | `RRC`       | Rotate accumulator right               |
+| `17h`  | `RAL`       | Rotate accumulator left through carry  |
+| `1Fh`  | `RAR`       | Rotate accumulator right through carry |
+
+*Only the Carry flag is affected by these instructions.*
+
+Example:
+
+Suppose the accumulator contains the value `A7h`, or `10100111` in binary.
+
+- `RLC` and `RRC`:
+  - The `RLC` instruction will get the `01001111`, and the Carry flag is `1`.
+  - The `RRC` will get `11010011` and the Carry flag is `1`.
+
+- `RAL` and `RAR`:
+
+  The `RAL` instruction sets the Carry flag to the lowest bit of the accumulator when shifting left but sets the highest bit to the previous contents of the Carry flag.
+
+  - if the accumulator contains `10100111` and the Carry flag is `0`. `RAL` causes the accumulator to become `01001110` and the Carry flag to be `1`.
+
+
+  - Similarly, under teh same initial conditions `RAR` cause the accumulator to become `01010011` and the Carry flag to be `1` 
+
+*The shift instructions come in handy when you're multiplying a number by `2` or dividing a number by `2`.*
 
 
 
+### Stack
+
+####  Storage Forms :
+
+-  *random access memory* (RAM): The memory that the microprocessor addresses is called random access memory (RAM) for a reason: The microprocessor can access any pariticular memory location simply by supplying an address of that location.
+- *Sequential access*: microfilm or tape storage can't be random access, the term for them is sequential access.
+- **Stack**: You are stacking things from the bottom up and removing them form the top down. It's also called **last-in-first-out storage**, or *LIFO*. The last thing put on the stack is the first thing taken off the stack, The first thing put on the stack is the last thing taken off the stack.
 
 
+
+Computers also can use a stack for storing numbers, and it's something that turns out to be quite convenient.
+
+Putting something on the stack is called a **push**, and taking something off the stack is called a **pop**.
 
 
 
