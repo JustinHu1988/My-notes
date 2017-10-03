@@ -811,16 +811,53 @@ Example:
 
 #### 4. 状语vs补足语
 
-- He acted stupid.
-- He acted stupidly.
+1. 状语和句子层面的补足语
 
+   - He acted stupid. (他当时在装傻)
+   - He acted stupidly.（他当时的行为很蠢）
+   - He acted *foolish*.（主补）
+   - He acted *foolishly*.（状语）
+   - He acted *the fool*. （主补）
 
+   因此，如果说：
 
+   - He acted heroically. 表示“他当时表现英勇”。
+
+   - He acted heroic. 则表示“他装的像个英雄”。
+
+     需要注意两者的含义差别。
+
+   再以look为例：
+
+   - He looked sympahtetic towards the teacher. 看起来他很同情那位老师。
+   - He looked sympathetically at the teacher. 他很同情地看着那位老师。
+
+2. 状语和短语层面的补足语
+
+   主要比较动词状语和动词补足语：
+
+   - *动词状语是对动词的修饰和描述，表示动作发生的时间、地点，原因，方式等*。
+   - *动词补足语用来补充动词的语义，使句子意思完整（实际上，应该可以理解为动词对应宾语的补足语）*。
+
+   *例*：
+
+   - Let's schedule the meeting *at* 3 pm. 状语，表示schedule这个动作发生在3pm。
+   - Let's schedule the meeting *for* 3 pm. 动词补足语，表示schedule的内容——the meeting是在3pm。
+   - She threw the bottle *into* the sea. 状语，表示threw这个动作朝向大海。
+   - She threw the bottle *in* the sea. 补足语，表示扔完之后，瓶子在大海里。
+
+   这个区分，考验对于固定搭配的熟悉程度。
 
 
 
 
 ## 定语（修饰成分2）
+
+名词短语的组成成分，包括定语和同位语。
+
+
+
+
 
 
 
