@@ -855,11 +855,71 @@ Example:
 
 名词短语的组成成分，包括定语和同位语。
 
+### 1. 形式结构
+
+一般来说，能够作定语的结构包括：
+
+1. 限定词
+2. 形容词及形容词短语
+3. 介词短语
+4. 不定式短语
+5. 分词短语
+6. 定语从句
+
+*定语的形式结构，与其在句中的位置密切相关。*
+
+### 2. 句中位置
+
+1. 前置定语
+
+   前置定语只有两个：限定词和形容词，更多的是后置定语。
+
+2. 后置定语
+
+   后置定语有五类：介词短语，形容词短语，不定式短语，分词短语，定语从句
+
+*具体位置关系*：
+
+- *限定词*+*形容词*+中心名词+*五类后置定语*
+
+例：
+
+- The boy is my brother.
+- The cute boy in blue jeans is my brother.
+- The cute boy wearing blue jeans is my brother.
+- The cute boy who is wearing blue jeans is my brother.
 
 
 
+> *尾重原则+倒装*：
+>
+> 例：
+>
+> - The speed of the motion of the wing of the hummingbird, which normally lives in North America and has beautiful feathers, is remarkable.  主语部分过于笨重，按照尾重原则，应该将复杂的主语后置，因此需要倒装：
+> - Remarkable is *the speed* of the motion of the wing of the hummingbird, which normally lives in North America and has beautiful feathers.
 
 
+
+### 3. 语义特征
+
+*限制性定语从句和非限制性定语从句， 区别在于定语从句和所修饰名词之间的亲疏关系*。
+
+- *限制性定语从句不加逗号，会对所修饰名词的含义进行进一步的限定*。
+  - The students who had done well on the test were excused from class early.（表示只有考得好的那部分学生才早放学了。）
+- *非限制性定语从句加逗号，不会对所修饰名词的含义范围进行缩窄，只会补充说明*。
+  - The students, who had done well on the test, were excused from class early. (表示所有学生考的都好，都早放学)
+
+> *对于专有名词，我们只能用非限定性定语从句（加逗号），因为专有名词本身语义已经很完整，无法进一步缩小。*
+>
+> - ... the Magna Carta, which was signed in 1215 ... (这句话的逗号不能去掉。)
+>
+> **同理，语义非常明确的词语，都不能再进行限制性的修饰，需要用非限定性定语。（例如在特定上下文中，含义已经十分明确的代词等。）**
+
+
+
+当多个形容词修饰同一个名词，需要对形容词进行排序。 而排序的依据，就是看形容词和名词之间的语义关系亲疏程度:
+
+- The *traditional Chinese* festival.
 
 ## 同位语（名词短语的补语成分）
 
