@@ -600,17 +600,95 @@ Suppose the accumulator contains the value `A7h`, or `10100111` in binary.
 
 ### Stack
 
-####  Storage Forms :
+####  1. Storage Forms
 
 -  *random access memory* (RAM): The memory that the microprocessor addresses is called random access memory (RAM) for a reason: The microprocessor can access any pariticular memory location simply by supplying an address of that location.
-- *Sequential access*: microfilm or tape storage can't be random access, the term for them is sequential access.
-- **Stack**: You are stacking things from the bottom up and removing them form the top down. It's also called **last-in-first-out storage**, or *LIFO*. The last thing put on the stack is the first thing taken off the stack, The first thing put on the stack is the last thing taken off the stack.
+-  *Sequential access*: microfilm or tape storage can't be random access, the term for them is sequential access.
+-  **Stack**: You are stacking things from the bottom up and removing them form the top down. It's also called **last-in-first-out storage**, or *LIFO*. The last thing put on the stack is the first thing taken off the stack, The first thing put on the stack is the last thing taken off the stack.
+
 
 
 
 Computers also can use a stack for storing numbers, and it's something that turns out to be quite convenient.
 
 Putting something on the stack is called a **push**, and taking something off the stack is called a **pop**.
+
+
+
+#### 2. Stack Pointer
+
+what is particularly nice about the stack mechanism is that lots of different sections of a program can use the stack without causing problems.
+
+How is the stack implemented? *The stack is first of all, just a section of normal RAM that isn't being used for anything else. The 8080 microprocessor contains a special 16-bit register that addresses this section of memory. That 16-bit register is called the* **Stack Pointer**. 
+
+The 8080 PUSH instruction actually stores 16-bit values on the stack, and POP instruction retrieves them.
+
+| Opcode | Instruction | Opcode | Instruction |
+| :----: | :---------: | :----: | :---------: |
+| `C5h`  |  `PUSH BC`  | `C1h`  |  `POP BC`   |
+| `D5h`  |  `PUSH DE`  | `D1h`  |  `POP DE`   |
+| `E5h`  |  `PUSH HL`  | `E1h`  |  `POP HL`   |
+| `F5h`  | `PUSH PSW`  | `F1h`  |  `POP PSW`  |
+
+- The `PUSH BC` instruction stores registers `B` and `C` on the stack, and `POP BC` retrieves them.
+- The abbreviation `PSW` in the last row refers to the *Program Status Word*, which, as you'll recall, *is the 8-bit register that contains the flags*. 
+- The two instructions in the bottom row actually push and pop both accumulator and the `PSW`. 
+
+For example:
+
+- If you want to save the contents of all the registers and flags, you can use:
+
+  ```
+  PUSH PSW
+  PUSH BC
+  PUSH DE
+  PUSH HL
+  ```
+
+  When you later need to restore the contents of these registers, use the POP instructions in reverse order:
+
+  ```
+  POP HL
+  POP DE
+  POP BC
+  POP PSW
+  ```
+
+  Let's assume the Stack Pointer is `8000h`. The `PUSH BC` instruction causes the following to occur:
+
+  - The Stack Pointer is decremented to `7FFFh`.
+  - The contents of register `B` are stored at the Stack Pointer address, or `7FFFh`.
+  - ​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 

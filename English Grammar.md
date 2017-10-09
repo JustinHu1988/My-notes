@@ -921,7 +921,48 @@ Example:
 
 - The *traditional Chinese* festival.
 
+### 4. 定语与状语位置的差异
+
+前面说过，定语中的短语或从句都只能后置，但状语的短语或从句既可在动词前也可以在动词后。
+
+因此，*前置状语来修饰主句动词，可以减少歧义*：
+
+- The chair of the school board announced a plan to build two new elementary schools *during an interview with a local news reporter*.
+- *During an interview with a local news reporter*, the chair of the school board *announced* a plan to build two new elementary schools.
+
+后置状语容易引起歧义：
+
+- I `showed` my father a picture of the car I am going to `buy` *as soon as I save enough money*.
+- I `showed` my father a picture of the car I am going to `buy` *as soon as he arrived at home*.
+- *As soon as he arrived at home*, I `showed` my father a picture of the car I am going to buy.
+
 ## 同位语（名词短语的补语成分）
+
+名词才有同位语，两个名词才会构成同位关系。
+
+名词的同位语，其实就是名词补足语的一种，即不需要用介词连接的补足语。
+
+- 具体名词后可以接具体名词作同位语；
+- 抽象名词后，接介词短语做补足语，以及接从句作同位语，构成同位语从句。
+- 同位语、同位语从句和介词短语补足语都属于名词补足语。
+
+
+
+
+
+
+
+# 语法难点
+
+
+
+
+
+
+
+
+
+
 
 
 
