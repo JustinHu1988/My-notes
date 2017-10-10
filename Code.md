@@ -615,7 +615,7 @@ Putting something on the stack is called a **push**, and taking something off th
 
 
 
-#### 2. Stack Pointer
+#### 2. *Stack Pointer*
 
 what is particularly nice about the stack mechanism is that lots of different sections of a program can use the stack without causing problems.
 
@@ -654,11 +654,23 @@ For example:
   POP PSW
   ```
 
-  Let's assume the Stack Pointer is `8000h`. The `PUSH BC` instruction causes the following to occur:
+  Let's assume the Stack Pointer is `8000h`. The `PUSH BC` instruction causes *the following to occur*:
 
   - The Stack Pointer is decremented to `7FFFh`.
   - The contents of register `B` are stored at the Stack Pointer address, or `7FFFh`.
-  - ​
+  - The Stack Pointer is decremented to `7FFEh`.
+  - The contents of register `C` are stored at the Stack Pointer address, or `7FFEh`.
+
+  A `POP BC` instruction executed when the Stack Pointer is still `7FFEh` undoes everything:
+
+  - The contents of register `C` are loaded from the Stack Pointer address, or `7FFEh`.
+  - The Stack Pointer is incremented to `7FFFh`.
+  - The contents of register `B` are loaded from the Stack Pointer address, or `7FFFh`.
+  - The Stack Pointer is incremented to `8000h`.
+
+  For every `PUSH` instruction, the stack increases 2 bytes in size. It's possible that the stack will get so big that it will begin to overwrite some code or data needed by a program. This is a problem known as **stack overflow**. Similarly, too many `POP` instructions can prematurely exhaust the contents of the stack, a condition known as **stack underflow**.
+
+  If you have 64KB of memory connected to your 8080, you might want to initially set the Stack Pointer to `0000h`. The first `PUSH` instruction decrements that address to `FFFFh`. The stack then occupies the area of memory with the very highest addresses, quite a distance from your programs, which will probably be in the area of memory starting at address `0000h`. 
 
 
 
@@ -688,7 +700,9 @@ For example:
 
 
 
- 
+
+
+
 
 
 
