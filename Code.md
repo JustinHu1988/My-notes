@@ -672,6 +672,44 @@ For example:
 
   If you have 64KB of memory connected to your 8080, you might want to initially set the Stack Pointer to `0000h`. The first `PUSH` instruction decrements that address to `FFFFh`. The stack then occupies the area of memory with the very highest addresses, quite a distance from your programs, which will probably be in the area of memory starting at address `0000h`. 
 
+  *The instruction to set the value of the stack register is `LXI`,* which stands for `Load Extended Immediate`. These instructions also load 16-bit register pairs with the two bytes that follow the opcode:
+
+  | Opcode |  Instruction  | Opcode |  Instruction  |
+  | :----: | :-----------: | :----: | :-----------: |
+  | `01h`  | `LXI BC,xxxx` | `21h`  | `LXI HL,xxxx` |
+  | `11h`  | `LXI DE,xxxx` | `31h`  | `LXI SP,xxxx` |
+
+  The instruction:
+
+  ```
+  LXI BC,527Ah
+  ```
+
+  is equivalent to
+
+  ```
+  MVI B,52h
+  MVI C,7Ah
+  ```
+
+  The LXI instruction saves a byte. In addition, the last LXI instruction in the preceding table is used to set the Stack Pointer to a particular value.
+
+  ​
+
+  ​
+
+  ​
+
+  ​
+
+  ​
+
+  ​
+
+  ​
+
+
+
 
 
 
