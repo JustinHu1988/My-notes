@@ -598,9 +598,9 @@ Suppose the accumulator contains the value `A7h`, or `10100111` in binary.
 
 
 
-### Stack
+#### **Stack**
 
-####  1. Storage Forms
+#####  1. Storage Forms
 
 -  *random access memory* (RAM): The memory that the microprocessor addresses is called random access memory (RAM) for a reason: The microprocessor can access any pariticular memory location simply by supplying an address of that location.
 -  *Sequential access*: microfilm or tape storage can't be random access, the term for them is sequential access.
@@ -615,7 +615,7 @@ Putting something on the stack is called a **push**, and taking something off th
 
 
 
-#### 2. *Stack Pointer*
+##### 2. **Stack Pointer**
 
 what is particularly nice about the stack mechanism is that lots of different sections of a program can use the stack without causing problems.
 
@@ -668,97 +668,104 @@ For example:
   - The contents of register `B` are loaded from the Stack Pointer address, or `7FFFh`.
   - The Stack Pointer is incremented to `8000h`.
 
-  For every `PUSH` instruction, the stack increases 2 bytes in size. It's possible that the stack will get so big that it will begin to overwrite some code or data needed by a program. This is a problem known as **stack overflow**. Similarly, too many `POP` instructions can prematurely exhaust the contents of the stack, a condition known as **stack underflow**.
+For every `PUSH` instruction, the stack increases 2 bytes in size. It's possible that the stack will get so big that it will begin to overwrite some code or data needed by a program. This is a problem known as **stack overflow**. Similarly, too many `POP` instructions can prematurely exhaust the contents of the stack, a condition known as **stack underflow**.
 
-  If you have 64KB of memory connected to your 8080, you might want to initially set the Stack Pointer to `0000h`. The first `PUSH` instruction decrements that address to `FFFFh`. The stack then occupies the area of memory with the very highest addresses, quite a distance from your programs, which will probably be in the area of memory starting at address `0000h`. 
+If you have 64KB of memory connected to your 8080, you might want to initially set the Stack Pointer to `0000h`. The first `PUSH` instruction decrements that address to `FFFFh`. The stack then occupies the area of memory with the very highest addresses, quite a distance from your programs, which will probably be in the area of memory starting at address `0000h`. 
 
-  *The instruction to set the value of the stack register is `LXI`,* which stands for `Load Extended Immediate`. These instructions also load 16-bit register pairs with the two bytes that follow the opcode:
+*The instruction to set the value of register pairs and the stack register is `LXI`,* which stands for `Load Extended Immediate`. These instructions also load 16-bit register pairs with the two bytes that follow the opcode:
 
-  | Opcode |  Instruction  | Opcode |  Instruction  |
-  | :----: | :-----------: | :----: | :-----------: |
-  | `01h`  | `LXI BC,xxxx` | `21h`  | `LXI HL,xxxx` |
-  | `11h`  | `LXI DE,xxxx` | `31h`  | `LXI SP,xxxx` |
+| Opcode |  Instruction   | Opcode |  Instruction   |
+| :----: | :------------: | :----: | :------------: |
+| `01h`  | `LXI BC,xxxxh` | `21h`  | `LXI HL,xxxxh` |
+| `11h`  | `LXI DE,xxxxh` | `31h`  | `LXI SP,xxxxh` |
 
-  The instruction:
+The instruction:
 
-  ```
-  LXI BC,527Ah
-  ```
+```
+LXI BC,527Ah
+```
 
-  is equivalent to
+is equivalent to
 
-  ```
-  MVI B,52h
-  MVI C,7Ah
-  ```
+```
+MVI B,52h
+MVI C,7Ah
+```
 
-  The LXI instruction saves a byte. In addition, the last LXI instruction in the preceding table is used to set the Stack Pointer to a particular value.
+The LXI instruction saves a byte. In addition, the last LXI instruction in the preceding table *`LXI SP,xxxxh` is used to set the Stack Pointer to a particular value. It's not uncommon for this instruction to be one of the first instructions that a microprocessor executes after being restarted*:
 
-  ​
+```
+0000h:  LXI SP,0000h
+```
 
-  ​
+*It's also possible to increment and decrement register pairs and the Stack Pointer as if they were 16-bit registers*:
 
-  ​
+| Opcode | Instruction | Opcode | Instruction |
+| :----: | :---------: | :----: | :---------: |
+| `03h`  |  `INX BC`   | `0Bh`  |  `DCX BC`   |
+| `13h`  |  `INX DE`   | `1Bh`  |  `DCX DE`   |
+| `23h`  |  `INX HL`   | `2Bh`  |  `DCX HL`   |
+| `33h`  |  `INX SP`   | `3Bh`  |  `DCX SP`   |
 
-  ​
 
-  ​
 
-  ​
+While I'm on the subject of 16-bit instructions, let's look at a few more. *The following instructions add contents of 16-bit register pairs to the register pair `HL`:*
 
-  ​
+| Opcode | Instruction | Opcode | Instruction |
+| :----: | :---------: | :----: | :---------: |
+| `09h`  | `DAD HL,BC` | `29h`  | `DAD HL,HL` |
+| `19h`  | `DAD HL,DE` | `39h`  | `DAD HL,SP` |
 
+These instructions could save a few bytes.  For example*, the first of these instructions would normally require 6 bytes:*
 
+```
+MOV A,L
+ADD A,C
+MOV L,A
+MOV A,H
+ADC A,B
+MOV H,A
+```
 
+The `DAD` instruction is normally used for calculating memory addresses. The only flag that the instruction affects is the Carry flag.
 
 
 
+Next let's look at some miscellaneous instructions. 
 
+1. These two opcodes are followed by a 2-byte address and store and load the contents of the register pair `HL` at that address:
 
+   | Opcode |   Instruction    |     Meaning     |
+   | :----: | :--------------: | :-------------: |
+   |  `2h`  | `SHLD [aaaa],HL` | Store HL Direct |
+   | `2Ah`  | `LHLD HL,[aaaa]` | Load HL Direct  |
 
+   The L register is stored at address `aaaa`, and the H register is stored at address `aaaa+1`.
 
+2. These two instructions load the Program Counter or the Stack Pointer from the register pair HL:
 
+   | Opcode | Instruction  |           Meaning            |
+   | :----: | :----------: | :--------------------------: |
+   | `E9h`  | `PCHL PC,HL` | Load Program Counter from HL |
+   | `F9h`  | `SPHL SP,HL` |  Load Stack Pointer from HL  |
 
+   The PCHL instruction is actually a type of **Jump**. The next instruction that the 8080 executes is the one located at the address store in the HL register pair. SPHL is another method to set the Stack Pointer.
 
+3. These two instructions exchange the contents of HL first with the two bytes located on top of the stack and second with the register pair DE:
 
+   | Opcode |  Instruction   |            Meaning            |
+   | :----: | :------------: | :---------------------------: |
+   | `E3h`  | `XTHL HL,[SP]` | Exchange top of stack with HL |
+   | `EBh`  |  `XCHG HL,DE`  |      Exchange DE and HL       |
 
 
 
+##### 3. **Jump Instruction**
 
+As you'll recall from Chapter 17, a processor includes a register called the Program Counter that contains the memory address the processor uses to retrieve the instructions that it executes.
 
+Normally the Program Counter causes the processor to execute instructions that are located sequentially in memory. But some instructions — usually named **Jump** or **Branch** or **Goto** — cause the processor to deviate from this steady course. Such instruction cause the Program Counter to be loaded with another value. The next instruction that the processor fetches is somewhere else in memory.
 
+While a plain old ordinary Jump instruction is certainly useful, **conditional jumps** are even better. These instructions cause the processor to jump to another address based on the setting of a particular flag, such as the Carry flag or the Zero flag. The presence of a conditional
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
