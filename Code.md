@@ -766,6 +766,64 @@ As you'll recall from Chapter 17, a processor includes a register called the Pro
 
 Normally the Program Counter causes the processor to execute instructions that are located sequentially in memory. But some instructions — usually named **Jump** or **Branch** or **Goto** — cause the processor to deviate from this steady course. Such instruction cause the Program Counter to be loaded with another value. The next instruction that the processor fetches is somewhere else in memory.
 
-While a plain old ordinary Jump instruction is certainly useful, **conditional jumps** are even better. These instructions cause the processor to jump to another address based on the setting of a particular flag, such as the Carry flag or the Zero flag. The presence of a conditional
+While a plain old ordinary Jump instruction is certainly useful, **conditional jumps** are even better. *These instructions cause the processor to jump to another address based on the setting of a particular flag, such as the Carry flag or the Zero flag*. The presence of a conditional Jump instruction is what turned the Chapter 17 automated adding machine into a general-purpose digital computer.
+
+The 8080 has five flags, four of which are used for conditional jumps. The 8080 supports nine different Jump instructions, including the unconditional Jump and conditional jumps based on whether the Zero, Carry, Parity, and Sign flags are 1 or 0.
+
+
+
+Two other types of instructions that are related to the Jump:
+
+- **Call** instruction: A Call is similar to a Jump except that prior to loading the Program Counter with a new address, *the processor saves the previous address on the stack*.
+
+  This strategy means that the Call instruction effectively saves a reminder of where it jumped from. The saved address allows the processor to eventually return to the original location. The returning instruction is called **Return**. *The Return instruction pops 2 bytes from the stack and loads the Program Counter with that value.*
+
+  The Call and Return instructions are extremely important features of any processor. *They allow a programmer to implement subroutines*, which are snippets of frequently used code.(By frequently I generally mean more than once). Subroutines are the primary organizational elements of assembly-language programs.
+
+
+
+For example, a group of instructions that multiply 2 bytes is an ideal candidate for a subroutine. Let's take a look:
+
+- In Chapter 17, the bytes to be multiplied (and the result) were stored in particular locations in memory. 
+
+- This 8080 subroutine instead multiplied the byte in register `B` by the byte in register `C` and puts the 16-bit product in register `HL`:
+
+  ```
+  Multiply:	PUSH PSW		;Save registers being altered
+  			PUSH BC
+  			
+  			SUB H,H			;Set HL(result) to 0000h
+  			SUB L,L
+  			
+  			MOV A,B			;The multiplier goes in A
+  			CPI A,00h		;If it's 0, we're finished
+  			JZ AllDone
+  			
+  			MVI B,00h		;Set high byte of BC to 0
+  			
+  MultLoop:	DAD HL,BC		;Add BC to HL
+  			DEC A			;Decrement multiplier
+  			JNZ MultLoop	;Loop if it's not 0
+  			
+  AllDone:
+  ```
+
+  ​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  
