@@ -810,7 +810,15 @@ Two other types of instructions that are related to the Jump:
   			RET				;Return
   ```
 
-  Notice that the first line of the subroutine​ begins with a label, which is the word `Multiply`. This label, of course
+  Notice that the first line of the subroutine begins with a label, which is the word `Multiply`. This label, of course, actually corresponds to a memory address where the subroutine is located. 
+
+  - The subroutine begins with two `PUSH` instructions. *Usually a subroutine should attempt to save (and later restore) any registers that it might need to use*.
+  - The subroutine then sets the contents of the `H` and `L` registers to `0`. It could have use the `MVI` instructions rather than `SUB` instructions for this job, *but that would have required 4 instruction bytes rather than 2 (???why?)*.
+  - The register pair `HL` will hold the result of the multiplication when the subroutine is completed.
+  - Next the subroutine moves the contents of register `B` into `A` and checks if it's `0`. If it's `0`, the multiplication subroutine is complete because the product is `0`. Since registers `H` and `L` are already `0`, the subroutine can just use the `JZ`(Jump If Zero) instruction to skip to the two `POP` instructions at the end.
+  - Otherwise, the subroutine sets register `B` to `0`. Now the register pair `BC` contain a 16-bit multiplicand and `A` contains the multiplier. The DAD instruction adds `BC` to `HL`. The multiplier in `A` is decremented and, as long as it's not `0`, the `JNZ` (Jump If Not Zero) instruction causes `BC` to be added to `HL` again. This little loop will continue until `BC` is added to `HL` an number of times equal to the multiplier. (*It's possible to write a more efficient multiplication subroutine using the 8080 shift instructions.*)
+
+
 
 
 
