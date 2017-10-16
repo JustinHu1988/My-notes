@@ -782,11 +782,11 @@ Two other types of instructions that are related to the Jump:
 
 
 
-For example, a group of instructions that multiply 2 bytes is an ideal candidate for a subroutine. Let's take a look:
+*For example, a group of instructions that multiply 2 bytes is an ideal candidate for a subroutine*. Let's take a look:
 
 - In Chapter 17, the bytes to be multiplied (and the result) were stored in particular locations in memory. 
 
-- This 8080 subroutine instead multiplied the byte in register `B` by the byte in register `C` and puts the 16-bit product in register `HL`:
+- This 8080 subroutine instead multiplied the byte in register `B` by the byte in register `C` and puts the 16-bit product in register `HL`, *Here is a multiply subroutine :*
 
   ```
   Multiply:	PUSH PSW		;Save registers being altered
@@ -805,10 +805,12 @@ For example, a group of instructions that multiply 2 bytes is an ideal candidate
   			DEC A			;Decrement multiplier
   			JNZ MultLoop	;Loop if it's not 0
   			
-  AllDone:
+  AllDone:	POP BC			;Restore saved registers
+  			POP PSW
+  			RET				;Return
   ```
 
-  ​
+  Notice that the first line of the subroutine​ begins with a label, which is the word `Multiply`. This label, of course
 
 
 
@@ -826,4 +828,3 @@ For example, a group of instructions that multiply 2 bytes is an ideal candidate
 
 
 
- 
