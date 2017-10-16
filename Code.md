@@ -418,7 +418,7 @@ Instructions such as `LDA`, `STA` or `MOV` don't affect the flags at all. The `A
 - The Sign flag is set to `1` if the most significant bit of the result is `1`, meaning that the result is negative.
 - The Zero flag is set to `1` if the result is `0`.
 - The Parity flag is set to `1` if the result has even parity, which means that the number of `1` bits in the result is even.
-  - Parity is sometimes used as a crude form of error checking.
+  - *Parity is sometimes used as a crude form of error checking.*
 - The Carry flag is set to `1` if an `ADD` or `ADC` operation results in a carry or if a `SUB` and `SBB` does not result in a carry. (this is different from the implementation of the Carry flag in the Chapter 17 computer.)
 - The Auxiliary Carry flag is `1` if the operation results in a carry from the low nibble into the high nibble. This flag is used only for the DAA(Decimal Adjust Accumulator) instruction.
 
@@ -813,10 +813,44 @@ Two other types of instructions that are related to the Jump:
   Notice that the first line of the subroutine begins with a label, which is the word `Multiply`. This label, of course, actually corresponds to a memory address where the subroutine is located. 
 
   - The subroutine begins with two `PUSH` instructions. *Usually a subroutine should attempt to save (and later restore) any registers that it might need to use*.
-  - The subroutine then sets the contents of the `H` and `L` registers to `0`. It could have use the `MVI` instructions rather than `SUB` instructions for this job, *but that would have required 4 instruction bytes rather than 2 (???why?)*.
+
+  - The subroutine then sets the contents of the `H` and777 `L` registers to `0`. It could have use the `MVI` instructions rather than `SUB` instructions for this job, *but that would have required 4 instruction bytes rather than 2 (???why?)*.
+
   - The register pair `HL` will hold the result of the multiplication when the subroutine is completed.
+
   - Next the subroutine moves the contents of register `B` into `A` and checks if it's `0`. If it's `0`, the multiplication subroutine is complete because the product is `0`. Since registers `H` and `L` are already `0`, the subroutine can just use the `JZ`(Jump If Zero) instruction to skip to the two `POP` instructions at the end.
+
   - Otherwise, the subroutine sets register `B` to `0`. Now the register pair `BC` contain a 16-bit multiplicand and `A` contains the multiplier. The DAD instruction adds `BC` to `HL`. The multiplier in `A` is decremented and, as long as it's not `0`, the `JNZ` (Jump If Not Zero) instruction causes `BC` to be added to `HL` again. This little loop will continue until `BC` is added to `HL` an number of times equal to the multiplier. (*It's possible to write a more efficient multiplication subroutine using the 8080 shift instructions.*)
+
+  - A program that wishes to make use of this subroutine to multiply, for example, `25h` by `12h` uses the following code:
+
+    ```
+    MVI B,25h
+    MVI C,12h
+    CALL Multiply
+    ```
+
+    The `CALL` instruction saves the value of the Program Counter on the stack. The value saved on the stack is the address of the next instruction *after* the `CALL` instruction. Then the `CALL` instruction causes a jump to the instruction identified by the label `Multiply`. That's the beginning of the subroutine. When the subroutine has calculated the product, it executes a `RET`(**Return**) instruction, which cause the Program Counter to be popped from the stack. The program continues with the next statement after the `CALL` instruction.
+
+
+
+
+The 8080 instruction set includes conditional `Call` instructions and conditional `Return` instructions, but these are used much less than the conditional `Jump` instructions.
+
+The complete array of these instructions is shown in the following table:
+
+| Condition   | Opcode | Instruction | Opcode | Instruction | Opcode | Instruction |
+| ----------- | :----: | :---------: | :----: | :---------: | :----: | :---------: |
+| None        |        |             |        |             |        |             |
+| Z not set   |        |             |        |             |        |             |
+| Z set       |        |             |        |             |        |             |
+| C not set   |        |             |        |             |        |             |
+| C set       |        |             |        |             |        |             |
+| Odd parity  |        |             |        |             |        |             |
+| Even parity |        |             |        |             |        |             |
+| S not set   |        |             |        |             |        |             |
+| S set       |        |             |        |             |        |             |
+
 
 
 
