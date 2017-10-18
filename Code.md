@@ -853,7 +853,11 @@ The complete array of these instructions is shown in the following table:
 
 
 
+#### Peripherals
 
+How does the microprocessor communicate with peripherals(such as keyboard and video display)?
+
+Peripherals are built so that they have an interface similar to memory. A
 
 
 
