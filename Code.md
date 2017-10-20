@@ -137,7 +137,7 @@ This packaging protects the silicon chip and also provides access to all of the 
 4. *8-bit*:
 
    - The 8080 can reads data from memory and writes data to memory 8 bits at a time. The chip include eight signals labeled *D~0~* through *D~7~*.
-   - These singals are the only ones on the chip that are *both inputs and outputs*. 
+   - These signals are the only ones on the chip that are *both inputs and outputs*. 
 
 5. *Control signals* pins: 
 
@@ -855,15 +855,73 @@ The complete array of these instructions is shown in the following table:
 
 #### Peripherals
 
+Memory isn't the only thing connected to a microprocessor.
+
 How does the microprocessor communicate with peripherals(such as keyboard and video display)?
 
-Peripherals are built so that they have an interface similar to memory. A
+Peripherals are built so that they have an interface similar to memory. A microprocessor can write into and read from a peripheral by specifying certain addresses that the peripheral responds to.  In some microprocessors, peripherals actually replace some addresses that would normally be used to address memory. This configuration is known as **memory-mapped I/O**. In the 8080, however, 256 additional addresses beyond the normal 65,536 are specifically reserved for input and output devices. These are known as **I/O ports**. The I/O address signals are *$A_0$ through $A_7$ , but I/O accesses are distinguished from memory accesses through signals latched by the 8228 System Controller chip*.
+
+*The `OUT` instruction writes the contents of the accumulator to a port addressed by the byte that follows the instruction.* *The `IN` instruction reads a byte into the accumulator.* 
+
+| Opcode | Instruction |
+| ------ | ----------- |
+| `D3`   | OUT ~pp~    |
+| `DB`   | IN ~pp~     |
+
+Peripherals sometimes need to get the attention of the microprocessor.
+
+For example, when you press a key on a keyboard, it's usually helpful if the microprocessor knows about this event right away. This is a accomplished by a mechanism called an **interrupt**, which is a signal connected from the peripheral to the `INT` input of the 8080.
+
+When the 8080 is reset, however, it doesn't respond to interrupts. A program must execute the `EI`(Enable Interrupts) instruction to enable interrupts and can later execute `DI`(Disable Interrupts) to disable them:
+
+| Opcode | Instruction |
+| ------ | ----------- |
+| `F3`   | DI          |
+| `FB`   | EI          |
+
+The `INTE` output signal from the 8080 indicates when interrupts have been enabled.
+
+When a peripheral needs to interrupt the microprocessor, it sets the `INT` input if the 8080 to `1`. The 8080 responds to that by fetching an instruction form memory, but control signals indicate that an interrupt is occurring. The peripheral usually responds by supplying one of the following instructions to the 8080:
+
+| Opcode | Instruction | Opcode | Instruction |
+| ------ | ----------- | ------ | ----------- |
+| `C7`   | RST 0       | `E7`   | RST 4       |
+| `CF`   | RST 1       | `EF`   | RST 5       |
+| `D7`   | RST 2       | `F7`   | RST 6       |
+| `DF`   | RST 3       | `FF`   | RST 7       |
+
+These are called `Restart` instructions, and they're similar to Call instructions in that the current Program Counter is saved on the stack. But the Restart instructions then jump to specific locations: RST 0 jumps to address 0000h, RST 1 to address 0008h, and so forth, up to RST 7, which jumps to address 0038h. Located at these addresses are sections of code that deal with the interrupt. For example, an interrupt from the keyboard might cause a RST 4 instruction to be executed. At address 0020h begins some code to read a byte from the keyboard.(See chapter 21)
 
 
 
+#### NOP
+
+So far I've described 243 opcodes. The 12 bytes that aren't associated with any
+opcodes are 08h, 10h, 18h, 20h, 28h, 30h, 38h, CBh, D9h, DDh, EDh, and FDh. That
+brings the total to 255. There's one more opcode I need to mention, and that's this one:
+
+| Opcode | Instruction |
+| ------ | ----------- |
+| `00h`  | NOP         |
+
+*`NOP` stands for no operation*. The NOP causes the processor to do absolutely nothing. What's it good for? Filling space.
 
 
 
+### 6800
+
+<img src="images/code-chapter19-40-pin-6800-function.png" width="400">
+
+Many of the aspects of 6800's design and functionality are quite similar to those of the 8080.
+
+- $V_{ss}$ indicates Ground, and $V_{cc}$ is 5 volts.
+- Like the 8080, the 6800 has 16 output Address signals and 8 Data signals used for both input and output.
+- There's a $RESET$ signal and a $R/\overline{W}$ (read/write) signal.
+- The $\overline{IRQ}$ signal stands for interrupt request.
+- The signal timing of the 6800 is considered to be much simpler than that of the 8080.
+- *What 6800 doesn't have is the concept of I/O ports. All input and output devices must be part of the 6800 memory address space.*
+- The 6800 has a 16-bit Program Counter, a 16-bit Stack Pointer, an 8-bit Status Register (for flags), and *two 8-bit accumulators called `A` and `B`.*  These are both considered accumulators (rather than `B` being considered just a register) because there is nothing that you can do with `A` that you can't also do with `B`. There are no additional 8-bit registers, however.
+- The 6800 instead has a 16-bit **index register** that can be used to hold a 16-bit address, much like the register pair `HL` is used in the 8080.
 
 
 
