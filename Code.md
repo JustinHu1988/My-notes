@@ -1062,7 +1062,9 @@ In our earlier studies of Morse code and Braille, we've already seen how the let
 
   Problems like this are typical nasty results of using shift codes. Although Baudot is certainly an economical code, it's probably preferable to use unique codes for numbers and punctuation, as well as separate codes for lowercase and uppercase letters.
 
-### ASCII			
+  ​
+
+### ASCII
 
 We need 7 bits to represent the characters of English text if we want uppercase and lowercase with no shifting.
 
@@ -1073,7 +1075,42 @@ ASCII is a 7-bit code using binary codes `0000000` through `1111111`, which are 
 
 > A particular uppercase letter in ASCII differs from its lowercase counterpart by 20h.	
 >
-> Two ways to capitalizes a string of text.(See the book *code*)
+> **Two ways to capitalizes a string of text.**(See the book *code*)
+>
+> 1. ```
+>    Capitalize: MOV A,C 	; C = number of characters left
+>    			CPI A,00h 	; Compare with 0
+>    			JZ AllDone 	; If C is 0, we're finished
+>    			MOV A,[HL] 	; Get the next character
+>    			CPI A,61h 	; Check if it's less than 'a'
+>    			JC SkipIt 	; If so, ignore it
+>    			CPI A,7Bh 	; Check if it's greater than 'z'
+>    			JNC SkipIt 	; If so, ignore it
+>    			SBI A,20h 	; It's lowercase, so subtract 20h
+>    			MOV [HL],A 	; Store the character
+>    SkipIt: 	INX HL 		; Increment the text address
+>    			DCR C 		; Decrement the counter
+>    			JMP Capitalize ; Go back to the top
+>    AllDone: 	RET
+>    ```
+>
+> 2. The statement that subtracts 20h from the lowercase letter to convert it to uppercase can be replaced with this:
+>
+>    ```
+>    ANI A,DFh
+>    ```
+>
+>    The `ANI` instruction is an `AND Immediate`. It performs *a bitwise AND operation* between the value in the accumulator and the value `DFh`, which is `11011111` in binary.
+
+
+
+ASCII includes 95 **graphic characters**(which have a visual representation) and 33 **control characters**(have no visual representation but instead perform certain functions).
+
+> Control characters: at the time ASCII was developed, it was intended mostly for teletypewriters, and many of these are currently obscure.
+
+
+
+
 
 
 
