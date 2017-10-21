@@ -921,8 +921,175 @@ Many of the aspects of 6800's design and functionality are quite similar to thos
 - The signal timing of the 6800 is considered to be much simpler than that of the 8080.
 - *What 6800 doesn't have is the concept of I/O ports. All input and output devices must be part of the 6800 memory address space.*
 - The 6800 has a 16-bit Program Counter, a 16-bit Stack Pointer, an 8-bit Status Register (for flags), and *two 8-bit accumulators called `A` and `B`.*  These are both considered accumulators (rather than `B` being considered just a register) because there is nothing that you can do with `A` that you can't also do with `B`. There are no additional 8-bit registers, however.
-- The 6800 instead has a 16-bit **index register** that can be used to hold a 16-bit address, much like the register pair `HL` is used in the 8080.
+- The 6800 instead has a 16-bit **index register** that can be used to hold a 16-bit address, much like the register pair `HL` is used in the 8080. For many instructions, an address can be formed from the sum of the index register and the byte that follows the opcode.
+- While the 6800 does just about the same operations as the 8080— loading, storing, adding, subtracting, shifting, jumping, calling — it should be obvious that *the opcodes and the mnemonics are completely different*.
+- The 6800 doesn't have a Parity flag like the 8080, but it does have a flag teh 8080 doesn't have — an *Overflow flag*.
 
+
+
+
+### 8800 vs 6800
+
+Of course the 8080 and 6800 instructions sets are different. The two chips were designed about the same time by two different groups of engineers at two different companies.
+
+- What this incompatibility means is that neither chip can execute the other chip's machine codes. Nor can a assembly-language program written for one chip be translated into opcodes that run on the other chip.
+- *Writing computer programs that run on more than one processor is the subject of Chapter 24.*
+
+
+
+Here's another interesting difference between the 8080 and the 6800:
+
+- In both microprocessors, the instruction `LDA` lands the accumulator from a specified memory address.
+
+  - In the 8080, for example, the following sequence of bytes:
+
+    <img src="images/code-chapter19-8080-LDA-instruction.png" width="200">
+
+    will load the accumulator with the byte stored at memory address `347Bh`.
+
+  - Now compare that with the 6800 `LDA` instruction using the so-called 6800 extended addressing mode:
+
+    <img src="images/code-chapter19-6800-LDA-instruction.png" width="200">
+
+    This sequence of bytes loads accumulator `A` with the byte stored at memory address `7B34h`.
+
+- *The 8080 assumes that the low-order byte comes first, followed by the high-order byte. The 6800 assumes that the high-order byte comes first!*
+
+- *This fundamental difference in how Intel and Motorola microprocessors store multibyte values have never been resolved.* 
+
+- *To this very day, Intel microprocessors continue to store multibyte values with the least-significant byte first, and Motorola microprocessors store multibyte values with the most-significant byte first.*
+
+These two methods are known as **little-endian** (the Intel way) and **big-endian** (the Motorola way). 
+
+Despite neither method being intrinsically "right", the difference does create an *additional incompatibility problem when sharing information between systems based on little-endian and big-endian machines*.
+
+
+
+### After 8080 and 6800
+
+- *Altair 8800* (use 8080 chip): The first home computer, 1975(1974?)
+
+- *Intel 8085 chip*.
+
+- *Z-80* *chip*, by Zilog. 
+
+  - In 1977, the  Z-80 was used in the *Radio Shack TRS-80 Model 1*.
+
+- *Apple II*
+
+  - In 1977, the Apple Computer Company.
+  - Use MOS Technology's less expensive *6502 chip* (an enhancement of the 6800).
+
+- **Intel 8086 chip**.
+
+  - A 16-bit microprocessor that could access 1 megabyte of memory.
+  - *The 8086 opcodes weren't compatible with the 8080, but included instructions to multiply and divide*.
+
+-  *Intel 8088 chip.*
+
+  - Internally was identical to teh 8086 but externally accessed memory in bytes, thus allowing the microprocessor to use the more-prevalent 8-bit support chips designed for the 8080.
+  - *5150 Personal Computer* — commonly called the IBM PC — introduced in the fall of 1981.
+
+- **x86 family**:
+
+  - Include 8086, 8088
+  - *186, 286 chip*: In 1982
+  - *386 chip*: 32-bit, in 1985
+  - *486 chip*: in 1989
+  - Beginning in 1993: *Intel Pentium line of microprocessors*
+  - And so on
+
+  *While these Intel microprocessors have ever-increasing instruction sets, they continue to support the opcodes of all earlier processors starting with the 8086.*
+
+- *The Apple Macintosh*, first introduced in 1984, used the *Motorola 68000*, a 16-bit microprocessor that's a direct descendant of the 6800. The 68000 and its descendants (often called the 68K series)  are some of the most beloved microprocessors ever made.
+
+- Since 1994, Macintosh computers have used the **PowerPC microprocessor** that was developed in a coalition of Motorola, IBM, and Apple.
+
+  - The PowerPC was designed with a type of microprocessor architecture known as **RISC**(Reduced Instruction Set Computing精简指令集计算机), which attempts to increase the speed of the processor by simplifying it in some respects.
+  - *In a RISC computer, generally each instruction is the same length (32 bits on the PowerPC), memory accesses are restricted to just load and store instructions, and instructions do simple operations rather than complex ones. RISC processors usually have plenty of registers to avoid frequent accesses of memory.*
+  - *PowerPC can't execute 68K code because it has a whole different instruction set.* But the PowerPC microprocessors currently used in the Apple Macintoshes can emulate the 68K. An emulator program running on the PowerPC examines each opcode of a 68K program, one by one, and performs an appropriate action. It's not as fast as native PowerPC code, but it works.
+
+
+
+### With more transistors
+
+Additional transistors: 
+
+- Some of the transistors accommodate the *increase in processor data width*, from 4 bits to 8 bits to 16 bits to 32 bits to 64 bits.
+
+- Another part of the increase is due to *new instructions*.  For example:
+
+  - Most microprocessors these days have instructions to do floating-point arithmetic;
+  - New instructions have also been added to microprocessors to do some of the repetitive calculations required to display pictures or movies on computer screens.
+
+- Improve processor speed. Modern processors use several techniques to help improve their speed:
+  - **Pipelining** :
+    - When the processor is executing one instruction, it's reading in the next instructions, even to a certain extent anticipating how jump instructions will alter the execution flow.
+  - **Cache** : (pronounced cash)
+    - a array of very fast RAM inside the processor that is used to store recently executed instructions.
+    - Because computer programs often execute small loops of instructions, the cache prevents these instructions from being repetitively reloaded.
+
+  All these speed-improving features require more logic and more transistors in the microprocessor.
+
+  ​
+
+Before build a complete computer system, we need to *learn how to encode something else in memory besides opcodes and numbers*.
+
+
+
+# Chapter 20. ASCII and a Cast of Characters
+
+Digital computer memory stores only bits.
+
+Don't think about text as formatted into two-dimensional columns on the printed page. *Think of text instead as a one-dimensional stream of letters, numbers, and punctuation marks, with perhaps an additional code to indicate the end of one paragraph and the start of another.*
+
+In our earlier studies of Morse code and Braille, we've already seen how the letters of the alphabet can be represented in a binary form. Although these systems are fine for their specific purposes, both have their failings when it comes to computers. — *We need each code is a certain number of bits.*
+
+### Baudot / Murray code
+
+- Perhaps the most economical code for text is a *5-bit code* that originated in an 1874 printing telegraph developed by Emile Baudot. This code was later modified by Donald Murray and standardized in 1931. This code often be called **Baudot** or **Murray code**.
+
+- In the twentieth century, Baudot was often *used in teletypewriters*. 
+
+  - Teletypewriter keys are actually switches that cause a binary code to be generated and sent down the teletypewriter's output cable, one bit after the other.
+  - Teletypewriter also contains a printing mechanism. Codes coming through the teletypewriter's input cable trigger electromagnets that print characters on paper.
+
+- Like Morse code, this 5-bit code doesn't differentiate between uppercase and lowercase.
+
+- *Problem*: Because Baudot need to use `shift code` to change from letter to figure or vice versa, this will cause some problems. Such as:
+
+  <img src="images/code-chapter20-Baudot-problem.png" width="700">
+
+  Problems like this are typical nasty results of using shift codes. Although Baudot is certainly an economical code, it's probably preferable to use unique codes for numbers and punctuation, as well as separate codes for lowercase and uppercase letters.
+
+### ASCII			
+
+We need 7 bits to represent the characters of English text if we want uppercase and lowercase with no shifting.
+
+In 1967, ASCII (American Standard Code for Information Interchange ) was formalized. 
+
+ASCII is a 7-bit code using binary codes `0000000` through `1111111`, which are hexadecimal codes `00h` through `7Fh`. 
+​		
+
+> A particular uppercase letter in ASCII differs from its lowercase counterpart by 20h.	
+>
+> Two ways to capitalizes a string of text.(See the book *code*)
+
+
+
+​	
+
+
+
+
+
+
+
+​	
+
+
+​		
+​	
 
 
 
