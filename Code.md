@@ -967,7 +967,7 @@ Despite neither method being intrinsically "right", the difference does create a
 
 ### After 8080 and 6800
 
-- *Altair 8800* (use 8080 chip): The first home computer, 1975(1974?)
+- *MITS Altair 8800* (use 8080 chip): The first home computer, 1975(1974?)
 
 - *Intel 8085 chip*.
 
@@ -1110,23 +1110,105 @@ ASCII includes 95 **graphic characters**(which have a visual representation) and
 
 
 
+### EBCDIC
+
+> Although ASCII is the dominant standard in the computing world, it isn't used on many of IBM's larger computer systems.
+
+In connection with the System/360, IBM developed its own 8-bit character code known as the **Extended BCD Interchange Code**, or **EBCDIC**(pronounced EBB-see-dick), which was derived from codes used on **IBM punch cards** -- capable of *storing 80 characters of text* -- was introduced by IBM in 1928 and used for over 50 years.
+
+<img src="images/code-chapter20-IBM-punch-cards.png">
+
+IBM punch card:
+
+- As this picture shows, the character itself is often printed near the top of the card.
+- The lower 10 rows are identified by number and are known as the 0-row, the 1-row and so forth through the 9-row.
+- The unnumbered row above the 0-row is called the 11-row, and the top row is called the 12-row. There is no 10-row.
+-  More IBM punch card terminology: Row 0 through 9 are known as the the *digit rows*, or *digit punches*. Row 11 and 12 are known as the *zone rows*, or *zone punches*. (but some IBM punch cards confusion: Sometimes rows 0 and 9 are considered to be zone rows rather than digit rows).
 
 
 
+An 8-bit EBCDIC character code is composed of:
 
-​	
+1. *a low-order nibble*: (4-bit value)
+   - is the BCD code corresponding to the digit punches of the character.
+   - (BCD stands for binarycoded decimal -- a 4-bit code for digits 0 through 9).
+2. *a high-order nibble*: (4-bit value)
+   - is a code corresponding (in a fairly arbitrary way) to  the zone punches of the character.
+
+- For the digits 0 through 9 : 
+
+  there are no zone punches. That lack of punches corresponds to a high-order nibble of `1111`. The low-order nibble is the BCD code of the digit punch.
+
+- For the uppercase letters : 
+
+  a zone punch of just the 12-row is indicated by the nibble `1100`, a zone punch of just the 11-row is indicated by the nibble `1101`, and a zone punch of just the 0-row is indicated by the nibble `1110`.
+
+| Hex Code | EBCDIC Character | Hex Code | EBCDIC Character | Hex Code | EBCDIC Character |
+| -------- | ---------------- | -------- | ---------------- | -------- | ---------------- |
+| `C1h`    | A                | `D1h`    | J                |          |                  |
+| `C2h`    | B                | `D2h`    | K                | `E2h`    | S                |
+| `C3h`    | C                | `D3h`    | L                | `E3h`    | T                |
+| `C4h`    | D                | `D4h`    | M                | `E4h`    | U                |
+| `C5h`    | E                | `D5h`    | N                | `E5h`    | V                |
+| `C6h`    | F                | `D6h`    | O                | `E6h`    | W                |
+| `C7h`    | G                | `D7h`    | P                | `E7h`    | X                |
+| `C8h`    | H                | `D8h`    | Q                | `E8h`    | Y                |
+| `C9h`    | I                | `D9h`    | R                | `E9h`    | Z                |
+
+- For the lowercase letters:
+
+  have the same digit punches as the uppercase letters but different zone punches.
+
+  For lowercase letters `a` through `i`, the 12-row and 0-row are punched, corresponding to the code `1000`. For `j` through `r`, the 12-row and 11-row are punched. This is the code `1001`. For the letters `s` through `z`, the 11-row and 0-row are punched—the code `1010`.
+
+Of course, there are other EBCDIC codes for punctuation and control characters, but it's hardly necessary to do a full-blown exploration of this system.
 
 
 
+### Extended ASCII character set
+
+Because many computer systems store characters as 8-bit values, it's possible to devise an extended ASCII character set that contains 256 characters rather than just 128. In such a character set, codes `00h` through `7Fh` are defined just as they are in ASCII; codes `80h` through `FFh` can be something else entirely.
+
+Unfortunately, many different extensions of ASCII have been defined over the decades, leading to much confusion and incompatibility.
 
 
 
+### Unicode
 
-​	
+Whereas ASCII is a 7-bit code, Unicode is a 16-bit code. Each and every character in Unicode requires 2 bytes. That means that Unicode has character codes ranging from `0000h` through `FFFFh` and can represent 65,536 different characters.
+
+>While Unicode may be an obvious improvement over existing character codes, that doesn't guarantee it instant acceptability. ASCII and the myriad flawed extensions of ASCII have become so entrenched in the computing world that it will be difficult to dislodge them.
 
 
-​		
-​	
+
+# Chapter 21. Get on the Bus
+
+The processor is certainly the most important component of a computer, but it's not the only component:
+
+- RAM: A computer also requires random access memory (RAM) that contains machine-code instructions for the processor to execute. 
+- I/O: The computer must also include some way for those instructions to get into RAM (an input device) and some way for the results of the program to be observed (an output device). 
+- ROM: As you'll also recall, RAM is volatile—it loses its contents when the power is turned off. So another useful component of a computer is a long-term storage device that can retain code and data when the computer is turned off.
+
+All the integrated circuits that make up a complete computer must be mounted on circuit boards. In some smaller machines, all the ICs can fit on a single board. But it's more usual for the various components of the computer to be divided among two or more boards. These boards communicate with each other by means of a *bus*.
+
+**Bus**: A bus is simply *a collection of digital signals* that are provided to every board in a computer. These signals fall into four categories:
+
+- *Address signals*.
+  - These are signals generated by the microprocessor and used mostly to address random access memory. But they're also used to address other devices attached to the computer.
+- *Data Output signals*.
+  - These also are signals provided by the microprocessor. They're used to write data to RAM or to other devices. *Be careful with the terms input and output. A data output signal from the microprocessor becomes a data input signal to RAM and other devices*.
+- *Data Input signals*.
+  - These are signals that are provided by other parts of the computer and are read by the microprocessor. The data input signals most often originate in RAM output; this is how the microprocessor reads the contents of memory. But other components also provide data input signals to the microprocessor.
+- *Control signals*.
+  - These are miscellaneous signals that usually correspond to the control signals of the particular microprocessor around which the computer is built.
+    Control signals may originate in the microprocessor or from other devices to signal the microprocessor.
+  - An example of a control signal is the signal used by the microprocessor to indicate that it needs to write some data output into a particular memory address.
+- *Power supply*. 
+  - In addition, the bus supplies power to the various boards that the computer comprises.
+
+
+
+S-100 bus:
 
 
 
