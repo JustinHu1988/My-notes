@@ -952,6 +952,57 @@ Example:
 
 
 
+
+## Auxiliary Verbs
+
+- **do** - for simple tenses
+- **be** - for continuous tenses
+- **have** - for perfect tenses
+
+1. must *agree with with the subject*.
+   - He is leaving / They are leaving / I am leaving.
+2. can be used as main verb.
+3. auxiliary verbs in positive sentences are function words, not content words, usually unstressed when they're spoken. (be reduced or contracted)
+   - I*'m* shopping with my friends.
+   - He*'s* taking his time.
+   - I*'ve* bought you some fruit.
+4. in negative sentences, auxiliary verbs are usually stressed, but often, they're contracted with 'not'.
+   - I didn't like it.
+   - We *haven't* been there yet / We*'ve not* been there yet.
+
+### do
+
+- In positive sentences, we often omit the auxiliary verb (if it is a function verb).
+  - We *(do)* eat fish on Fridays. (if you include "do" , it's to add emphasis to the sentence).
+
+
+
+### be
+
+be can used in continuous tense, or the passive voice.
+
+- I *am trying* to call him now.
+
+
+- I *was given* three minutes to finish. **
+
+### have
+
+- It *hasn't* arrived yet.
+- We *have* tried it many times.
+- We *have been waiting* for hours! **
+- He *will have finished* by 3pm. **
+- ​
+
+> **Modal verbs** are also considered auxiliary verbs, but there are different grammar rules for modal verbs.
+
+
+
+
+
+
+
+
 # 语法难点
 
 
