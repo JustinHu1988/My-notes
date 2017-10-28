@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Notes</title>
+    <link rel="stylesheet" href="learning-progress/reset.css">
+    <style>
+        html{
+            font-family: "Microsoft Yahei", "微软雅黑";
+            line-height: 20px;
+            background: url(learning-progress/images/bg-01.jpg) top center no-repeat;
+            background-attachment: fixed;
+            color:#fff;
+        }
+        .content-box{
+            width: 100%;
+            position: relative;
+            margin: 0 auto;
+            color:#fff;
+        }
+        
+        .content-cell{
+            background-color: rgba(0,0,0,0.6);
+            margin-bottom: 10px;
+        }
+        h2{
+            font-family: "Microsoft Yahei", "微软雅黑";
+            line-height: 32px;
+            text-align: left;
+            border-bottom: 1px rgba(255,255,255,0.8) dotted;
+            font-size: 24px;
+            padding-top: 10px;
+            margin: 0 10px 18px 10px;
+            font-style: italic;
+        }
+        .main-progress{
+            font-family: "Microsoft Yahei", "微软雅黑";
+
+            width:1100px;
+            height:360px;
+        }
+        .main-progress > li{
+            width:1100px;
+            height:30px;
+        }
+        .week-progress{
+            font-family: "Microsoft Yahei", "微软雅黑";
+
+            width:1100px;
+            height:360px;
+        }
+        .week-progress > li{
+            width:1100px;
+            height:30px;
+        }
+        .title{
+            width:120px;
+            display: inline-block;
+            height:20px;
+            text-align: right;
+            line-height: 20px;
+            float: left;
+        }
+        .bar{
+            margin-left: 3px;
+            width:700px;
+            display: inline-block;
+            height:20px;
+            transition: all 0.5s;
+            background-color: #fff;
+            border:0px #fff solid;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            float: left;
+
+        }
+        .goal-score{
+            width:100px;
+            display: inline-block;
+            height:20px;
+            float: left;
+            margin-left: 20px;
+
+        }
+        .achieved{
+            height:20px;
+            width:0px;
+            background-color: rgba(1, 159, 255, 1);
+            transition: all 1s 0.1s;
+            float: left;
+        }
+        .recent{
+            height:20px;
+            width:0px;
+            transition: all 0.5s 1.1s;
+            background-color: blue;
+            float: left;
+            position: relative;
+        }
+        .recent p{
+            height:13px;
+            font-size: 10px;
+            line-height: 13px;
+            text-align: left;
+            width:80px;
+            position: absolute;
+            right:-80px;
+            top:3px;
+            color:#000;
+            text-indent: 2px;
+
+
+        }
+        .personal-data{
+            height: 100%;
+            vertical-align: top;
+            text-align: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 300px;
+            padding: 10px;
+        }
+        .personal-data-img{
+            width: 100px;
+            height: 130px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: absolute;
+            left: 100px;
+            top: 50px;
+            border: 3px #fff solid;
+        }
+        .personal-data-img img{
+            width: 100px;
+            height: 100px;
+        }
+        .personal-data-img p{
+            height: 30px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 30px;
+            background:rgba(1, 159, 255, 1);
+            color:#fff;
+        }
+        .personal-data-ability{
+            width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .personal-data-ability ul{
+            width: 360px;
+        }
+        .personal-data-ability li{
+            width: 145px;
+            height: 60px;
+            padding: 0;
+            position: relative;
+            font-size: 15px;
+            float: left;
+            margin: 0 10px 10px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            font-weight: bold;
+            text-align: center;
+            line-height: 24px;
+        }
+        .personal-data p{
+            background: #fff;
+            height: 33px;
+            color:rgba(1, 159, 255, 1);
+            line-height: 32px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .personal-data h4{
+            font-size: 13px;
+            background: rgba(1, 159, 255, 1);
+            color: #fff;
+            line-height: 18px;
+            padding: 5px 0;
+        }
+        .gifts-box{
+            position: relative;
+            border: solid #fff 0px;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            width: 300px;
+            height: 258px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .gifts-box ul{
+            height: 170px;
+    overflow-y: auto;
+        }
+        .gifts-box h4{
+            font-size: 13px;
+            background: rgb(255, 73, 1);
+            color: #fff;
+            line-height: 18px;
+            padding: 5px 0;
+        }
+        .gifts-box li{
+            background: #fff;
+            height: 33px;
+            color: rgb(255, 73, 1);
+            line-height: 32px;
+            border-bottom:rgb(255, 73, 1) 1px dotted;
+        }
+        
+        .total-points{
+            width: 300px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+    </style>
+
+    <script src="learning-progress/jquery-3.2.1.js"></script>
+
+</head>
+<body>
+<div class="content-box">
+    <div class="personal-data content-cell" id="justin-hu">
+        <h2>Personal Data</h2>
+        <div class="personal-data-img"><img src="learning-progress/images/personal-data-img-01.jpg"><p>Justin Hu</p></div>
+        <div class="personal-data-ability">
+            <div class="total-points"><h4>Total Points</h4> <p>10000</p></div>
+            <ul>
+                <li class="english"><h4>English</h4><p>10000</p></li>
+                <li class="computer"><h4>Computer</h4><p></p></li>
+                <li class="math"><h4>Math</h4><p></p></li>
+                <li class="physics"><h4>Physics</h4><p></p></li>
+                <li class="economics"><h4>Economics</h4><p></p></li>
+                <li class="PhysicalExercise"><h4>Physical Exercise</h4><p></p></li>
+                <li class="Other"><h4>Other</h4><p></p></li>
+            </ul>
+            
+        </div>
+        
+        <div class="gifts-box"></div>
+        
+        
+    </div>
+
+
+
+    <div class="content-cell">
+        <h2>One Week Plan (600 points) [2017-10-23 - 2017-10-29]</h2>
+        <ul class="week-progress">
+            <li class="english">
+                <p class="title">english</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li class="computer">
+                <p class="title">computer</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li class="math">
+                <p class="title">math</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li class="physics">
+                <p class="title">physics</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li class="economics">
+                <p class="title">economics</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li class="physicalExercise">
+                <p class="title">physicalExercise</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="content-cell">
+        <h2>10000 Hours Plan (120000 points)</h2>
+        <ul class="main-progress">
+            <li id="english">
+                <p class="title">english</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li id="computer">
+                <p class="title">computer</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li id="math">
+                <p class="title">math</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li id="physics">
+                <p class="title">physics</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li id="economics">
+                <p class="title">economics</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+            <li id="physicalExercise">
+                <p class="title">physicalExercise</p>
+                <div class="bar">
+                    <div class="achieved"></div>
+                    <div class="recent">
+                        <p></p>
+                    </div>
+                </div>
+                <p class="goal-score"></p>
+            </li>
+        </ul>
+    </div>
+
+
+
+
+</div>
+
+
+
+
+<script>
+    let giftList=[
+        {name:"Air Jordan 6 Sport Blue", value:1399},
+        {name:"ipad pro 12.0", value:8376},
+        {name:"Apple watch", value:3288},
+        {name:"psv", value:1299},
+        {name:"pspgo", value:990},
+    ];
+let dataArr=[
+    {   year:2017,month:10,date:23,
+            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
+            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
+        },
+    {   year:2017,month:10,date:23,
+            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
+            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
+        },
+        {   year:2017,month:10,date:23,
+            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
+            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
+        },
+        {   year:2017,month:10,date:23,
+            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
+            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
+        },
+    ];
+</script>
+
+<script src="learning-progress/LearningProgress.js"></script>
+
+
+
+</body>
+</html>

@@ -2,12 +2,7 @@
  * Created by justinhu on 23/10/2017.
  */
 
-let dataArr=[
-    {   year:2017,month:10,date:23,
-        math:0, economics:0, computer:60, physics:0, physicalExercise:0,
-        english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
-    },
-];
+let totalPoints=0, remainGiftPoints=0;
 console.log(dataArr[0].english);
 
 
@@ -46,6 +41,7 @@ function getAll(){
 
 function getLastweek(){
     let dataMain = dataMainZero;
+
     if(dataArr.length>=7){
         for(let i=dataArr.length-7; i<dataArr.length; i++){
             dataMain.math += dataArr[i].math;
@@ -75,24 +71,44 @@ function getLastweek(){
 }
 
 
-let yearData = getAll();
+let allData = getAll();
 let weekData = getLastweek();
 
 $(".main-progress>li").each(function() {
     let id = $(this).attr('id');
+    let tmpLen = 0;
     if(id === "english"){
-        $(this).children(".bar").children(".achieved").css("width", ((yearData[id].value-weekData[id].value) / levelScore[id].value) * 800 + 'px');
-        $(this).children(".bar").children(".recent").css("width", ((weekData[id].value) / levelScore[id].value) * 800 + 'px');
-        $(this).children(".bar").children(".recent").children("p").html(yearData[id].value + '+' + weekData[id].value + 'points');
+        tmpLen =$(this).children(".bar").children(".achieved").css("width", ((allData[id].value) / levelScore[id].value) * 700 + 'px');
+        $(this).children(".bar").children(".achieved").css("width", ((allData[id].value-weekData[id].value) / levelScore[id].value) * 700 + 'px');
+        $(this).children(".bar").children(".recent").css("width", ((weekData[id].value) / levelScore[id].value) * 700 + 'px');
+        $(this).children(".bar").children(".recent").children("p").html(allData[id].value-weekData[id].value + '+' + weekData[id].value + 'points');
 
         $(this).children(".goal-score").html(levelScore[id].value+" points");
     }else{
-        $(this).children(".bar").children(".achieved").css("width", ((yearData[id]-weekData[id]) / levelScore[id]) * 800 + 'px');
-        $(this).children(".bar").children(".recent").css("width", ((weekData[id]) / levelScore[id]) * 800 + 'px');
-        $(this).children(".bar").children(".recent").children("p").html(yearData[id] + '+' + weekData[id] + 'points');
+        $(this).children(".bar").children(".achieved").css("width", ((allData[id]-weekData[id]) / levelScore[id]) * 700 + 'px');
+        $(this).children(".bar").children(".recent").css("width", ((weekData[id]) / levelScore[id]) * 700 + 'px');
+        $(this).children(".bar").children(".recent").children("p").html(allData[id]-weekData[id] + '+' + weekData[id] + 'points');
 
         $(this).children(".goal-score").html(levelScore[id]+" points");
     }
 
 });
 
+
+totalPoints = allData.math + allData.economics + allData.computer +allData.physics + allData.physicalExercise+ allData.english.value;
+
+$(".personal-data").find(".total-points").children("p").html(totalPoints);
+
+let giftHtmlArr = [];
+
+remainGiftPoints = totalPoints;
+for(let i = 0; i<giftList.length; i++){
+    remainGiftPoints -= giftList[i].value;
+    giftHtmlArr[i] = "<li>" + giftList[i].name + " (" + giftList[i].value + ")" +"</li>";
+}
+
+
+let giftHtmlStr = giftHtmlArr.join("");
+$(".personal-data").find(".gifts-box").html(
+    "<h4>Gift List: </h4>" + "<ul>" +  giftHtmlStr +"</ul>" +'<div class="remain-points"><h4>The remaining gift points</h4><p>'+remainGiftPoints+'</p></div>'
+);
