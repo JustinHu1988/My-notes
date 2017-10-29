@@ -1123,7 +1123,7 @@ IBM punch card:
 - As this picture shows, the character itself is often printed near the top of the card.
 - The lower 10 rows are identified by number and are known as the 0-row, the 1-row and so forth through the 9-row.
 - The unnumbered row above the 0-row is called the 11-row, and the top row is called the 12-row. There is no 10-row.
--  More IBM punch card terminology: Row 0 through 9 are known as the the *digit rows*, or *digit punches*. Row 11 and 12 are known as the *zone rows*, or *zone punches*. (but some IBM punch cards confusion: Sometimes rows 0 and 9 are considered to be zone rows rather than digit rows).
+- More IBM punch card terminology: Row 0 through 9 are known as the the *digit rows*, or *digit punches*. Row 11 and 12 are known as the *zone rows*, or *zone punches*. (but some IBM punch cards confusion: Sometimes rows 0 and 9 are considered to be zone rows rather than digit rows).
 
 
 

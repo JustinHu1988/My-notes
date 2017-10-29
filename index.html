@@ -3,25 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>My Notes</title>
+    <meta name="viewport" content="width=350, user-scalable=no">
     <link rel="stylesheet" href="learning-progress/reset.css">
     <style>
         html{
             font-family: "Microsoft Yahei", "微软雅黑";
             line-height: 20px;
-            background: url(learning-progress/images/bg-01.jpg) top center no-repeat;
+
+            background-size: cover;
             background-attachment: fixed;
             color:#fff;
+            background: url(learning-progress/images/bg-07.jpg) top center;
+            background-attachment: fixed;
+            background-size: cover;
         }
         .content-box{
-            width: 100%;
+            width: 90%;
             position: relative;
             margin: 0 auto;
-            color:#fff;
+            color: #fff;
+            box-sizing: border-box;
+            margin: 5%;
+            border: solid 2px #fff;
+            border-radius: 9px;
+            background-color: rgba(0, 0, 0, 0.8);
         }
-        
+
         .content-cell{
-            background-color: rgba(0,0,0,0.6);
-            margin-bottom: 10px;
+
+            float: left;
+            width:100%;
+            position: relative;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .title-box{
+            height: 136px;
+            width: 100%;
         }
         h2{
             font-family: "Microsoft Yahei", "微软雅黑";
@@ -33,55 +51,74 @@
             margin: 0 10px 18px 10px;
             font-style: italic;
         }
+        h3, h4, h5, p{
+            font-family: "Microsoft Yahei", "微软雅黑";
+        }
         .main-progress{
             font-family: "Microsoft Yahei", "微软雅黑";
-
-            width:1100px;
-            height:360px;
         }
         .main-progress > li{
-            width:1100px;
-            height:30px;
+            height:40px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .progress-win{
+            width:100%;
+            box-sizing: border-box;
+            position: relative;
+            padding-left: 326px;
         }
         .week-progress{
             font-family: "Microsoft Yahei", "微软雅黑";
-
-            width:1100px;
-            height:360px;
         }
         .week-progress > li{
-            width:1100px;
-            height:30px;
+            height:40px;
+            position: relative;
+            margin-bottom: 10px;
         }
         .title{
-            width:120px;
+            width: 120px;
             display: inline-block;
-            height:20px;
-            text-align: right;
-            line-height: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 19px;
             float: left;
+            position: absolute;
+            color: #fff;
+            margin-left: 10px;
+            border: solid #fff 1px;
+            border-radius: 10px 10px 0 0;
+            font-size: 12px;
         }
         .bar{
-            margin-left: 3px;
-            width:700px;
+            width: 100%;
             display: inline-block;
-            height:20px;
+            height: 20px;
             transition: all 0.5s;
             background-color: #fff;
-            border:0px #fff solid;
+            border: 0px #fff solid;
             border-radius: 10px;
-            position: relative;
             overflow: hidden;
             float: left;
-
+            position: absolute;
+            top: 20px;
+            left: 0;
+            z-index:10;
         }
-        .goal-score{
-            width:100px;
-            display: inline-block;
-            height:20px;
-            float: left;
-            margin-left: 20px;
 
+        .goal-score{
+            width: 100px;
+            display: inline-block;
+            height: 20px;
+            float: left;
+            margin-right: 10px;
+            position: absolute;
+            right: 0;
+            text-align: center;
+            color: #fff;
+            border: solid #fff 1px;
+            border-radius: 10px 10px 0 0;
+            font-size: 12px;
         }
         .achieved{
             height:20px;
@@ -112,38 +149,43 @@
 
 
         }
+
         .personal-data{
             height: 100%;
             vertical-align: top;
             text-align: center;
-            position: fixed;
-            left: 0;
-            top: 0;
             width: 300px;
             padding: 10px;
+            z-index: 10;
+            float: left;
+            box-sizing: content-box;
+        }
+        .personal-data h2{
+            width: 185px;
+            float: left;
+            margin: 0 0px 16px 0px;
         }
         .personal-data-img{
-            width: 100px;
-            height: 130px;
+            width: 90px;
+            height: 114px;
             border-radius: 8px;
             overflow: hidden;
-            position: absolute;
-            left: 100px;
-            top: 50px;
             border: 3px #fff solid;
+            float: right;
         }
+
         .personal-data-img img{
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
         }
         .personal-data-img p{
-            height: 30px;
             text-align: center;
-            font-size: 14px;
             font-weight: bold;
-            line-height: 30px;
             background:rgba(1, 159, 255, 1);
             color:#fff;
+            height: 24px;
+            font-size: 13px;
+            line-height: 24px;
         }
         .personal-data-ability{
             width: 300px;
@@ -177,6 +219,10 @@
             line-height: 32px;
             font-weight: bold;
             font-size: 15px;
+        }
+        .personal-data-img p {
+            line-height: 25px;
+            font-size: 12px;
         }
         .personal-data h4{
             font-size: 13px;
@@ -216,10 +262,43 @@
         }
         
         .total-points{
-            width: 300px;
+            width: 194px;
             text-align: center;
             position: relative;
             margin-bottom: 10px;
+            float: left;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        @media screen and (max-width:480px) {
+            .title-box {
+                height: 136px;
+                width: 300px;
+                margin: 0 auto;
+            }
+            .personal-data {
+                width: 100%;
+                box-sizing: border-box;
+
+            }
+            .progress-win {
+                width: 100%;
+                box-sizing: border-box;
+                position: relative;
+                padding-left: 0;
+                float: left;
+            }
+            .content-box {
+                width: 94%;
+                position: relative;
+                margin: 0 auto;
+                color: #fff;
+                box-sizing: border-box;
+                margin: 3%;
+                border: solid 1px #fff;
+            }
+
         }
 
     </style>
@@ -230,10 +309,12 @@
 <body>
 <div class="content-box">
     <div class="personal-data content-cell" id="justin-hu">
-        <h2>Personal Data</h2>
-        <div class="personal-data-img"><img src="learning-progress/images/personal-data-img-01.jpg"><p>Justin Hu</p></div>
-        <div class="personal-data-ability">
+        <div class="title-box">
+            <h2>Personal Data</h2>
+            <div class="personal-data-img"><img src="learning-progress/images/personal-data-img-01.jpg"><p>Justin Hu</p></div>
             <div class="total-points"><h4>Total Points</h4> <p>10000</p></div>
+        </div>
+        <div class="personal-data-ability">
             <ul>
                 <li class="english"><h4>English</h4><p>10000</p></li>
                 <li class="computer"><h4>Computer</h4><p></p></li>
@@ -247,145 +328,145 @@
         </div>
         
         <div class="gifts-box"></div>
-        
-        
     </div>
 
 
-
-    <div class="content-cell">
-        <h2>One Week Plan (600 points) [2017-10-23 - 2017-10-29]</h2>
-        <ul class="week-progress">
-            <li class="english">
-                <p class="title">english</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
+    <div class="progress-win">
+        <div class="content-cell">
+            <h2>One Week Plan (600 points)</h2>
+            <ul class="week-progress">
+                <li class="english">
+                    <p class="title">english</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
                     </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li class="computer">
-                <p class="title">computer</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="computer">
+                    <p class="title">computer</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
                     </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li class="math">
-                <p class="title">math</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="math">
+                    <p class="title">math</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
                     </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li class="physics">
-                <p class="title">physics</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="physics">
+                    <p class="title">physics</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
                     </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li class="economics">
-                <p class="title">economics</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="economics">
+                    <p class="title">economics</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
                     </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li class="physicalExercise">
-                <p class="title">physicalExercise</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="physicalExercise">
+                    <p class="title">physicalExercise</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
                     </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-        </ul>
+                    <p class="goal-score"></p>
+                </li>
+            </ul>
+        </div>
+        <div class="content-cell">
+            <h2>10000 Hours Plan (120000 points)</h2>
+            <ul class="main-progress">
+                <li class="english">
+                    <p class="title">english</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
+                    </div>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="computer">
+                    <p class="title">computer</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
+                    </div>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="math">
+                    <p class="title">math</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
+                    </div>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="physics">
+                    <p class="title">physics</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
+                    </div>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="economics">
+                    <p class="title">economics</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
+                    </div>
+                    <p class="goal-score"></p>
+                </li>
+                <li class="physicalExercise">
+                    <p class="title">physicalExercise</p>
+                    <div class="bar">
+                        <div class="achieved"></div>
+                        <div class="recent">
+                            <p></p>
+                        </div>
+                    </div>
+                    <p class="goal-score"></p>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <div class="content-cell">
-        <h2>10000 Hours Plan (120000 points)</h2>
-        <ul class="main-progress">
-            <li id="english">
-                <p class="title">english</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
-                    </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li id="computer">
-                <p class="title">computer</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
-                    </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li id="math">
-                <p class="title">math</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
-                    </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li id="physics">
-                <p class="title">physics</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
-                    </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li id="economics">
-                <p class="title">economics</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
-                    </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-            <li id="physicalExercise">
-                <p class="title">physicalExercise</p>
-                <div class="bar">
-                    <div class="achieved"></div>
-                    <div class="recent">
-                        <p></p>
-                    </div>
-                </div>
-                <p class="goal-score"></p>
-            </li>
-        </ul>
-    </div>
+    <ul class="week-complete-list">
 
-
+    </ul>
 
 
 </div>
@@ -393,34 +474,7 @@
 
 
 
-<script>
-    let giftList=[
-        {name:"Air Jordan 6 Sport Blue", value:1399},
-        {name:"ipad pro 12.0", value:8376},
-        {name:"Apple watch", value:3288},
-        {name:"psv", value:1299},
-        {name:"pspgo", value:990},
-    ];
-let dataArr=[
-    {   year:2017,month:10,date:23,
-            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
-            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
-        },
-    {   year:2017,month:10,date:23,
-            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
-            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
-        },
-        {   year:2017,month:10,date:23,
-            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
-            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
-        },
-        {   year:2017,month:10,date:23,
-            math:0, economics:0, computer:60, physics:0, physicalExercise:0,
-            english:{hearing:0,reading:0,seeing:0,writing:0,grammar:0,speaking:0,word:0,value:0},
-        },
-    ];
-</script>
-
+<script src="learning-progress/dataInput-CC.js"></script>
 <script src="learning-progress/LearningProgress.js"></script>
 
 

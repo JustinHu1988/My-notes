@@ -74,25 +74,29 @@ function getLastweek(){
 let allData = getAll();
 let weekData = getLastweek();
 
-$(".main-progress>li").each(function() {
-    let id = $(this).attr('id');
+function generateProgress(_this,allData,levelScore){
+    let thisClass = $(_this).attr('class');
     let tmpLen = 0;
-    if(id === "english"){
-        tmpLen =$(this).children(".bar").children(".achieved").css("width", ((allData[id].value) / levelScore[id].value) * 700 + 'px');
-        $(this).children(".bar").children(".achieved").css("width", ((allData[id].value-weekData[id].value) / levelScore[id].value) * 700 + 'px');
-        $(this).children(".bar").children(".recent").css("width", ((weekData[id].value) / levelScore[id].value) * 700 + 'px');
-        $(this).children(".bar").children(".recent").children("p").html(allData[id].value-weekData[id].value + '+' + weekData[id].value + 'points');
-
-        $(this).children(".goal-score").html(levelScore[id].value+" points");
+    let tmpWidth = $(".bar").width();
+    if(thisClass === "english"){
+        tmpLen =$(_this).children(".bar").children(".achieved").css("width", ((allData[thisClass].value) / levelScore[thisClass].value) * tmpWidth + 'px');
+        $(_this).children(".bar").children(".achieved").css("width", ((allData[thisClass].value-weekData[thisClass].value) / levelScore[thisClass].value) * tmpWidth + 'px');
+        $(_this).children(".bar").children(".recent").css("width", ((weekData[thisClass].value) / levelScore[thisClass].value) * tmpWidth + 'px');
+        $(_this).children(".bar").children(".recent").children("p").html(allData[thisClass].value-weekData[thisClass].value + '+' + weekData[thisClass].value + 'points');
+        $(_this).children(".goal-score").html(levelScore[thisClass].value+" points");
     }else{
-        $(this).children(".bar").children(".achieved").css("width", ((allData[id]-weekData[id]) / levelScore[id]) * 700 + 'px');
-        $(this).children(".bar").children(".recent").css("width", ((weekData[id]) / levelScore[id]) * 700 + 'px');
-        $(this).children(".bar").children(".recent").children("p").html(allData[id]-weekData[id] + '+' + weekData[id] + 'points');
-
-        $(this).children(".goal-score").html(levelScore[id]+" points");
+        $(_this).children(".bar").children(".achieved").css("width", ((allData[thisClass]-weekData[thisClass]) / levelScore[thisClass]) * tmpWidth + 'px');
+        $(_this).children(".bar").children(".recent").css("width", ((weekData[thisClass]) / levelScore[thisClass]) * tmpWidth + 'px');
+        $(_this).children(".bar").children(".recent").children("p").html(allData[thisClass]-weekData[thisClass] + '+' + weekData[thisClass] + 'points');
+        $(_this).children(".goal-score").html(levelScore[thisClass]+" points");
     }
+}
 
-});
+
+
+$(".main-progress>li").each(function(){generateProgress(this,allData,levelScore);});
+$(".week-progress>li").each(function(){generateProgress(this,allData,levelScore);});
+
 
 
 totalPoints = allData.math + allData.economics + allData.computer +allData.physics + allData.physicalExercise+ allData.english.value;
