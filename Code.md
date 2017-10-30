@@ -1346,3 +1346,17 @@ You can fit 64 of these chips on a single S-100 board. That will give you 8KB of
 
 <img src="images/code-chapter21-16-bit-addresses.png" width="500" >
 
+The 4KB memory board we're designing can occupy one of 16 different 4KB ranges in the entire 64KB memory space of the microprocessor. For example, the first bank can represent `0000h` to `0FFFh`, and the second bank can represent `1000h` to `1FFFh`, and so on.
+
+*It's common to wire a 4KB memory board so that you can flexibly specify at a later time what range of addresses is responds to.* To achieve this flexibility, you use something called a **DIP switch**.
+
+<img src="images/code-chapter21-DIP-switch.png" width="100">
+
+You can wire this switch with the high 4 address bits from the bus in a circuit called a **comparator**.
+
+<img src="images/code-chapter21-comparator.png" width="400">
+
+
+
+
+
