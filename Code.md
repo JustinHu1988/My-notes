@@ -1511,63 +1511,54 @@ The number of different colors that a video adapter is capable of is related to 
 
 The 320-by-200 resolution is just about the best you can do on a standard television set. That's why monitors made specifically for computers have a much *higher bandwidth* than television sets.
 
-- The first monitors sold with the IBM Personal Computer in 1981 could display 25 lines of 80 characters each.
-
-
-
-
-​			
-​		
-​	
-
-
-
-
-
-
-
-​		
-​				
-​		
-​	
-
-
-​			
-​		
-​				
-​		
-​		
-​	
+- 1981, The first monitors sold with the IBM Personal Computer could display 25 lines of 80 characters each.
+  - 80 characters is the number of characters on an IBM punch card.
+  - early days, the CRT displays attached to mainframes were often used for viewing the contents of punch cards.
+- 1987, IBM's Personal System/2 series of personal computers and Apple's Macintosh II both introduced video adapters that did 640 pixels horizontally by 480 pixels vertically.
+  - This has remained the *minimum-standard video resolution* ever since.
 
 
 
 
 
 
+### Input: keyboard
+
+> Note: Although we normally think of the computer display and the keyboard as connected in some way—what you type on the keyboard is displayed on the screen—they're usually physically distinct.
+
+A keyboard attached to a computer must include some hardware that provides a unique code for each key that's pressed.
+
+The code provided by the keyboard hardware is instead referred to as a **scan code**. A short computer program can figure out what ASCII code (if any) corresponds to a particular key being pressed on the keyboard.
 
 
 
+Assume we have a keyboard that has 16 keys, the keyboard hardware contains component:
+
+<img src="images/code-chapter21-keyboard.png" width="500">
+
+The 16 keys of the keyboard are shown as simple switches in the lower left area of this diagram. 
+
+A 4-bit counter repetitively and very quickly cycles through the 16 codes corresponding to the keys. *It must be fast enough to cycles through all the codes faster than a person can press and release a key.*
+
+When a key is pressed, no other counter output will cause the output of the selector to be 1. Each key has its own code.
+
+If your keyboard has 64 keys, you need a 6-bit scan code. That would involve a 6-bit counter. You could arrange the keys in an 8x8 array, using a 3-to-8 Decoder and a 1-of-8 Selector.
 
 
 
+What happens next in this circuit depends on the sophistication of the keyboard interface.
+
+*The keyboard hardware could include 1 bit of RAM for each key.* The RAM would be addressed by the counter, and the contents of the RAM could be `0` if the key is up and `1` if the key is down. This RAM could also be read by the microprocessor to determine the status of each key.
+
+One useful part of a keyboard interface is an *Interrupt signal*: 
+
+- the 8080 has an input signal that allows an external device to interrupt what the microprocessor is doing. 
+- The microprocessor responds by reading an instruction from memory. 
+- This is usually a RST instruction and causes the microprocessor to branch to a specific area of memory where a program to handle the interrupt is located.
 
 
 
-
-
-
-
-​		
-​	
-
-
-​			
-​		
-​	
-
-
-
-
+### Storage device
 
 
 
