@@ -1307,7 +1307,7 @@ Suppose we design a 8080 computer, we need:
 
 *Let's look at the various **interfaces** we can design to add these components to our computer.*
 
-#### memory
+### memory
 
 RAM arrays have:
 
@@ -1320,7 +1320,7 @@ The number of address inputs indicates the number of separate values that can be
 
 The number of data input and output signals indicates the size of the stored values.
 
-Example: *2012 memory chip*
+Example: *2102 memory chip*
 
 <img src="images/code-chapter21-2012-memory-chip.png" width="400">
 
@@ -1334,7 +1334,7 @@ Example: *2012 memory chip*
 
 If you want to organize this memory so that it stores 8-bit values rather than 1-bits values. At very least, you'll *need to wire 8 of these 2102 chips together to store entire bytes*.
 
-You can do this by connecting all the corresponding address signals, the $R/\overline{W}$ signals, and the $\overline{CS}$ signals of eight 2012 chips.
+You can do this by connecting all the corresponding address signals, the $R/\overline{W}$ signals, and the $\overline{CS}$ signals of eight 2102 chips.
 
 <img src="images/code-chapter21-2012-memory-chip-8.png" width="400">
 
@@ -1355,6 +1355,231 @@ The 4KB memory board we're designing can occupy one of 16 different 4KB ranges i
 You can wire this switch with the high 4 address bits from the bus in a circuit called a **comparator**.
 
 <img src="images/code-chapter21-comparator.png" width="400">
+
+You can then combine that Equal signal with a **2-Line-to-4-Line Decoder** to generate $\overline{CS}$ signals for each of the four banks of memory:
+
+<img src="images/code-chapter21-2-Line-to-4-Line.png" width="400">
+
+*Note*: 
+
+- You might assume that we also need eight 4-to-1 Selectors to select the correct data output signals from the four banks of memory. But we don't, and  here's why:
+- Normally, the output signals of TTL-compatible integrated circuits are either greater than 2.2 volts(for a logical `1`) or less than 0.4 volts(for a logical `0`). But what happens if you try connecting outputs? If one integrated circuit has a `1` output and another has a `0` output, and these two outputs are connected, what will result? You can't really tell, and *that's why outputs of integrated circuits aren't normally connected together.*
+
+##### Tri-state
+
+The data output signal of the 2102 chip is known as a **3-state**, or **tri-state**, output.
+
+- Besides a logical 0 and a logical 1, this data output signal can also be a third state. 
+- This state is nothing at all! It's as if nothing is connected to the pin of the chip.
+- *The data output signal of the 2102 chip goes into this third state when the $\overline{CS}$ input is 1.*
+- *This means that we can connect the corresponding data output signals of all banks and use those eight conbined outputs as the eight data input signals of the bus*.
+
+
+
+Tri-state output is essential to the operation of a bus.
+
+- Everything that's connected to the bus uses the data input signals of the bus. 
+- *At any time, only one board connected to the bus should be determining what those data input signals are.* *The other boards must be connected to the bus with deselected try-state outputs*.
+
+##### SRAM / DRAM
+
+- **SRAM**: static random access memory
+  - SRAM generally requires *4 transistors per bit of memory*.
+  - a SRAM chip suchas the 2102 will retain its contents as long as the chip has power. If the power goes off, the chip loses its contents.
+- **DRAM**: dynamic random access memory (nowaday standard)
+  - Requires only 1 transistor per bit.
+  - The drawback of DRAM is that it requires more complex support circuitry.
+  - *DRAM also requires that the contents of the memory be periodically accessed, even if the contents aren't needed*. This is called a **refresh cycle**, and it must occur *several hundred times per second*.
+  - Despite the hassle of using DRAM, the ever-increasing capacity of DRAM chips over the years has *made DRAM the standard*.
+  - Today's computers usually have sockets for memory right on the system board. The sockets take small boards called **single inline memory modules(SIMMs)** or **dual inline memory modules(DIMMs)** taht contain several DRAM chips. 
+
+
+
+### Output
+
+Early days, we use **cathode-ray tube(CRT,显像管)** as the video display for a computer.
+
+The electronic components that provide the signal to the video display are usually known as the **video display adapter(视频适配器)**.
+
+Often the video display adapter occupies its own board in the computer, which is know as the **video board(显卡)**.
+
+##### The principle of CRT
+
+While the two-dimensional image of a video display or a television might seem complex, *the image is actually composed of a single continuous beam of light that sweeps across the screen very rapidly*:
+
+The beam begins in the upper left corner and moves across the screen to the right, whereupon it zips back to the left to begin the second line. Each horizontal line is known as a **scan line(扫描行)**. The movement back to the beginning of each of these lines is known as the **horizontal retrace(水平回归)**. When the beam finishes the bottom line, it zips from the lower right corner of the screen to the upper left corner (the **vertical retrace(垂直回归)**) and the process begins again. For American television signals, this happens 60 times a second, which is known as the **field rate(场频)**. It's fast enough so that the image doesn't appear to be flickering.
+
+Television is complicated somewhat by the use of an **interlaced(隔行扫描)** display. Two fields are required to make up a single **frame(帧)**, which is a complete still video image. Each field contributes half the scan lines of the entire frame—the first field has the even scan lines, and the second field has the odd scan lines. The **horizontal scan rate**, which is the rate at which each horizontal scan line is drawn, is 15,750 Hertz. If you divide that number by 60 Hertz, you get 262.5 lines. That's the number of scan lines in one field. An entire frame is double that, or 525 scan lines.
+
+*Regardless of the mechanics of interlaced displays, the continuous beam of light that makes up the video image is controlled by a single continuous signal*.
+
+
+
+For black and white television, this video signal is quite straightforward and easy to comprehend.(Color gets a bit messier).
+
+- Sixty times per second, the signal contains a **vertical sync pulse(垂直同步脉冲)** that indicates the beginning of a field. This pulse is 0 volts(ground) for about 400 microseconds.
+- A **horizontal sync pulse(水平同步脉冲)** indicates the beginning of each scan line: The video signal is 0 volts for 5 microseconds 15,750 times per second.
+- Between the horizontal sync pulses, the signal varies from 0.5 volt for black to 2 volts for white, with voltages between 0.5 volt and 2 volts to indicate shades of gray.
+
+*The image of a television is thus partially digital and partially analog*. The image is divided in to 525 lines vertically, but each scan line is a continuous variation of voltages — an analog of the visual intensity of the image.
+
+But the voltage can't vary indiscriminately. There's an upper limit to how quickly the television set can respond to the varying signal. This is know as the television's **bankwidth(带宽)**.
+
+*Bandwidth is an extremely important concept in communication, and it relates to the amount of information that can be transferred over a particular communication medium*.
+
+##### Video display of computer
+
+###### The size of a primitive video display adapter
+
+If we want to connect a video display to a computer, it's awkward to think of the display as a hybrid analog and digital device. It's easier to treat it as *a completely digital device*. 
+
+From the perspective of a computer, it's most convenient to conceive of the video image as being divided into a rectangular grid of discrete dots known as **pixels**. (The term comes from the phrase picture element.)
+
+
+​					
+*The video bandwidth enforces a limit to the number of pixels that can fit in a horizontal scan line*. (I defined the bandwidth as the speed with which the video signal can change from black to white and back to black again.)
+
+- A bandwidth of 4.2 MHz for television sets allows two pixels 4.2 million times a second, or—dividing 2 x 4,200,000 by the horizontal scan rate of 15,750 — 533 pixels in each horizontal scan line. But about a third of these pixels aren't available because they're hidden from view—either at the far ends of the image or while the light beam is in the horizontal retrace. That leaves about 320 useful pixels horizontally.
+- Likewise, we don't get 525 pixels vertically. Instead, some are lost at the top and bottom of the screen and during the vertical retrace. Also, it's most convenient to not rely upon interlace when computers use television sets. A reasonable number of pixels in the vertical dimension is 200.
+
+We can thus say that the resolution of *a primitive video display adapter* attached to a conventional television set is *320 pixels x 200 pixels*.
+
+###### Text on video display
+
+One possible approach is that uses an 8x8 grid (64pixels) for each character:
+
+<img src="images/code-chapter21-ASCII-on-display.png" width="200">
+
+These are the characters corresponding to ASCII codes `20h` through `7Fh`(No visible characters are associated with ASCII codes `00h` through `1Fh`.)
+
+*Each character is identified by a 7-bit ASCII code, but each character is also associated with 64 bits that determine the visual appearance of the character. You can also think of these 64 bits of information as codes.*
+
+​		
+Using these character definitions, you can fit 25 lines of 40 characters each on the 320 x 200 video display, which (for example) is enough to fit an entire short poem by Amy Lowell:
+
+<img src="images/code-chapter21-25-40.png" width="400">
+
+###### RAM for display
+
+A video display adapter must contain some RAM to store the contents of the display, and the microprocessor must be able to write data into this RAM to change teh display's appearance. Most conveniently, this RAM is part of the microprocessor's normal memory space.
+
+*How much RAM is required for a display adapter*:for the previous example, the possible size can *range from 1 kilobyte to 192 kilobytes*.
+
+- **Low estimate**: restrict the adapter to text only. The screen can display 1000 characters, the RAM on the video board need only store the 7-bit ASCII codes of those 1000 characters. That is approximately *1 kilobyte*.
+
+  - **Character generator(字符生成器)**: Such a video adapter board must also include a character generator that contains the pixel patterns of all the ASCII characters. This generator is generally read-only memory, or ROM.
+
+  - **ROM**:A ROM is an integrated circuit manufactured so that a particular address always results in a particular data output. Unlike RAM, a ROM doesn't have any data input signals. *You can think of ROM as a circuit that converts one code to another*.
+
+  - A ROM that stores 8x8 pixel patterns of 128 ASCII characters could have *7 address signals* and *64 data output signals*. But 64 data output signals would make the chip quite large.
+
+  - **It's more convenient to have *10 address signals* and *8 output signals*.**
+
+    - Seven of the address signals specify the particular ASCII character.
+    - The other 3 address signals indicate the row. For example, address bits `000` indicate the top row and `111` indicate teh bottom row.
+    - The 8 output bits are eight pixels of each row.
+
+  - Example: the 10-bit address and the data output signals for a capital `A`:
+
+    |    Address     | Data Output |
+    | :------------: | :---------: |
+    | `1000001 000`  | `00110000`  |
+    | `1000001 001`  | `01111000`  |
+    | `1000001 010 ` | `11001100`  |
+    | `1000001 011 ` | `11001100`  |
+    | `1000001 100`  | `11111100`  |
+    | `1000001 101`  | `11001100`  |
+    | `1000001 110`  | `11001100`  |
+    | `1000001 111`  | `00000000`  |
+
+  - **Cursor**:  
+
+    - A video display adapter that displays text only must also have logic for a cursor.
+    - *The character row and column position of the cursor is usually stored in two 8-bit registers on the video board that the microprocessor can write values into*.
+
+- **High estimate**: if the video adapter board is not restricted to text only, it's referred to as a **graphics board(图形显卡)**.
+
+  - graphics video boards require more memory than text-only boards.
+  - For the screen which has 64,000 pixels:
+    - *Black-and-white*: if each pixel corresponds to one bit of RAM, such a board requires 64,000 bits of RAM, or *8000 bytes*. But this can only show two colors.
+    - *Gray-shade*: To display shades of gray from a graphics board, it's common for each pixel to correspond to an entire byte of RAM. A 320-bu-200 video board that displays 256 gray shades requires *64,000 bytes of RAM (64KB)*.
+    - *Full-color*: requires 3 bytes per pixel. That means *192,000 bytes of RAM*.
+
+The number of different colors that a video adapter is capable of is related to the number of bits used for each pixel:*$$Number\;of\;Colors = 2^{Number\;of\;bits\;per\;pixel}$$*.
+
+###### More pixels for display
+
+The 320-by-200 resolution is just about the best you can do on a standard television set. That's why monitors made specifically for computers have a much *higher bandwidth* than television sets.
+
+- The first monitors sold with the IBM Personal Computer in 1981 could display 25 lines of 80 characters each.
+
+
+
+
+​			
+​		
+​	
+
+
+
+
+
+
+
+​		
+​				
+​		
+​	
+
+
+​			
+​		
+​				
+​		
+​		
+​	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+​		
+​	
+
+
+​			
+​		
+​	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
