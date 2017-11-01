@@ -1558,7 +1558,39 @@ One useful part of a keyboard interface is an *Interrupt signal*:
 
 
 
-### Storage device
+### Long-term Storage device
+
+1. Punch card
+2. Magnetic storage
+   1. **Magnetic tape**: can't moving quickly to an arbitrary spot on the tape.
+   2. **Magnetic disk**
+      1. Floppy disks
+      2.  Hard disks
+
+Magnetic disk:
+
+- The surface of a disk is divided into concentric rings called **tracks(磁道)**.
+- Each track is divide like slices of a pie into **sectors(扇区)**.
+  - Each sector stores a certain number of bytes, usually 512 bytes.
+
+Interface for disk:
+
+- A floppy disk or hard disk usually comes with its own electrical interface and also requires an additional interface between that and the microprocessor. 
+- Several standard interfaces are popular for hard drives:
+  - SCSI
+  - ESDI
+  - IDE
+- *All these interfaces make use of direct memory access(DMA) to take over the bus and transfer data directly between random access memory and the disk, bypassing the microprocessor*.
+- *These transfers are in increments of the disk sector size, which is usually 512 bytes*.
+
+
+
+##### Difference between memory and storage:
+
+- Storage is non-volatile;
+- *When the microprocessor outputs an address signal, it's always addressing memory, not storage*.
+  - Getting something from disk storage into memory so that it can be accessed by the microprocessor requires extra steps.
+  - *It requires that the microprocessor run a short program that accesses the disk drive so that the disk drive transfers data from the disk into memory.*
 
 
 
@@ -1566,11 +1598,136 @@ One useful part of a keyboard interface is an *Interrupt signal*:
 
 
 
+#  Chapter 22. The Operating System
+
+Now, all teh hardware is in place, what do we miss?
+
+If we turn on this new computer now: 
+
+- the screen displays an array of perfectly formed — but totally random — ASCII characters. Because *semiconductor memory loses its contents when the power is off and begins in a random and unpredictable state when it first gets power.*
+- Likewise, all the RAM that we've constructed for the microprocessor contains random bytes.
+- *The microprocessor begins executing these random bytes as if they were machine code*. This won't cause anything bad to happen, but it won't be very productive either.
+
+What we're missing here is *software*:
+
+- *When a microprocessor is first turned on or reset, it begins executing machine code at a particular memory address*. In the case of the Intel 8080, that address is `0000h`.
+- *In a properly designed computer, that memory address should contain a machine-code instruction when the computer is turned on.*
+
+
+
+### **How does that machine-code instruction get there?**
+
+The process of getting software into a newly designed computer is possibly one of the most confusing aspects of the project.
+
+#### First way: control panel
+
+One way to do it is with a control panel, used for writing bytes into RAM:
+
+<img src="images/code-chapter22-control-panel.png" width="400">
+
+1. **Reset**: This control panel has a switch labeled Reset. The Reset switch is connected to the Reset input of the microprocessor.
+   - As long as that switch is on, the microprocessor doesn't do anything.
+   - When you turn off the switch, the microprocessor begins executing machine code.
+   - To use this control panel, you turn the Reset switch on to reset the microprocessor and to stop it from executing machine code.
+2. **Takeover**: turn on the Takeover switch to take over the address signals and data signals on the bus.
+   - Now, you can use the swiches labeled $A_{0}$ through $A_{15}$ to specify a 16-bit memory address.
+   - The light bulbs labeled $D_0$ through $D_{7}$ show you the 8-bit contents of that memory address.
+   - The write a new byte into that address, you set the byte up on switches $D_0$ through $D_7$ and flip the **Write** switch on and then off again.
+3. After you're finished inserting bytes into memory, turn the Takeover switch off and the Reset switch off, and the microprocessor will execute the program.
+
+This is how you *enter your first machine-code programs into a computer* that you've just built from scratch.
 
 
 
 
 
+**Getting program output to the video display**:
+
+Getting program output to the video display isn't as simple as it might first seem.
+
+For example:
+
+- a program that you write does a particular calculation that results in the value `4Bh`, you can't simply write that value to the video display memory. What you'll see in the screen in that case is the letter `K` because that's the letter that corresponds to the ASCII code `4Bh`.
+- Instead, you *need to write two ASCII characters to the display*: 
+  - `34h`: ASCII code for 4.
+  - `42h`: ASCII code for B.
+- Each nibble of the 8-bit result is a hexadecimal digit, which must be displayed by the ASCII code for that digit.
+
+Here's one *subroutines in 8080 assembly language that converts a nibble in the accumulator(assumed to be a value between `00h` and `0Fh`) to its ASCII equivalent*:
+
+```
+NibbleToAscii:	CPI A,0Ah	;Check if it's a letter or number
+				JC Number
+				ADD A,37h	;A to F converted to 41h to 46h
+				RET
+Number:			ADD A,30h	;0 to 9 converted to 30h to 39h
+				RET
+```
+
+This subroutine calls NibbleToAscii twice to convert a byte in accumulator A to two ASCII digits in registers B and C:
+
+```
+ByteToAscii:	PUSH PSW			;Save accumulator
+				RRC					;Rotate A right 4 times...
+				RRC
+				RRC
+				RRC					;...to get high-order nibble
+				CALL NibbleToAscii	;Convert to ASCII code
+				MOV B,A				;Move result to register B
+				POP PSW				;Get original A back
+				AND A,0Fh			;Get low-order nibble
+				CALL NibbleToaAscii	;Convert to ASCII code
+				MOV C,A				;Move result to register C
+				RET
+```
+
+These subroutines now let you display a byte in hexadecimal on the video display. If you want to convert to decimal, it's a bit more work.
+
+
+
+Although the control panel doesn't require a lot of hardware, what it also lacks is ease to use. The control panel has to be the absolute worst form of input and output ever devised. 
+
+*We need a keyboard.*
+
+
+
+#### Second way:
+
+We need a keyboard. Every time a key is pressed, an interrupt to the microprocessor occurs.
+
+The interrupt controller chip that we've used in our computer causes the microprocessor to respond to this interrupt by executing a `RST`(Restart) instruction. Let's suppose that this is a `RST 1` instruction.
+
+This instruction causes the microprocessor to save the current program counter on the stack and to jump to address `00008h`.
+
+Beginning at that address, you'll enter some code (using the control panel) that we'll call the **keyboard handler(键盘处理程序)**.
+
+To get this all working right, you'll need some code that's executed when the microprocessor is reset. This is called **initialization code(初始化代码)**.
+
+##### Initialization code
+
+1. *Stack pointer*: The initialization code first sets the stack pointer so that the stack is located in a valid area of memory.
+2. *Display memory*: The code then sets every byte in the video display memory to the hexadecimal value `20h`, which is the ASCII space character. This procedure gets rid of all the random characters on the screen.
+3. *Cursor*: The initialization code uses teh `OUT`(Output) instruction to set the position of the cursor to the first column of the first row.
+4. *EI* and *HLT*: The next instruction is `EI`(Enable Interrupts) to enable interrupts so that the microprocessor can respond to the keyboard interrupt. That instruction is followed by a `HLT` to halt the microprocessor.
+
+After the initialization code, *the computer will mostly be in a halted state resulting from executing the `HLT` instruction*. *The only event that can nudge the computer from the halted state is a Reset from the control panel or an interrupt from the keyboard*.
+
+##### Keyboard handler
+
+The keyboard handler is much longer than the initialization code. Here's where all the really useful stuff takes place.
+
+1. Whenever a key is pressed on the keyboard, the interrupt signal causes teh microprocessor to jump from the `HLT` statement at the end of the initialization code to the keyboard handler. 
+2. The keyboard handler uses the `IN`(Input) instruction to determine the key that has been pressed. 
+3. The keyboard handler then does something based on which key has been pressed and then executes a `RET`(Return) instruction to go back to the `HLT` statement to await another keyboard interrupt.
+4. **echoing** the key to the display
+   1. If the pressed key is a letter or a number or a punctuation mark, the keyboard handler uses the keyboard scan code, taking into account whether the Shift key is up or down, to determine the appropriate ASCII code.
+   2. Then, it writes this ASCII code into the video display memory at the cursor position.
+5. The cursor position is then incremented so that the cursor appears in the space after the character just displayed. In this way, someone can type a bunch of characters on the
+
+
+
+​		
+​	
 
 
 
