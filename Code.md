@@ -1565,7 +1565,7 @@ One useful part of a keyboard interface is an *Interrupt signal*:
    1. **Magnetic tape**: can't moving quickly to an arbitrary spot on the tape.
    2. **Magnetic disk**
       1. Floppy disks
-      2.  Hard disks
+      2. Hard disks
 
 Magnetic disk:
 
@@ -1691,17 +1691,31 @@ Although the control panel doesn't require a lot of hardware, what it also lacks
 
 
 
-#### Second way:
+#### Second way: use a keyboard
 
-We need a keyboard. Every time a key is pressed, an interrupt to the microprocessor occurs.
+##### **按执行顺序，简述键盘的准备工作过程：**（个人总结）
 
-The interrupt controller chip that we've used in our computer causes the microprocessor to respond to this interrupt by executing a `RST`(Restart) instruction. Let's suppose that this is a `RST 1` instruction.
+1. **Use control panel first** *（在这个阶段，键盘还无法直接使用，还是需要先使用control panel，将初始化代码和键盘处理程序输入到内存中）*
+   1. enter initialization code
+   2. enter the keyboard handler code (start at address `0008h`)
+   3. execute from initialization code
+2. **Once you accomplish this, you have keyboard handler. then you can use the keyboard.**
+   - Every time a key is pressed, an interrupt to the microprocessor occurs.
+   - The interrupt controller chip respond to this interrupt by executing a `RST`(Restart) instruction.
+   - This instruction causes the microprocessor to save the current program counter on the stack and to jump to address `0008h`. 
+   - Then the keyboard handler will execute.
 
-This instruction causes the microprocessor to save the current program counter on the stack and to jump to address `00008h`.
+下方是本小节的笔记：
 
-Beginning at that address, you'll enter some code (using the control panel) that we'll call the **keyboard handler(键盘处理程序)**.
+##### Basic
 
-To get this all working right, you'll need some code that's executed when the microprocessor is reset. This is called **initialization code(初始化代码)**.
+- Every time a key is pressed, an interrupt to the microprocessor occurs.
+- The interrupt controller chip that we've used in our computer causes the microprocessor to respond to this interrupt by executing a `RST`(Restart) instruction. Let's suppose that this is a `RST 1` instruction.
+- This instruction causes the microprocessor to save the current program counter on the stack and to jump to address `0008h`.
+
+Beginning at that address, you'll enter some code (*using the control panel*) that we'll call the **keyboard handler(键盘处理程序)**. 
+
+To get this all working right, you'll need some code that's executed when the microprocessor is reset. This is called **initialization code(初始化代码)**. 
 
 ##### Initialization code
 
@@ -1716,20 +1730,133 @@ After the initialization code, *the computer will mostly be in a halted state re
 
 The keyboard handler is much longer than the initialization code. Here's where all the really useful stuff takes place.
 
-1. Whenever a key is pressed on the keyboard, the interrupt signal causes teh microprocessor to jump from the `HLT` statement at the end of the initialization code to the keyboard handler. 
-2. The keyboard handler uses the `IN`(Input) instruction to determine the key that has been pressed. 
+1. Whenever a key is pressed on the keyboard, the *interrupt signal* causes the microprocessor to *jump from the `HLT` statement* at the end of the initialization code *to the keyboard handler*. 
+
+2. *The keyboard handler uses the `IN`(Input) instruction to determine the key that has been pressed.* 
+
 3. The keyboard handler then does something based on which key has been pressed and then executes a `RET`(Return) instruction to go back to the `HLT` statement to await another keyboard interrupt.
-4. **echoing** the key to the display
-   1. If the pressed key is a letter or a number or a punctuation mark, the keyboard handler uses the keyboard scan code, taking into account whether the Shift key is up or down, to determine the appropriate ASCII code.
+
+4. **echoing** the key to the display:
+   1. If the pressed key is a letter or a number or a punctuation mark, *the keyboard handler uses the keyboard scan code*, taking into account *whether the Shift key is up or down*, to determine the appropriate ASCII code.
    2. Then, it writes this ASCII code into the video display memory at the cursor position.
-5. The cursor position is then incremented so that the cursor appears in the space after the character just displayed. In this way, someone can type a bunch of characters on the
+   3. The cursor position is then incremented so that the cursor appears in the space after the character just displayed. In this way, someone can type a bunch of characters on the keyboard and they'll be displayed on the screen.
+   4. *Backspace*: If the key pressed is the Backspace key (corresponding to ASCII code `08h`), the keyboard handler erases the character that was last written to the video display memory. (Erasing the character is simply a matter of writing ASCII code 20h—the space character—in that memory location.) It then moves the cursor backward one space.
+
+5. **Command**: When the keyboard handler processes the *Return* or *Enter* key (corresponding to ASCII code `0Dh`), *the line of text in the video display memory is interpreted as a command to the computer*, that is, something for the keyboard handler to do).
+
+   - The keyboard handler includes a **command processor** that understand (for example) three commands: `W`, `D` and `R`.
+
+   - `W`: If the line of text begins with a `W`, the command means *Write* some byte into memory. The line you type on the screen looks something like this:
+
+     ```
+     W 1020 35 4F 78 23 9B AC 67
+     ```
+
+     This command instructs the command processor to write the hexadecimal bytes `35h`, `4Fh`, and so on into the memory addresses beginning at address `1020h`.
+
+     For this job, the keyboard handler *needs to convert ASCII codes to bytes*.
+
+   - `D`: If the line of text begins with a `D`, the command means *Display* some bytes in memory. The line you type on the screen looks like this:
+
+     ```
+     D 1030
+     ```
+
+     The command processor responds by displaying the 11 bytes stored beginning at location `1030h`.(I say 11 bytes because that's how many will fit on a 40-characterwide display on the same line following the address.) You can use the Display command to examine the contents of memory.
+
+   - `R`: if the line of text begins with an R, the command means *Run*. For example:
+
+     ```
+     R 1000
+     ```
+
+     This means: Run the program that's stored beginning at address `1000h`.
+
+     The command processor stores `1000h` in the register pair `HL` and then executes the instruction `PCHL`, which loads the program counter from register pair `HL`, effectively jumping to that address.
 
 
-
-​		
 ​	
 
+*Getting this keyboard handler and command processor working is an important milestone.* Once you have it , you no longer need suffer the indignity of the control panel. Typing bytes in from the keyboard is easier, faster and classier.
 
 
 
+> **感想**：
+>
+> Hardware accomplish all basic works.
+>
+> Software is used to determine an certain order list of basic hardware functions, in order to accomplish something. 
+>
+> **硬件：一切底层工作均是由硬件完成。**
+>
+> **软件：软件只负责编排“基础硬件指令”的执行顺序。当硬件的基础指令形成特定序列时，便会产生可以完成特定工作的程序。**
+
+
+
+#### Store codes in ROM
+
+Of course, you still have the problem of all the code you've entered disappearing when you turn off the power. 
+
+For that reason, you'll probably want to *store all this new code in read-only memory, or ROM.* 
+
+We assumed our chip was configured with this data during manufacture. You can also program ROM chips in the privacy of your home. 
+
+- Programmable read-only memory (**PROM**) chips are programmable only once. 
+- Erasable programmable read-only memory (**EPROM**) chips can be programmed and reprogrammed after being entirely erased by exposure to ultraviolet light.
+
+
+
+As you'll recall, we wired our RAM boards with a DIP switch that allows us to specify the starting address of the board.
+
+- If you're working with an 8080 system, initially one of your RAM boards will be set for address `0000h`.
+- *After you create a ROM, that ROM will occupy address `0000h` and the RAM board can be switched to a higher address.*
+
+
+
+**The creation of the command processor is an important milestone** not only because it provides a faster means to enter bytes into memory but also because the computer is now **interactive**. When you type something on the keyboard, the computer responds by displaying something on the screen.
+
+Once you have the command processor in ROM, you can start experimenting with writing data from memory to the disk drive and reading the data back into memory. *Storing programs and data on the disk is much safer than storing them in RAM and much more flexible than storing them in ROM.*
+
+#### More commands to command processor
+
+Eventually, you might want to add some new commands to the command processor.
+
+For example:
+
+- `S` command stands for Store(*Store memory to storage*):
+
+  ```
+  S 2080 2 15 3
+  ```
+
+  This command indicates that the block of memory beginning at address `2080h` is to be stored on the disk on side 2, track 15, and sector 3. (The size of this memory block is dependent on the sector size of the disk).
+
+- `L` for Load command:
+
+  ```
+  L 2080 2 15 3
+  ```
+
+  this load the sector from the disk back into memory.
+
+
+
+### File system
+
+Of course, you'll have to keep track of what you're storing where. You'll probably keep a pad and pencil handy for this purpose. 
+
+*Be careful*: You can't just store some code located at one address and then later load it back into memory at another address and expect it to work. All the Jump and Call instructions will be wrong because they indicate the old addresses. 
+
+Also, you might have a program that's longer than the sector size of your disk, so you need to store it in several sectors. Because some sectors on the disk might be occupied by other programs or data and some sectors might be free, the sectors in which you store a long program might not be consecutive on the disk.
+
+Eventually, you could decide that the manual clerical work involved in keeping track of where everything is stored on the disk is just too much. At this point, you're ready for a file system.
+
+
+
+A **file system** is a method of disk storage in which data is organized into **files**. 
+
+- *A file is simply a collection of related data that occupies one or more sectors on the disk*.
+- Most important, each file is identified by a **name** that helps you remember what the file contains.
+
+A file system is almost always part of a larger collection of software known as an **operating system**.
 
