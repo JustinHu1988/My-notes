@@ -1777,7 +1777,7 @@ The keyboard handler is much longer than the initialization code. Here's where a
 
 ​	
 
-*Getting this keyboard handler and command processor working is an important milestone.* Once you have it , you no longer need suffer the indignity of the control panel. Typing bytes in from the keyboard is easier, faster and classier.
+**Getting this keyboard handler and command processor working is an important milestone.** Once you have it , you no longer need suffer the indignity of the control panel. Typing bytes in from the keyboard is easier, faster and classier.
 
 
 
@@ -1858,5 +1858,284 @@ A **file system** is a method of disk storage in which data is organized into **
 - *A file is simply a collection of related data that occupies one or more sectors on the disk*.
 - Most important, each file is identified by a **name** that helps you remember what the file contains.
 
+### Operating system
+
 A file system is almost always part of a larger collection of software known as an **operating system**.
+
+The keyboard handler and command processor we've been building in this chapter could certainly evolve into an operating system. But instead of trudging through that long evolutionary process, let's take a look instead at a real operating system and get a feel for what it does and how it works.
+
+
+
+##### **CP/M**: Control Program for Micros
+
+- Most important operating system for 8-bit microprocessors in history.
+
+- Author: Written in the mid-1970s for the Intel 8080 microprocessor by **Gary Kildall**, who later founded Digital Research Incorporated(DRI).
+
+- *CP/M is stored on a disk.* 
+
+  - In the early days of CP/M, the most common medium for CP/M was a single-sided 8-inch diskette with 77 tracks, 26 sectors per track, and 128 bytes per sector.
+  - The first two tracks of the disk contain CP/M itself.
+  - The remaining 75 tracks on the CP/M disk are used for storing files.
+
+- *File system:* The CP/M file system is fairly simple, but is *satisfies the two major requirements*:
+
+  1. *each file on the disk is identified by a name.* This name is also stored on the disk; Indeed, all the information that CP/M needs to read these files is stored on the disk along with the files themselves.
+  2. *Files don't have to occupy consecutive sectors on a disk*. It often happens that as files of various sizes are created and deleted, free space on the disk becomes fragmented. The ability of a file system to store a large file in nonconsecutive sectors is very useful.
+
+- **Allocation block(分配块)**: 
+
+  - The sectors in the 75 tracks used for storing files are grouped into allocation blocks. 
+  - Each allocation block contains 8 sectors, or 1024 bytes.
+  - There are 243 allocation blocks on the disk, numbered 0 through 242.
+
+- **directory(目录)**: 
+
+  - The first two allocation blocks (a total of 2048 bytes) are used for the directory. 
+
+  - The directory is the area of the disk that contains the names and some crucial information about every file stored on the disk.
+
+  - Each file stored on the disk requires a **directory entry(目录项)** 32 bytes long. Because the total directory is just 2048 bytes, the diskette is limited to 64 files.
+
+  - *Each 32-byte directory entry contains the following information*:
+
+    |  Bytes  |       Meaning        |
+    | :-----: | :------------------: |
+    |   `0`   |   Usually set to 0   |
+    |  `1-8`  |       Filename       |
+    | `9-11`  |      File type       |
+    |  `12`   |     File extent      |
+    | `13-14` | Reserved (set to 0)  |
+    |  `15`   | Sector in last block |
+    | `16-31` |       Disk map       |
+
+    - The first byte in the directory entry is used only when the file system can be shared by two or more people at the same time. Under CP/M, this byte is normally set to 0, as bytes 13 and 14.
+
+    - Under CP/M, *each file is identified with a two-part name*:
+
+      1. **filename**: filename can have up to eight characters stored in bytes 1 through 8 of the directory entry.
+      2. **file type**: file type can have up to three character stored in bytes 9 through 11. There are several standard file types, for example:
+         - TXT: indicates a text file (a file containing only ACSII codes)
+         - COM (Command): indicates a file containing 8080 machine-code instructions — a program.
+
+      This file-naming convention has come to be known as 8.3(eight dot three), indicating the maximum eight letters before the period and the three letters after.
+
+    - **Disk map(磁盘存储表)**: The disk map of the directory entry indicates the allocation blocks in which the file is stored.
+
+      - Suppose the first four entries in the disk map are `14h`, `15h`, `07h`, and `23h`, and the rest are zeros. This means that the file occupies four allocatioon blocks, or 4KB of space. The file might actually be a bit shorter. 
+      - Byte `15` in the directory entry indicates how many 128-bytes sectors are actually used in the last allocation block.
+      - *The disk map is 16 bytes long; That length accommodates a file up to 16,384 bytes.*
+      - *A file longer than 16KB must use multiple directory entries, whick are called* **extents**. In that case, byte 12 is set to `0` in the first directory, `1` in the second directory entry, and so forth.
+
+- **Text file** and **binary file**:
+
+  - Text files are also called ASCII files, or text-only files.
+
+  - A text file contains ASCII codes (including carriage return and linefeed codes) that correspond to text readable by human beings.
+
+  - A file that isn't a text file is called a binary file. A CP/M COM file is a binary file because it contains 8080 machine code.
+
+  - *Storing numbers in different type of files*:
+
+    Suppose a file (very small file) must contain three 16-bit numbers — for example, `5A48h`, `78BFh`, and `F510h`.
+
+    - A binary file with these three numbers is just 6 bytes long:
+
+      ```
+      48 5A BF 78 10 F5	// Intel format
+      5A 48 78 BF F5 10	// Motorola format
+      ```
+
+    - An ASCII text file storing these same four 16-bit values contains the bytes:
+
+      ```
+      35 41 34 38 68 0D 0A 37 38 42 46 68 0D 0A 46 35 31 30 68 0D 0A
+      ```
+
+      These bytes are ASCII codes for numbers and letters, where each number is *terminated by a carriage return(`0Dh`) and a linefeed(`0A`) character*.
+
+      The text file is more conveniently displayed not as string of bytes that happen to be ASII codes, but as the characters themselves:
+
+      ```
+      5A48h
+      78BFh
+      F510h
+      ```
+
+      A ASCII text file that stores these three numbers could also contain these bytes:
+
+      ```
+      32 33 31 31 32 0D 0A 33 30 39 31 31 0D 0A 36 32 37 33 36 0D 0A
+      ```
+
+      These bytes are the ASCII codes for the decimal equivalents of the three numbers:
+
+      ```
+      23112
+      30911
+      62736
+      ```
+
+      *Since the intent of using text files is to make the files easier for humans to read, there's really no reason not to use decimal rather than hexadecimal numbers.*
+
+      ​
+
+- **Boorstrap loader(引导程序)**
+
+  CP/M itself is stored on the first two tracks of a disk. *To run, CP/M must be loaded from the disk into memory*.
+
+  - The ROM in a computer that uses CP/M need not be extensive. All the ROM needs to contain is a small piece of code known as a *bootstrap loader*. (Because that code effectively pulls the rest of the operating system up by its bootstraps).
+  - **booting the operating system(引导操作系统)**
+    1. *The bootstrap loader loads the very first 128-byte sector from the diskette into memory and runs it*.
+    2. *This sector contains code to load the rest of CP/M into memory*.
+
+  *Eventually, CP/M arranges itself to occupy the area of RAM with the highest memory addresses*.
+
+  ​
+
+- **CP/M in memory**:
+
+  - The entire organization of memory after CP/M has loaded looks like this:
+
+  <img src="images/code-chapter22-memory-after-bootstrap.png" width="300">
+
+  - This diagram isn't to scale:
+    - The three components of CP/M:
+
+      1. the Basic Input/Output System **(BIOS,基本输入输出系统)**
+      2. the Basic Disk Operating System **(BDOS,基本磁盘操作系统)**
+      3. the Console Command Processor **(CCP,控制台命令处理程序)**
+
+      Only occupy only about 6KB of memory in total.
+
+    - The Transient Program Area **(TPA,临时程序区域)**: about 58KB of memory in a 64KB computer(initially contains nothing).
+
+      ​
+
+- **Console Command Processor, CCP 控制台命令处理程序**:
+
+  - The Console Command Processor is equivalent to the command processor that we were building earlier.
+
+  - The word **console(控制台)** refers to a combination of a keyboard and a display.
+
+  - The CCP displays a **prompt(命令提示符)** on the display, which looks like this:
+
+    ```
+    A>
+    ```
+
+
+  - The prompt is your signal to type something in.
+  - In computers that have more than one disk drive, the A refers to the first disk drive, the one from which CP/M was loaded.
+  - You type in commands following the prompt and press the Enter key.
+  - The CCP then executes these commands, which usually produces information displayed on the screen.
+  - When the command has finished, the CCP displays the prompt again.
+
+
+  - *The CPP recognizes just a few commands*:
+
+    - **DIR**: Possibly the most important is this one:
+
+      ```
+      DIR
+      ```
+
+      Which *displays the directory of the disk* — that is, a list of all the files stored on the disk. _You can use the special character `?` and `*` to limit this list to files of a particular name or type_. For example:
+
+      ```
+      DIR *.TXT
+      ```
+
+      Displays all text files, while
+
+      ```
+      DIR A???B.*
+      ```
+
+      displays a list of all files that have a five-character name where the first letter is A and the last letter is B.
+
+    - **ERA**: short for *Erase*. You use this to erase a file from the disk. For example:
+
+      ```
+      ERA MYLETTER.TXT
+      ```
+
+      erases the file with that name, while:
+
+      ```
+      ERA *.TXT
+      ```
+
+      Erases all the text files. *Erasing a file means freeing the directory entry and the disk space occupied by the file.*
+
+    - **REN**: short for *Rename*. You use this command to change the name of a file.
+
+    - **TYPE**: display the contents of a text file. Because a text file contains only ASCII codes, this command allows you to read a file right on the screen, like this:
+
+      ```
+      TYPE MYLETTER.TXT
+      ```
+
+    - **SAVE**: save one or more 256-byte memory blocks located in the Transient Program Area(临时程序区域) to a disk file with a specified name.
+
+  - *If you type in a command that CP/M doesn't recognize, it assumes you're specifying the name of a program that's stored as a file on the disk*:
+
+    - Programs always have the file type COM, which stands for Command.
+
+    - The CCP searches for a file of that name on the disk. If one exists, CP/M loads the file from disk into the Transient Program Area, which *begins at memory address `0100h`.* This is how you run programs that are located on the disk. 
+
+    - For example, if you type:
+
+      ```
+      CALC
+      ```
+
+      following the CP/M prompt: 
+
+      1. if a file named `CALC.COM` exists on the disk
+      2. the CCP loads that file into memory starting at address `0100h`
+      3. then executes the program by jumping to the machine-code instruction located at address `0100h`.
+
+    Earlier I explained how you can insert machine-code instructions any-where into memory and execute them, but *in CP/M, programs that are stored in disk files must be designed to be loaded into memory beginning at a specific memory location, which is `0100h`.*
+
+  - *CP/M programs*:
+
+    - PIP (Peripheral Interchange Program外设交换程序): allows you to copy files.
+    - ED: a text editor that allows you to create and modify text files.
+
+    Programs such as PIP and ED, which are small and designed to do simple chores, are often known as **utility programs(实用程序)**.
+
+    If you were running a CP/M system, you would probably purchase larger **application programs(应用程序)**, such as word processors or computer spreadsheets. Or you might write such programs yourself. All these programs are also stored in files of the COM type.
+
+  ​
+
+*So far we've seen two function of operating system*:
+
+1. Provides commands and utilities that let you perform refimentary housekeeping regarding files.
+2. Loads program files into memory and executes them.
+
+*An operating system also has a third major function:*
+
+**API (application programming interface,应用程序接口)**
+
+- Basic:
+  - A program running under CP/M often needs to write some output to the video display. Or the program might need to read something that you've typed on the keyboard. 
+  - But in most cases, the CP/M program does *not* write its output directly into video display memory. Likewise, the CP/M program does *not* access the hardware of the keyboard to see what you've typed. And the CP/M program definitely does *not* access the disk drive hard-ware to read and write disk sectors.
+  - Instead, **a program running under CP/M make use of a collection of subroutines built into CP/M for performing these common chores**.
+  - These subroutines have been specifically designed so that programs can get easy access to all the hardware of the computer — including the video display, keyboard, and disk — without worrying programmers about how these peripherals are actually connected. Most inportant, *a program running under CP/M doesn't need to know about disk sector and tracks. That's CP/M's job.* It can instead store whole files on the disk and later read them.
+- **Providing a program with easy access to the hardware of the computer is the third major function of an operating system. This access that the operating system provides is called the application programming interface, or API.**
+- Use the API:
+  - ​
+
+
+
+
+
+
+
+
+
+ 
+
+
 
