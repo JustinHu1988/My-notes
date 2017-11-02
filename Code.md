@@ -2123,19 +2123,96 @@ The keyboard handler and command processor we've been building in this chapter c
   - But in most cases, the CP/M program does *not* write its output directly into video display memory. Likewise, the CP/M program does *not* access the hardware of the keyboard to see what you've typed. And the CP/M program definitely does *not* access the disk drive hard-ware to read and write disk sectors.
   - Instead, **a program running under CP/M make use of a collection of subroutines built into CP/M for performing these common chores**.
   - These subroutines have been specifically designed so that programs can get easy access to all the hardware of the computer — including the video display, keyboard, and disk — without worrying programmers about how these peripherals are actually connected. Most inportant, *a program running under CP/M doesn't need to know about disk sector and tracks. That's CP/M's job.* It can instead store whole files on the disk and later read them.
+
 - **Providing a program with easy access to the hardware of the computer is the third major function of an operating system. This access that the operating system provides is called the application programming interface, or API.**
+
 - Use the API:
-  - ​
+  - A program running under CP/M uses the API by *setting register `C` to a particular value (called the function value) and executing the instruction*:
+
+    ```
+    CALL 5
+    ```
+
+  - For example:
+
+    - a program obtains the ASCII code of a key typed on the keyboard by executing:
+
+      ```
+      MVI C,01h
+      CALL 5
+      ```
+
+      On return, accumulator `A` contains the ASCII code of the key that was pressed.
+
+
+    - Similarly,
+
+      ```
+      MVI C,02h
+      CALL 5
+      ```
+
+      write the ASCII character in accumulator `A` to the video display at the cursor position and then increments the cursor.
+
+
+    - If  a program needs to create a file, it sets register pair `DE` to an area of memory that basically contains the name of the file. Then it executes the code:
+
+      ```
+      MVI C,16h
+      CALL 5
+      ```
+
+      In this case, the `CALL 5` instruction cause CP/M to create an empty file on the disk. The program can then use other functions to write to the file and eventually *close* the file, which means it has finished using the file for now. The same program or another program can later *open* the file and read its contents.
+
+  - What does `CALL 5` actually do?
+
+    *The memory location at `0005h` is set up by CP/M to contain a `JMP`(Jump) instruction, which jumps to a location in the* **Basic Disk Operation System (BDOS) ** *of CP/M.*
+
+    This area contains a bunch of subroutines that execute each of the CP/M functions.
+
+    The BDOS -- as its name implies -- is primarily responsible for maintaining the file system on the disk. 
+
+    Frequently, the BDOS has  to make use of subroutines in the Basic Input/Output System (BIOS) of CP/M, which is the area that actually accesses the hardware of the keyboard, the video display, and the disk drives.
+
+    *In fact, the BIOS is the only section of CP/M that needs to know about the hardware of the computer.*
+
+    *The CCP does everything it needs to do using BDOS functions, and so do the utilities that come with CP/M.*
+
+- The API is a *device-independent* interface to the hardware of the computer.
+
+  - What this means is that a program written for CP/M doesn't need to know the actual mechanics of  how the keyboard works on a particular machine, or how the video display works, or how to read and write disk sectors.
+  - It simply uses the CP/M functions to perform tasks that involve the keyboard, display, and disk.
+  - The bonus is that *a CP/M program can run on many different computers* that might use very different hardware to access these peripherals. (All CP/M programs must have an Intel 8080 microprocessor, however, or a processor that executes 8080 instructions, such as the Intel 8085 or the Zilog Z-80).
+  - Just as long as the computer is running CP/M, the program uses the CP/M functions to indirectly access this hardware.
+
+  ​
+
+
+After CP/M:
+
+- CP/M was once a very popular operating system for the 8080 and remains historically important.
+- CP/M was the major influence behind a 16-bit operating system named **QDOS** (Quick and Dirty Operating System) written by Tim Paterson of Seattle Computer Products for Intel's 16-bit 8086 and 8088 chips.
+- QDOS was eventually renamed **86-DOS** and licensed by Microsoft Corporation.
+- Under the name **MS-DOS**(Microsoft Disk Operating System), the operating system was licensed to IBM for the first IBM Personal Computer, introduced in 1981.
+- Although a 16-bit version of CP/M (called CP/M-86) was also available for the IBM PC, MS-DOS quickly became the standard. MS-DOS (called PC-DOS on IBM's computers) was also licensed to other manufacturers who created computers compatible with the IBM PC.
+
+##### MS-DOS
+
+**FAT (File Allocation Table 文件配置表)**
+
+- MS-DOS didn't retain CP/M's file system.
+- The file system in MS-DOS instead used a scheme called the *File Allocation Table, or FAT,* which had been originally invented at Microsoft in 1977.
+- The disk space is divided into *clusters*, which --  depending on the size of the disk -- can range in size from 512 bytes to 16,384 bytes.
+- Each file is a collection of clusters.
+- *The directory entry for a file indicates only that file's starting cluster*.
+- The FAT itself indicates for each cluster on the disk what the next cluster is.
+- The directory entries on an MS-DOS disk are 32 bytes long and use the same 8.3 filenaming convention as CP/M. The terminology is a little different, however: The last three letters are called the filename **extension** rather than the file type.
+- The MS-DOS directory entry need not contain a list of allocation blocks. Instead, the directory includes such useful information as the date and time the file was last modified, and the size of the file.
 
 
 
+The 
 
-
-
-
-
-
- 
 
 
 
