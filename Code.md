@@ -2151,7 +2151,7 @@ The keyboard handler and command processor we've been building in this chapter c
       MVI C,02h
       CALL 5
       ```
-
+    
       write the ASCII character in accumulator `A` to the video display at the cursor position and then increments the cursor.
 
 
@@ -2161,7 +2161,7 @@ The keyboard handler and command processor we've been building in this chapter c
       MVI C,16h
       CALL 5
       ```
-
+    
       In this case, the `CALL 5` instruction cause CP/M to create an empty file on the disk. The program can then use other functions to write to the file and eventually *close* the file, which means it has finished using the file for now. The same program or another program can later *open* the file and read its contents.
 
   - What does `CALL 5` actually do?
@@ -2211,7 +2211,130 @@ After CP/M:
 
 
 
-The 
+
+BIOS wasn't required in MS-DOS:
+
+The early versions of MS-DOS were structured much like CP/M. *But the BIOS wasn't required in MS-DOS because the IBM PC itself included a complete BIOS in ROM.* 
+
+
+
+The command processor in MS-DOS is a file named COMMAND.COM. MS-DOS programs come in two flavors:
+
+- Programs with the filename extension *COM* are limited to 64KB in size.
+- Larger programs have the filename extension **EXE**.(means executable)
+
+
+
+**MS-DOS API** — new API
+
+- Although MS-DOS initially supported the `CALL 5` interface for API functions, a newer interface was recommended for new programs.
+- The new interface use a feature of the 8086 called the **software interrupt(软件中断)**, which is similar to a subroutine call except that the program doesn't need to know the actual address that it's calling.
+- *A program calls an MS-DOS API function by executing the instruction `INT 21h`.*
+
+
+
+*Applications which access hardware directly*:
+
+In theory, application programs are supposed to access the hardware of the computer on through the interfaces provided by the operating system.
+
+But many application programmers who dealt with small computer operating system of the 1970s and early 1980s often bypassed the operating system, particularly in dealing with the video display.
+
+Programs that directly wrote bytes into video display memory ran faster than programs that didn't.
+
+Indeed, for some applications — such as those that needed to display graphics on the video display — the operating system was totally inadequate.
+
+What many programmers liked most about MS-DOS was that it "stayed out of the way" and let programmers write programs as fast as the hardware allowed.
+
+For this reason, popular software that ran on the IBM PC often relied upon idiosyncrasies of the IBM PC hardware. Manufacturers of machines intended to be competitive with the IBM PC were often forced to duplicate these idiosyncrasies; not doing so would cause popular programs to run poorly, if at all. Such software often included the hardware requirement "IBM Personal Computer or 100 percent compatible" or something similar.
+
+
+
+MS-DOS 2.0:
+
+- Released in March 1983.
+- was enhanced to accommodate hard disk drives, which at the time were small but which would soon get much larger.
+  - The larger a disk drive, the more files it can store.
+  - And, the more files a disk can store, the more confusing it becomes to find a particular file or to impose any type of organization on the files.
+- The solution in MS-DOS 2.0 is called a **hierarchical file system(层次文件系统)**.
+  - This was added to the existing MS-DOS file system with a minimum number of changes.
+  - As you'll recall, a disk contains an area called a directory, which is a list of files that includes information about where the files are stored on the disk.
+  - In a hierarchical file system, some of these files might themselves be directories — that is, they're files that contain a list of other files. Some of these files might also be directories. 
+  - The normal directory on the disk is called **root directory(根目录)**.
+  - Directories contained in other directories are called **subdirectories(子目录)**.
+  - The directories (sometimes called **folders(文件夹)**) become a way to group related files.
+
+The hierarchical file system — and some other feature of MS-DOS 2.0 — were borrowed from an operating system named **UNIX**.
+
+##### UNIX
+
+- *developed in the early 1970s at Bell Telephone Laboratories*
+- largely by Ken Thompson and Dennis Ritchie
+- Name: UNIX was originally written as a less hardy version of an earlier operating system named Multics (Which stands for Multiplexed Information and Computing Services) that Bell labs had been codeveloping with MIT and GE.
+
+Among hard-core computer programmers, UNIX is the most beloved operating system of all time.
+
+- While most operating systems are written for specific computers, UNIX was designed to be **portable(可移植性)**, which means that is can be adapted to run on a variety of computers.
+
+
+
+There is no single version of UNIX. There are, instead, a variety of different versions known under different names running on different computers sold by different vendors.
+
+Lots of people have put their fingers into UNIX and left their fingerprints behind.
+
+Still, a pervalent *"UNIX philosophy"* seems to guide people as they add pieces to UNIX. *Part of that philosophy is using text files as common denominator*. Many UNIX utilities read text files, do something with them, and then write another text file. *UNIX utilities can be strung together in chains that do different types of processing on these text files*.
+
+
+
+**Time-sharing(分时)**
+
+- UNIX was originally written for computers that were too large and too expensive for just one person to use.
+- Such computers allow multiple users to interact with then simultaneously through a technique known as *time-sharing*.
+- The computer is connected to multiple displays and keyboards called **terminals(终端)**.
+- By quickly switching attention among all the terminals, an operating system can make it seem as if the computer is servicing everyone at the same time.
+
+**Multitasking (多任务)**
+
+- An operating system that runs multiple programs concurrently is known as a *multitasking operating system*, and obviously such an operating system is more complex than single-tasking operating systems such as CP/M and MS-DOS.
+- Multitasking complicates the file system because multiple users might try to use the same files at the same time.
+- It also affects how the computer allocates memory to the different programs, so some kind of **memory management(内存管理)** is required.
+- As the multiple programs running concurrently need more memory, it's likely that the computer won't have enough memory to go around. The operating system might need to implement a technique called **virtual memory(虚拟内存)**, in which blocks of memory are stored in temporary files during periods when the memory blocks aren't needed and then read back into memory when they are needed.
+
+
+
+**FSF** and **GNU**:
+
+The most interesting development for UNIX in recent years has been the **Free Software Foundation(FSF 自由软件基金会)** and the **GNU project**, both founded by Richard Stallman.
+
+GNU stands for "*G*NU's *N*ot *U*NIX", which, of course, it's not.
+
+Instead, *GNU is intended to be compatible with UNIX but distributed in a manner that prevents the software from becoming proprietary*.
+
+The GNU project has resulted in many UNIX-compatible utilities and tools, and also **Linux**, which is the core (or kernel) od a UNIX-compatible operating system. Written largely by linus Torvalds of Finland, Linux has become quite popular in recent years.
+
+
+
+The most significant trend in operating systems since the mid-1980s, however, has been the development of large and sophisticated systems, such as the Apple Macintosh and Microsoft Windows, that incorporate graphics and a visually rich video display intended to make applications easier to use. I'll describe this trend in the last chapter of this book.
+
+
+
+
+
+# Chapter 23. Fixed Point, Floating Point
+
+
+
+
+
+We're accustomed to thinking of numbers as **continuous**.
+
+But digital computers can't deal with continuums. Bits are either 0 or 1, with nothing between. So by their very nature, digital computers must deal with **discrete** values.
+
+*The number of discrete values you can represent is directly related to the number of bits you have available*.
+
+
+
+
+
 
 
 
