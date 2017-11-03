@@ -2331,11 +2331,60 @@ But digital computers can't deal with continuums. Bits are either 0 or 1, with n
 
 *The number of discrete values you can represent is directly related to the number of bits you have available*.
 
+### Fixed Point
 
+##### Fractional values be represented in binary
 
+**Binary-coded decimal (BCD)**
 
+- BCD is a binary coding of decimal numbers, Each decimal digit (0, 1, 2, 3, 4, 5, 6, 7, 8, and 9) requires 4 bits, as shown in the following table:
 
+  | Decimal Digit | Binary Value |
+  | :-----------: | :----------: |
+  |       0       |    `0000`    |
+  |       1       |    `0001`    |
+  |       2       |    `0010`    |
+  |       3       |    `0011`    |
+  |       4       |    `0100`    |
+  |       5       |    `0101`    |
+  |       6       |    `0110`    |
+  |       7       |    `0111`    |
+  |       8       |    `1000`    |
+  |       9       |    `1001`    |
 
+- BCD is particularly useful in computer programs that work with money amounts in dollars and cents.(because many of the fractional numbers require just two decimal places)
 
+- It's common to store two BCD digits in 1 byte, a system that's sometimes called **packed BCD**.
 
+- Two's complements aren't used with BCD. For this reason, packed BCD also usually requires *an extra bit* to indicate whether the number is positive or negative. This is called the **sign bit(符号位)**.
+
+- Because it's convenient to have a particular BCD number stored in a whole number of bytes, that one little sign bit usually involved sacrificing 4 bits or 8 bits of storage.
+
+- Example: the amount -4,325,120.25 is represented by the 5 bytes:
+
+  ```
+  00010100 00110010 01010001 00100000 00100101
+  ```
+
+  or, in hexadecimal:
+
+  ```
+  14h 32h 51h 20h 25h
+  ```
+
+  Notice *the nibble at the far left is 1 to indicate a negative value.* That's the sing bit. It would be 0 if the number were positive.
+
+- Example 2: If you need to represent values from -99,999,999.99 through 99,999,999.99, you'd need 6 bytes -- 5 bytes for the 10 digits and a byte just for the sign bit.
+
+- This type of storage and notation is also called **fixed-point(定点数)** format, because the decimal point is always fixed at a particular number of places.
+
+- Notice that there's nothing actually stored along with the number that indicates the position of the decimal point.
+
+- Programs that work with numbers in fixed-point format must know where the decimal point is.
+
+*Fixed-point format works well only if you know that numbers aren't going to get too large for the memory location that you've mapped out and that you won't need more decimal places.*
+
+Where fixed-point format utterly fails is in situations in which numbers can get very large or very small.
+
+### scientific notation
 
