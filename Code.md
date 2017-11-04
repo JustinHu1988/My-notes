@@ -2388,3 +2388,88 @@ Where fixed-point format utterly fails is in situations in which numbers can get
 
 ### scientific notation
 
+Scientific notation is particularly useful for representing very large and very small numbers because it incorporates a power of ten that allows us to avoid writing out long strings of zeros.
+
+In scientific notation, the number
+
+- $$490,000,000,000$$
+
+  is written
+
+  $$4.9 \times 10^{11}$$
+
+- and the number
+
+  $$0.00000000026$$
+
+  is written
+
+  $$2.6 \times 10^{-10}$$
+
+In these two examples, the number 4.9 and 2.6 are called the **fraction part**, or the **characteristic**, or sometimes the **mantissa**. But to be more in tune with the terminology used with computers, I'm going to call this part of scientific notation the **significand**.
+
+The **exponent** part tells you how many places the decimal point has been moved in the significand.
+
+
+
+In the normalized form of scientific notation. the significand is always greater than or equal to 1 and less than 10.
+
+
+
+### floating-point notation
+
+- In computers, the alternative to fixed-point notation is called **floating-point** notation, and the floating-point format is ideal for storing small and large numbers because it's based on scientific notation.
+- But *the floating-point format as used in computers employs binary numbers written in scientific.* 
+- The first thing we have to figure out is what fractional numbers look like in binary.
+
+The normalized significand of numbers in binary scientific notation is always greater than or equal to 1 but less than binary 10, which is 2 in decimal. So in binary scientific notation, the number:
+
+$$101.1101$$
+
+is expressed as 
+
+$$1.011101 \times 2^2$$.
+
+One interesting implication of this rule is that a normalized binary floating-point number always has a 1 and nothing else at the left of the binary point.
+
+
+
+*Most contemporary computers and computer programs that deal with floating-point numbers use a standard established by the IEEE*(the Institute of Electrical and Electronics Engineers) in 1985, a standard also recognized by ANSI (the American National Standards Institute).
+
+ANSI/IEEE Std 754-1985 is called the **IEEE Standard for Binary Floating-Point Arithmetic**. *It gives the basics of encoding binary floating-point numbers in a convenient manner.*
+
+The IEEE floating-point standard defines two basic format:
+
+1. single precision: requires 4 bytes
+2. double precision: require 8 bytes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
