@@ -2436,15 +2436,76 @@ One interesting implication of this rule is that a normalized binary floating-po
 
 *Most contemporary computers and computer programs that deal with floating-point numbers use a standard established by the IEEE*(the Institute of Electrical and Electronics Engineers) in 1985, a standard also recognized by ANSI (the American National Standards Institute).
 
-ANSI/IEEE Std 754-1985 is called the **IEEE Standard for Binary Floating-Point Arithmetic**. *It gives the basics of encoding binary floating-point numbers in a convenient manner.*
+ANSI/IEEE Std 754-1985 is called the **IEEE Standard for Binary Floating-Point Arithmetic(IEEE二进制浮点数算术运算标准)**. *It gives the basics of encoding binary floating-point numbers in a convenient manner.*
 
 The IEEE floating-point standard defines two basic format:
 
-1. single precision: requires 4 bytes
-2. double precision: require 8 bytes
+1. **single precision(单精度格式)**: requires 4 bytes
+2. **double precision(双精度格式)**: require 8 bytes
 
 
 
+
+##### Single precision
+
+- three part
+
+  - 1-bit sign (0 for positive and 1 for negative)
+
+  - 8-bit exponent
+
+  - 23-bit significand fraction, with the least-significant bits on the right
+
+    | s=1-bit Sign | e=8-bit Exponent | f= 23-bit Significand Fraction |
+    | ------------ | ---------------- | ------------------------------ |
+    | 符号位          | 指数               | 有效数字                           |
+
+- **Precision(精度)**:
+
+  - Because the significand of a normalized binary floating-point number always has a 1 to the left of the binary point, *that bit is not included in the storage of floating-point numbers in the IEEE format*.
+  - The 23-bit fractional part of the significand is the only part stored. *So even though only 23 bits are used to store the significand, the precision is said to be 24 bits*.
+
+- **bias(偏移量)**:
+
+  - The 8-bit exponent part can range from 0 through 255. This is called a **biased exponent(偏移指数)**, which means that you must subtract a number—called the *bias*—from the exponent in order to determine the signed exponent that actually applies. 
+  - *For single-precision floating-point numbers, this bias is 127.*
+
+- The exponents 0 and 255 are used for special purposes, If the exponent ranges from 1 through 254, the number represented by particular values of s (the sign bit), e (the exponent), and f (the significand fraction) is
+
+  **$$(-1)^s\times1.f\times2^{e-127}$$**
+
+  - That negative 1 to the s power is a mathematician's annoyingly clever way of saying, "If s is 0, the number is positive (because anything to the 0 power equals 1); and if s is 1, the number is negative (because –1 to the 1 power is –1)."
+  - The next part of the expression is 1.f, which means a 1 followed by a binary point, followed by the 23 bits of the significand fraction. This is multiplied by 2 to a power. The exponent is the 8-bit biased exponent stored in memory minus 127.
+
+- **Special case**
+
+  Notice that I haven't mentioned any way to express a very common number that we seem to have forgotten about, namely 0. That's one of the special cases, which are these:
+
+  - If `e` equals 0, and `f` equals 0, the number is 0. Generally, all 32 bits are set to 0 to signify 0. But the sign bit can be 1, in which case the number is interpreted as a negative 0. A negative 0 can indicate a very small number that can't be represented with the available digits and exponents in single-precision format but which is still less than 0.
+  - If e equals 0 and f doesn't equal 0, the number is valid, but it's not normalized. The number equals $(-1)^s\times0.f\times2^{-127}$.
+  - Notice that the significand has a `0` to the left of the binary point.
+  - If `e` equals 255 and `f` equals 0, the number is positive or negative infinity,
+    depending on the sign `s`.
+  - If `e` equals 255 and `f` doesn't equal 0, the value is considered to be not a
+    number, which is abbreviated `NaN`. A `NaN` could indicate an unknown number or the result of an invalid operation.
+
+- smallest and largest:
+
+  - The smallest normalized positive or negative binary number that can be represented in single-precision floating-point format is:
+
+    $1.00000000000000000000000_{TWO} \times 2^{-126}$.
+
+    That's 23 binary zeros following the binary point.
+
+  - The largest normalized positive or negative number is that can be represented in single-precision floating-point format is this:
+
+    $1.11111111111111111111111_{TWO} \times 2^{127}$.
+
+  - In decimal, these two numbers are approximately $1.175494351 \times 10^{-38}$ and $3.402823466  \times 10^{38}$. That's *the effective range of single-precision floating-point notation.*
+
+- **The problem of Precision(精度的问题):**
+
+  - ​
 
 
 
