@@ -2144,24 +2144,20 @@ The keyboard handler and command processor we've been building in this chapter c
 
       On return, accumulator `A` contains the ASCII code of the key that was pressed.
 
-
     - Similarly,
 
       ```
       MVI C,02h
       CALL 5
       ```
-    
       write the ASCII character in accumulator `A` to the video display at the cursor position and then increments the cursor.
 
-
-    - If  a program needs to create a file, it sets register pair `DE` to an area of memory that basically contains the name of the file. Then it executes the code:
+    - If a program needs to create a file, it sets register pair `DE` to an area of memory that basically contains the name of the file. Then it executes the code:
 
       ```
       MVI C,16h
       CALL 5
       ```
-    
       In this case, the `CALL 5` instruction cause CP/M to create an empty file on the disk. The program can then use other functions to write to the file and eventually *close* the file, which means it has finished using the file for now. The same program or another program can later *open* the file and read its contents.
 
   - What does `CALL 5` actually do?
@@ -2456,9 +2452,9 @@ The IEEE floating-point standard defines two basic format:
 
   - 23-bit significand fraction, with the least-significant bits on the right
 
+    |     符号位      |        指数        |              有效数字              |
+    | :----------: | :--------------: | :----------------------------: |
     | s=1-bit Sign | e=8-bit Exponent | f= 23-bit Significand Fraction |
-    | ------------ | ---------------- | ------------------------------ |
-    | 符号位          | 指数               | 有效数字                           |
 
 - **Precision(精度)**:
 
@@ -2470,14 +2466,14 @@ The IEEE floating-point standard defines two basic format:
   - The 8-bit exponent part can range from 0 through 255. This is called a **biased exponent(偏移指数)**, which means that you must subtract a number—called the *bias*—from the exponent in order to determine the signed exponent that actually applies. 
   - *For single-precision floating-point numbers, this bias is 127.*
 
-- The exponents 0 and 255 are used for special purposes, If the exponent ranges from 1 through 254, the number represented by particular values of s (the sign bit), e (the exponent), and f (the significand fraction) is
+- Expression: The exponents 0 and 255 are used for special purposes, If the exponent ranges from 1 through 254, the number represented by particular values of s (the sign bit), e (the exponent), and f (the significand fraction) is
 
   **$$(-1)^s\times1.f\times2^{e-127}$$**
 
   - That negative 1 to the s power is a mathematician's annoyingly clever way of saying, "If s is 0, the number is positive (because anything to the 0 power equals 1); and if s is 1, the number is negative (because –1 to the 1 power is –1)."
   - The next part of the expression is 1.f, which means a 1 followed by a binary point, followed by the 23 bits of the significand fraction. This is multiplied by 2 to a power. The exponent is the 8-bit biased exponent stored in memory minus 127.
 
-- **Special case**
+- **Special case (0, infinity, NaN)**
 
   Notice that I haven't mentioned any way to express a very common number that we seem to have forgotten about, namely 0. That's one of the special cases, which are these:
 
@@ -2489,7 +2485,7 @@ The IEEE floating-point standard defines two basic format:
   - If `e` equals 255 and `f` doesn't equal 0, the value is considered to be not a
     number, which is abbreviated `NaN`. A `NaN` could indicate an unknown number or the result of an invalid operation.
 
-- smallest and largest:
+- Range:
 
   - The smallest normalized positive or negative binary number that can be represented in single-precision floating-point format is:
 
@@ -2505,7 +2501,154 @@ The IEEE floating-point standard defines two basic format:
 
 - **The problem of Precision(精度的问题):**
 
-  - ​
+  - ​ single-precision floating-point format offers a precision of 24-bits, or about 7 decimal digits.
+
+  - It's more appropriate to say that a single-precision floating-point number is accurate to 1 part in 2^24^, or 1 part in 16,777,216, *or about 6 parts in a million(???error?)*.
+
+  - *For example, it means that if you try to represent both 16,777,216 and 16,777,217 as single-precision floating-point numbers, they'll end up being identical!* Moreover, any number between those to is also considered to be identical. All these decimal numbers are stored as the 32-bit single-precision floating-point value:
+
+    ```
+    4B800000h
+    ```
+
+    Which, divided into the sian, exponent, and significand bits, looks like this:
+
+    ```
+    0 10010111 00000000000000000000000
+    ```
+
+    Which is number:
+
+    $1.00000000000000000000000_{TWO} \times 2^{24}$
+
+    The next-highest significand is the binary floating-point number that represents 16,777,218 or:
+
+    $1.00000000000000000000001_{TWO} \times 2^{24}$
+
+  - It might or might not be a problem that two different decimal numbers end up being stored as identical floating-point values.
+
+  - But if you were writing a program for a bank, and you were using single-precision floating-point arithmetic to store dollars and cents, you probably would be deeply disturbed to discover that \$262,144.00 is the same as \$262,144.01. Both these numbers are
+
+    $1.00000000000000000000000_{TWO} \times 2^{18}$
+
+    *That's one reason why fixed-point is preferred when dealing with dollars and cents*. 
+
+  - When you work with floating-point numbers, you could also discover other little quirks that can drive you mad. *Your program will do a calculation that should yield the result 3.50 and instead you get 3.499999999999.* This type of thing tends to happen in floating-point calculations, and there isn't a whole lot you can do about it.
+
+
+##### Double-precision
+
+If floating-point notation is what you want to use but single-precision doesn't quite hack it, you'll probably want to use double-precision floating-point format.
+
+- These numbers require 8 bytes of storage, arranged like this:
+
+  |     符号位      |        指数         |              有效数字              |
+  | :----------: | :---------------: | :----------------------------: |
+  | s=1-bit Sign | e=11-bit Exponent | f= 52-bit Significand Fraction |
+
+  The exponent bias is 1023, or 3FFh, so the number stored in such a format is:
+
+  **$$(-1)^s\times1.f\times2^{e-1023}$$**
+
+- Similar rules as those we encountered with single-precision format apply for 0, infinity, and NaN.
+
+- Range:
+
+  - The smallest is:
+
+    $1.0000000000000000000000000000000000000000000000000000_{TWO} \times 2^{-1022}$.
+
+    That's 23 binary zeros following the binary point.
+
+  - The largest is:
+
+    $1.1111111111111111111111111111111111111111111111111111_{TWO} \times 2^{1023}$.
+
+  - The range is decimal in approximately $2.2250738585072014 \times 10^{-308}$ to $1.7976931348623158 \times 10^{308}$. 
+
+- Problem:
+
+  - The 53 bits of the significand (including the 1 bit that's not included) is a resolution approximately equivalent to 16 decimal digits. This is much better than single-precision floating-point format, but it still means that eventually some number will equal some other number.
+
+  - For example, 140,737,488,355,328.00 is the same as 140,737,488,355,328.01. These two numbers are both stored as the 64-bit double-precision floating-point value
+
+    ```
+    42E0000000000000h
+    ```
+
+    which decodes as
+    $1.0000000000000000000000000000000000000000000000000000_{TWO} \times 2^{47}$
+
+
+
+##### Floating-point arithmetic
+
+Developing a format for storing floating-point numbers in memory is only a small part of actually using these number in your assembly-language programs.
+
+If you were indeed developing a desert-island computer, you would now be faced with the job of writing a collection of functions that add, subtract, multiply, and divide floating-point numbers. Fortunately, these jobs can be broken down into smaller jobs that involve adding, subtracting, multiplying, and dividing integers, which you already know how to do.
+
+Floating-point arithmetic:
+
+- adding:
+
+  - floating-point addition basically requires that you add two significands; the tricky part is using the two exponents to figure out how the two significands mesh.
+  - Sometimes the exponents will be so far apart that one of the two numbers won't even affect the sum. This would be the case if you were adding the distance to the sun and the radius of the hydrogen atom.
+
+- Multiplying:
+
+  - multiplying the two significands as if they were integers and adding the two integer exponents.
+  - Normalizing the significand could result in your decrementing the new exponent once or twice.
+
+- complex: such as roots and exponents and logarithms and trigonometric
+
+  - all of these jobs can be done with the four basic floating-point operations: addition, subtraction, multiplication, and division.
+
+  - For example, the sine function in trigonometry can be calculated with a series expansion, like this:
+
+    $$sin(x) = x-\frac{x^3}{3!}+\frac{x^5}{5!}-\frac{x^7}{7!}+...$$
+
+    - The x argument must be in *radians*. There are 2π radians in 360 degrees.
+    - The exclamation point is a *factorial* sign.
+    - The exponent in each term is also a multiplication.
+    - The rest is just division, addition, and subtraction.
+    - The only really scary part is the ellipsis at the end, which means to continue the calculation forever.
+    - In reality, however, if you restrict yourself to the range 0 through π/2 (from which all other sine values can be derived), you don't have to go anywhere close to forever. After about a dozen terms, you're accurate to the 53-bit resolution of double-precision numbers.
+
+*Floating-point routines is so important to scientific and engineering applications that it's traditionally be given a very high priority.* In the early days of computers, writing floating-point routines was always one of the first software jobs when a new type of computer was built.	
+
+
+
+In fact, it even makes sense to implement computer machine-code instructions that perform floating-point arithmetic directly!
+
+If you can implement *floating-point arithmetic in hardware* — similar to the multiply and divide instructions in 16-bit microprocessors — all floating-point calculations done on the machine will be faster.
+
+- **IBM 704**: The first commercial computer that included floating-point hardware as an option, in 1954.
+  - The 704 stored all numbers as 36-bit values. For floating-point numbers, that broke down to a 27-bit significand, an 8-bit exponent, and a sign bit.
+  - The floating-point hardware could do addition, subtraction, multiplication, and division. 
+  - Other floating-point functions had to be implemented in software.
+- **8087 Numeric Data Coprocessor chip (8087数据协处理器芯片)**:in 1980, Intel released first Hardware floating-point arithmetic to the desktop. 
+  - a type of integrated circuit usually referred to these days as a **math coprocessor (数学协处理器)** or a **floating-point unit (FPU 浮点运算单元)**.
+  - The 8087 is called a coprocessor because it couldn't be used by itself. It could be used only in conjunction with the 8086 and 8088, Intel's first 16-bit microprocessors.
+  - 68 instructions that include trigonometry, exponents, and logarithms. 
+  - Data types are based on the IEEE standard.
+  - At the time, the 8087 was considered to be the most sophisticated integrated circuit ever made.
+
+You can think of the coprocessor as a little self-contained computer. In response to a particular floating-point machine code instruction (for example, FSQRT to calculate a square root), the coprocessor internally executes its own series of instructions coded in ROM. These internal instructions are called **microcode(微代码)**. The instructions generally loop, so the result of the calculation isn't immediately available. Still, however, the math coprocessor is usually at least 10 times faster than the equivalent routines done in software.
+
+
+
+Intel 8087 is an optional hardware.
+
+In 1989, Intel 486DX has FPU built right into the CPU itself. And with the 1993 release of the Pentium, the built-in FPU became standard.
+
+Motorola integrated an FPU with its 68040 microprocessor, which was released in 1990.
+
+
+The PowerPC chips also have built-in floating-point hardware.
+
+
+
+# Chapter 24. Languages High and Low
 
 
 
@@ -2519,8 +2662,13 @@ The IEEE floating-point standard defines two basic format:
 
 
 
-
-
+​			
+​		
+​				
+​		
+​				
+​		
+​	
 
 
 
