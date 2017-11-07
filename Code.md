@@ -2168,7 +2168,7 @@ The keyboard handler and command processor we've been building in this chapter c
 
     The BDOS -- as its name implies -- is primarily responsible for maintaining the file system on the disk. 
 
-    Frequently, the BDOS has  to make use of subroutines in the Basic Input/Output System (BIOS) of CP/M, which is the area that actually accesses the hardware of the keyboard, the video display, and the disk drives.
+    Frequently, the BDOS has  to make use of subroutines in the **Basic Input/Output System (BIOS)** of CP/M, which is the area that actually accesses the hardware of the keyboard, the video display, and the disk drives.
 
     *In fact, the BIOS is the only section of CP/M that needs to know about the hardware of the computer.*
 
@@ -2440,7 +2440,13 @@ The IEEE floating-point standard defines two basic format:
 2. **double precision(双精度格式)**: require 8 bytes
 
 
-
+> **固定位数的二进制，在可表示的浮点数范围内，其离散特性是：越接近两端，两个相邻数字之间的间距越大，无法表示的数也就越多。类似于下面这种分布示意：**（若忘记如何理解，可参见下方“精度的问题”）
+>
+> ```
+> |.     .    .   .  . . .... .  .   .    .     .|
+> ```
+>
+> 
 
 ##### Single precision
 
@@ -2614,7 +2620,7 @@ Floating-point arithmetic:
     - The only really scary part is the ellipsis at the end, which means to continue the calculation forever.
     - In reality, however, if you restrict yourself to the range 0 through π/2 (from which all other sine values can be derived), you don't have to go anywhere close to forever. After about a dozen terms, you're accurate to the 53-bit resolution of double-precision numbers.
 
-*Floating-point routines is so important to scientific and engineering applications that it's traditionally be given a very high priority.* In the early days of computers, writing floating-point routines was always one of the first software jobs when a new type of computer was built.	
+  *Floating-point routines is so important to scientific and engineering applications that it's traditionally be given a very high priority.* In the early days of computers, writing floating-point routines was always one of the first software jobs when a new type of computer was built.
 
 
 
@@ -2650,6 +2656,231 @@ The PowerPC chips also have built-in floating-point hardware.
 
 # Chapter 24. Languages High and Low
 
+### low-level languages
+
+Programming in machine code is inefficient. 
+
+As you know, the bytes of machine code(instructions that cpu can perform) are associated with certain short mnemonics, such as `MOV`, `ADD`, `CALL`, and `HLT`, that let us refer to the machine code in something vaguely resembling English. These mnemonics are often written with operands that further indicate what the machine-code instruction does. 
+
+Of course, it's much easier to write programs in assembly language than in machine code, but *the microprocessor can't understand assembly language*.
+
+So the assembly-language statements need to be converted to machine-code bytes and enter them into memory:
+
+- You can convert assembly-language statements to machine-code by hand writing the machine-code yourself.
+
+- But *it is better for the computer to do this conversion for you*. If you were running the CP/M operating system on your 8080 computer, you'd already have all the tools you need. *Here's how it works*:
+
+  1. Create a text file to contain your program written in assembly language. (you can use the CP/M program ED.COM text editor for this job.) 
+
+  2. Let's suppose you create a text file with the name PROGRAM1.ASM. The ASM file type indicates that this file contains an assembly-language program. The file might look something like this:
+
+     ```
+     ORG 0100h
+     LXI DE,Text
+     MVI C,9
+     CALL 5
+     RET
+     Text: DB 'Hello!$'
+     END
+     ```
+
+     - `ORG`(for origin) statement does not correspond to an 8080 instruction. Instead, it indicates that the address of the next statement is to begin at address 0100h, which you'll recall is the address where CP/M loads programs into memory.
+     - `LXI` (Load Extended Immediate) instruction, which loads a 16-bit value into the register pair `DE`. In this case, that 16-bit value is given as the label `Text`.
+     - That label is located near the bottom of the program in front of a `DB` (Data Byte) statement, something else we haven't seen before. The DB statement can be followed by several bytes separated by commas or (as I do here) by some text in single quotation marks.
+     - The `MVI` (Move Immediate) statement moves the value `9` into register `C`. The `CALL 5` statement makes a CP/M function call. Function 9 means to display a string of characters beginning at the address given by the `DE` register pair and stop when a dollar sign is encountered.
+     - The final `RET` statement ends the program and returns control to CP/M.
+     - The END statement indicates the end of the assembly-language file.
+
+  3. The next step is to assemble it, which means to convert it to machine code. Previously we've done this by hand. But since we're running CP/M, we can use a program included with CP/M named `ASM.COM`. This is the CP/M **assembler(汇编器)**. We run ASM.COM from the CP/M command line this way:
+
+     ```
+     ASM PROGRAM1.ASM
+     ```
+
+     The ASM program looks at the file PROGRAM1.ASM and creates a new file named `PROGRAM1.COM` that contains the machine code corresponding to the assembly-language statements that we wrote.
+
+  4. Now you can run `PROGRAM1.COM` from the CP/M command line. It displays the text "Hello!" and then ends.
+
+     The PROGRAM1.COM file contains the following 16 bytes:
+
+     ```
+     11 09 01 OE 09 CD 05 00 C9 48 65 6C 6C 6F 21 24
+     ```
+
+     <img src="images/code-chapter24-machine-code-1.png">
+
+##### Assembler:
+
+- What an assembler such as ASM.COM does is read an assembly-language program (often called a **source-code(源代码)** file) and write out a file containing machine code — an **executable file(可执行文件)**.
+- In the grand scheme of things, assemblers are fairly simple programs because there's a one-to-one correspondence between the assembly-language mnemonics and machine code.
+- Notice how the assembler figures out that the LXI instruction must set the register pair DE to the address 0109h. If the LXI instruction itself is located at 0100h (as it is when CP/M loads the program into memory to run), address 0109h is where the text string begins. Generally a programmer using an assembler doesn't need to worry about the specific addresses associated with different parts of the program.
+
+Write an assembler:
+
+- The first person to write the first assembler had to hand-assemble the program, of course. 
+- A person who writes a new (perhaps improved) assembler for the same computer can write it in assembly language and then use the first assembler to assemble it. Once the new assembler is assembled, it can assemble itself.
+- Every time a new microprocessor comes out, a new assembler is needed. The new assembler, however, can first be written on an existing computer using that computer's assembler. This is called a **cross-assembler(交叉汇编)**. The assembler runs on Computer A but creates code that runs on Computer B.
+
+##### Shortcomming of assemble language
+
+Although an assembler eliminates the less-creative aspects of assembly-language programming (the hand-assembling part), assembly language still has two major problems:
+
+1. it can be very *tedious*. You're working down on the level of the microprocessor chip, and you have to worry about every little thing.
+
+2. assembly language *isn't portable*.
+
+   If you write an assembly-language program for the Intel 8080, it's not suitable for the Motorola 6800. You must rewrite the program in 6800 assembly language.
+
+   ​
+
+   ​
+
+### High-level programming languages	
+
+Assembly language is considered a low-level language because it's very close to the hardware of the computer.
+
+Although the term high-level is used to describe any programming language other than assembly language, some languages are considered to be higher level than others.
+
+##### Compiler
+
+In order to use high-level programming language, you must also write a **compiler (编译器)**, which is the program that converts the statements of your high-level language to machine code.
+
+Like an assembler, a compiler must read through a source-code file character by character and break it down into short words and symbols and numbers. 
+
+*A compiler, however, is much more complex than an assembler.*
+
+- An assembler is simplified somewhat because of the one-to-one correspondence between assembly-language statements and machine code. 
+- A compiler usually must translate a single statement of a high-level language into many machine-code instructions. Compilers aren't easy to write. Whole books are devoted to their design and construction.
+
+##### Advantages and disadvantages
+
+Advantages:
+
+- *Easy*: easier to learn and to program in than assembly languages.
+- *Concise*: Programs written in high-level languages are often clearer and more concise. 
+- *Portable*: High-level languages are often portable — that is, they aren't dependent on a particular processor as are assembly languages.
+  - Of course, if you need to run the program on more than one processor, *you need compilers that generate machine code for those processors. The actual executable files are still specific to individual processors*.
+
+Disadvantages:
+
+- a good assembly-language programmer can write better code than a compiler can.
+  - (In recent years, however, this has become less obvious as microprocessors have become more complex and compilers have also become more sophisticated in optimizing code.)
+- although a high-level language might make a processor easy to use, it doesn't make it more powerful.
+  - Anything that a processor is capable of you can exploit in assembly language.
+  - if a high-level language is truly portable, it can't use features specific to certain processors.*(Such as bit-shifting instruction, but todays compilers can optimize this)*	
+
+In the early days of home computers, most application programs were written in
+assembly language. These days, however, assembly language is rarely used except for special purposes. 
+
+As hardware has been added to processors that implements pipelining—the progressive execution of several instruction codes simultaneously—assembly language has become trickier and more difficult. 
+
+At the same time, compilers have become more sophisticated. The larger storage and memory capacity of today's computers has also played a role in this trend: Programmers no longer feel the need to create code that runs in a small amount of memory and fits on a small diskette.
+
+​			
+
+##### Brief History of High-level languages	
+
+See the *Code* book.
+
+
+
+
+
+# Chapter 25. The Graphical Revolution
+
+When the cathode-ray tube first appear on computer, they were just treated as a "glass teletypewriter" — displaying output line by line going down the screen and scrolling the contents of the screen up when the text reached the bottom.
+
+All the utilities in CP/M and most utilities in MS-DOS used the video display in a teletypewriter mode. 
+
+Perhaps the archetypal teletypewriter operating system is UNIX, which still proudly upholds that tradition.
+
+
+
+*ASCII set has changed for two-deminsional character-imaging devices*:
+
+- Interestingly enough, the ASCII character set isn't entirely adequate in dealing with the Cathode-ray tube.
+
+
+- When ASCII was originally designed, the code `1Bh` was labeled Escape and was specifically intended for handling extensions of the character set. 
+
+- In 1979, the American National Standards Institute (ANSI) published a standard entitled "Additional Controls for Use with American National Standard Code for Information Interchange." The purpose of this standard was "to accommodate the foreseeable needs for input/output control of two-dimensional character-imaging devices, including interactive terminals of both the cathode ray tube and printer types..."
+
+- Of course, the Escape code `1Bh` is just 1 byte and can mean only one thing. But the Escape code works by prefacing variable-length sequences that perform a variety of functions. 
+
+- For example:
+
+  - ```
+    1Bh 5Bh 32h 4Ah
+    ```
+
+    is the Escape code followed by the characters `[2J`, is defined to erase the entire screen and move the cursor to the upper left corner. This isn't something that can be done on a teletypewriter.
+
+  - ```
+    1Bh 5Bh 35h 3Bh 32h 39h 48h
+    ```
+
+    is the Escape code followed by the characters [5;29H, moves the cursor to row 5 and column 29.
+
+A combined keyboard and CRT that responds to ASCII codes (and possibly to a collection of Escape sequences) coming from a remote computer is sometimes called a **dumb terminal (哑终端，字符终端)**.
+
+
+
+Such terminals are faster than teletypewriters and somewhat more flexible, but they're not quite fast enough for real innovations in the user interface.
+
+*Such innovations came with small computers in the 1970s that included the video display memory as part of the microprocessor's address space.*
+
+
+
+### VisiCalc
+
+The first indication that home computers were going to be much different from their larger and more expensive cousins was probably the application **VisiCalc**.
+
+ - Designed and programmed by Dan Bricklin (born 1951) and Bob Frankston (born 1949)
+ - introduced in 1979 for the *Apple II*
+ - VisiCalc used the screen to give the user *a two-dimensional view of a spreadsheet*. 
+ - Prior to VisiCalc, a spreadsheet (or worksheet) was a piece of paper with rows and columns generally used for doing series of calculations. 
+ - VisiCalc replaced the paper with the video display, allowing the user to move around the spreadsheet, enter numbers and formulas, and recalculate everything after a change.
+
+VisiCalc *doesn't fit larger computers*:
+
+- What was amazing about VisiCalc is that it was an application that could not be duplicated on larger computers. 
+- A program such as VisiCalc needs to update the screen very quickly. 
+- For this reason, it wrote directly to the random access memory used for the Apple II's video display. This memory is part of the address space of the microprocessor. 
+- The interface between a large time-shared computer and a dumb terminal is simply not fast enough to make a spreadsheet program usable.
+
+
+
+*The faster a computer can respond to the keyboard and alter the video display, the tighter the potential interaction between user and computer.* 
+
+
+
+
+
+
+
+Most of the software written in the first decade of the IBM Personal Computer (through the 1980s) wrote directly to video display memory. Because IBM set a hardware standard that other computer manufacturers adhered to, software manufacturers could bypass the operating system and use the hardware directly without fear that their programs wouldn't run right (or at all) on some machines. 
+
+For the most part, early applications for the IBM PC used only text output and not graphics. The use of text output also helped the applications run as fast as possible.
+
+When a video display is designed like the one described in Chapter 21, a program can display a particular character on the screen by simply writing the character's ASCII code into memory. A program using a graphical video display usually needs to write 8 or more bytes into memory to draw the image of the text character.
+
+
+
+*The move from character displays to graphics was, however, an extremely important step in the evolution of computers.* 
+
+Yet the development of computer hardware and software that work with graphical images rather than just text and numbers evolved very slowly：
+
+- 1945，John von Neumann envisioned an oscilloscope-like display that could graph pictorial information.
+- early 1950s, **SAGE**(Semi-Automatic Ground Environment) project: 
+  - computer graphics were ready to become a reality when MIT (with help from IBM) set up the Lincoln Laboratory to develop computers for the Air Force's air defense system.
+  - included graphics display screens to help the operators analyze large amounts of data.
+
+
+
+The early video displays used in systems such as SAGE weren't like those we use today on personal computers. Today's common PC displays are known as raster
+displays, Much like a TV.
+
+Although raster displays seem very natural to us now, in the early days they were not quite practical because they required what was then a great deal of memory. Instead, *the SAGE video displays were* **vector displays(矢量显示器)**, more like an oscilloscope than a TV.
 
 
 
@@ -2658,17 +2889,125 @@ The PowerPC chips also have built-in floating-point hardware.
 
 
 
+
+
+
+##### high color or thousands of colors
+
+devote 2 bytes per pixel, you could allocate 5 bits for each primary color (with 1 bit left over). That gives you 32 levels of red, green, and blue and a total of 32,768 different colors.
+
+##### full color or millions of colors
+
+use 3 bytes per pixel, or 1 byte for each primary. This encoding scheme results in 256 levels of red, green, and blue for a total of 16,777,216 different colors.
+
+
+
+If the resolution of the video display is 640 pixels horizontally by 480 pixels vertically, the total amount of memory required is 921,600 bytes, or nearly a megabyte.
+
+The number of bits per pixel is sometimes referred to as the color depth or colorresolution. The number of different colors is related to the number of bits per pixel inthis way:
+
+$Number\;of\;colors = 2^{Number\;of\;bits\;per\;pixel}$
+
+
+
+A video adapter board has only a certain amount of memory, so it's limited in the combinations of resolutions and color depths that are possible. For example:
+
+- a video adapter board that has a megabyte of memory can do a 640-by-480 resolution with 3 bytes per pixel.
+
+- But if you want to use a resolution of 800 by 600, there's not enough memory for 3 bytes per pixel. Instead, you'll need to use 2 bytes per pixel.
+
+  ​			
 
 
 
 
 ​			
 ​		
-​				
+​		
+
+
+​	
+
+
+​			
+​		
+​	
+
+
+
+
+
+​	
+
+
+​			
 ​		
 ​				
 ​		
 ​	
+
+
+​			
+​		
+​				
+​		
+​			
+
+​		
+​			
+
+
+​		
+​	
+
+
+​			
+​		
+​			
+​		
+​	
+
+
+​			
+​		
+​	
+
+
+​			
+​		
+​	
+
+
+​			
+​		
+​	
+
+​		
+​	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

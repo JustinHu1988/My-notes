@@ -1035,12 +1035,179 @@ be can used in continuous tense, or the passive voice.
 
    找到指代关系，一个句子的*名词*与另一个句子的*代词*具有指代关系。
 
+   - *The man* is siting over there.
+   - I was telling you about *him*.
+
 2. 替换
 
    把*代词*替换成*关系词*（who, which等）
 
+   - *The man* is siting over there.
+   - I was telling you about *who*.
+
 3. 移位
 
    1. 关系词移位
+      - The man is siting over there.
+      - *Who* I was telling you about.
    2. 定语从句移位
+      - The man *who I was telling you about* is siting over there.
+
+
+谁当主句：
+
+- 英语句子的中心意思在主句谓语上，因此若主句谓语不同，则整个句子含义就会不一样。
+- 例：
+  - Mary likes the man who teaches us English.
+  - The man who Mary likes teaches us English.
+- 因此，判断该把哪个句子作为主句的依据，应该看句意或看逻辑语义关系。
+
+
+
+### 两个重要概念：先行词和关系词
+
+**先行词(antecedent)**：被定语从句修饰的对象，称为先行词。
+
+- 例：I'd really like to find *a friend* who I can trust completely.
+
+  ​
+
+**关系词(relative)**：指连接主句和从句并且回指先行词，然后在定语从句中充当一定成分的连词。
+
+- 例：I'd really like to find a friend *who* I can trust completely.
+
+- 关系词作用：
+
+  1. 成分作用：在其后边的定语从句中担当相应成分。
+  2. 指代作用：指代相应的先行词。
+  3. 链接作用：连接主句和从句的作用。
+
+- 关系词分类：
+
+  - 关系代词(relative pronoun)
+    - who
+    - whom
+    - which
+    - that
+  - 关系限定词(relative determiner)
+    - whose
+    - which
+  - 关系副词(relative adverb)
+    - when
+    - where
+    - why
+
+  |  分类   |  关系词  | 先行词  | 在从句中的成分 |
+  | :---: | :---: | :--: | :-----: |
+  | 关系代词  |  who  |  人   |  主语或宾语  |
+  |       | whom  |  人   |  只能做宾语  |
+  |       | which |  物   |  主语或宾语  |
+  |       | that  | 人或物  |  主语或宾语  |
+  | 关系限定词 | which |  物   |   定语    |
+  |       | whose | 人或物  |   定语    |
+  | 关系副词  | when  |  时间  |   状语    |
+  |       | where |  地点  |   状语    |
+  |       |  why  |  原因  |   状语    |
+
+
+
+## 关系词在定语从句中的位置
+
+关系代词充当定语从句的哪个成分，很关键。
+
+### 1. 主语关系代词 (subject relatives)
+
+主语关系代词主要就是who、which、that。
+
+例句：
+
+- I like guys *who* have a good sense of humor.
+- I like guys *that* have a good sense of humor.
+- I prefer music *that* has great lyrics.
+- I prefer music *which* has great lyrics.
+
+**当关系代词作主语时，who比that更常用，that比which更常用。**
+
+
+
+**根据先行词的单复数来确定从句谓语的单复数**，而不是根据关系词who或which来确定。
+
+例：
+
+- I like guys who ~~has~~/have a good sense of humor.
+- I prefer music which has/~~have~~ great lyrics.
+
+
+
+### 2. 动词宾语关系代词 (verb-object relatives)
+
+主要有：who, whom, which, that
+
+关系代词在定语从句中充当（动词或介词的）宾语时，**可以省略**。
+
+例：
+
+- I'd really like to find a friend (who/whom/that) I can trust completely.
+- I can dance to music (which/that) I love.
+
+> 不要在保留定语从句中的宾语代词：
+>
+> - I'd really like to find a firend I can trust ~~him~~ completely.
+
+> 存在动词与宾语分离：
+>
+> - 由于此时定语从句中的动词后边缺少宾语，而这个宾语实际上就是关系词所指代的先行词。由于这个先行词与从句动词可能被分隔很远，因而可能导致找不到宾语，影响对句子的理解。
+> - 例：
+>   - In the United States there are *other customs* in addition to a disregard of titles *that* visitor accustomed to considerable attention and services may *find* insulting at first.
+
+> 宾语关系代词省略：
+>
+> 理论上讲都可以省去。
+>
+> 不过上面这个例句的that并没有省略。
+>
+> **实际来说，遇到下列情况时倾向于不省略关系代词：**
+>
+> - 定语从句的主语很长
+>   - visitor accustomed to considerable attention and services
+> - 先行词和定语从句被其他成分隔开
+>   -  in addition to a disregard of titles
+
+### 3. 介词宾语关系代词 (preposition-object relatives)
+
+与动词宾语一样：who, whom, which, that。**可以省略**。
+
+不过，介词宾语关系代词，往往比动词宾语的用法要复杂。主要因为*介词位置多变*。
+
+例句：
+
+- The man *(who/whom/that)* I was telling you *about* is sitting over there.
+
+- I love music *(which/that)* I can dance *to*.
+
+  这两个句子里，介词位于定语从句的末尾，简称**介词后置**(finally placed preposition)。
+
+- The man *about whom* I was telling you is sitting over there.
+
+- I love music *to which* I can dance.
+
+  把定语从句末尾的介词置于定语从句的开头，简称**介词前置**(initially places preposition)。
+
+  注意：**介词前置时，指人的关系代词只能用whom，指物的关系代词只能用which，并且均不可省略。**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
