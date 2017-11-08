@@ -2735,7 +2735,7 @@ Although an assembler eliminates the less-creative aspects of assembly-language 
 
    ​
 
-### High-level programming languages	
+   ### High-level programming languages
 
 Assembly language is considered a low-level language because it's very close to the hardware of the computer.
 
@@ -2767,7 +2767,7 @@ Disadvantages:
   - (In recent years, however, this has become less obvious as microprocessors have become more complex and compilers have also become more sophisticated in optimizing code.)
 - although a high-level language might make a processor easy to use, it doesn't make it more powerful.
   - Anything that a processor is capable of you can exploit in assembly language.
-  - if a high-level language is truly portable, it can't use features specific to certain processors.*(Such as bit-shifting instruction, but todays compilers can optimize this)*	
+    - if a high-level language is truly portable, it can't use features specific to certain processors.*(Such as bit-shifting instruction, but todays compilers can optimize this)*
 
 In the early days of home computers, most application programs were written in
 assembly language. These days, however, assembly language is rarely used except for special purposes. 
@@ -2866,6 +2866,8 @@ When a video display is designed like the one described in Chapter 21, a program
 
 
 
+### Vector display
+
 *The move from character displays to graphics was, however, an extremely important step in the evolution of computers.* 
 
 Yet the development of computer hardware and software that work with graphical images rather than just text and numbers evolved very slowly：
@@ -2881,6 +2883,173 @@ The early video displays used in systems such as SAGE weren't like those we use 
 displays, Much like a TV.
 
 Although raster displays seem very natural to us now, in the early days they were not quite practical because they required what was then a great deal of memory. Instead, *the SAGE video displays were* **vector displays(矢量显示器)**, more like an oscilloscope than a TV.
+
+Vector display:
+
+- The electron gun could be electrically positioned to point to any part of the display and draw lines and curves directly. The persistence of the image on the screen allowed assembling these lines and curves into rudimentary pictures.
+
+- **Light pen**: The SAGE computer also support light pens that let the operators alter images on the display.
+
+  - a light pen doesn't emit light — it detects light.
+
+  - The circuitry that controls the movements of the electron gun in the CRT (regardless of whether a raster or vector display is used) can also determine when the light from the electron gun hits the light pen and hence where the light pen is pointing on the screen.
+
+
+    ​			
+    ​	
+
+
+    ​	
+
+### PARC and Alto			
+
+Many of the early enthusiasts of interactive graphical computing (although not Engelbart) came together at **Xerox(施乐公司)**, fortunately at a time when raster displays became economically feasible.
+
+Xerox had founded the **Palo Alto Research Center (PARC)** in 1970 in part to help develop products that would allow the company to enter the computer industry. 
+
+
+
+The first big project at PARC was the **Alto**, designed and built between 1972 and 1973. 
+
+- By the standards of those years, it was an impressive piece of work. 
+- The floor-standing system unit had 16-bit processing, two 3-MB disk drives, 128 KB of memory (expandable to 512 KB), and a mouse with three buttons. 
+- Because the Alto preceded the availability of 16-bit single-chip microprocessors, the Alto processor had to be built from about 200 integrated circuits.
+- The video display was one of the several unusual aspects of the Alto. The screen was approximately the size and shape of a sheet of paper—8 inches wide and 10 inches high. It ran in a raster graphics mode with 606 pixels horizontally by 808 pixels vertically, for a total of 489,648 pixels. One bit of memory was devoted to each pixel, which meant that each pixel could be either black or white. The total amount of memory devoted to the video display was 64 KB, which was part of the address space of the processor.
+- By writing into this video display memory, software could draw pictures on the screen or display text in different fonts and sizes. 
+- By rolling the mouse on the desk, the user of the Alto could position a pointer on the screen and interact with on-screen objects. 
+- Rather than treating the video display in the same way as the teletypewriter—linearly echoing user input and writing out program output — *the screen became a two-dimensional high-density array of information and a more direct source of user input.*
+- Over the remainder of the 1970s, programs written for the Alto developed some very interesting characteristics. 
+  - Multiple programs were put into windows and displayed on the same screen simultaneously. 
+  - The video graphics of the Alto allowed software to go beyond text and truly mirror the user's imagination. 
+  - *Graphical objects* (such as buttons and menus and little pictures called icons) became part of the user interface.
+  - The mouse was used for selecting windows or triggering the graphical objects to perform program functions.
+
+
+​		
+What PARC developed in the Alto was the beginnings of the **graphical user interface (图形用户界面)**, or **GUI** (pronounced gooey). 
+
+​			
+​		
+
+### Mac OS
+
+In 1979, Steve Jobs and a contingent from Apple Computer visited PARC and were quite impressed with what they saw. But it took them over three years to introduce a computer that had a graphical interface. This was the ill-fated Apple Lisa in January 1983. 
+
+A year later, however, Apple introduced the much more successful **Macintosh**.
+
+The original Macintosh:
+
+- had a Motorola 68000 microprocessor, 64 KB of ROM, 128KB of RAM, 
+- a $3\frac{1}{2}$-inch diskette drive (storing 400 KB per diskette), 
+- a keyboard, 
+- a mouse, 
+- a video display capable of displaying 512 pixels horizontally by 342 pixels vertically. (The CRT itself measured only 9 inches diagonally.) That's a total of 175,104 pixels. Each pixel was associated with 1 bit of memory and could be colored either black or white, so about 22 KB were required for the video display RAM.
+
+The hardware of the original Macintosh was elegant but hardly revolutionary. What made the Mac so different from other computers available in 1984 was the **Macintosh operating system**, generally referred to as the system software at the time and later known as the **Mac OS**.
+
+
+
+##### Text-based OS vs Graphical OS
+
+- A text-based single-user operating system such as CP/M or MS-DOS isn't very large and doesn't have an extensive application programming interface (API). As I explained in Chapter 22, *mostly what's required in these text-based operating systems is a way for applications to use the file system*. 
+- *A graphical operating system such as the Mac OS, however, is much larger and has hundreds of API functions*. Each of them is identified by a name that describes what the function does.
+
+
+
+While a text-based operating system such as MS-DOS provides a couple of simple API functions to let application programs display text on the screen in a teletypewriter manner, a graphical operating system such as the Mac OS must provide a way for programs to display graphics on the screen. 
+
+In theory, this can be accomplished by implementing a single API function that lets an application set the color of a pixel at a particular horizontal and vertical coordinate. But it turns out that this is inefficient and results in very slow graphics.
+
+*It makes more sense for the operating system to provide a complete* **graphics programming system (图形编程系统)**, which means that the operating system includes API functions
+to draw lines, rectangles, and ellipses (including circles) as well as text. 
+
+- Lines can be either solid or composed of dashes or dots. 
+- Rectangles and ellipses can be filled with various patterns. 
+- Text can be displayed in various fonts and sizes and with effects such as boldfacing and underlining. 
+
+*The graphics system is responsible for determining how to render these graphical objects as a collection of dots on the display.*
+
+*Programs running under a graphical operating system use the same APIs to draw*
+*graphics on both the computer's video display and the printer.* 
+
+- A word processing application can thus display a document on the screen so that it looks very similar to the document later printed, a feature known as **WYSIWYG** (pronounced wizzy wig, *What you see is what you get*)
+
+​			
+
+Part of the appeal of a graphical user interface is that different applications work roughly the same and leverage a user's experience. 
+
+This means that the operating system must also support API functions that let applications implement the various components of the user interface, such as buttons and menus. 
+
+*Although the GUI is generally viewed as an easy environment for users, it's also just as importantly an environment for programmers.* Programmers can implement a modern user interface without reinventing the wheel.
+
+
+
+
+
+In theory, aside from the graphics display, a graphical operating system doesn't require much more in the way of hardware than a text-based operating system. In theory, not even a hard disk drive is required: The original Macintosh didn't have one,and Windows 1.0 didn't require one. Windows 1.0 didn't even require a mouse, although everyone agreed that it was much easier to use with a mouse.
+
+Still, however, it's not surprising that graphical user interfaces have become more popular as microprocessors have grown faster and as memory and storage have become more plentiful. *As more and more features are added to graphical operating systems, they have grown large.* Today's graphical operating systems generally require a couple hundred megabytes of hard disk space and upwards of 32 megabytes of memory.
+
+
+
+
+
+### Object-oriented programming
+
+Applications for graphical operating systems are almost never written in assembly language. 
+
+In the early days, the popular language for Macintosh applications was Pascal. For Windows applications, it was C. 
+
+But once again, PARC had demonstrated a different approach. Beginning about 1972, the researchers at PARC were developing a language named *Smalltalk* that embodied the concept of **object-oriented programming (面向对象编程)**, or **OOP** (pronounced oop).
+
+
+*Traditionally, high-level programming languages differentiate between code* (which is statements generally beginning with a keyword such as `set` or `for` or `if`) *and data, which is numbers represented by variables.* 
+
+*This distinction no doubt originates from the architecture of von Neumann computers, in which something is either machine code or is data acted upon by machine code.*
+
+
+
+**In object-oriented programming, however, an object is a combination of code and data.**
+
+*The actual way in which the data in an object is stored is understood only by codeassociated with the object.* Objects communicate with one another by sending andreceiving messages, which give instructions to an object or ask for information from it.
+
+*Object-oriented languages are often helpful for programming applications for graphical operating systems because the programmer can treat objects on the screen (such as windows and buttons) in much the same way that a user perceives them*.
+
+- button is an example of an object in an objectoriented language. A button has a certain dimension and position on the screen and displays some text or a little picture, all of which is data associated with the object. Code associated with the object determines when the user "presses" the button with the keyboard or the mouse and sends a message indicating the button has been triggered.
+
+
+
+
+
+The most popular object-oriented languages for small computers, however, are
+extensions of traditional ALGOL-like languages, such as C and Pascal. 
+
+- The most popular object-oriented extension of C is called **C++**. (As you might recall, two plus signs in C is an increment operator.) Largely the brainchild of Bjarne Stroustrup (born 1950) of Bell Telephone Laboratories, C++ was implemented first as a translator that converted a program written in C++ to one written in C (although very ugly and virtually unreadable C). The C program could then be compiled normally.
+
+
+
+*Object-oriented languages can't do anything more than traditional languages can do*, of course. *But programming is a problem-solving activity, and object-oriented languages allow the programmer to consider different solutions that are often structurally superior*.
+
+
+
+*It's also possible — although not exactly easy — to write a single program using an object-oriented language that can be compiled to run either on the Macintosh or under Windows. Such a program doesn't refer to the APIs directly but rather uses objects that in turn call the* **API functions**. *Two different object definitions are used to compile the program for the Macintosh or Windows API.*
+
+​			
+
+### integrated development environment
+
+
+Most programmers working on small computers no longer run a compiler from a command line. Instead, programmers use an **integrated development environment (IDE, 集成开发环境)**, which combines all the tools they need in one convenient program that runs like other graphical applications.
+
+
+
+​		
+
+### visual programming		
+
+Programmers also take advantage of a technique called **visual programming (可视化编程)**, in which windows are designed interactively by using the mouse to assemble buttons and other components.
+
+
 
 
 
@@ -2927,94 +3096,6 @@ A video adapter board has only a certain amount of memory, so it's limited in th
 
 
 ​	
-
-
-​			
-​		
-​	
-
-
-
-
-
-​	
-
-
-​			
-​		
-​				
-​		
-​	
-
-
-​			
-​		
-​				
-​		
-​			
-
-​		
-​			
-
-
-​		
-​	
-
-
-​			
-​		
-​			
-​		
-​	
-
-
-​			
-​		
-​	
-
-
-​			
-​		
-​	
-
-
-​			
-​		
-​	
-
-​		
-​	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

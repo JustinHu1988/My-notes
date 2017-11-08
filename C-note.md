@@ -794,7 +794,7 @@ For instance, a `pointer` points to the location of a variable or other data obj
 
 ### 3.4.9 Type Sizes
 
-What type sizes does your system use? c99 provides a %zd specifier for sizes.
+What type sizes does your system use? c99 provides a `%zd` specifier for sizes.
 
 C has a built-in operator called `sizeof` that gives sizes in bytes, C99 and C11 provide a `%zd` specifier for this type used by `sizeof`. Noncompliant compilers may require `%u` or `%lu` instead.
 
