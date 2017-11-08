@@ -157,23 +157,75 @@ int main() //define a function named main, receives no arguments. see Note-001.
 
 ### 1.2 Variables and Arithmetic Expressions		
 
+The next program uses the formula $^{\circ}C=(5/9)(^{\circ}F-32)$
 
-​		
-​	
+```c
+#include <stdio.h>
 
+/* print Fahrenheit-Celsius table
+for fahr = 0, 20, ..., 300 */
+main()
+{
+	int fahr, celsius;
+	int lower, upper, step;
 
+	lower = 0;
+	upper = 300;
+	step = 20;
 
+	fahr = lower;
+	while (fahr <= upper) {
+		celsius = 5 * (fahr - 32) / 9;
+		printf("%d\t%d\n", fahr, celsius);
+		fahr = fahr + step;
+	}
+}
+```
 
+```c
+#include <stdio.h>
 
+/* print Fahrenheit-Celsius table
+for fahr = 0, 20, ..., 300 */  // this two line are a comment.
+main()
+{
+	int fahr, celsius;  // In C, all variables must be declared before they are used, usually at the beginning of the function before any executable statements.
+	int lower, upper, step; // int means that the variable listed are integers, by contrast with float, which means floating point. See Note-003.
 
+	lower = 0;  // assignment statements, set the variables to their initial values. Individual statements are terminated by semicolons.
+	upper = 300;
+	step = 20;
+	fahr = lower;
+  
+	while (fahr <= upper) { // while loop, see Note-004.
+		celsius = 5 * (fahr - 32) / 9;
+		printf("%d\t%d\n", fahr, celsius);
+		fahr = fahr + step;
+	}
+}
+```
 
+> Note-003: 
+>
+> - The range of both `int` and `float` depends on the machine you are using.
+>
+>   - 16-bit ints, which lie between -32768 and +32767
+>   - A float number is typically a 32-bit quantity, with at least six significant digits and magnitude generally between about 10^-38^ and 10^38^.
+>
+> - C provides several other basic **data types** besides `int` and `float`, including:
+>
+>   - `char`: character -- a single byte
+>   - `short`: short integer
+>   - `long`: long integer
+>   - `double`: double-precision floating point
+>
+>   The **size** of these objects are also machine-dependent.
+>
+>   There are also `arrays`, `structures` and `unions` of these basic types, `pointers` to them, and `functions` that return them, all of which we will meet in due course.
 
-
-
-
-
-
-
+> Note-004
+>
+> - ​
 
 ​			
 ​		
