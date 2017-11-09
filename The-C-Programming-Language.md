@@ -157,14 +157,14 @@ int main() //define a function named main, receives no arguments. see Note-001.
 
 ### 1.2 Variables and Arithmetic Expressions		
 
-The next program uses the formula $^{\circ}C=(5/9)(^{\circ}F-32)$
+The next program is a temperature conversion, uses the formula $^{\circ}C=(5/9)(^{\circ}F-32)$
 
 ```c
 #include <stdio.h>
 
 /* print Fahrenheit-Celsius table
 for fahr = 0, 20, ..., 300 */
-main()
+int main()
 {
 	int fahr, celsius;
 	int lower, upper, step;
@@ -187,7 +187,7 @@ main()
 
 /* print Fahrenheit-Celsius table
 for fahr = 0, 20, ..., 300 */  // this two line are a comment.
-main()
+int main()
 {
 	int fahr, celsius;  // In C, all variables must be declared before they are used, usually at the beginning of the function before any executable statements.
 	int lower, upper, step; // int means that the variable listed are integers, by contrast with float, which means floating point. See Note-003.
@@ -198,8 +198,8 @@ main()
 	fahr = lower;
   
 	while (fahr <= upper) { // while loop, see Note-004.
-		celsius = 5 * (fahr - 32) / 9;
-		printf("%d\t%d\n", fahr, celsius);
+		celsius = 5 * (fahr - 32) / 9; // see Note-005.
+		printf("%d\t%d\n", fahr, celsius);  // see Note-006.
 		fahr = fahr + step;
 	}
 }
@@ -225,8 +225,312 @@ main()
 
 > Note-004
 >
-> - ​
+> - The body of a `while` can be one or more statements enclosed in braces, as in the temperature converter, or a single statement without braces:
+>
+>   ```C
+>   while (i < j)
+>     i = 2*i;
+>   ```
+>
+>   In either case, we will always indent the statements controlled by the `while` by one tab stop so you can see at a glance which statements are inside the loop.
+
+> Note-005
+>
+> ```C
+> celsius = 5 * (fahr - 32) / 9;
+> ```
+>
+> The reason for multiplying by 5 and then dividing by 9 instead of just multiplying by 5/9 is that in C, as in many languages, *integer division* **truncates** *: any fractional part is discarded*.
+>
+> *Since 5 and 9 are integers, 5/9 would be truncated to zero* and so all the Celsius temperatures would be reported as zero.
+
+> Note-006
+>
+> `printf` is a general-purpose output formatting function.
+>
+> - Its first argument is a string of characters to be printed, with *each `%` indicating where one of the other (second, third, ...) arguments is to be substituted, and in what form it is to be printed*. 
+> - Each `%` construction and the corresponding argument must match up properly by number and type.
+>
+> `printf` is not part of the C language; there is no input or output defined in C itself. `printf` is just a useful function from the standard library of functions that are normally accessible to C programs. (ANSI standard)
+
+There are a couple of problems with the temperature conversion program. 
+
+- the output isn't very pretty because the numbers are not *right-justified*. That's easy to fix; if we augment each `%d` in the `printf` statement *with a width*, the numbers printed will be right-justified in their fields. For example:
+
+  ```C
+  printf("%3d %6d\n", fahr, celsius);
+  ```
+
+- Because we have used integer arithmetic, the Celsius temperatures are not very accurate.
+
+  - *To get more accurate answers, we should use floating-point arithmetic instead of integer.* This requires some changes in the program:
+
+    ```C
+    #include <stdio.h>
+
+    /* print Fahrenheit-Celsius table
+    for fahr = 0, 20, ..., 300; floating-point version */
+    int main()
+    {
+    	float fahr, celsius;
+    	int lower, upper, step;
+
+    	lower = 0;
+    	upper = 300;
+    	step = 20;
+
+    	fahr = lower;
+    	while (fahr <= upper) {
+    		celsius = (5.0/9.0) * (fahr - 32.0);
+    		printf("%3.0f %6.1f\n", fahr, celsius);
+    		fahr = fahr + step;
+    	}
+    }
+    ```
+
+  - In this version, `fahr` and `celsius` are declared to be `float`, and the formula for conversion is written in a more natural way.
+
+  - A decimal point in a constant indicates that it is floating point, *so 5.0/9.0 is not truncated because it is the ratio of two floating-point values.*
+
+    - If an arithmetic operator has integer operands, an integer operation is performed.
+    - If an arithmetic operator has one floating-point operand and one integer operand, *the integer will be converted to floating point before teh operation is done*. So in this example, we can write `fahr - 32` and the result is still a float-point.
+    - Nevertheless, writing floating-point constants with explicit decimal points even when they have integral values emphasizes their floating-point nature for human readers.
+    - The detailed rules for when integers are converted to floating point are in Chapter 2, *for now, notice that the assignment `fahr = lower;` and the test `while (fair <= upper)` also convert int to float before the operation is done in this example.*
+
+  - The `printf` conversion specification :
+
+    - *`%3.0f` says that a floating-point number is to be printed at least three characters wide, with no decimal point and no fraction digits*. 
+    - *`%6.1f` describes another number that is to be printed at least six characters wide, with 1 digit after the decimal point.*
+
+    *Width and precision may be omitted from a specification*: 
+
+    - *`%6f` says that the number is to be at least six characters wide, but the precision is not constrained.*
+    - *`%.2f` specifies two characters after the decimal point, but the width is not constrained.* 
+    - `%f` merely says to print the number as floating point.
+    - `%o` for octal
+    - `%x` for hexadecimal
+    - `%c` for character
+    - `%s` for character string
+    - `%%` for `%` itself.
 
 ​			
+​		
+
+### 1.3 The For statement	
+
+
+
+```C
+#include <stdio.h>
+
+/* print Fahrenheit-Celsius table */
+int main()
+{
+    int fahr;
+  	for(fahr = 0; fahr <= 300; fahr = fahr + 20)
+      printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));
+}
+```
+
+```C
+#include <stdio.h>
+
+/* print Fahrenheit-Celsius table */
+int main()
+{
+    int fahr;
+  	for(fahr = 0; fahr <= 300; fahr = fahr + 20)  // See Note-008
+      printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));  // See Note-007
+}
+```
+
+> Note-007
+>
+> **A general rule** — *in any context where it is permissible to use the value of a variable of some type, you can use a more complicated expression of that type*.
+>
+> - Since the third argument of `printf` must be a floating-point value to match the `%6.1f`, any floating-point expression can occur there.
+
+> Note-008
+>
+> `for` loop, as with the `while`, the body of the loop can be a single statement, or a group of statements enclosed in braces. The initialization, condition, and increment can be any expressions.
+>
+> The choice between `while` and `for` is arbitrary, based on which seems clearer.
+>
+> ​			
+
+### 1.4 Symbolic Constants		
+
+*It's bad practice to bury "magic numbers" like `300` and `20` in a program:* 
+
+- they *convey little information* to someone who might have to read the program later.
+- and they are *hard to change* in a systematic way.
+
+*One way to deal with magic numbers is to give them meaningful names*:
+
+##### #define
+
+A **`#define`** line defines a **symbolic name(符号名)** or **symbolic constant(符号常量)** to be a particular string of characters:
+
+```C
+#define   name   replacement text
+```
+
+Thereafter, any occurrence of `name` will be replaced by the corresponding `replacement text`.
+
+- The `name` has the same form as a variable name; a sequence of letters and digits that begins with a letter.
+- The `replacement text` can be any sequence of characters; it is not limited to numbers.
+
+```C
+#include <stdio.h>
+
+#define LOWER 0
+#define UPPER 300
+#define STEP 20
+
+/* print Fahrenheit-Celsius table */
+int main()
+{
+  int fahr;
+  
+  for (fahr = LOWER; fahr <= UPPER; fahr = fahr + STEP)
+    printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));
+}
+```
+
+The quantities `LOWER`, `UPPER` and `STEP` are symbolic constant, not variables, so they do not appear in declarations.
+
+*Symbolic constant names are conventionally written in upper case* so they can be readily distinguished from lower case variable names.
+
+Notice that there is *no semicolon at the end of a `#define` line*.
+
+
+
+### 1.5 Character Input and Output
+
+Text input or output, is dealt with as streams of characters.
+
+A **text stream (文本流)** is a sequence of characters divided into lines; each line consists of zero or more characters followed by a newline character.
+
+- It is the responsibility of the library to make each input or output stream conform to this model. The C programmer using the library need not worry about how lines are represented outside the program.
+
+
+
+The standard library provides several functions for reading or writing one character at a time, of which **`getchar`** and **`putchar`** are the simplest. **对于getchar的工作原理，还不太了解????**
+
+- Each time it is called, `getchar` reads the next input character from a text stream and returns that as its value. That is, *after*
+
+  ```C
+  c = getchar()
+  ```
+
+  *the variable `c` contains the next character of input.* The characters normally come from the keyboard; input from files is discussed in Chapter 7.
+
+- The function `putchar` prints a character each time it is called:
+
+  ```C
+  int c = 90;
+  putchar(c);  // output "Z"
+  ```
+
+  *Prints the contents of the **integer variable** `c` as a character usually on the screen*.
+
+  Calls to `putchar` and `printf` may be interleaved; the output will appear in the order in which the call are made.
+
+Given `getchar` and `putchar`, you can write a surprising amount of useful code without knowing anything more about input and output.
+
+##### 1.5.1 File Copying
+
+The simplest example is a program that copies its input to its output one character at a time:
+
+```
+read a character
+while (character is not end-of-file indicator)
+	output the character just read
+	read a character
+```
+
+Converting this into C gives:
+
+```c
+#include <stdio.h>
+
+/* copy input to output; 1st version */
+int main()
+{
+  int c; // 
+  
+  c = getchar();
+  while (c != EOF){ 
+    putchar(c);
+    c = getchar();
+  }
+}
+```
+
+*What appears to be a character on the keyboard or screen is of course, like everything else, stored internally just as a bit pattern.*
+
+The type `char` is specifically meant for storing such character data, but any integer type can be used. We used `int` for a subtle but important reason:
+
+- *The problem is distinguishing the end of the input from valid data.*
+- The solution is that `getchar` returns a distinctive value when there is no more input; a value that cannot be confused with any real character.
+- This value is called `EOF`, for "end of file".
+- We must declare `c` to be a type big enough to hold any value that `getchar` returns.
+- *We can't use `char` since `c` must be big enough to hold `EOF` in addition to any possible `char`. Therefore we use `int`.*
+- `EOF` is an integer defined in `<stdio.h>`, but the specific numeric value doesn't matter as long as it is not the same as any `char` value.
+- *By using the symbolic constant, we are assured that nothing in the program depends on the specific numeric value.*
+
+
+
+​		
+The program for copying would be written *more concisely* by experienced C programmers. In C, any assignment, such as
+
+```C
+c = getchar();
+```
+
+*is an expression and has a value, which is the value of the left hand side after the assignment*.
+
+**This means that an assignment can appear as part of a larger expression**. If the assignment of a character to `c` is put inside the test part of a `while` loop, the copy program can be written this way:
+
+```c
+#include <stdio.h>
+
+/* copy input to output; 2nd version */
+int main()
+{
+  int c;
+  
+  while ((c = getchar()) != EOF)
+    putchar(c);
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+​	
 ​		
 ​	
