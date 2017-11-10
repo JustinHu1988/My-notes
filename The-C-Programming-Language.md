@@ -519,24 +519,3 @@ This version centralizes the input -- there is now only one reference to `qetcha
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-​	
-​		
-​	
