@@ -86,6 +86,8 @@ Only the question arises here:
 
 
 
+
+
 ## II. The First Extension of the Notion of Number
 
 Extension of the number concept:
@@ -105,6 +107,72 @@ The creation of negative numbers is motivated by the demand that:
 
 
 Here, for the first time, we meet the transition from concrete to formal mathematics.
+
+
+
+When negative numbers are introduced:
+
+- *addition and subtraction coalesce*.
+
+  The new operation of addition (including subtraction) in the domain of positive and negative numbers the five formal laws stated before hold without change. 
+
+- The chief point in the multiplication of positive and negative numbers is the *rule of signs*:
+
+  *The absolute value of a product is equal to the product of the absolute values of the factors; its sign is positive or negative according as an even or an odd number of factors is negative.*
+
+  With this convention, multiplication in the domain of positive and negative numbers has again the following properties:
+
+  1. Always possible.
+  2. Unique.
+  3. Associative.
+  4. Commutative.
+  5. Distributive with respect to addition.???
+
+  There is a change only in the monotonic law:
+
+  6. If $a>b$ then:
+     - if $c>0$, then $a \cdot c > b \cdot c$;
+     - if $c<0$, then $a \cdot c<b \cdot c$;
+
+
+
+*Again, whether these laws, considered again purely formally, are consistent?*
+
+- A purely logical proof of consistency is as yet much less possible here than it is in the case of integers.
+
+- Only a reduction is possible, in the sense that the present laws are consistent if the laws for integers are consistent.
+
+- But until this had been completed by a logical consistency proof for integers, one will have to hold that *the consistency of our laws is based solely on the fact that there are intuitive things, with intuitive relations, which obey these laws.*
+
+- From the present point of view, we have the so called **parenthesis rules** for operations with positive numbers, which are, of course, contained in our fundamental formulas, provided one includes the corresponding laws for subtraction. In order to show the possibility of extremely simple intuitive proofs for them, let see two examples:
+
+  1. Given $a>b$ and $c>a$, where a, b, c are positive. Then $a-b$ is a positive number and is smaller than c, that is, $c-(a-b)$ must exist as a positive number.
+
+     Now, You can easily use axis of abscissas to prove that $c-(a-b)=c-a+b$ :
+
+     <img src="images/elementary-mathematics-from-an-advanced-standpoint-001.PNG">
+
+  2. Given $a>b$ and $c>d$; then $a-b$ and $c-d$ are positive integers. We wish to examine the product $(a-b) \cdot (c-d)$; for that purpose, draw the rectangle with sides $a-b$ and $c-d$ whose area is the number sought, $(a-b) \cdot (c-d)$, and which is part of the rectangle with sides a and c.
+
+     Then, we also can easily prove that: $(a-b)(c-d)=ac-ad-bc+bd$.
+
+     <img src="images/elementary-mathematics-from-an-advanced-standpoint-002.PNG">
+
+  3. ​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
