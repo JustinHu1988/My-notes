@@ -2,7 +2,7 @@
 
 ## I. Calculating with Natural Numbers
 
-### fundamental laws of reckoning
+### 1.1 fundamental laws of reckoning
 
 **Five fundamental laws of addition**:
 
@@ -42,7 +42,7 @@ All elementary reckoning can be based upon these eleven laws.
 
 
 
-### Logical Foundations of Operations with Integers
+### 2.1 Logical Foundations of Operations with Integers
 
 How does one justify the above-mentioned fundamental laws, how does one account for the notion of number at all?
 
@@ -52,7 +52,7 @@ So far as the notion of number is concerned, it is very difficult to discover it
 
 
 
-##### Intuitive(直觉) view:
+##### 2.1.1 Intuitive(直觉) view:
 
 **Theorem of mathematical induction**: If a theorem holds for small numbers, and if an assumption of its validity for a number n always insures its validity for n+1, then it holds generally for every number.
 
@@ -68,13 +68,13 @@ If we would realize teh significance of this question as the the source of the v
 
 
 
-##### Point Set(点集) view:
+##### 2.1.2 Point Set(点集) view:
 
 *The properties of integers and of operations with them are to be deduced from the general properties and abstract relations of point sets.*
 
 
 
-##### Purely formal theory of numbers(数的纯形式理论) view:
+##### 2.1.3 Purely formal theory of numbers(数的纯形式理论) view:
 
 Once one has the eleven fundamental rules of reckoning, one can operate with the letters a, b, c, …, be things devoid of meaning, or things of whose meaning we know nothing; let us agree only that one may combine them according to those eleven rules, but that these combinations need not have any real known meaning.
 
@@ -136,6 +136,7 @@ When negative numbers are introduced:
 
 
 
+
 *Again, whether these laws, considered again purely formally, are consistent?*
 
 - A purely logical proof of consistency is as yet much less possible here than it is in the case of integers.
@@ -148,17 +149,77 @@ When negative numbers are introduced:
 
   1. Given $a>b$ and $c>a$, where a, b, c are positive. Then $a-b$ is a positive number and is smaller than c, that is, $c-(a-b)$ must exist as a positive number.
 
-     Now, You can easily use axis of abscissas to prove that $c-(a-b)=c-a+b$ :
+     Now, You can easily use axis of abscissas to prove that $c-(a-b)=c-a+b$ `[1]`:
 
      <img src="images/elementary-mathematics-from-an-advanced-standpoint-001.PNG">
 
   2. Given $a>b$ and $c>d$; then $a-b$ and $c-d$ are positive integers. We wish to examine the product $(a-b) \cdot (c-d)$; for that purpose, draw the rectangle with sides $a-b$ and $c-d$ whose area is the number sought, $(a-b) \cdot (c-d)$, and which is part of the rectangle with sides a and c.
 
-     Then, we also can easily prove that: $(a-b)(c-d)=ac-ad-bc+bd$.
+     Then, we also can easily prove that: $(a-b)(c-d)=ac-ad-bc+bd$ `[2]`.
 
      <img src="images/elementary-mathematics-from-an-advanced-standpoint-002.PNG">
 
-  3. ​
+
+  **We are involuntarily inclined to employ rules under circumstances more general than are warranted by the special cases under which the rules were derived and have validity.**
+
+  - For the particular case of transition to negative numbers, the above principle would declare that *one desired to forget, in formulas like `[1]` and `[2]` the expressed assumptions as to the relative magnitude of `a` and `b` and to employ them in other cases*. 
+  - If one applies `[2]`, for example, to $a=c=0$, *for which the formulas were not proved at all*, one obtains $(-b) \cdot (-c)=+bd$, **the sign rule for multiplication of negative numbers**. *（这个符号法则的得出，并没有严格遵守前述公式的前提条件，因此并没有得到证明）*
+  - In this manner we may derive, in fact almost unconsciously, all the rules, which we must now designate, following the same line of thought, as almost necessary assumptions, necessary insofar as one would have validity of the old rules for the new concepts.
+  - *负数的性质（符号法则），是通过某种一般性假设得出的，无法严谨得到证明。目前看来，与其说需要证明，不如说需要保证其与前述自然数法则的逻辑相容性(即逻辑上是否允许这个法则)。* 
+  - **the rule of signs is not susceptible of proof; one can only be concerned with recognizing the logical permissibility of the rule**，at the same time, that it is arbitrary, and regulated by considerations of expedience, such as the principle of permanence.
+  - *The function of pure logic, when it comes to setting up new concepts, is only to regulate and never to act as the sole guiding principle; for there will always be many other conceptual systems which satisfy the single demand of logic, namely, freedom from contradiction.*
+  - 个人感想：*有些基础公式，无法得到直接证明，是一种约定俗成（假设），在这种约定的形成中，最重要的是整个数学体系的逻辑一致性和实用性。*
+  - These formal conventions, suggested by the principle of permanence, are appropriate in that they yield a uniformly convenient algorithm, whereas every other convention would always compel the consideration of numerous special cases.
+
+
+### 2.2 Fractions
+
+We have passed from the *number* of things to their *measure*, from the consideration of *countable things to measureable things*.
+
+
+
+- Weber-Wellstein: 
+  - The fraction $a/b$ is a symbol, a "number-pair" with which one can operate according to certain rules.
+- Burkhardt:
+  - Fraction $a/b$ is a sequence of two operations in the domain of integers; a multiplication by `a` and a division by `b`, 
+
+
+
+### 2.3 Irrational Numbers
+
+Historically, the origin of the concept of irrational numbers lies certainly in geometric intuition and in the requirements of geometry.
+
+The set of rational points is *dense* on the axis of abscissas, but there are *still other points on it*.
+
+
+
+Irrational number: can't be expressed by the ratio of two whole numbers.
+
+
+
+The general idea of the irrational number appeared first at the end of the sixteenth century as a consequence of the introduction of *decimal fractions(十进制小数)*, the use of which became established at that time in connection with the appearance of logarithmic tables(对数表).
+
+- if we transform a rational number into a decimal, we may obtain infinite decimals, as well as finite decimals, but they will always be periodic.
+- Now there is nothing to prevent our thinking of a aperiodic decimal whose digits proceed according to any definite law whatever, and anyone would instinctively consider it as a definite, and hence a non-rational, number.
+- By this means the general notion of irrational number is established.
+- It arose to a certain extent automatically, by the consideration of decimal fractions.
+- Thus, historically, the same thing happened with negative numbers. *Calculation forced the introduction of the new concepts*, and without being concerned much as to their nature or their motivation, one operated with them, the more particularly since they often proved to be extremely useful. 
+
+
+
+It was not until the sixth decade of the nineteenth century that the need was felt for a more precise arithmetic formulation of the foundations of irrational numbers.
+
+- If `r` is any rational number, it separates the totality of rational numbers into two parts `A` and `B` such that every number in A is smaller than any number in B, and every rational number belongs to one of these two calsses.
+  - A is the totality of all rational numbers which are smaller than `r`, B those that are larger, whereby `r` itself may be thought of indifferently as belonging to the one or to the other.
+  - Besides these "proper cuts" there are also "improper cuts", these being separations of all rational numbers into two classes having the same properties except that they are not brought about by a rational number, separations such that there is neither a smallest rational number in B nor a largest in A. For example: $\sqrt{2}=1.414…$ . 
+
+*A cut in the domain of rational numbers is called a rational number or an irrational number according as the cut is proper or improper.*
+
+A definition of equality follows from this at once: Two numbers are said to be equal if they yield the same cut in the domain of rational numbers.
+
+- From this definition we can immediately prove for example: that $\frac{1}{3}$ is equal to the infinite decimal 0.3333….
+
+*Two numbers are called equal if they differ by less than any preassigned constant, however small.* (So 0.9999… is equal to 1).
 
 
 
@@ -166,8 +227,46 @@ When negative numbers are introduced:
 
 
 
+After establishing arithmetic theory for irrational numbers, how can we pass to the applications in other fields.
+
+- This applies in particular, to analytic geometry, which to the naive perception appears to be the source of irrational numbers.
+
+- If we think of the axis of abscissa, with the origin and also the rational points marked on it. Then, these applications depend upon the following fundamental principle:
+
+  **Corresponding to every rational or irrational number there is a point which has this number as abscissa and , conversely, corresponding to every point on the line there is a rational or an irrational number.**
+
+- Such a fundamental principle, which stands at the head of a branch of knowledge, and from which all that follows is logically deduced, *while itself cannot be logically proved*, may properly be called an **axiom (公理)**. 
+
+- Such an axiom will appear intuitively obvious or will be accepted as a more or less arbitrary convention, by each person according to his gifts.
 
 
+
+
+
+**Mathematics of approximation** vs **Mathematics of precision**
+
+- Explain the difference by an interpretation of the equation $f(x)=0$: 
+  - In the mathematics of approximation, just as in our empirical space perception, one is not concerned that $f(x)$ should be exactly zero, but *merely that its absolute value $|f(x)|$ should remain below the attainable threshold of exactness `ε`. The symbol $f(x)=0$ is merely an abbreviation for the inequality $|f(x)|<ε$ ,* with which one is really concerned.
+  - *It is only in the mathematics of percision that one insists that the equation $f(x)=0$ be exactly satisfied*.
+- Since mathematics of approximation alone plays a role in applications, one might say, somewhat crassly, that one needs only this branch of mathematics, whereas the mathematics of precision exists only for the intellectual pleasure of those who busy themselves with it, and to give valuable and indeed indispensable support for the development of mathematics of approximation.
+
+*Concept of irrational number belongs certainly only to mathematics of precision*. 
+
+
+
+
+
+## III. Concerning Special Properties of Integers
+
+This chapter devoted ot the actual theory of integers, to the theory of numbers, or arithmetic in its narrower sense.
+
+
+
+1. The first problem of the theory of numbers is that of **divisibility**: Is one number divisible by another or not?
+2. Simple rules can be given which enable us easily to decide as to the divisibility of any given number by smaller numbers, such as 2, 3, 4, 5, 9, 11, etc.
+3. There are infinitely many prime numbers, that is, numbers which have no integral divisors except one and themselves: 2, 3, 4, 5, 9, 11, etc.
+4. *We are in control of all of the properties of given integers if we know their decomposition into prime factors.*
+5.  
 
 
 
