@@ -500,7 +500,7 @@ int main()
 {
   int c;
   
-  while ((c = getchar()) != EOF)  // assignment will execute, then the value of c will compare with EOF
+  while ((c = getchar()) != EOF)  // assignment will execute, then the value of c will compare with EOF, see Note-009
     putchar(c);
 }
 ```
@@ -509,11 +509,104 @@ int main()
 
 - if it was not, the body of the `while` is executed, printing the character. The `while` then repeats. When the end of the input is finally reached, the `while` terminates and so does `main`.
 
-This version centralizes the input -- there is now only one reference to `qetchar` -- and shrinks the program. The resulting program is more compact, and, once the idiom is mastered, easier to read. You'll see this style often. (It's possible to get carried away and create impenetrable code, however, a tendency that we will try to curb).
+This version centralizes the input -- there is now only one reference to `getchar` -- and shrinks the program. The resulting program is more compact, and, once the idiom is mastered, easier to read. You'll see this style often. (It's possible to get carried away and create impenetrable code, however, a tendency that we will try to curb).
 
-*The parentheses around the assignment within the condition are necessary:*
+> Note-009:
+>
+> *The parentheses around the assignment within the condition are necessary:*
+>
+> - *Because the precedence of `!=` is higher than that of `=`.*
 
-- *Because the precedence of `!=` is higher than that of `=`.*
+
+
+##### 1.5.2 Character Counting
+
+```c
+#include <stdio.h>
+/* count characters in input; 1st version */
+int main()
+{
+  long nc;  // long integers are at least 32bits.
+  nc = 0;
+  while (getchar() != EOF)
+    ++nc; // ++, means increment by one. See Note-010
+  printf("%ld\n", nc); // The conversion specification %ld tells printf that the corrsponding argument is a long integer.
+}
+```
+
+> Note-010:
+>
+> - Instead write `nc=nc+1`, `++nc` is more concise and often more efficient.
+> - There is a corresponding operator `--` to decrement by `1`.
+> - The operators `++` and `--` can be either prefix(`++nc`) operators or postfix(`nc++`);
+>   - These two forms have different value in expressions
+>   - but they both increment `nc`.
+
+
+
+It may be possible to cope with even bigger numbers by using a `double`. We will also use a `for` statement instead of a `while`, to illustrate another way to write a loop.
+
+```c
+#include <stdio.h>
+/* count characters in input; 2nd version */
+int main()
+{
+  double nc;
+  for (nc = 0; getchar() != EOF; ++nc)
+    ;  // see Note-011
+  printf("%.0f\n", nc);  // printf uses %f for both float and double. %.0f suppresses printing of the decimal point and the fraction part, which is zero
+}
+```
+
+> Note-011:
+>
+> - The body of this for loop is empty, because all of the work is done in the test and increment parts. 
+> - But the grammatical rules of C require that a `for` statement have a body. The isolated semicolon, called a **null statement (空语句)**, is there to satisfy that requirement.
+> - We put it on a separate line to make it visible.
+
+
+
+Observe that if the input contains no characters, the while or for test fails on the very first call to `getchar`, and the program produces `0`, the right answer. This is important. One of the nice things about `while` and `for` is that they test at the top of the loop, before proceeding with the body. If there is nothing to do, nothing is done, even if that means never going through the loop body. 
+
+Programs should act intelligently when given zero-length input. The `while` and `for` statements help ensure that programs *do reasonable things with boundary conditions*.
+
+
+
+##### 1.5.3 Line Counting
+
+```c
+#include <stdio.h>
+/* count lines in input */
+int main()
+{
+  int c, nl;
+  nl = 0;
+  while ((c=getchar()) != EOF)
+    if (c=='\n')  // see Note-012
+      ++nl;
+  printf("%d\n", nl);
+}
+```
+
+> Note-012
+>
+> - `if` statement tests the parenthesized condition, and if the condition is true, executes the statement (or group of statements in braces) that follows.
+> - double equal sign `==` is the C notation for "is equal to". This symbol is used to distinguish the equality test from the single `=` that C uses for assignment.
+> - **A character written between single quotes represents an integer value equal to the numerical value of the character in the machine's character set.** This is called a **character constant (字符常量)**, although it is just another way to write a small integer. 
+>   - for example: 'A' is a character constant; in the ASCII character set its value is 65, the internal representation of the character A. Of course 'A' is to be preferred over 65: its meaning is obvious, and it is independent of a particular character set.
+> - The escape sequences used in string constants are also legal in character constants, so '\n' stands for the value of the newline character, which is 10 in ASCII.
+>   - note carefully that '\n' is a single character, and in expressions is just an integer.
+>   - On the other hand, '\n' is a string constant that happens to contain only one character.
+
+
+
+
+
+
+
+
+
+
 
 
 
