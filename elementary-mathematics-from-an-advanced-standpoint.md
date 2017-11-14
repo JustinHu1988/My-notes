@@ -265,8 +265,14 @@ This chapter devoted ot the actual theory of integers, to the theory of numbers,
 1. The first problem of the theory of numbers is that of **divisibility**: Is one number divisible by another or not?
 2. Simple rules can be given which enable us easily to decide as to the divisibility of any given number by smaller numbers, such as 2, 3, 4, 5, 9, 11, etc.
 3. There are infinitely many prime numbers, that is, numbers which have no integral divisors except one and themselves: 2, 3, 4, 5, 9, 11, etc.
-4. *We are in control of all of the properties of given integers if we know their decomposition into prime factors.*
-5.  
+4. *We are in control of all of the properties of given integers if we know their decomposition into prime factors.
+5. In the transformation of rational fractions into decimal fractions **the theory of numbers (数论)** plays an important role; It shows why the decimal fraction must be periodic and how large the period is.
+6. **Continued fractions (连分数)**.
+7. **Diophantine equations (丢番图方程)**.
+8. **The problem of dividing the circle into equal parts (圆的等份问题)** is closely related to the theory of numbers.
+9. The higher theory of numbers is touched, when π is calculated.
+
+
 
 
 

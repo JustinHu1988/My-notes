@@ -598,9 +598,126 @@ int main()
 >   - note carefully that '\n' is a single character, and in expressions is just an integer.
 >   - On the other hand, '\n' is a string constant that happens to contain only one character.
 
+##### 1.5.4 Word Counting
+
+```c
+#include <stdio.h>
+#define IN 1 /* inside a word */
+#define OUT 0 /* outside a word */
+
+/* count lines, words, and characters in input */
+int main()
+{
+  int c, nl, nw, nc, state;
+  
+  state = OUT;
+  nl = nw = nc = 0;  // sets all three variables to zero
+  while ((c=getchar()) != EOF){
+    ++nc;
+    if(c=='\n'){
+        ++nl;
+    }
+    if(c==' ' || c=='\n' || c=='\t') // see Note-013
+      state = OUT;
+    else if (state == OUT) {
+      state = IN;
+      ++nw;
+    }
+  }
+  printf("%d %d %d\n", nl, nw, nc);
+}
+```
+
+> Note-013
+>
+> - operator `||` means OR.
+>   - It is guaranteed that evaluation will stop as soon as the truth or falsehood is known.
+> - and there is a corresponding operator `&&` for AND.
+> - Precedence: *`&&` is higher than `||`.*
 
 
 
+Exercise 1-12: *练习题初期答案和标准答案之间的对比：*
+
+not optimized:
+
+```C
+#include <stdio.h>
+#define IN 1 /* inside a word */
+#define OUT 0 /* outside a word */
+/* prints its input one word per line (not optimized) */
+int main()
+{
+    int c, state, count;
+    state = IN;
+    count = 0;
+
+    while ((c=getchar()) != EOF){
+        if(c==' ' || c=='\t'){
+            if(count == 0){
+            }else{
+             state = OUT;
+            }
+        }
+        else if(c=='\n' && state==IN){
+            putchar('\n');
+            count = 0;
+        }
+        else if (state == OUT) {
+            state = IN;
+            putchar('\n');
+            if(c != '\n'){
+             putchar(c);
+            } else{
+             count = 0;
+            }  
+        }else if(state == IN){
+            if(count == 0) {
+                count++;
+            }
+            putchar(c);
+        }
+    }
+}
+```
+
+**Optimized**:
+
+```C
+#include <stdio.h>
+#define IN 1 /* inside a word */
+#define OUT 0 /* outside a word */
+
+/* prints its input one word per line (optimized) */
+int main()
+{
+    int c, state;
+    state = OUT;
+  
+    while ((c=getchar()) != EOF){
+        if(c==' ' || c=='\t' || c=='\n'){
+            if(state==IN){
+                putchar('\n');
+                state = OUT;
+            }
+        }
+        else if (state == OUT) {
+            state = IN;
+            putchar(c);
+        }else if(state == IN){
+            putchar(c);
+        }
+    }
+}
+```
+
+*预先的逻辑架构要清晰，才可以得出较为优化的判定结构。*
+
+
+
+
+
+### 1.6 Arrays
 
 
 
