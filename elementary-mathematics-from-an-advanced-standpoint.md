@@ -263,15 +263,68 @@ This chapter devoted ot the actual theory of integers, to the theory of numbers,
 
 
 1. The first problem of the theory of numbers is that of **divisibility**: Is one number divisible by another or not?
-2. Simple rules can be given which enable us easily to decide as to the divisibility of any given number by smaller numbers, such as 2, 3, 4, 5, 9, 11, etc.
-3. There are infinitely many prime numbers, that is, numbers which have no integral divisors except one and themselves: 2, 3, 4, 5, 9, 11, etc.
-4. *We are in control of all of the properties of given integers if we know their decomposition into prime factors.
-5. In the transformation of rational fractions into decimal fractions **the theory of numbers (数论)** plays an important role; It shows why the decimal fraction must be periodic and how large the period is.
-6. **Continued fractions (连分数)**.
-7. **Diophantine equations (丢番图方程)**.
-8. **The problem of dividing the circle into equal parts (圆的等份问题)** is closely related to the theory of numbers.
-9. The higher theory of numbers is touched, when π is calculated.
 
+2. Simple rules can be given which enable us easily to decide as to the divisibility of any given number by smaller numbers, such as 2, 3, 4, 5, 9, 11, etc.
+
+3. There are infinitely many prime numbers, that is, numbers which have no integral divisors except one and themselves: 2, 3, 4, 5, 9, 11, etc.
+
+4. *We are in control of all of the properties of given integers if we know their decomposition into prime factors*.
+
+5. In *the transformation of rational fractions into decimal fractions* **the theory of numbers (数论)** plays an important role; It shows why the decimal fraction must be periodic and how large the period is.
+
+6. **Continued fractions (连分数)**.
+
+7. **Diophantine equations (丢番图方程)**.
+
+8. **The problem of dividing the circle into equal parts (圆的等份问题)** is closely related to the theory of numbers.
+
+9. The higher theory of numbers is touched, when **π** is calculated, during the study of the quadrature of the circle.
+
+   - We usually determine the first decimal places for π, by some method or other
+
+   - *The modern proof of the transcendence of π which sets at rest the old problem of the quadrature of the circle with ruler and compasses.*
+
+   - *The number π does not satisfy any algebraic equation with integral coefficients:*
+
+     $$aπ^{n}+aπ^{n-1}+…+kπ + 1=0$$.
+
+     It is especially important that the codfficients be integers, and it is for this reason that the problem belongs to the theory of numbers.
+
+   - Of course here, again, one is concerned solely with a problem of the mathematics of precision, because it is only in this sense that the number-theoretic character of π has any significance. (The mathematics of approximation is satisfied with the determination of the first few decimals, which permit us to effect the quadrature of the circle with any desired degree of exactness).
+
+
+
+
+The theory of numbers would be made more accessible, and would awaken more general interest, if it were presented in connection with graphical elements and appropriate figures.
+
+
+
+**proof of the existence of infinitely many prime numbers**:
+
+- Assuming that the sequence of prime numbers is finite, let it be 1, 2, 3, 5, … , p;
+- then the number $N=(1\cdot2\cdot3\cdot5…p)-1$ is not divisible by any of the numbers $2, 3, 5, …, p$ since there is always the remainder $1$.
+- Hence $N$ must either itself be a prime number or there are prime numbers larger than $p$.
+- Either of these alternatives contradicts the hypothesis, and the proof is complete.
+
+
+
+For the fifth point — the transformation of ordinary fractions into decimal fractions:
+
+- Let us consider the fraction $\frac{1}{p}$, where $p$ is a prime number different from $2$ and $5$. We shall show that:
+
+  - $\frac{1}{p}$ is equal to an infinite periodic decimal, and that the number $δ$ of places in the period is the smallest exponent of which $10^{δ}$ , when divided by $p$, leaves $1$ as a remainder, or that, in the language of number theory, $δ$ is the smallest exponent which satisfies the "congruence":
+
+    $$10^δ\equiv1(modp)$$.
+
+- Proof:
+
+  - The proof requires, in the first place, the knowledge that this congruence always has a solution.
+
+  - This is supplied by the **theorem of Fermat (费马定理)**, which states that for every prime number $p$ except $2$ and $5$:
+
+    $$10^{p-1}\equiv1(modp)$$.
+
+  - ​
 
 
 
