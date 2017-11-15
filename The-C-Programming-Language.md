@@ -721,6 +721,225 @@ int main()
 
 
 
+```C
+#include <stdio.h>
+/* count digits, white space, others */
+int main()
+{
+  int c, i, nwhite, nother;
+  int ndigit[10];
+  
+  nwhite = nother = 0;
+  for (i = 0; i < 10; ++i)
+    ndigit[i] = 0;
+  
+  while ((c = getchar()) != EOF)
+    if (c >= '0' && c <= '9')
+      ++ndigit[c-'0'];
+    else if (c == ' ' || c == '\n' || c == '\t')
+      ++nwhite;
+  	else
+      ++nother;
+  
+  printf("digits = ");
+  for (i = 0; i < 10; ++i)
+    printf("%d", ndigit[i]);
+  printf(", white space = %d, other = %d\n", nwhite, nother);
+}
+```
+
+```C
+#include <stdio.h>
+/* count digits, white space, others */
+int main()
+{
+  int c, i, nwhite, nother;
+  int ndigit[10];  // declares `ndigit` to be an array of 10 integers. See Note-014
+  
+  nwhite = nother = 0;
+  for (i = 0; i < 10; ++i)
+    ndigit[i] = 0;
+  
+  while ((c = getchar()) != EOF)
+    if (c >= '0' && c <= '9')  // See Note-015
+      ++ndigit[c-'0'];
+    else if (c == ' ' || c == '\n' || c == '\t')
+      ++nwhite;
+  	else
+      ++nother;
+  
+  printf("digits = ");
+  for (i = 0; i < 10; ++i)
+    printf("%d", ndigit[i]);
+  printf(", white space = %d, other = %d\n", nwhite, nother);
+}
+```
+
+
+
+> Note-014
+>
+> A subscript can be any integer expression, which includes integer variables like `i`, and integer constants.
+
+> Note-015
+>
+> This particular program relies on the properties of the character representation of the digits. For example, the test:
+>
+> ```c
+> if (c >= '0' && c <= '9')...
+> ```
+>
+> determines whether the character in `c` is a digit. If it is, the numeric value of that digit is: `c-'0'`.
+>
+> This works only if '0', '1', …, '9' have consecutive increasing values. Fortunately, this is true for all character sets.
+
+*By definition, `char`s are just small integers, so `char` variables and constants are identical to `int`s in arithmetic expressions*.
+
+This is natural and convenient; for example, `c-'0'` is an integer expression with a value between 0 and 9 corresponding to the character '0' to '9' stored in `c`, and is thus a valid subscript for the array `ndigit`.
+
+
+
+*Note: Exercise 1-14 is still not write.???*
+
+
+
+### 1.7 Functions
+
+With properly designed functions, it is possible to ignore how a job is done, knowing what is done is sufficient.
+
+For illustration, let's see an example:
+
+```C
+#include <stdio.h>
+
+int power(int m, int n);
+
+/* test power function */
+int main(){
+  int i;
+  for (i = 0; i < 10; ++i)
+  	printf("%d %d %d\n", i, power(2,i), power(-3,i));
+  return 0; 
+}
+/* power: raise base to n-th power; n>=0 */
+int power(int base, int n)
+{
+  int i,p;
+  
+  p = 1;
+  for (i = 1; i <= n; ++i)
+    p = p * base;
+  return p;
+}
+```
+
+A function definition has this form:
+
+```
+return-type function-name(parameter declarations, if any)
+{
+  declarations
+  statements
+}
+```
+
+*Function definitions can appear in any order, and in one source file or several, although no function can be split between files.*
+
+- If the source program appears in several files, you may have to say more to compile and load it than if it all appears in one, but that is an operating system matter, not a language attribute.
+
+For the moment, we will assume that both functions are in the same file, so whatever you have learned about running C programs will still work.
+
+
+
+```C
+#include <stdio.h>
+
+int power(int m, int n);  // a function prototype, See Note-020
+
+/* test power function */
+int main(){
+  int i;
+  for (i = 0; i < 10; ++i)
+  	printf("%d %d %d\n", i, power(2,i), power(-3,i));  // See Note-016
+  return 0; // See Note-019
+}
+/* power: raise base to n-th power; n>=0 */
+int power(int base, int n)  // See Note-017
+{
+  int i,p;
+  
+  p = 1;
+  for (i = 1; i <= n; ++i)
+    p = p * base;
+  return p; // See Note-018
+}
+```
+
+> Note-016
+>
+> Each call passes two arguments to `power`, which each time returns an integer to be formatted and printed.
+
+> Note-017
+>
+> This line declares the parameter types and names, and the type of the result that the function returns.
+>
+> The names used by `power` for its parameters are local to `power`, and are not visible to any other function: other routines can use the same names without conflict. This is also true of the variables `i` and `p`: the `i` in `power` is unrelated to the `i` in `main`.
+>
+> We will generally use **parameter** for a variable named in the parenthesized list in a function definition, and **argument** for the value used in a call of the function. The terms **formal argument** and **actual argument** are sometimes used for the same distinction.
+
+> Note-018
+>
+> The value that `power` computes is returned to `main` by the `return` statement.
+>
+> Any expression may follow `return`:
+>
+> ```
+> return expression;
+> ```
+>
+> - A function need not return a value;
+>
+> - A `return` statement with no expression causes control, but no useful value, to be returned to the caller, as does "falling off the end" of a function by reaching the terminating right brace.
+>
+>   And the calling function can ignore a value returned by a function.
+
+> Note-019
+>
+> Since `main` is a function like any other, it may return a value to its caller, which is in effect the environment in which the program was executed.
+>
+> - *Typically, a return value of zero implies normal termination;*
+> - *Non-zero values signal unusual or erroneous termination conditions.*
+
+> Note-020
+>
+> **Function prototype (函数原型)**:
+>
+> - the prototype need to *agree with the definition and uses of the same function name*. Otherwise it is an error.
+>
+> - *Parameter names need not agree*. Indeed, parameter names are *optional* in a function prototype, so for prototype we could have written:
+>
+>   ```c
+>   int power(int, int);
+>   ```
+>
+>   However, *well-chosen names are good documentation, so we will often use them*.
+>
+> *This (relatively) new syntax of function prototypes makes it much easier for a compiler to detect errors in the number of arguments or their types.*
+
+### 1.8 Arguments — *Call by Value*
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1200,23 +1200,47 @@ be can used in continuous tense, or the passive voice.
 
 
 
+#### 4. 定语关系限定词 (possessive relatives)
+
+定语关系限定词主要就是whose(此外也可以是which).
+
+whose必须接名词，而who等不能接名词。
+
+- The professor *whose course I am taking* is excellent.
 
 
 
+和其他关系词不同的是，不能单独把whose移位到从句的句首，而是要把“whose+名词”一起移位到从句开头。whose本身只作定语，而“whose+名词”构成的名词短语，类似于who或which关系代词，因而可以在定语从句中充当主语、动词宾语以及介词宾语等。
+
+- 充当从句主语：
+  - When I looked through the window, I saw a girl *whose beauty* took my breath away.
+- 充当从句的动词宾语：
+  - I apologized to the woman *whose coffee* I spilled.
+- 充当从句的介词宾语：
+  - Atlas in Greek mythology was a kneeling man *whose shoulder* the world rested *on*.
+  - Atlas in Greek mythology was a kneeling man *on whose shoulder* the world rested.
 
 
 
+除了指代人，whose也可以指代事物：
+
+- I live in a dormitory *whose residents* come from many countries.
+- They lived in a house *whose roof* was leaking.
 
 
 
+whose替换的物主代词包括his, her, their, its.
 
 
 
+Whose与of which的替换：
 
+- They lived in a houre *whose roof* was leaking.
+- They lived in a house, *the roof of which* was leaking.
+- They lived in a house *of which the roof* was leaking.
 
-
-
-
+1. *of which与the搭配使用，因为被修饰名词house是第二次提到；*
+2. *whose不能与the搭配使用。*
 
 
 
