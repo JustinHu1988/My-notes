@@ -925,8 +925,14 @@ int power(int base, int n)  // See Note-017
 >   However, *well-chosen names are good documentation, so we will often use them*.
 >
 > *This (relatively) new syntax of function prototypes makes it much easier for a compiler to detect errors in the number of arguments or their types.*
+>
+> 
 
 ### 1.8 Arguments — *Call by Value*
+
+In C, all function arguments are passed "by value".
+
+This means that the called function is given the values of its arguments in temporary variables rather than the originals.
 
 
 
