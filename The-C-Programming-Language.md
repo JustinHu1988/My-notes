@@ -930,7 +930,167 @@ int power(int base, int n)  // See Note-017
 
 In C, all function arguments are passed "by value".
 
-This means that the called function is given the values of its arguments in temporary variables rather than the originals.
+- This means that the called function is given the values of its arguments in temporary variables rather than the originals.
+- This leads to some different properties than are seen with "call by reference" languages.
+- It usually leads to more compact programs with fewer extraneous variables, because parameters can be treated as conveniently initialized local variables in the called routine.
+- When necessary, it is possible to arrange for a function to modify a variable in a calling routine. (the argument's value is a *"pointer"*).
+- The story is different for arrays. When the name of an array is used as an argument, the value passed to the function is the location or address of the beginning of the array — there is no copying of array elements. By subscripting this value, the function can access and alter any element of the array. (*Same as pointer???*)
+
+
+
+### 1.9 Character Arrays
+
+The most common type of array in C is the array of characters.
+
+Example: reads a set of text lines and prints the longest:
+
+```
+while (there's another line)
+	if (it's longer than the previous longest)
+		save it
+		save its length
+print longest line
+```
+
+
+
+```C
+#include <stdio.h>
+#define MAXLINE 1000 /* maximum input line size */
+
+int get_line(char line[], int maxline);
+void copy(char to[], char from[]);
+
+/* print longest input line */
+int main()
+{
+  int len;	/* current line length */
+  int max;	/* maximum length seen so far */
+  char line[MAXLINE];	/* current input line */
+  char longest[MAXLINE];	/* longest line saved here */
+  
+  max = 0;
+  while((len=get_line(line, MAXLINE)) > 0)
+    if (len > max) { 
+      max = len;
+      copy(longest, line); //
+    }
+  if(max > 0)
+    printf("%s", longest);
+  return 0;  
+}
+
+/* get_line: read a line to s, return length */
+int get_line(char s[], int lim)
+{
+  int c, i;
+  
+  for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+    s[i] = c;
+  if (c == '\n'){
+    s[i] = c;
+    ++i;
+  }
+  s[i] = '\0';
+  return i;
+}
+
+/* copy: copy 'from' into 'to'; assume to is big enough */
+void copy(char to[], char from[])
+{
+  int i;
+  
+  i = 0;
+  while((to[i] = from[i]) != '\0')
+    ++i;
+}
+
+```
+
+
+
+```C
+#include <stdio.h>
+#define MAXLINE 1000 /* maximum input line size */
+
+int get_line(char line[], int maxline); // See Note-021
+void copy(char to[], char from[]);
+
+/* print longest input line */
+int main()
+{
+  int len;	/* current line length */
+  int max;	/* maximum length seen so far */
+  char line[MAXLINE];	/* current input line */
+  char longest[MAXLINE];	/* longest line saved here */
+  
+  max = 0;
+  while((len=get_line(line, MAXLINE)) > 0) /* 获取此行长度，如果文件还没结束，执行下述代码 */
+    if (len > max) { 
+      max = len;
+      copy(longest, line); //
+    }
+  if(max > 0) //已经获取完最大长度的行，如果此行长度大于0，则将其内容打印
+    printf("%s", longest); // See Note-022
+  return 0;  
+}
+
+/* get_line: read a line to s, return length */
+int get_line(char s[], int lim) // See Note-021
+{
+  int c, i;
+  
+  for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+    s[i] = c;  // put the input character line into s.
+  if (c == '\n'){
+    s[i] = c;
+    ++i;
+  }
+  s[i] = '\0';  // See Note-022
+  return i;
+}
+
+/* copy: copy 'from' into 'to'; assume to is big enough */
+void copy(char to[], char from[])  // the return type void, which states explicitly that no value is returned.
+{
+  int i;
+  
+  i = 0;
+  while((to[i] = from[i]) != '\0')
+    ++i;
+}
+```
+
+> Note-021
+>
+> - the first argument, `s`, is an array.
+>   - The purpose of supplying the size of an array in a declaration is to set aside storage.
+>   - *The length of the array `s` is not necessary in `getline` since its size is set in `main`.*
+> - the second argument, `lim`, is an integer.
+> - `getline` uses `return` to send a value back to the caller, just as the function `power` did.
+> - this line also declares that `getline` returns an `int`;
+
+>Note-022
+>
+>`getline` puts the character `'\0'` (the *null* character, whose value is zero) at the end of the array it is creating, to mark the end of the string of characters.
+>
+>**This convention is also used by the C language**:
+>
+>- *When a string constant like `"hello\n"` appears in a C program, it is stored as an array of character containing the characters of the string and terminated with a `'\0'` to mark the end.*
+>
+>  <img src="images/the-c-programming-language-chapter01-001.png" width="240">
+>
+>- The `%s` format specification in `printf` expects the corresponding argument to be a string represented in this form.
+>
+>- `copy` also relies on the fact that its input argument is terminated by `'\0'`, and it copies this character into the output argument. (All of this implies that `'\0'` is not a part of normal text.)
+
+It is worth mentioning in passing that even a program as small as this one presents some sticky design problems.
+
+- For example, what should `main` do if it encounters a line which is bigger than its limit?
+- `getline` works safely, in that it stops collecting when the array is full, even if no newline has been seen. By testing the length and the last character returned, `main` can determine whether the line was too long, and the cope as it wishes. In the interests of brevity, we have ignored the issue.
+- There is no way for a user of `getline` to know in advance how long an input line might be, so `getline` checks for overflow. On the other hand, the user of `copy` already knows (or can find out) how big the strings are, so we have chosen not to add error checking to it.
+
+
 
 
 
