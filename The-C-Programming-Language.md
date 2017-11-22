@@ -1004,7 +1004,6 @@ void copy(char to[], char from[])
   while((to[i] = from[i]) != '\0')
     ++i;
 }
-
 ```
 
 
@@ -1072,7 +1071,7 @@ void copy(char to[], char from[])  // the return type void, which states explici
 
 >Note-022
 >
->`getline` puts the character `'\0'` (the *null* character, whose value is zero) at the end of the array it is creating, to mark the end of the string of characters.
+>`getline` puts the character `'\0'` (the **null** character, whose value is zero) at the end of the array it is creating, to *mark the end of the string of characters*.
 >
 >**This convention is also used by the C language**:
 >
@@ -1094,6 +1093,94 @@ It is worth mentioning in passing that even a program as small as this one prese
 
 
 
+
+### 1.10 External variables and Scope
+
+
+
+**External variable:**
+
+- Must be defined exactly once, outside of any function; *this sets aside storage for it.*
+- The variable must also be declared in each function that wants to access it; 
+  - *this states the type of the variable.*
+  - *The declaration may be an explicit `extern` statement or may be implicit from context.*
+
+Example: let us rewrite the longest-line program with `line`, `longest`, and `max` as external variables:
+
+```c
+#include <stdio.h>
+#define MAXLINE 1000 
+
+int max;
+char line[MAXLINE];
+char longest[MAXLINE];
+
+int get_line(void);  // void is used for compatibility with older C programs
+void copy(void);
+
+/* print longest input line; specialized version */
+int main()
+{
+  int len;
+  extern int max;  // See Note-023
+  extern char longest[];  // See Note-023
+  
+  max = 0;
+  while((len=get_line()) > 0)
+    if (len > max) { 
+      max = len;
+      copy();
+    }
+  if(max > 0)
+    printf("%s", longest);
+  return 0;
+}
+
+/* get_line: specialized version */
+int get_line(void)
+{
+  int c, i;
+  extern char line[];  // See Note-023
+  
+  for (i=0; i<MAXLINE-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+    line[i] = c;
+  if (c == '\n'){
+    line[i] = c;
+    ++i;
+  }
+  line[i] = '\0';
+  return i;
+}
+
+/* copy: specialized version */
+void copy(void)
+{
+  int i;
+  extern char line[], longest[];  // See Note-023
+  
+  i = 0;
+  while((longest[i] = line[i]) != '\0')
+    ++i;
+}
+```
+
+> Note-023
+>
+> - The external variables in `main`, `getline`, and `copy` are defined by the first lines of the example above, which *state their type* and *cause storage to be allocated for them*.
+> - *Before a function can use an external variable, the name of the variable must be made known to the function*.
+>   - One way to do this is to write an `extern` declaration in the function; the declaration is the same as before except for the added keyword `extern`.
+> - *In certain circumstances, the `extern` declaration can be omitted.*
+>   - *If the definition of an external variable occurs in the source file before its use in a particular function,* then there is no need for an `extern` declaration in the function.
+>   - *So, the `extern` declarations in `main`, `getline` and `copy` are thus redundant.*
+>   - *In fact, common practice is to place definitions of all external variables at the beginning og the source file, and then omit all `extern` declarations.*
+> - **If the program is in several file**, and a variable is defined in `file1` and used in `file2` and `file3`, **then `extern` declarations are needed** in `file2` and `file3` to connect the occurrences of the variable.
+>   - *The usual practice is to collect `extern` declarations of variables and functions in a separate file, historically called a **header**, that is included by `#include` at the front of each source file.* 
+>   - *The suffix `.h` is conventional for header names. The functions of the standard library, for example, are declared in headers like `<stdio.h>`.* (discussed at length in Chapter 4).
+
+*You should note that we are using the words Definition and declaration carefully when we refer to external variables in this section(:
+
+- **Definition** refers to the place where the variable is created or assigned storage;
+- **Declaration** refers to places where the nature of the variable is stated but no storage is allocated.
 
 
 
