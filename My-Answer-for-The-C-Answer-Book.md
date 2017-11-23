@@ -358,6 +358,14 @@ int reverse_line(char str[], char str_01[], int len){
 
 
 
+### 1-20 detab
+
+```c
+/* entab that replaces strings of blanks by the minimum number of tabs and blanks to achieve the same spacing */
+```
+
+
+
 
 
 

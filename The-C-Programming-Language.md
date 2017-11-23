@@ -1177,10 +1177,42 @@ void copy(void)
 >   - *The usual practice is to collect `extern` declarations of variables and functions in a separate file, historically called a **header**, that is included by `#include` at the front of each source file.* 
 >   - *The suffix `.h` is conventional for header names. The functions of the standard library, for example, are declared in headers like `<stdio.h>`.* (discussed at length in Chapter 4).
 
-*You should note that we are using the words Definition and declaration carefully when we refer to external variables in this section(:
+You should note that we are using the words Definition and declaration carefully when we refer to external variables in this section:
 
 - **Definition** refers to the place where the variable is created or assigned storage;
 - **Declaration** refers to places where the nature of the variable is stated but no storage is allocated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
