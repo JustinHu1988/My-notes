@@ -293,7 +293,7 @@ There are a couple of problems with the temperature conversion program.
   - A decimal point in a constant indicates that it is floating point, *so 5.0/9.0 is not truncated because it is the ratio of two floating-point values.*
 
     - If an arithmetic operator has integer operands, an integer operation is performed.
-    - If an arithmetic operator has one floating-point operand and one integer operand, *the integer will be converted to floating point before teh operation is done*. So in this example, we can write `fahr - 32` and the result is still a float-point.
+    - If an arithmetic operator has one floating-point operand and one integer operand, *the integer will be converted to floating point before the operation is done*. So in this example, we can write `fahr - 32` and the result is still a float-point.
     - Nevertheless, writing floating-point constants with explicit decimal points even when they have integral values emphasizes their floating-point nature for human readers.
     - The detailed rules for when integers are converted to floating point are in Chapter 2, *for now, notice that the assignment `fahr = lower;` and the test `while (fair <= upper)` also convert int to float before the operation is done in this example.*
 
@@ -316,8 +316,8 @@ There are a couple of problems with the temperature conversion program.
       ​
       ​
 
-  ### 1.3 The For statement
 
+### 1.3 The For statement
 
 
 ```C
@@ -1179,39 +1179,187 @@ void copy(void)
 
 You should note that we are using the words Definition and declaration carefully when we refer to external variables in this section:
 
-- **Definition** refers to the place where the variable is created or assigned storage;
-- **Declaration** refers to places where the nature of the variable is stated but no storage is allocated.
+- **Definition**: refers to the place where the variable is created or assigned storage;
+- **Declaration**: refers to places where the nature of the variable is stated but no storage is allocated.
 
 
 
 
 
 
+# Chapter 2: Types, Operators, and Expressions
 
 
 
+### 2.1 Variable Names
+
+Restrictions on the names of variables and symbolic constants:
+
+- Made up of letters and digits.
+
+
+- the first character must be a letter.
+- The underscore `_` counts as a letter;
+  - it is sometimes useful for improving the readability fo long variable names.
+  - Don't begin variable names with underscore (library routines often use such names.)
+- Upper case and lower case are distinct.
+- At least the first 31 characters of an internal name are signigicant. 
+- For function names and external variables, the number may be less than 31, because external names may be used by assemblers and loaders over which the language has no control.
+  - For external names, the standard guarantees uniqueness only for 6 characters and a single case.
+- keywords like `if`, `else`, `int`, `float`, etc., are reserved.
+
+It is wise to choose variable names that are related to the purpose of the variable.
+
+### 2.2 Data Types and Sizes
+
+There are only a few basic data types in C:
+
+- `char`: a single byte, capable of holding one character in the local character set.
+- `int`: an integer, typically reflecting the natural size of integers on the host machine.
+- `float`: single-precision floating point.
+- `double`:  double-precision floating point.
+
+In addition, there are a number of qualifiers that can be applied to these basic types: 
+
+- `short` and `long` apply to integers:
+
+  ```C
+  short int sh;
+  long int counter;
+  ```
+
+  The word `int` can be omitted in such declarations, and typically is.
+
+  Each compiler is free to choose appropriate sizes for its own hardware, subject only to the restriction that `short`s and `int`s are at least 16 bits, `long`s are at least 32 bits, and `short` is no longer than `int`, which is no longer than `long`.
+
+
+- *`signed` or `unsigned` may be applied to `char` or any integer*.
+  - `unsigned` numbers are always positive or zero, and obey the laws of arithmetic modulo $2^n$, where `n` is the number of bits in the type.
+  - For instance, if `chars` are 8 bits, `unsigned char` variables have values between 0 and 255, while `signed char`s have values between -128 and 127 (in a two's complement machine).
+  - Whether plain `char`s are signed or unsigned is machine-dependent, but *printable character are always positive*.
+- The type `long double` specifies extended-precision floating point. As with integers, the sizes of floating-point objects are implementation-defined; `float`, `double` and `long double` could represent one, two or three distinct sizes.
 
 
 
+*The standard headers `<limits.h>` and `<float.h>` contain symbolic constants for all of these sizes, along with other properties of the machine and compiler.???*
+
+*Exercise 2-1 unfinished???*
 
 
 
+### 2.3 Constants
+
+- Int / Long / Unsigned
+
+  - Example: `1234`, `12345L`, `12345l`, `234U`, `234u`
+
+- Floating-point
+
+  - Contain a decimal point: `123.4`
+
+  - Contain exponent: `1e-2`
+
+  - Or both: `1.2e6`
+
+    Type is `double`, unless suffixed.
+
+- hexadecimal / octal
+
+  - Hexadecimal: `0x12`, `0X1d`, `0X1F`, `0XFUL`
+  - Octal: `012`
+
+- *Character constant*
+
+  - an integer, written as one character within single quotes, such as `'x'`.
 
 
+  - *Character constants participate in numeric operations just as any other integers, although they are most often used in comparisons with other character.*
 
+  - Escape sequences:
 
+    These sequences look like two or more characters, but represent only one.
 
+    |      |                        |        |                    |
+    | ---- | ---------------------- | ------ | ------------------ |
+    | `\a` | Alert (bell) character | `\\`   | Backslash          |
+    | `\b` | Backspace              | `\?`   | Question mark      |
+    | `\f` | Formfeed               | `\'`   | Single quote       |
+    | `\n` | Newline                | `\"`   | double quote       |
+    | `\r` | Carriage return        | `\ooo` | Octal number       |
+    | `\t` | Horizontal tab         | `\xhh` | Hexadecimal number |
+    | `\v` | Vertical tab           | `\0`   | `null`             |
 
+    *The character constant `'\0'` represents the character with value zero, the `null` character.*
 
+    *`'\0'` is often written instead of `0` to emphasize the character nature of some expression, but the numeric value is just `0`.*
 
+- Constant expression
 
+  - an expression  that involves only constants.
+  - Such expressions may be evaluated during compilation rather than run-time, and  accordingly may be used in any place that a constant can occur.
 
+- *String constant/ string literal* （字符串常量／字面值）
 
+  - a sequence of zero or more characters surrounded by double quotes: 
 
+    - `"I am a string"`
+    - `""` (the empty string)
 
+  - The quotes are not part of the string, but serve only to delimit it. String constants can be concatenated at compile time:
 
+    - `"hello, " "world"` is equivalent to `"hello, world"`
 
+  - *a string constant is an array of characters*.
 
+    - *The intermal representation of a string has a null character `'\0'` at the end*, so the physical storage required is one more than the number of characters written between the quotes.
+
+    - this representation means that there is no limit to how long a string can be, but programs must scan a string completely to determine its length.
+
+    - The standard library function `strlen(s)` returns the length of its character string argument `s`, excluding the terminal `'\0'`:
+
+      ```C
+      /* strlen: return length of s */
+      int strlen(char s[]){
+        int i;
+        i = 0;
+        while (s[i] != '\0')
+          ++i;
+        return i;
+      }
+      ```
+
+      *`strlen` and other string functions are declared in the standard header `<string.h>`.*
+
+  - **Distinguish between a character constant and a string that contains a single character:**
+
+    - `'x'` is not the same as `"x"`.
+    - The former is *an integer*;
+    - the latter is *an array of characters* that contains on character (the letter `x`) and a `'\0'`.
+
+- **Enumeration constant (枚举常量)**
+
+  - a list of constant integer values:
+
+    ```C
+    enum boolean {NO, YES}
+    ```
+
+  - the first name in an `enum` has value `0`, the next `1`, and so on, unless explicit values are specified.
+
+  - if not all values are specified, unspecified values continue the progression from the last specified value, as in the second of these examples:
+
+    ```c
+    enum escapes {BELL = '\a', BACKSPACE='\b', TAB = '\t', NEWLINE = '\n', VTAB='\v', RETURN = '\r'};
+    enum months {JAN = 1, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC};
+    ```
+
+  - *Names in different enumerations must be distinct*. 
+
+  - Enumerations provide a convenient way to associate constant values with names, an alternative to `#define` with the advantage that the values can be generated for you.
+
+    In addition, a debugger may be able to print values of enumeration variables in their symbolic form.
+
+### 2.4 Declarations
 
 
 
