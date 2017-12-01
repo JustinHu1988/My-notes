@@ -1361,15 +1361,139 @@ In addition, there are a number of qualifiers that can be applied to these basic
 
 ### 2.4 Declarations
 
+- All variables must be declared before use.
+
+- A declaration specifies a type, and contains a list of one or more variables of that type:
+
+  ```C
+  int lower, upper, step;
+  char c, line[1000];
+  ```
+
+- A variable may also be initialized in its declaration:
+
+  ```C
+  char esc = '\\';
+  int i = 0;
+  int limit = MAXLINE+1;
+  float eps = 1.0e-5;
+  ```
+
+- If the variable is not automatic, the initialization is done once only,  conceptually before the program starts executing, and the *initializer must be a constant expression*.
+
+- An explicitly initialized automatic variable is initialized each time the function or block is entered; the initializer may be any expression.
+
+- if variables are not initialized:
+
+  - External and static variables are *initialized to zero by default*.
+  - Automatic variables for which there is no explicit initializer *have undefined values*.
+
+- `const`: can be applied to the declaration of any variable to specify that its value will not be changed.
+
+  - *For an array, the `const` qualifier says that the elements will not be altered*:
+
+    ```c
+    const double e = 2.71828182845905;
+    const char msg[] = "warning: "
+    ```
+
+  - The `const` declaration can also be used with array arguments, to indicate that the function does not change that array:
+
+    ```c
+    int strlen(const char[]);
+    ```
+
+    The result is *implementation-defined* if an attempt is made to change a `const`.
+
+### 2.5 Arithmetic Operators
+
+- `+`, `-`, `*`, `/`, `%`
+- The `%` operator cannot be applied to `float` or `double`.
+- *The direction of truncation for `/` and the sign of the result for `%` are machine-dependent for negative operands, as is the action taken on overflow or underflow.*
+- Precedence :
+  - The binary `+` and `-` operators ahve the same precedence, which is lower than teh precedence of `*`, `/`, and `%`, which is in turn lower than unary `+` and `-`.
+
+### 2.6 Relational and Logical Operators
+
+- Relational operators: `>`, `>=`, `<`, `<=`, `==`, `!=`
+
+  - Have lower precedence than arithmetic operators
+
+- Logical operators: `&&`, `||`
+
+  - Expressions connected by `&&` or `||` are evaluated left to right, and evaluation stops as soon as the truth or falsehood of the result is known. Most C programs rely on these properties.
+
+  - The precedence of `&&` is higher than that of `||`, and both are lower than relational and equality operators, 
+
+  - for example:
+
+    ```C
+    i<lim-1 && (c=getchar()) != '\n' && c!= EOF
+    ```
+
+    Since the precedence of `!=` is higher than assignment, parentheses are needed.
+
+- *By definition, the numeric value of a relational or logical expression is `1` if the relation is true, and `0` if the relation is false.*
+
+- **The unary negation operator `!` Converts a non-zero operand into `0`, and a zero operand into `1`.** 
+
+  - A common use of `!` is in constructions like:
+
+    ```C
+    if(!valid)
+    ```
+
+    Rather than
+
+    ```C
+    if(valid==0)
+    ```
+
+    It's hard to generalize about which form is better.
+
+
+
+Exercise 2-2:
+
+```C
+for (i=0; testBl != false; ++i){
+  s[i]=c;
+  testBl = false;
+  if(i<lim-1)
+      if((c=getchar())!='\n')
+        if(c!=EOF)
+          testBl = true;
+}
+```
+
+
+
+### 2.7 Type Conversions
+
+When an operator has operands of different types, they are converted to a common type according to a small number of rules.
+
+- In general, the only automatic conversions are those that convert a "narrower" operand into a "wider" one with out losing information, such as converting an integer to floating point in an expression like `f + i`.
+
+- Expressions that don't make sense, like using a `float` as a subscript, are disallowed.
+
+- Expression that might lose information, like assigning a longer integer type to a shorter, or a floating-point type to an integer, may draw a warning, but they are not illegal.
+
+- A `char` is just a small integer, so `char` may be freely used in arithmetic expressions. This permits considerable flexibility in certain kinds of character transformations.
+
+- **The standard header `<ctype.h>`, defines a family of functions that provide tests and conversions that are independent of character set.**
+
+- There is one subtle point about the conversion of characters to integers. The language does not specify whether variables of type `char` are signed or unsigned quantities. When a char is converted to an int, can it ever produce a negative integer? *The answer varies from machine to machine, reflecting differences in architecture.*
+
+  - The definition of C guarantees that any character in the machine's standard printing character set will never be negative, so these characters will always be positive quantities in expressions. But arbitrary bit patterns stored in character variables may appear to be negative on some machines, yet positive on others. For portability, specify `signed` or `unsigned` if non-character data is to be stored in `char` variables.
+- Relational expressions like `i > j` and logical expressions connected by `&&` and `||` are defined to have value `1` if true, and `0` if false.
 
 
 
 
 
-
-
-
-
+  			
+  ​		
+  ​	
 
 
 
