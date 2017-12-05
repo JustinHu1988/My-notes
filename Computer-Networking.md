@@ -23,8 +23,8 @@ Most prominent types:
 - **routers**.(路由器)
 - **Link-layer switche**s.(链路层交换机)
 
-​		
-Link-layer switches are typically used in access networks, while routers are typically used in the network core.
+  ​	
+  Link-layer switches are typically used in access networks, while routers are typically used in the network core.
 
 **Route/path**: (路径)
 
@@ -138,12 +138,24 @@ Hosts are sometimes further divided into two categories: **clients** and **serve
 
 ### 1.2.1 Access Networks
 
-​	
+**access network (接入网)** — the network that physically connects an end system to the first router (also known as the "**edge router(边缘路由器)**") on a path from the end system to any other distant end system.
+
+#### Home Access: DSL, Cable, FTTH, Dial-Up, and Satellite
+
+Two prevalent types of broadband residential access:
+
+1. **digital subscriber line(DSL, 数字用户线)**
+   - when DSL is used, a customer's telco is also its ISP.
+   - each customer's DSL modem uses the existing telephone line to exchange data with a **digital subscriber line access multiplexer (DSLAM, 多路器)** located in the telco's local central office (CO).
+   - The home's DSL modem takes digital data and translates it to high-frequency tones for transmission over telephone wires to the CO. The analog signals from many such houses are translated back into digital format at the DSLAM.
+   - *The residential telephone line carries both data and traditional telephone signals simultaneously, which are encoded at different frequencies:*
+     - A high-speed downstream channel, in the 50 kHz to 1 MHz band;
+     - A medium-speed upstream channel, in the 4 kHz to 50 kHz band;
+     - An ordinary two-way telephone channel, in the 0 to 4 kHz band.
+2. **cable**
 
 
-
-
-​				
+​
 ​			
 ​		
 ​	
