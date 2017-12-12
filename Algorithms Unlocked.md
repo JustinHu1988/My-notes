@@ -159,7 +159,7 @@ Although we'd expect SENTINEL-LINEAR-SEARCH to be faster in practice, it would b
 
 
 
-## 2.3 **Loop invariants**
+## 2.3 **Loop invariants** 循环不变式
 
 Loop invariant: *a common method of showing correctness of an algorithm*.
 
@@ -887,7 +887,9 @@ Chapter 8 of CLRS expands on all the material in this chapter.
 
 Topological sorting differs from sorting in the sense that we used in Chapter 3 and 4.
 
-The linear order produced by a topological sort is *not necessarily unique*. 
+The linear order produced by a topological sort is *not necessarily unique*.
+
+
 
 
 
