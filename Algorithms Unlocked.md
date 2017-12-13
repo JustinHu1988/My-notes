@@ -360,7 +360,7 @@ Figure Example for `key` move:
 
 The test in step `1B` relies on the `and` operator being *short circuiting*(短路): 
 
-- If the expression on the left, `j>0` is false; then it does not evaluate the expression on the right `A[j]>key`.
+- If the expression on the left, `j > 0` is false; then it does not evaluate the expression on the right `A[j] > key`.
 
 For the INSERTION-SORT procedure, the number of times that the inner loop iterates depends on both the index `i` of the outer loop and the values in the array elements.
 
@@ -499,7 +499,7 @@ If we are merging `n` elements altogether, it takes *$θ(n)$* time to copy the e
 
 
 
-## 3.5 Quicksort
+## 3.5 **Quicksort**
 
 Quicksort uses divide-and-conquer in a slightly different way than merge sort.
 
@@ -598,16 +598,16 @@ Solution: *Don't always pick the last element as the pivot.*
 
 - In this case, previous PARTITION procedure won't work.
 - So, before running the PARTITION procedure, swap `A[r]` with a randomly chosen element in `A[p..r]`. Now you've chosen your pivot randomly and you can run the PARTITION procedure.
-- In fact, you *can still improve your chance of getting a split that's close to even*. *Instead of choosing one element in `A[p..r]` at random, choose three elements at random and swap teh median of the three with `A[r]`.* 
+- In fact, you *can still improve your chance of getting a split that's close to even*. *Instead of choosing one element in `A[p..r]` at random, choose three elements at random and swap the median of the three with `A[r]`.* 
   - By the median of the three, we mean the one whose value is between the other two. (If two or more of the randomly chosen elements are equal, break ties arbitrarily ????) .
 
 *How many times does QUICKSORT swap elements?*
 
 - That depends on whether you count "swapping" an element to the same position it started in as a swap. You could certainly check to see whether this is the case and avoid the swap if it is.
-- So let’s call it a swap only when an element really moves in the array as a result of swapping, that is, when $q\ne u$ in step `2A` or when $q\ne r$ in step 3 of PARTITION. 
+- So let's call it a swap only when an element really moves in the array as a result of swapping, that is, when $q\ne u$ in step `2A` or when $q\ne r$ in step 3 of PARTITION. 
   - The best case for minimizing swaps is also one of the worst cases for asymptotic running time: when the array is already sorted. Then no swaps occur.
   - The most swaps occur when `n` is even and the input array looks like
-    `n, n-2,n-4,…,4,2,1,3,5,…,n-3,n-1`.  Then $n^2=4$ swaps occur, and the asymptotic running time is still the worst case $θ(n^2)$.
+    `n, n-2,n-4,…,4,2,1,3,5,…,n-3,n-1`.  Then $n^2/4$ swaps occur, and the asymptotic running time is still the worst case $θ(n^2)$.
 
     ​	
     ​
