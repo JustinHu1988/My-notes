@@ -2974,7 +2974,7 @@ to draw lines, rectangles, and ellipses (including circles) as well as text.
 
 - A word processing application can thus display a document on the screen so that it looks very similar to the document later printed, a feature known as **WYSIWYG** (pronounced wizzy wig, *What you see is what you get*)
 
-​			
+  ​		
 
 Part of the appeal of a graphical user interface is that different applications work roughly the same and leverage a user's experience. 
 
@@ -3021,8 +3021,7 @@ But once again, PARC had demonstrated a different approach. Beginning about 1972
 
 
 
-The most popular object-oriented languages for small computers, however, are
-extensions of traditional ALGOL-like languages, such as C and Pascal. 
+The most popular object-oriented languages for small computers, however, are extensions of traditional ALGOL-like languages, such as C and Pascal. 
 
 - The most popular object-oriented extension of C is called **C++**. (As you might recall, two plus signs in C is an increment operator.) Largely the brainchild of Bjarne Stroustrup (born 1950) of Bell Telephone Laboratories, C++ was implemented first as a translator that converted a program written in C++ to one written in C (although very ugly and virtually unreadable C). The C program could then be compiled normally.
 
