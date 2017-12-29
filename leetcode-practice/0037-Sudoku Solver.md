@@ -81,7 +81,7 @@ var solveSudoku = function(board) {
 	}
 
 	for(let i=0; i<9; i++){
-		arrZ[i].push = {1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1,9:1,len:9};
+		arrZ[i].push({1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1,9:1,len:9});
 	}
 
 
@@ -92,11 +92,22 @@ var solveSudoku = function(board) {
 				arrX[i][j].num = parseInt(board[i][j]);
 
 				arrZ[arrX[i][j].z][9][arrX[i][j].num] = 0;
+                arrZ[arrX[i][j].z][9].len--;
 				count++;
 				sift(arrX[i][j]);
 			}
 		}
 	}
+    while(count < 81){
+        continFun(arrZ);
+        continFun(arrY);
+        continFun(arrX);
+        removeTwo(arrZ);
+        removeTwo(arrY);
+        removeTwo(arrX);
+    
+        console.log(count);
+    }
 
 	function sift(r){
 		for(let i=0; i<9; i++){
@@ -104,36 +115,105 @@ var solveSudoku = function(board) {
 			siftEle(r, r.col, i);
 			siftEle(r, r.blo, i);
 		}
-
-		/*
-		for(let i=0; i<9; i++){
-			if(r.row[i].len!==1 && r.row[i].list[r.num] !== 0){
-				r.row[i].list[r.num] = 0;
-				r.row[i].len--;
-				if(r.row[i].len===1){
-					findNum(r.row[i]);
-				}
-			}
-			if(r.col[i].len!==1 && r.col[i].list[r.num] !== 0){
-				r.col[i].list[r.num] = 0;
-				r.col[i].len--;
-				if(r.col[i].len===1){
-					findNum(r.col[i]);
-				}
-			}
-			if(r.blo[i].len!==1 && r.blo[i].list[r.num] !== 0){
-				r.blo[i].list[r.num] = 0;
-				r.blo[i].len--;
-				if(r.blo[i].len===1){
-					findNum(r.blo[i]);
-				}
-			}
-		}
-		*/
-
 		sift2nd(r);
 	}
-	function siftEle(r, attr, i){
+	
+
+	function sift2nd(r){
+		for(let i=0; i<2; i++){
+			if(r.horBlo[i][9][r.num] !== 0 && r.horBlo[i][9].len !==0){
+                let obj = r.horBlo[i];
+                let count = 0;
+                let num1 = 0;
+                let num2 = 0;
+				for(let j=0; j<9; j++){
+                    if(obj[j].x !== r.x){
+                        if(count<3){
+                            num1 += obj[j].list[r.num];   
+                        }else if(count<6){
+                            num2 += obj[j].list[r.num];    
+                        }
+                        count++;
+                    }
+                }
+                if(num1 === 0){
+                    if(r.x%3 !== 2){
+                        putZeroX(r.horBlo[1-i], r, 2);
+                    }else{
+                        putZeroX(r.horBlo[1-i], r, 1);
+                    }
+                    break;
+                }else if(num2 === 0){
+                    if(r.x%3 === 0){
+                        putZeroX(r.horBlo[1-i], r, 1);
+                    }else{
+                        putZeroX(r.horBlo[1-i], r, 0);
+                    }
+                    break;
+                }
+			}
+		}
+        for(let i=0; i<2; i++){
+			if(r.verBlo[i][9][r.num] !== 0 && r.verBlo[i][9].len !==0){
+                let obj = r.verBlo[i];
+                let countArr = [0,0,0];
+                let num0 = 0;
+                let num1 = 0;
+                let num2 = 0;
+				for(let j=0; j<9; j++){
+                    if(obj[j].y !== r.y){
+                        if(j%3 === 0){
+                            num0 += obj[j].list[r.num];
+                            countArr[0]++;
+                        }else if(j%3 === 1){
+                            num1 += obj[j].list[r.num];  
+                            countArr[1]++;
+                        }else if(j%3 === 2){
+                            num2 += obj[j].list[r.num];  
+                            countArr[2]++;
+                        }
+                    }
+                }
+                if(countArr[0] === 0){
+                    if(num1 === 0){
+                        putZeroY(r.verBlo[1-i], r, 2);
+                    }else if(num2 === 0){
+                        putZeroY(r.verBlo[1-i], r, 1);
+                    }
+                    break;
+                }else if(countArr[1] === 0){
+                    if(num0 === 0){
+                        putZeroY(r.verBlo[1-i], r, 2);
+                    }else if(num2 === 0){
+                        putZeroY(r.verBlo[1-i], r, 0);
+                    }
+                    break;
+                }else if(countArr[2] === 0){
+                    if(num0 === 0){
+                        putZeroY(r.verBlo[1-i], r, 1);
+                    }else if(num1 === 0){
+                        putZeroY(r.verBlo[1-i], r, 0);
+                    }
+                    break;
+                }
+			}
+		}
+	}
+    function putZeroX(blo, r, row){
+        for(let i=row*3; i<row*3+3; i++){
+            siftEle(r, blo, i);
+        }
+        findOnlyOne(blo, r);
+    }
+    function putZeroY(blo, r, col){
+        for(let i=0; i<9; i++){
+            if(i%3 === col%3){
+                siftEle(r, blo, i);
+            }
+        }
+        findOnlyOne(blo, r);
+    }
+    function siftEle(r, attr, i){
 		if(attr[i].len!==1 && attr[i].list[r.num] !== 0){
 			attr[i].list[r.num] = 0;
 			attr[i].len--;
@@ -143,27 +223,110 @@ var solveSudoku = function(board) {
 		}
 	}
 
-	function sift2nd(r){
-		for(let i=0; i<2; i++){
-			if(r.horBlo[i][9][r.num] !== 0 && r.horBlo[i][9].len !==0){
-				
-			}
-		}
-
-	}
-
 	function findNum(r){
 		for(let i=0; i<9; i++){
 			if(r.list[i+1]===1){
 				r.num = i+1;
+                r.len = 1;
 				count++;
 				arrZ[r.z][9][r.num] = 0;
+                arrZ[r.z][9].len--;
 				board[r.x][r.y] = "" + (i+1);
 				return sift(r);
 			}
 		}
 	}
-
+    function findOnlyOne(blo, r){
+        let count=0;
+        let temp=0;
+        for(let i=0; i<9; i++){
+            if(blo[i].num === -1 && blo[i].list[r.num]!==0){
+                count++;
+            }
+            if(count === 1 && temp === 0){
+                temp = i;
+            }
+        }
+        if(count===1){
+            blo[temp].num = r.num;
+            blo[temp].len = 1;
+            count++;
+            board[blo[temp].x][blo[temp].y] = "" + blo[temp].num;
+			return sift(blo[temp]);
+        }
+    }
+    
+    function continFun(arr){
+        for(let i=0; i<9; i++){
+            for(let j=0; j<9; j++){
+                let num = 0;
+                let temp = 0;
+                for(let k=0; k<9; k++){
+                    if(arr[i][k].num === -1){
+                        num += arr[i][k].list[j+1];
+                        if(num === 1 && temp === 0){
+                            temp = arr[i][k];
+                        }
+                    }
+                }
+                if(num === 1){
+                    temp.num = j+1;
+                    temp.len = 1;
+				    count++;
+				    arrZ[temp.z][9][temp.num] = 0;
+                    arrZ[temp.z][9].len--;
+				    board[temp.x][temp.y] = "" + (j+1);
+                    return sift(temp);
+                }   
+            }
+        }
+    }
+    function removeTwo(arr){
+        for(let i=0; i<9; i++){
+            let num = 0;
+            let temp = 0;
+            let tempArr = [];
+            for(let j=0; j<9; j++){    
+                if(arr[i][j].num === -1 && arr[i][j].len === 2){
+                    let te = [];
+                    for(let k=0; k<9; k++){
+                        if(arr[i][j].list[k+1]===1){
+                            te.push({k:k, obj:arr[i][j]});
+                        }
+                    }
+                    tempArr.push(te);
+                }  
+            }
+            if(tempArr.length>1){
+                for(let k=0; k<tempArr.length; k++){
+                    for(let j=k+1; j<tempArr.length; j++){
+                        if(tempArr[k][0].k === tempArr[j][0].k && tempArr[k][1].k === tempArr[j][1].k){
+                            removeCer(arr[i], tempArr[k][0].obj,tempArr[j][0].obj,tempArr[k][0].k+1,tempArr[k][1].k+1);
+                        }
+                    }
+                }
+            }else{continue;}
+        }
+    }
+    
+    function removeCer(blo, obj1, obj2, num1, num2){
+        for(let i=0; i<9; i++){
+            if(blo[i].num === -1 && blo[i] !== obj1 && blo[i] !== obj2){
+                if(blo[i].list[num1] !== 0){
+                    blo[i].list[num1] = 0;
+                    blo[i].len--;
+                }
+                if(blo[i].list[num2] !== 0){
+                    blo[i].list[num2] = 0;
+                    blo[i].len--;
+                }
+                if(blo[i].len===1){
+				    findNum(blo[i]);
+			    }
+            }
+        }
+    }
+    
 
 };
 ```
