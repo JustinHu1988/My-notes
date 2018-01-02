@@ -672,7 +672,7 @@ The answer depends on the rules of the game: how is the sorting algorithm allowe
 
 
 
-Suppose that we know two things  about the elements we are sorting:
+Suppose that we know two things about the elements we are sorting:
 
 1. Each sort key is either 1 or 2;
 2. The elements consist of only sort keys — no satellite data.
@@ -789,7 +789,7 @@ Inputs:
  - n: the number of elements in A;
  - m: defines the range of the values in A.
 
-Output: A array B containing the elements of A, sorted.
+Output: An array B containing the elements of A, sorted.
 
 1. let B[1..n] and next[0..m-1] be new arrays.
 2. For j = 0 to m-1:
@@ -832,13 +832,13 @@ Output: A array B containing the elements of A, sorted.
 
 > **Example** :  One example would be if I were sorting exams by grade. The grades range from 0 to 100, but the number of students varies. I could use counting sort to sort the exams of n students in $θ(n)$ time, since m=101 (remember that the range being sorted is 0 to m-1) is a constant.
 
-In practice, however, counting sort truns out to be useful as part of yet another sorting algorithm: *radix sort*.
+In practice, however, counting sort turns out to be useful as part of yet another sorting algorithm: *radix sort*.
 
-In addition to running in linear time when m is a constant, counting sort has another important property: it is **stable**. *In a stable sort, elements with the same sort key appear in the output array in the same order as they do in the input array*. In other words, a stable sort breaks ties between two elements with equal sort keys by placing first in the output array whichever element appears first in the input array.
+In addition to running in linear time when m is a constant, counting sort has another important property: it is **stable(稳定)**. *In a stable sort, elements with the same sort key appear in the output array in the same order as they do in the input array*. In other words, a stable sort breaks ties between two elements with equal sort keys by placing first in the output array whichever element appears first in the input array.
 
 
 
-## 4.4 **Radix sort**
+## 4.4 **Radix sort (基数排序)**
 
 If we want to *sort strings of characters of some fixed length*, we can use radix sort algorithm.
 
@@ -865,8 +865,8 @@ Chapter 8 of CLRS expands on all the material in this chapter.
 
 *Directed graphs* (有向图):
 
-- vertex
-- directed edge
+- vertex (顶点)
+- directed edge (有向边)
   - Each directed edge is an ordered pair of the form `(u,v)`, where `u` and `v` are vertices.
   - When a directed graph contains a directed edge `(u,v)`, we say that:
     -  *`v` is adjacent to `u`* ;
@@ -881,13 +881,19 @@ Chapter 8 of CLRS expands on all the material in this chapter.
 
 ## 5.2 Topological sorting
 
-拓扑排序
-
-*A **topological sort** of a dag produces a linear order such that if `(u,v)` is an edge in the dag, then `u` appears before `v` in the linear order.*
+*A **topological sort（拓扑排序）** of a dag produces a linear order such that if `(u,v)` is an edge in the dag, then `u` appears before `v` in the linear order.*
 
 Topological sorting differs from sorting in the sense that we used in Chapter 3 and 4.
 
 The linear order produced by a topological sort is *not necessarily unique*.
+
+The number if edges entering a vertex is the vertex's **in-degree**, and so we could start with any vertex whose in-degree is 0.
+
+Every dag must have at least one vertex with in-degree 0 and at least on vertex with **out-degree** 0, for otherwise there would be a cycle.
+
+
+
+
 
 
 

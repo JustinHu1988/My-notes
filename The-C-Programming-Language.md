@@ -1470,9 +1470,9 @@ for (i=0; testBl != false; ++i){
 
 ### 2.7 Type Conversions
 
-When an operator has operands of different types, they are converted to a common type according to a small number of rules.
+When an operator has operands of different types, they are converted to a common type according to a small number of rules:
 
-- In general, the only automatic conversions are those that convert a "narrower" operand into a "wider" one with out losing information, such as converting an integer to floating point in an expression like `f + i`.
+- In general, the only automatic conversions are those that *convert a "narrower" operand into a "wider" one with out losing information*, such as converting an integer to floating point in an expression like `f + i`.
 
 - Expressions that don't make sense, like using a `float` as a subscript, are disallowed.
 
@@ -1480,20 +1480,133 @@ When an operator has operands of different types, they are converted to a common
 
 - A `char` is just a small integer, so `char` may be freely used in arithmetic expressions. This permits considerable flexibility in certain kinds of character transformations.
 
+  ```C
+  /* atoi: convert s to integer */
+  int atoi(char s[]){
+    int i, n;
+    n=0;
+    for (i=0; s[i] >= '0' && s[i] <= '9'; i++){
+        n=10*n + (s[i]-'0');
+    }
+    return n;
+  }
+  /* lower: convert c to lower case; ASCII only*/
+  int lower(int c){
+      if(c >= 'A' && c<='Z'){
+          return c+'a'-'A';
+      }else{
+          return c;
+      }
+  }
+  ```
+
+  ​
+
 - **The standard header `<ctype.h>`, defines a family of functions that provide tests and conversions that are independent of character set.**
+
+  - `tolower(c)` returns the lower case value of `c` if `c` is upper case, so `tolower` is a portable replacement for the function `lower` shown above.
+  - Similarly, `atoi` function can be replaced by `isdigit(c)`.
+  - **We will use the `<ctype.h>` functions from now on.** 
 
 - There is one subtle point about the conversion of characters to integers. The language does not specify whether variables of type `char` are signed or unsigned quantities. When a char is converted to an int, can it ever produce a negative integer? *The answer varies from machine to machine, reflecting differences in architecture.*
 
-  - The definition of C guarantees that any character in the machine's standard printing character set will never be negative, so these characters will always be positive quantities in expressions. But arbitrary bit patterns stored in character variables may appear to be negative on some machines, yet positive on others. For portability, specify `signed` or `unsigned` if non-character data is to be stored in `char` variables.
+  - *The definition of C guarantees that any character in the machine's standard printing character set will never be negative, so these characters will always be positive quantities in expressions.* *But arbitrary bit patterns stored in character variables may appear to be negative on some machines, yet positive on others.* **For portability, specify `signed` or `unsigned` if non-character data is to be stored in `char` variables.**
+
 - Relational expressions like `i > j` and logical expressions connected by `&&` and `||` are defined to have value `1` if true, and `0` if false.
+
+  - However, functions like `isdigit` may return any non-zero value for true.
+  - In the set part of `if`, `while`, `for`, etc., `true` just means "non-zero", so this makes no difference.
+
+- Implicit arithmetic conversion:
+
+  - In general, if an operator like `+` or `*` that takes two operands (a binary operator) has operands of different types, the "lower" type is promoted to the "higher" type before the operation proceeds. The result is of the higher type. *Section 6 of Appendix A states the conversion rules precisely*.
+  - If there are no `unsigned` operands, the following informal set of rules will suffice:
+    - If either operand is `long double`, convert the other to `long double`.
+    - Otherwise, if either operand is `double`, convert the other to `double`.
+    - Otherwise, if either operand is `float`, convert the other to `float`.
+    - Otherwise, convert `char` and `short` to `int`.
+    - Then, if either operand is `long`, convert the other to `long`.
+  - *Notice that `float`s in an expression are not automatically converted to `double`.* This is a change from the original definition.
+    - In general, mathematical functions like those in `<math.h>` will be use double precision.
+    - The main reason for using `float` is to save storage in large arrays, or, less often, to save time on machines where double-precision arithmetic is particularly expensive.
+  - When `unsigned` operands are involved, conversion rules are more complicated:
+    - The problem is that comparisons between signed and unsigned values are machine-dependent, because they depend on the sizes of the various integer types.
+    - For example, suppose that `int` is 16 bits and `long` is 32 bits. Then `-1L < 1U`, because `1U`, which is an `int`, is promoted to a `signed long`. But `-1L > 1UL`, because `-1L` is promoted to `unsigned long` and thus appears ot be a large positive number. 
+
+- Conversions take place across assignments; the value of the right side is converted to the type of the left, which is the type of the result.
+
+- A character is converted to an integer, either by sign extension or not.
+
+- Longer integers are converted to shorter ones or to `char`s by dropping the excess high-order bits.
+
+- if `x` is `float`, and `i` is `int`, then `x=i` and `i=x` both cause conversions; `float` to `int` causes truncation of any fractional part.
+
+- When `double` is converted to `float`, whether the value is rounded or truncated is implementation-dependent.
+
+- Since an argument of a function call is an expression, type conversions also take place when arguments are passed to functions.
+
+  - In the absence of a function prototype, `char` and `short` become `int`, and `float` becomes `double`. *This is why we have declared function arguments to be `int` and `double` even when the function is called with `char` and `float`.* 
+
+  - Finally, explicit type conversions can be forced in any expression, with a unary operator called a **cast**(强制类型转换). In the construction:
+
+    ```
+    (type-name) expression
+    ```
+
+    the `expression` is converted to the named type by the conversion rules above.
+
+    For example:
+
+    ```c
+    sqrt((double) n);
+    ```
+
+    This will convert the value of `n` to `double` before passing it to `sqrt`.
+
+    The precise meaning of a cast is as if the expression were assigned to a variable of the specified type, which is then used in place of the whole construction.
+
+  - If arguments are declared by a function prototype, as they normally should be, the declaration causes automatic coercion of any arguments when the function is called.
+
+    Thus, given a function prototype for `sqrt`:
+
+    ```C
+    double sqrt(double);
+    ```
+
+    the call
+
+    ```c
+    root2 = sqrt(2);
+    ```
+
+    Coerces the integer 2 into the `double` value `2.0` without any need for a cast.
+
+  - The standard library includes a portable implementation of a pseudo-random number generator and a function for initializing the seed; the former illustrates a cast:
+
+    ```C
+    unsigned long int next = 1;
+    /* rand: return pseudo-random integer on 0-32767 */
+    int rand(void){
+      next = next * 1103515245 + 12345;
+      return (unsigned int)(next/65536)%32768;
+    }
+
+    /* srand: set seed for rand() */
+    void srand(unsigned int seed)
+    {
+      next = seed;
+    }
+    ```
+
+- ​
 
 
 
 
 
   			
-  ​		
-  ​	
+  	
+  	
 
 
 

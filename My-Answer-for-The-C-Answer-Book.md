@@ -372,3 +372,53 @@ int reverse_line(char str[], char str_01[], int len){
 
 
 
+### 2-3 
+
+```C
+#include <stdio.h>
+#define YES 1
+#define NO 0
+
+int htoi(char []);
+
+
+int main()
+{
+    int num;
+    num = htoi("ff");
+    printf("%d\n", num);
+}
+
+int htoi(char s[]){
+    int i=0, status = YES, tempDigit = 0, num = 0;
+    if(s[i] == '0'){
+        ++i;
+        if(s[i] == 'x' || s[i] == 'X'){
+            ++i;
+        }
+    }
+    for(; status == YES; i++){
+        if(s[i] >= '0' && s[i] <= '9'){
+            tempDigit = s[i] - '0';
+        }else if(s[i] >= 'a' && s[i] <= 'f'){
+            tempDigit = 10 + s[i] - 'a';
+        }else if(s[i] >= 'A' && s[i] <= 'F'){
+            tempDigit = 10 + s[i] - 'A';
+        }else{
+            status = NO;
+        }
+        if(status == YES){
+            num = num*16 + tempDigit;
+
+        }
+    }
+    return num;
+}
+```
+
+
+
+
+
+
+
