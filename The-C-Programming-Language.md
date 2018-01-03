@@ -1598,15 +1598,59 @@ When an operator has operands of different types, they are converted to a common
     }
     ```
 
-- ​
+
+
+
+
+### 2.8 Increment and Decrement Operators
+
+C provides two unusual operators for incrementing and decrementing variable.
+
+`++`, `--`
+
+The unusual aspect is that `++` and `—` may be used either as prefix operators for postfix.
+
+In both cases, the effect is to increment `n`. 
+
+But the expression `++n` increments `n` before its value is used, while `n++` increments `n` after its value has been used. 
+
+```C
+int x, y, m = 5,n = 5;
+x = m++; // x = 5, m = 6
+y = ++n; // y = 6, n = 6
+```
+
+*The increment and decrement operators can only be applied to variables; an expression like `(i+j)++` is illegal.*
 
 
 
 
 
-  			
-  	
-  	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -857,6 +857,8 @@ Chapter 8 of CLRS expands on all the material in this chapter.
 
 
 
+
+
 # Chapter 5 Directed Acyclic Graphs
 
 
@@ -893,71 +895,144 @@ Every dag must have at least one vertex with in-degree 0 and at least on vertex 
 
 
 
+```
+Procedure TOPOLOGICAL-SORT(G)
+
+Input: G: a directed acyclic graph with vertices numbered 1 to n.
+
+Output: A linear order of the vertices such that u appears before v in the linear order if (u,v) is an edge in the graph.
+
+1. Let in-degree[1..n] be a new array, and create an empty linear order of vertices.
+2. Set all values in in-degree to 0.
+3. For each vertex u:
+	A. For each vertex v adjacent to u:
+		i. Increment in-degree[v].
+4. Make a list `next` consisting of all vertices u such that in-degree[u] = 0.
+5. While `next` is not empty, do the following:
+	A. Delete a vertex from `next`, and call it vertex u.
+	B. Add u to the end of the linear order.
+	C. For each vertex v adjacent to u:
+		i. Decrement in-degree[v].
+		ii. If in-degree[v] = 0, then insert v into the next list.
+6. Return the linear order.
+```
 
 
 
+In order to analyze the TOPOLOGICAL-SORT procedure, we first have to understand how to represent a directed graph and a list such as `next`.
+
+When representing a graph, we won't require it to be acyclic, because the absence or presence of cycle has no effect on how we represent a graph.
 
 
 
+## 5.3 How to represent a directed graph
+
+Assume that we want to represent a graph that has `n` vertices and `m` edges.
+
+1. **Adjacency matrix (邻接矩阵)**
+   - an n*n adjacency matrix in which each row and each column corresponeds to one vertex, and the entry in the row for vertex u and the column for vertex v is either 1 if the edge(u,v) is present or 0 if the graph does not contain edge(u,v).
+   - Since an adjacency matrix has n^2^ entries, it must be true that m<=n^2^.
+2. Unordered list
+   - a list of all m edges in the graph in no particular order.
+3. **Adjacency-list representation (邻接表)**
+   - With an n-element array indexed by the vertices in which the array entry for each vertex u is a list of all the vertices adjacent to u.
+
+<img src="images/algrithms-unlocked-img-chapter05-adjacency-matrix.png" width="400">
+
+The unordered list of edges and the adjacency-list representation lead to the question of how to represent a list.
+
+- The best way to represent a list depends on what types of operations we need to perform on the list.
+- For unordered edge lists and adjacency lists, we know in advance how many edges will be in each list, and the contents of the lists won't change, and so we can store each list in an array.
+- We can also use an array to store a list even if the list's contents change over time, as long as we know the maximum number of items that will ever be in the list at any one time.
+- If we don't need to insert an item into the middle of the list or delete an item from the middle of the list, representing a list by an array is as efficient as any other means.
+
+
+
+​If we do need to insert into the middle of the list, then we can use a **linked list (链表)**, in which each list item includes the location of its successor item in the list, making it simple to splice in a new item after a given item. 
+
+If we also need to delete from the middle of the list, then each item in the linked list should also include the location of its predecessor item, so that we can quickly splice out an item.
+
+*From now on, we will assume that we can insert into or delete from a linked list in constant time*.
+
+A linked list that has only successor links is a **singly liked list (单向链表)**. Adding predecessor links makes a **doubly linked list (双向链表)**.
+
+
+
+## 5.4 Running time of topological sorting
+
+If we assume that the dag uses the adjacency-list representation and the next list is a linked list, then we can show that the TOPOLOGICAL-SORT procedure takes **$θ(n+m)$** time. (Since next is a linked list, we can insert into it or delete from it in constant time) 
+
+
+
+## 5.5 Critical path in a PERT chart			
+
+**PERT chart**: (program evaluation and review technique)
+
+**critical path**: The time to complete the entire job, even with as many tasks performed simultaneously as possible, is given by the "critical path" in the PERT chart.
+
+
+
+To understand what a critical path is, we first have to understand that a path is, and then we can define a critical path.
+
+**Path**: 
+
+- A path in a graph is a sequence of vertices and edges that allow you to get from one vertex to another (or back to itself); we say that the path contain both the vertices on it and the edges traversed.
+- a path from a vertex back to itself is a cycle, but of course dags do not have cycles.
+
+
+
+*A **critical path** in a PERT chart is a path for which the sum of the task times is maximum over all paths.*
+
+- The sum of tha task times along a critical path gives the minimum possible time for the entire job, no matter how many tasks are performed simultaneously.
+
+
+
+**Dummy vertices**:
+
+- Assuming that all task times are positive, a critical path in a PERT chart must start at some vertex with in-degree 0 and end at some vertex with out-degree 0.
+- Rather than checking paths between all pairs of vertices in which one has in-degree 0 and one has out-degree 0, we can just add two “dummy” vertices, “start” and “finish”, because these are dummy vertices, we give them task times of 0.
+- We add an edge from start to each vertex with in-degree 0 in the PERT chart, and we add an edge from each vertex with out-degree 0 to finish. Now the only vertex with in-degree 0 is start, and the only vertex with out-degree 0 is finish.
+- A path from start to finish with the maximum sum of task times on its vertices (shaded) gives a critical path in the PERT chart—minus the dummy vertices start and finish, of course.
+
+
+
+**shortest path**:
+
+- Once we have added the dummy vertices, we find a critical path by finding a shortest path from start to finish, based on the task times. 
+
+- At this point, you might think I made an error in the previous sentence, because a critical path should correspond to a longest path, not a shortest path. 
+
+- Indeed, it does, but because a PERT chart has no cycles, we can alter the task times so that a shortest path gives us a critical path. 
+
+- In particular, *we negate each task time and find a path from start to finish with the minimum sum of task times*.
+
+- Why negate task times and find a path with the minimum sum of task times? Because solving this problem is a special case of finding shortest paths, and *we have plenty of algorithms for finding shortest paths*.
+
+  ​
+
+**Weight (权)**:
+
+- When we talk about shortest paths, however, the values that determine path lengths are associated with edges, not with vertices. 
+- We call the value that we associate with each edge its **weight**. 
+- A directed graph with edge weights is a **weighted directed graph (加权有向图)**. “Weight” is a generic term for values associated with edges.
+- The weight of a path is the sum of the weights of the edges on the path. 
+- A shortest path from vertex `u` to vertex `v` is a path whose sum of edge weights is minimum over all paths from `u` to `v`. Shortest paths are not necessarily unique, as a directed graph from `u` to `v` could contain multiple paths whose weights achieve the minimum.
+
+​			
+Here is an example dag:
+
+<img src="images/algrithms-unlocked-img-chapter05-dag-with-weight.png" width="400">
 
 
 ​		
-
-
-
-
-
-
-​			
 ​		
+*Now we just have to find a shortest path (shaded) from start to finish in this dag, based on these edge weights*. A critical path in the original PERT chart will correspond to the vertices on the shortest path we find, minus start and finish. So let’s see how to find a shortest path in a dag.
+
+
+
 ​	
 
-
-​			
-​		
-​	
-
-
-​			
-​		
-​			
-​	
-​	
-​		
-
-
-
-
-
-
-​			
-​	
-
-
-
-
-
-
-
-
-
-
-​			
-​		
-​	
-
- 
-
-
-​			
-​		
-​	
-
-
-
-
-
-
+## 5.6 Shortest path in a directed acyclic graph
 
 
 

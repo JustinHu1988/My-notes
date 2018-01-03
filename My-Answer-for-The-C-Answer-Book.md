@@ -418,6 +418,49 @@ int htoi(char s[]){
 
 
 
+### 2-4 
+
+```C
+#include <stdio.h>
+#define MAX 1000
+
+void squeeze(char [], char []);
+
+int main()
+{
+    char s1[]= "hooenshdl";
+    char s2[] = "ho";
+    squeeze(s1, s2);
+    
+    printf("%s\n", s1);
+}
+
+void squeeze(char s1[], char s2[])
+{
+
+    int i, j, k, l=0;
+    for(i=j=0; s1[i] != '\0'; i++){
+        for(k=0; s2[k] != '\0'; k++){
+            if(s1[i]==s2[k]){
+                j++;
+            }
+        }
+        if(i==j){
+            s1[l] = s1[i];
+            j++;
+            l++;
+        }
+    }
+    s1[l] = '\0';
+
+}
+
+```
+
+
+
+### 2-5 
+
 
 
 
