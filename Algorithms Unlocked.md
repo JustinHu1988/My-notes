@@ -1018,8 +1018,8 @@ To understand what a critical path is, we first have to understand that a path i
 - The weight of a path is the sum of the weights of the edges on the path. 
 - A shortest path from vertex `u` to vertex `v` is a path whose sum of edge weights is minimum over all paths from `u` to `v`. Shortest paths are not necessarily unique, as a directed graph from `u` to `v` could contain multiple paths whose weights achieve the minimum.
 
-​			
-Here is an example dag:
+  ​		
+  Here is an example dag:
 
 <img src="images/algrithms-unlocked-img-chapter05-dag-with-weight.png" width="400">
 
@@ -1034,7 +1034,14 @@ Here is an example dag:
 
 ## 5.6 Shortest path in a directed acyclic graph
 
+There is another advantage to learning how to find a shortest path in a dag: we'll lay the foundations for finding shortest paths in arbitrary ditected graphs that may have cycles.
 
+As we did for topologically sorting a dag, we’ll assume that the dag is stored with the adjacency-list representation, and that with each edge(u,v) we have also stored its weight as weight(u,v).
+
+
+​			
+​		
+​	
 
 
 

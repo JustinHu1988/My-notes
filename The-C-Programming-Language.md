@@ -1624,13 +1624,254 @@ y = ++n; // y = 6, n = 6
 
 
 
+### 2.9 **Bitwise Operators**
+
+C provides six operators for bit manipulation, these may only be applied to integral operands(整型操作数), that is, `char`, `short`, `int`, and `long`, whether signed or unsigned.
+
+- **`&`**: bitwise AND
+  - `&` is often used to mask off some set of bits.
+  - Example:`n = n & 0177` sets to zero all but the low-order 7 bits of `n`.(`0177` is equal to `127`)
+- **`|`**: bitwise inclusive OR (或)
+  - `|` is used to turn bits on.
+  - Example:`x = x | SET_ON` sets to one in `x` the bits that are set to one in `SET_ON`.
+- **`^`**: bitwise exclusive OR (异或)
+  - `^` set a `1` in each bit position where its operands have different bits, and `0` where they are the same.
+- **`<<`**: left shift
+- **`>>`**: right shift
+  - `<<` and `>>` perform left and right shifts of their left operand by the number of bit positions given by the right operand, which must be positive.
+  - `x << 2` shifts the value of `x` left by two position, filling vacated bits with zero, this is equivalent to multiplication by `4`.
+  - Right shifting an `unsigned` quantity always fills vacated bits with zero.
+  - Right shifting a signed quantity will fill with sign bits ("arithmetic shift") on some machines and with 0-bits ("logical shift") on others.
+- **`~`**: one's complement (unary) 按位求反（一元运算符）
+  - `~` yields the one's complement of an integer; that is, it converts each 1-bit into a 0-bit and vice versa.
+  - `x = x & ~077` sets the last six bits of `x` to zero.
 
 
 
+> Note-024:
+>
+> One must distinguish the bitwise operators `&` and `|` from the logical operators `&&` and `||`, which imply left-to-right evaluation of a truth value.
+>
+> for example: if `x` is `1` and y is `2`, then `x & y` is zero while `x && y` is one.
+
+Exercise 2-6 / 2-7 / 2-8 ???
 
 
 
+### 2.10 Assignment Operators and Expressions
 
+Assignment Operators (赋值运算符)
+
+Most binary operators (oprators like `+` that have a left and right operand) have a corresponding assignment operator `op=`, where `op` is one of:
+
+```C
++  -  *  /  %  <<  >>  &  ^  |  
+```
+
+if $expr_1$ and $expr_2$ are expressions, then
+
+```
+expr1 op= expr2
+```
+
+is equivalent to 
+
+```
+expr1 = (expr1) op (expr2)
+```
+
+Except that $expr_1$ is computed only once.
+
+
+
+Exercise 2-9 ???
+
+
+
+### 2.11 Conditional Expressions
+
+conditional expression: (Ternary operator `?:`)
+
+```
+expr1 ? expr2 : expr3
+```
+
+the expression `expr1` is evaluated first. If it is non-zero(true), then the expression `expr2` is evaluated, and that is the value of the conditional expression. Otherwise `expr3` is evaluated, and that is the value.
+
+Only one of `expr2` and `expr3` is evaluated. 
+
+Thus to set `z` to the maximum of `a` and `b`:
+
+```C
+z = (a > b) ? a : b;  /* z = max(a,b) */
+```
+
+It should be noted that the conditional expression is indeed an expression, and it can be used wherever any other expression can be.
+
+*If `expr2` and `expr3` are of different types,* the type of the result is determined by the conversion rules discussed earlier in this chapter.
+
+For example, if `f` is a `float` and `n` is an `int`, then the expression:
+
+```C
+(n > 0) ? f : n
+```
+
+*is of type `float` regardless of whether `n` is positive.*
+
+
+
+Parentheses are not necessary around the first expression of a conditional expression, since *the precedence of `?:` is very low,just above assignment.* They are advisable anyway, however, since they make the condition part of the expression easier to see.
+
+
+
+The conditional expression often leads to succinct code.			
+​		
+​	
+
+### 2.12 **Precedence and Order of Evaluation**
+
+The rules for precedence and associativity of all operators:	
+
+<img src="images/The-C-Programming-Language-chapter02-precedence.png" width="400">
+
+
+
+- The operators `->` and `.` are used to access members of structures;
+
+- C, like most languages, does not specify the order in which the operands of an operator are evaluated. (The exceptions are `&&` `||` `?:` `,`):
+
+  - in a statement like:
+
+    ```C
+    x = f() + g();
+    ```
+
+    `f` may be evaluated before `g` or vice versa; thus if either `f` or `g` alters a variable on which the other depends, x can depend on the order of evaluation. Intermediate results can be stored in temporary variables to ensure a particular sequence.
+
+-  Similarly, the order in which function arguments are evaluated is not specified, so the statement:
+
+  ```C
+  printf("%d %d\n", ++n, power(2,n)); /* wrong */
+  ```
+
+  can produce different results with different compilers, depending on whether `n` is incremented before `power` is called. The solution, of course, is to write:
+
+  ```C
+  ++n;
+  printf("%d %d\n", n, power(2,n));
+  ```
+
+- Function calls, nested assignment statements, and increment and decrement operators cause "side effects" — some variable is changed as a by-product of the evaluation of an expression. 
+
+- In any expression involving side effects, there can be subtle dependencies on the order in which variables taking part in the expression are updated.
+
+- One unhappy situation is typified by the statement:
+
+  ```C
+  a[i] = i++;
+  ```
+
+  The question is whether the subscript is the old value of `i` or the new.
+
+  Compilers can interpret this in different ways, and generate different answers depending on their interpretation.
+
+- **The moral is that writing code that depends on order of evaluation is a bad programming practice in any language.** 
+
+- Naturally, it is necessary to know what things to avoid, but if you don't know how they are done on various machines, you won't be tempted to take advantage of a particular implementation.
+
+
+  ​
+
+​			
+
+# Chapter 3: Control Flow
+
+The control-flow statements of a language specify the order in which computations are performed.
+
+### 3.1 Statements and Blocks
+
+Statement:
+
+- An expression such as `x = 0` or `i++` or `printf(...)` becomes a **statement** when it is followed by a semicolon.
+- In C, the semicolon is a statement terminator, rather than a separator as it is in languages like Pascal.
+
+
+
+Block:
+
+- Brace `{` and `}` are used to group declarations and statements together into a *compound statement*, or **block**, so that they are syntactically equivalent to a single statement.
+- The braces that surround the statements of a function are one obvious example;
+- Braces around multiple statements after an `if`, `else`, `while`, or `for` are another.
+- There is no semicolon after the right brace that ends a block.
+
+
+
+### 3.2  if-else
+
+The `if-else` statement is used to express decisions. Formally, the syntax is:
+
+```C
+if (expression)
+	statement1
+else
+	statement2
+```
+
+where the `else` part is optional.
+
+An `if` simple tests the numeric value of an expression (0 or not 0).
+
+
+
+*Ambiguity:*
+
+```c
+if(n >= 0)
+  for(i = 0; i < n; i++)
+    if(s[i] > 0){
+      printf("...");
+      return i;
+    }
+else	/* WRONG */
+  printf("error -- n is negative\n");
+```
+
+The indentation shows unequivocally what you want, but the compiler doesn't get the message, and associated the `else` with the inner `if`.
+
+
+
+### 3.3 else if
+
+```C
+if (expression)
+  statement
+else if(expression)
+  statement
+else if(expression)
+  statement
+else
+  statement
+```
+
+
+
+### 3.4 switch
+
+The `switch` statement is a multi-way decision that tests whether an expression matches one of a number of `constant` integer values, and branches accordingly:
+
+```C
+switch(expression){
+  case const-expr: statements
+  case const-expr: statements
+  default: statements
+}
+```
+
+Exercise 3-2 ???
+
+
+
+### 3.5 Loops — while and for
 
 
 

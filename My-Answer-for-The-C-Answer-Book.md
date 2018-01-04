@@ -459,7 +459,43 @@ void squeeze(char s1[], char s2[])
 
 
 
-### 2-5 
+### 2-10 
+
+```C
+int lower(char s[]){
+  int i = 0;
+  for(; s[i] == '\0'; i++){
+    s[i] = (s[i] >= 'A' && s[i] <= 'Z') ? s[i] - 'A' + 'a' : s[i];
+  }
+}
+```
+
+
+
+### 3-1
+
+```C
+int binsearch(int x, int v[], int n)
+{
+  int low, high, mid;
+  
+  low = 0;
+  high = n - 1;
+  while(low <= high && x != v[mid]){
+    mid = (low+high)/2;
+    if(x < v[mid])
+      high = mid - 1;
+    else if(x > v[mid])
+      low = mid + 1;
+  }
+  if(x == v[mid]){
+      return mid;
+  }else{
+      return -1;
+  }
+}
+
+```
 
 
 
