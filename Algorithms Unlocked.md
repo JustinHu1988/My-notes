@@ -917,8 +917,6 @@ Output: A linear order of the vertices such that u appears before v in the linea
 6. Return the linear order.
 ```
 
-
-
 In order to analyze the TOPOLOGICAL-SORT procedure, we first have to understand how to represent a directed graph and a list such as `next`.
 
 When representing a graph, we won't require it to be acyclic, because the absence or presence of cycle has no effect on how we represent a graph.
@@ -1036,20 +1034,142 @@ To understand what a critical path is, we first have to understand that a path i
 
 There is another advantage to learning how to find a shortest path in a dag: we'll lay the foundations for finding shortest paths in arbitrary ditected graphs that may have cycles.
 
-As we did for topologically sorting a dag, we’ll assume that the dag is stored with the adjacency-list representation, and that with each edge(u,v) we have also stored its weight as weight(u,v).
+As we did for topologically sorting a dag, we’ll assume that: 
 
-
-​			
-​		
-​	
-
+- the dag is stored with the *adjacency-list representation* 
+- and with *each edge(u,v) we have also stored its weight as weight(u,v)*.
 
 
 
+**Single-source shortest paths**(SSSP)
+
+In a dag that we derive from a PERT chart above, we  want a shortest path from the *source vertex* to a specific *target vertex*.
+
+Now, we'll solve the more general problem of finding **single-source shortest paths**, where we **find shortest paths from a source vertex to all other vertices**.
+
+- By convention, we will name the source vertex `s`, and we want to compute two things for each vertex `v`.
+  1. *the weight of a shortest path from `s` to `v`,  which we denote by `sp(s,v)`.*
+  2. the **predecessor** of `v` on a shortest path from `s` to `v`: a vertex `u` such that a shortest path from `s` to `v` is a path from `s` to `u` and then a single edge(u,v).
+- Number the `n` vertices from 1 to n, so that algorithms for shortest paths here and in Chapter 6 can store these results in arrays `shortest[1..n]` and `pred[1..n]`,
+- As the algorithms unfold, the values in `shortest[v]` and `pred[v]` might not be their correct final values, but when the algorithms are done, they will be.
 
 
 
+*We need to handle a couple of cases that can arise*:
+
+1. what if there is no path at all from `s` to `v`?
+
+   - Then, we define `sp(s,v) = ∞`, so that `shortest[v]` should come out to `∞`.
+   - Since `v` would have no predecessor on a shortest path from `s`, we also way that `pred[v]` should be the special value `NULL`.
+   - Moreover, all shortest paths from `s` start with `s`, and so `s` has no predecessor either; thus we say that `pred[s]` should also be `NULL`.
+
+2. What if the weight of a cycle is negative?
+
+   For now, however, we’re concerned only with acyclic graphs, and so there are no cycles, much less negative-weight cycles, to worry about.
 
 
 
+To compute shortest paths from a source vertex `s`, *we start off with*:
+
+- `shortest(s) = 0` (since we don’t have to go anywhere to get from a vertex to itself);
+- `shortest(v) = ∞`  for all other vertices v (since we don’t know in advance which vertices can be reached from s);
+- `pred[v] = NULL` for all vertices `v`.
+
+
+Then we apply a series of **relaxation steps** to the edges of the graph:
+
+```
+Procedure RELAX(u,v)
+
+Inputs: u, v: vertices such that there is an edge(u,v).
+
+Result: The value of shortest[v] might decrease, and if it does, then pred[v] becomes u.
+
+1. If shortest[u]+weight(u,v) < shortest[v], then set shortest[v] to shortest[u] + weight(u,v) and set pred[v] to u.
+```
+
+
+
+We're going to relax all the edges in the dag, and the edges of each shortest path will be interspersed, in order, as we go through all the edges and relax each one.
+
+
+
+Here’s a more precise statement of how relaxing edges along a shortest path works, and it applies to any directed graph, with or withoutcycles:
+
+- Start with `shortest(u) = 0` and `pred[u] = NULL` for all vertices,except that `shortest(s) = 0` for the source vertex s.
+- Then relax the edges along a shortest path from s to any vertex v, in order, starting from the edge leaving s and ending withthe edge entering v. Relaxations of other edges may be inter-spersed freely with the relaxations along this shortest path, butonly relaxations may change any shortest or pred values.
+- After the edges have been relaxed, v’s shortest and pred valuesare correct: `shortest[v] = sp(s,v)` and `pred[v]` is the vertex preceding v on some shortest path from s.
+
+
+
+*In a dag, it's really easy to relax each edge exactly once yet relax the edges along every shortest path, in order*. How?
+
+- First, topologically sort the dag.
+- Then, consider each vertex, taken in the topologically sorted linear order, and relax all the edges leaving the vertex.
+- Since every edge must leave a vertex earlier in the linear order and enter a vertex later in the order, every path in the dag must visit vertices in an order consistent with the linear order.
+
+```
+Procedure DAG-SHORTEST-PATHS(G,s)
+
+Inputs:
+ - G: a weighted directed acyclic graph, containing a set V of n vertices and a set E of m directed edges.
+ - s: a source vertex in V.
+ 
+Result: For each non-source vertex v in V, shortest[v] is the weight sp(s,v) of a shortest path from s to v and pred[v] is the vertex preceding v on some shortest path. For the source vertex s, shortest[s] = 0 and pred[s] = NULL. If there is no path from s to v, then shortest[v] = ∞ and pred[v] = NULL.
+
+1. Call TOPOLOGICAL-SORT(G) and set l to be the linear order of vertices returned by the call.
+2. Set shortest[v] to ∞ for each vertex v except s, set shortest[s] to 0, and set pred[v] to NULL for each vertex v.
+3. For each vertex u, taken in the order given by l:
+	A. For each vertex v adjacent to u:
+		i. Call RELAX(u,v).
+```
+
+The next image shows a dag with weights appearing next to the edges. The shortest values from running DAG-SHORTSET-PATHS from source vertex s appear inside the vertices, and shaded edges indicate the pred values.
+
+<img src="images/algrithms-unlocked-img-chapter05-dag-01.png" width="300">
+
+*The vertices are laid out left to right in the linear order returned by the topological sort, so that all edges go from left to right.*
+
+If an edge (u,v) is shaded, then pred[v] is u and shortest[v] = shortest[u]+weight(u,v); for example, since (x,y) is shaded, pred[y] = x and shortest[y] equals shortest[x]+weight(x,y).
+
+There is no path from s to r, and so shortest[r] = ∞ and pred[r] = NULL.
+
+
+
+*DAG-SHORTSET-PATHS runs in $θ(m+n)$ time.*
+
+- step 1 takes $θ(m+n)$ time
+- step 2 initializes two values for each vertex and therefore takes $θ(n)$ time.
+- the outer loop of step 3 examines each vertex exactly once, and the inner loop of step 3A examines each edge exactly once over all iterations. Because each call of RELAX in step 3Ai takes constant time, step 3 takes $θ(m+n)$ time.
+
+
+
+Going back to PERT charts, *it’s now easy to see that finding a critical path takes $θ(m+n)$ time, where the PERT chart has n vertices and m edges.* 
+
+- We add the two vertices, start and finish, and we add at most m edges leaving start and at most m edges entering finish, for a total of at most 3m edges in the dag. 
+- Negating the weights and pushing them from the vertices to the edges takes  $θ(m)$ time, and then finding a shortest path through the resulting dag takes  $θ(m+n)$ time.
+
+
+
+> 寻找最短路径-注释笔记：
+>
+> 1. *拓扑排序在这里的作用，是用来生成一个特定的线性顺序（不唯一），让我们可以不重复的按照顺序遍历相邻顶点组成的线段。*
+>
+> 2. *每一条线段（u->v）包含的信息有：(以下都是自己定义的变量名，为了描述方便)*
+>
+>    1. *前置顶点u*
+>    2. *u距离s的权重$w_1$*
+>    3. *u到v的权重$w_2$*
+>    4. *v距离s的权重$w_3​$*
+>    5. *v的前驱顶点$p$*
+>
+> 3. *如果$w_1 + w_2 < w_3$，则设置$w_3=w_1 + w_2$，并将v的前驱$p$设置为u。*
+>
+>    *如果$w_1 + w_2 >= w_3$，则不改变顶点v包含的相关信息。*
+>
+> 4. *当完成全部线段的遍历后，每个顶点v都会包含距离s最近的权重值，加上指示其最短路径的前驱顶点。*
+>
+>    ​
+
+# Chapter 6 Shortest Paths
 
