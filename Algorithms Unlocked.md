@@ -1041,7 +1041,7 @@ As we did for topologically sorting a dag, we’ll assume that:
 
 
 
-**Single-source shortest paths**(SSSP)
+**Single-source shortest paths (SSSP, 单源最短路径)**
 
 In a dag that we derive from a PERT chart above, we  want a shortest path from the *source vertex* to a specific *target vertex*.
 
@@ -1173,3 +1173,39 @@ Going back to PERT charts, *it’s now easy to see that finding a critical path 
 
 # Chapter 6 Shortest Paths
 
+Most graphs that model real-life situations have cycles.
+
+**single-pair shortest path (单-结点对最短路径)**
+
+- When your GPS finds the fastest route from your current location to a specific destination, it is solving the single-pair shortest path problem.
+
+- Your GPS works with a weighted directed graph, where the edge weights represent either distance or travel time.
+
+  - Because you can't drive a negative distance or arrive before you've departed, all edge weights in your GPS's graph are *positive*.
+  - I suppose that some of them could be 0 for some weird reason, so let's say that the edge weights are *non-negative*.
+
+- *When all edge weights are nonnegative, we don't have to worry about negative-weight cycles, and all shortest paths are well defined.*
+
+
+  ​	
+
+What about graphs with negative-weight edges? How do they relate to the real world? 
+
+- We'll see that we can couch the problem of determining whether an arbitrage opportunity exist in currency trading as determining whether a graph that may have negative-weight edges has a negative-weight cycle.
+
+
+
+Dijkstra's algorithm
+
+Bellman-Ford algorithm
+
+
+
+### Dijkstra's algorithm
+
+Dijkstra's algorithm works on graphs that have two important differences from the graphs we saw in Chapter 5: 
+
+- all edge weights must be nonnegative
+- the graph may contain cycles.
+
+It is at the core of how your GPS finds routes.
