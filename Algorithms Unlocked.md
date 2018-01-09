@@ -1195,17 +1195,155 @@ What about graphs with negative-weight edges? How do they relate to the real wor
 
 
 
-Dijkstra's algorithm
 
-Bellman-Ford algorithm
+1. Dijkstra's algorithm
+
+2. Bellman-Ford algorithm: 
+
+   - A remarkably simple method for finding single-source shortest paths even when negative-weight edges are present.
+   - We can use the result of the Bellman-Ford algorithm to determine whether the graph contains a negative-weight cycle and, if it does, to identify the vertices and edges on the cycle.
+
+3. Floyd-Warshall algorithm:
+
+   - for the all-pair problem, where we want to find a shortest path between every pair of vertices.			
+
+   ​		
+   ​	
 
 
 
 ### Dijkstra's algorithm
 
-Dijkstra's algorithm works on graphs that have two important differences from the graphs we saw in Chapter 5: 
+Dijkstra's algorithm works on graphs that have *two important differences* from the graphs we saw in Chapter 5: 
 
-- all edge weights must be nonnegative
-- the graph may contain cycles.
+- *all edge weights must be nonnegative*
+- *the graph may contain cycles*
 
 It is at the core of how your GPS finds routes.
+
+
+
+Ideally, the simulation works as follows, though we’ll see that Dijkstra’s algorithm works slightly differently.
+
+
+It starts by sending out runners from the source vertex to all adjacent vertices. The first time a runner arrives at any vertex, runners immediately leave that vertex, headed to all of its adjacent vertices. Look at part (a) of this figure:		
+
+
+<img src="images/algrithms-unlocked-img-chapter06-dijkstra-runner.png" width="400">
+​	
+
+That was how the simulation proceeds ideally. It relied on the time for a runner to traverse an edge equaling the weight of the edge. Dijkstra’s algorithm works slightly differently. It treats all edges the same, so that when it considers the edges leaving a vertex, it processes the adjacent vertices together, and in no particular order.
+
+Dijkstra’s algorithm works by calling the RELAX procedure once per edge. Relaxing an edge(u,v) corresponds to a runner from vertex u arriving at vertex v. The algorithm maintains a set Q of vertices for which the final shortest and pred values are not yet known; all vertices not in Q have their final shortest and pred values. After initializing shortest(s) to 0 for the source vertex s, shortest[v] to ∞ for all other vertices, and pred[v] to NULL for all vertices, it repeatedly finds the vertex u in set Q with the lowest shortest value, removes that vertex from Q, and relaxes all the edges leaving u.
+
+
+
+```
+Procedure DIJKSTRA(G,s)
+
+Inputs:
+ - G: a directed graph containing a set V of n vertices and a set E of m directed edges with nonnegative weights.
+ - s: a source vertex in V.
+ 
+Result: For each non-source vertex v in V, shortest[v] is the weight sp(s,v) of a shortest path from s to v and pred[v] is the vertex preceding v on some shortest path. For the source vertex s, shortest[s] = 0 and pred[s] = NULL. If there is no path from s to v, then shortest[v] = ∞ and pred[v] = NULL. (Same as DAG-SHORTEST-PATHS).
+
+1. Set shortest[v] to ∞ for each vertex v except s, set shortest[s] to 0, and set pred[v] to NULL for each vertex v.
+2. Set Q to contain all vertices.
+3. While Q is not empty, do the following:
+	A. Find the vertex u in set Q with the lowest shortest value and remove it from Q.
+	B. For each vertex v adjacent to u:
+		i. Call RELAX(u,v).
+```
+
+Consider the vertex u in Q with the lowest shortest value. Its shortest value can never again decrease. Why not?
+
+- because the only edges remaining to be relaxed are edges leaving vertices in Q, and every vertex in Q has a shortest value at least as large as shortest(u).
+
+*Step 3 is the critical part.*
+
+<img src="images/algrithms-unlocked-img-chapter06-dijkstra-algorithm.png" width="400">
+
+
+
+
+
+
+
+**The running time of the DIJKSTRA procedure:**
+
+- to analyze it in full, we are going to have to first decide upon some implementation details.
+
+  - Recall from Chapter 5 that we denote the number of vertices by n and the number of edges by m, and $m \leq n^2$.
+    - We know that step 1 takes step 1 takes $θ(n)$ times.
+    - We also know that the loop of step 3 iterates exactly n times, because the set Q initially contains all `n` vertices, each iteration of the loop removes one vertex from Q, and vertices are never added back into Q.
+    - *The loop of step 3A precesses each vertex and each edge exactly once overthe course of the algorithm. (we saw the same idea in the TOPOLOGICAL-SORT and DAG-SHORTEST-PATHS procedures).*
+
+- What's left to analyze?
+
+  - We need to understand:
+
+    1. how long it takes to put all n vertices into the set Q (step 2)
+    2. How long it takes to determine which vertex in Q has the lowest shortest value and remove this vertex from Q (step 3A)
+    3. and bookkeeping adjustments we need to make, if any, when a vertex's shortest and pred values change due to calling RELAX.
+
+  - Let's name these operations:
+
+    - `INSERT(Q,v)` inserts vertex `v` into set `Q`.
+
+      - Dijkstra's algorithm calls INSERT $n$ times.
+
+    - `EXTRACT-MIN(Q)` removes the vertex in Q with the minimum shortest value and returns this vertex to its caller.
+
+      - Dijkstra's algorithm calls EXTRACT-MIN $n$ times.
+
+    - `DECREASE-KEY(Q,v)` performs whatever bookkeeping is necessary in Q to record that shortest[v] was decreased by a call of RELAX.
+
+      - Dijkstra's algorithm calls DECREASE-KEY up to $m$ times.
+
+        ​
+
+- These three operations, taken together, define a **priority queue (优先队列)**.
+
+  - The descriptions fo the priority queue operations say just $what$ the operations do, and not $how$ they do it.
+  - In software design, separating *what* operations do from *how* they do it is known as **abstraction(抽象)**. 
+  - We call the set of operations, specified by what they do but not how they do it, an **abstract data type(抽象数据类型)**, or **ADT**, so that *a priority queue is an ADT.*
+  - ​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
