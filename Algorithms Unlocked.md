@@ -1207,8 +1207,8 @@ What about graphs with negative-weight edges? How do they relate to the real wor
 
    - for the all-pair problem, where we want to find a shortest path between every pair of vertices.			
 
-   ​		
-   ​	
+     ​	
+     ​
 
 
 
@@ -1307,7 +1307,35 @@ Consider the vertex u in Q with the lowest shortest value. Its shortest value ca
   - The descriptions fo the priority queue operations say just $what$ the operations do, and not $how$ they do it.
   - In software design, separating *what* operations do from *how* they do it is known as **abstraction(抽象)**. 
   - We call the set of operations, specified by what they do but not how they do it, an **abstract data type(抽象数据类型)**, or **ADT**, so that *a priority queue is an ADT.*
-  - ​
+
+- We can implement the priority queue operations — the how — by any one of several data structures.
+
+  - A **data structure** is a specific way to store and access data in a computer.
+  - In the case of priority queues, we'll see three different data structures that can implement the operations.
+  - Software designers should be able to plug in any data structure that implements the operations of an ADT.
+  - But it's not quite so simple when we think about algorithms. Because *for different data structures, the way they implement operations may take differing amounts of time.*
+
+
+#### Simple array implementation
+
+The simplest way to implement the priority queue operations is to store the vertices in an array with $n$ positions.
+
+If the priority queue currently contains $k$ vertices, then they are in the first $k$ positions of the array, in no particular order.
+
+Along with the array, we need to maintain a count of how many vertices it currently contains.
+
+
+
+The INSERT operation is easy: just add the vertex to the next unused position in the array and increment the count.
+
+
+
+DECREASE-KEY is even easier: 
+
+
+
+
+
 
 
 
