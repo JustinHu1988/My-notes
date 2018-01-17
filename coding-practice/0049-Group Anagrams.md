@@ -122,11 +122,12 @@ var groupAnagrams = function(strs) {
         for(let j=0;j<strs[i].length; j++){
             temp *= plusObj[strs[i][j]];
         }
-        if(tempArr.has(temp) === false){
+        let bool = tempArr.get(temp);
+        if(bool === undefined){
             tempArr.set(temp, count++);
             objArr.push([strs[i]]);
         }else{
-            objArr[tempArr.get(temp)].push(strs[i]);
+            objArr[bool].push(strs[i]);
         }
     }
     return objArr;
