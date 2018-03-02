@@ -23,12 +23,10 @@ var restoreIpAddresses = function(s) {
 	return objArr;
 
 	function iter(index, listNum, tempStr, tempArr, count) {
-
 		// 判定剩余字符数是否超过限制
 		if((4-count)*3<len-index){
 			return false;
 		}
-
 		if(count<3){ // ip地址前三单元
 			tempStr+=s[index];
 			if(verify(tempStr)){
