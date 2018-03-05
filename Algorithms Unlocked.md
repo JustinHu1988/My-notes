@@ -1196,14 +1196,14 @@ What about graphs with negative-weight edges? How do they relate to the real wor
 
 
 
-1. Dijkstra's algorithm
+1. **Dijkstra's algorithm（迪杰斯特拉算法）**
 
-2. Bellman-Ford algorithm: 
+2. **Bellman-Ford algorithm**: 
 
    - A remarkably simple method for finding single-source shortest paths even when negative-weight edges are present.
    - We can use the result of the Bellman-Ford algorithm to determine whether the graph contains a negative-weight cycle and, if it does, to identify the vertices and edges on the cycle.
 
-3. Floyd-Warshall algorithm:
+3. **Floyd-Warshall algorithm**:
 
    - for the all-pair problem, where we want to find a shortest path between every pair of vertices.			
 
@@ -1212,7 +1212,7 @@ What about graphs with negative-weight edges? How do they relate to the real wor
 
 
 
-### Dijkstra's algorithm
+### Dijkstra's algorithm 
 
 Dijkstra's algorithm works on graphs that have *two important differences* from the graphs we saw in Chapter 5: 
 
@@ -1304,14 +1304,14 @@ Consider the vertex u in Q with the lowest shortest value. Its shortest value ca
 
 - These three operations, taken together, define a **priority queue (优先队列)**.
 
-  - The descriptions fo the priority queue operations say just $what$ the operations do, and not $how$ they do it.
+  - *The descriptions of the priority queue operations say just $what$ the operations do, and not $how$ they do it.*
   - In software design, separating *what* operations do from *how* they do it is known as **abstraction(抽象)**. 
   - We call the set of operations, specified by what they do but not how they do it, an **abstract data type(抽象数据类型)**, or **ADT**, so that *a priority queue is an ADT.*
 
 - We can implement the priority queue operations — the how — by any one of several data structures.
 
-  - A **data structure** is a specific way to store and access data in a computer.
-  - In the case of priority queues, we'll see three different data structures that can implement the operations.
+  - *A **data structure** is a specific way to store and access data in a computer.*
+  - In the case of priority queues, we'll see *three different data structures that can implement the operations*.
   - Software designers should be able to plug in any data structure that implements the operations of an ADT.
   - But it's not quite so simple when we think about algorithms. Because *for different data structures, the way they implement operations may take differing amounts of time.*
 
@@ -1326,11 +1326,10 @@ Along with the array, we need to maintain a count of how many vertices it curren
 
 
 
-The INSERT operation is easy: just add the vertex to the next unused position in the array and increment the count.
-
-
-
-DECREASE-KEY is even easier: 
+- The `INSERT` operation is easy: just add the vertex to the next unused position in the array and increment the count.
+-  `DECREASE-KEY` is even easier: do nothing! Both of these operations take constant time.
+- The `EXTRACT-MIN` operation takes $O(n)$ time, however, since we have to look at all the vertices currently in the array to find the one with the lowest shortest value.
+  - Once we identify this vertex, *deleting it is easy: just move the vertex in the last position into the position of the deleted vertex and then decrement the count*.
 
 
 

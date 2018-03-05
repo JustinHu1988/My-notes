@@ -71,7 +71,7 @@ Other bodies also specify standards for network components, most notably for net
 
 We can also describe the Internet from an entirely different angle —— namely, as an **infrastructure** *that provides services to applications*.
 
-These applications include electronic mail, Web surfing, social networks, instant messaging, Voice-over-IP(VoIP), video streaming, distributed games, peer-to-peer(P2P) file shring, television over the Internet, remote login, and much, much more.
+These applications include electronic mail, Web surfing, social networks, instant messaging, Voice-over-IP(VoIP), video streaming, distributed games, peer-to-peer(P2P) file sharing, television over the Internet, remote login, and much, much more.
 
 The applications are said to be **distributed applications**, since they involve multiple end systems that exchange data with each other.
 
@@ -86,10 +86,14 @@ This **Internet API** is a set of rules that the sending program must follow so 
 
 
 
-We have just given two descriptions of the Internet: one in terms of its hardware and software components, the other terms of an infrastructure for providing services to distributed applications.
+We have just given two descriptions of the Internet: 
 
-​	
-All activity in the Internet that involves two or more communicating remote entities is governed by a protocol.
+1. one in terms of its hardware and software components, 
+2. the other terms of an infrastructure for providing services to distributed applications.
+
+### 1.1.3 Protocols	
+
+*All activity in the Internet that involves two or more communicating remote entities is governed by a protocol.*
 
 - For example, hardware-implemented protocols in two physically connected computers control the flow of bits on the "wire" between the two network interface cards;
 - congestion-control protocols in end systems control the rate at which packets are transmitted between sender and receiver; 
@@ -99,7 +103,7 @@ Protocols are running everywhere in the Internet.
 
 
 
-When you type the URL of a Web page into your Web browser:
+*When you type the URL of a Web page into your Web browser:*
 
 - First, your computer will send a connection request message to the Web server and wait for a reply. 
 - The Web server will eventually receive your connection request message and return a connection reply message. 
@@ -116,7 +120,7 @@ When you type the URL of a Web page into your Web browser:
 
 Different protocols are used to accomplish different communication tasks.
 
-Mastering the field of computer networking is equivalent to understanding the what, why, and how of networking protocols.
+*Mastering the field of computer networking is equivalent to understanding the what, why, and how of networking protocols.*
 
 
 
@@ -158,7 +162,7 @@ Two prevalent types of broadband residential access:
 
      <img src="images/computer-networking-figure-1.6.png">
 
-   - At the cable head end, the cable modem termination system (CMTS) serves a similar function as the DSL network’s DSLAM—turning the analog signal sent from the cable modems in many downstream homes back into digital format.		
+     - At the cable head end, the cable modem termination system (CMTS) serves a similar function as the DSL network’s DSLAM—turning the analog signal sent from the cable modems in many downstream homes back into digital format.	
 
    - One important characteristic of cable Internet access is that it is **a shared broadcast medium**(*???need more learning*)
 
@@ -168,7 +172,7 @@ Two prevalent types of broadband residential access:
    - competing technologies for optical distribution from the CO to the homes:
      - **Active optical networks (AONs, 主动光纤网络)**
      - **Passive optical networks (PONs, 被动光纤网络)**
-   - FTTH can potentially provide Internet access rates in the gigabits per second range.	
+     - FTTH can potentially provide Internet access rates in the gigabits per second range.
 
 > The average downstream speed of US FTTH customers was approximately 20 Mbps in 2011 (*compared with 13 Mbps for cable access networks and less than 5 Mbps for DSL*)*(???why)*
 
@@ -202,14 +206,14 @@ On corporate and university campuses, and increasingly in home settings, a local
 
 - In a wireless LAN setting, wireless users transmit/receive packets to/from an access point that is connected into the enterprise’s network (most likely including wired Ethernet), which in turn is connected to the wired Internet. 
 - A wireless LAN user must typically be within a few tens of meters of the access point.
-- Wireless LAN access based on **IEEE 802.11 technology**, more colloquially known as WiFi.
+- Wireless LAN access based on **IEEE 802.11 technology**(**WiFi**).
 - As discussed in detail in Chapter 6, 802.11 today provides a shared transmission rate of up to 54 Mbps.
 
 
 
 Even though Ethernet and WiFi access networks were initially deployed in enterprise (corporate, university) settings, they have recently become relatively common components of home networks.
 
-*Many homes combine broadband residential access (that is, cable modems or DSL) with these inexpensive wireless LAN technologies to create powerful home networks.*
+*Ma ny homes combine broadband residential access (that is, cable modems or DSL) with these inexpensive wireless LAN technologies to create powerful home networks.*
 
 <img src="images/computer-networking-figure-1.9.png">
 ​			
@@ -222,8 +226,8 @@ Even though Ethernet and WiFi access networks were initially deployed in enterpr
 - These devices employ the same wireless infrastructure used for cellular telephony to send/receive packets through a base station that is operated by the cellular network provider. 
 - Unlike WiFi, a user need only be within a few tens of kilometers (as opposed to a few tens of meters) of the base station.
 
-Telecommunications companies have made enormous investments in so-called third-generation (**3G**) wireless, which provides *packet-switched wide-area wireless Internet access* at speeds in excess of 1 Mbps. 		
-But even higher-speed wide-area access technologies—a fourth-generation (**4G**) of wide-area wireless networks—are already being deployed.
+  Telecommunications companies have made enormous investments in so-called third-generation (**3G**) wireless, which provides *packet-switched wide-area wireless Internet access* at speeds in excess of 1 Mbps. 	
+  But even higher-speed wide-area access technologies—a fourth-generation (**4G**) of wide-area wireless networks—are already being deployed.
 
 
 **LTE** ( for “Long-Term Evolution”—a candidate for Bad Acronym of the Year Award) has its roots in 3G technology, and can potentially achieve rates in excess of 10 Mbps.
@@ -249,7 +253,7 @@ Cost:
 - In particular, the labor cost associated with the installation of the physical link can be orders of magnitude higher than the cost of the material. 
 - For this reason, many builders install twisted pair, optical fiber, and coaxial cable in every room in a building. Even if only one medium is initially used, there is a good chance that another medium could be used in the near future, and so money is saved by not having to lay additional wires in the future.
 
-#### Twisted-Pair Copper Wire (双绞铜线)				
+  #### Twisted-Pair Copper Wire (双绞铜线)			
 
 - The least expensive and most commonly used guided transmission medium.
   - (used by telephone, more than 99 percent of the wired connections from the telephone handset to the local telephone switch use twisted-pair copper wire.)
@@ -257,7 +261,7 @@ Cost:
 - Typically, a number of pairs are bundled together in a cable by wrapping the pairs in a protective shield. 
 - *A wire pair constitutes a single communication link*.
 - **Unshielded twisted pair (UTP, 无屏蔽双绞线)** *is commonly used for computer networks within a building, that is, for LANs*. *Data rates for LANs using twisted pair today range from 10 Mbps to 10 Gbps.*
-- The data rates that can be achieved *depend on the thickness of the wire and the distance between transmitter and receiver*.		
+  - The data rates that can be achieved *depend on the thickness of the wire and the distance between transmitter and receiver*.	
 - When fiber-optic technology emerged in the 1980s, many people disparaged twisted pair because of its relatively low bit rates. 
 - But twisted pair did not give up so easily. Modern twisted-pair technology, such as category 6a cable, can achieve data rates of 10 Gbps for distances up to a hundred meters.
 - In the end, *twisted pair has emerged as the dominant solution for high-speed LAN networking.*
@@ -305,8 +309,8 @@ used for:
   2. those that operate inlocal areas, typically spanning from ten to a few hundred meters; (thewireless LAN technologies described in Section 1.2.1 use local-area radio channels)
   3. those thatoperate in the wide area, spanning tens of kilometers. (the cellular access technologies use wide-area radio channels)
 
-We’ll discuss radio channels in detail in Chapter 6.	
+  We’ll discuss radio channels in detail in Chapter 6.
 
-​				
+  ​			
 
 #### Satellite Radio Channels (卫星无线电信道)
