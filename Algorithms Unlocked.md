@@ -1327,9 +1327,28 @@ Along with the array, we need to maintain a count of how many vertices it curren
 
 
 - The `INSERT` operation is easy: just add the vertex to the next unused position in the array and increment the count.
--  `DECREASE-KEY` is even easier: do nothing! Both of these operations take constant time.
+- `DECREASE-KEY` is even easier: do nothing! Both of these operations take constant time.
 - The `EXTRACT-MIN` operation takes $O(n)$ time, however, since we have to look at all the vertices currently in the array to find the one with the lowest shortest value.
   - Once we identify this vertex, *deleting it is easy: just move the vertex in the last position into the position of the deleted vertex and then decrement the count*.
+- The `n` `EXTRACT-MIN` calls take $O(n^2)$ time. Although the calls to `RELAX` take `O(m)` time, recall that $m \leq n^2$. 
+- With this implementation of the priority queue therefore, Dijkstra's algorithm takes *$O(n^2)$ time*, with the time dominated by the time spent in `EXTRACT-MIN`.
+
+
+```
+Procedure DIJKSTRA(G,s)
+
+Inputs and Result: Same as before.
+
+1. Set shortest[v] to ∞ for each vertex v except s, set shortest[s] to 0, and set pred[v] to NULL for each vertex v.
+2. Make Q an empty priority-queue.
+3. For each vertex v:
+	A. Call INSERT(Q,v).
+4. While Q is not empty, do the following:
+	A. Call EXTRACT-MIN(Q) and set u to hold the returned vertex.
+	B. for each vertex v adjacent to u:
+		i. Call RELAX(u,v).
+		ii. If the call to RELAX(u,v) decreased the value of shortest[v], then call DECREASE-KEY(Q,v).
+```
 
 
 
@@ -1337,16 +1356,106 @@ Along with the array, we need to maintain a count of how many vertices it curren
 
 
 
+#### Binary heap implementation
+
+A binary heap organizes data as a binary tree stored in an array.
+
+A **binary tree** is a type of graph, but we refer to its vertices as **nodes**, the edges are undirected, and each node has 0, 1, or 2 nodes below it, which are its **children**. Nodes with no children are **leaves**.
+
+
+
+<img src='images/algrithms-unlocked-img-chapter06-binary-heap.png' width="500">
+
+
+
+A **binary heap** is a binary tree with three additional properties:
+
+1. the tree is *completely filled on all levels*, except possibly the lowest, which is filled from the left up to a point.
+2. *each node contains a key*, shown inside each node in the figure.
+3. the keys obey the **heap property**: *the key of each node is less than or equal to the keys of its children.*
+
+The binary tree in the figure is also a binary heap.
+
+
+
+We can store a binary heap in an array, as shown on the right in the figure. 
+
+- Because of the heap property, the node with the minimum key must always be at position 1. 
+- The children of the node at position `i` are at positions `2i` and `2i+1`, and the node above the node at position `i` — its parent — is at position `[i/2]???`. 
+- It is easy to navigate up and down within a binary heap when we store it in an array.
+
+A binary heap has one other important characteristic: if it consists of `n` nodes, the its **height** — the number of edges from the root down to the farthest leaf — is only `[lg n]???`. 
+
+*Therefore, we can traverse a path from the root down to the leaf, or from a leaf up to the root.*
+
+
+
+Because binary heaps have height `[lg n]???`, we can perform the three priority queue operations *in $O(\lg n)$ time each*.
+
+- For `INSERT`: 
+  - add a new leaf at the first available position. 
+  - Then, as long as the key in the node is smaller than the key in its parent, exchange the contents of the node with the contents of its parent, and move up one level toward the root.
+  - In other words, "bubble up" the contents toward the root until the heap property holds. 
+  - Since the path to the root has at most `[lg n]???` Edges, at most `[lg n]???-1` exchanges occur, and so `INSERT` takes $O(\lg n)$ time.
+- To perform `DECREASE-KEY`, use the same idea:
+  - Decrease the key and then bubble up the contents toward the root until the heap property holds, again taking $O(\lg n)$ time.
+- To perform `EXTRACT-MIN`: 
+  - save the contents of the root to return the caller.
+  - Next, take the last leaf (the highest-numbered node) and put its contents into the root position. Then "bubble down" the contents of the root, exchanging the contents of the node and the child whose key is smaller, until the heap property holds.
+  - Finally, return the saved contents of root.
+
+When Dijkstra's algorithm uses the binary-heap implementation of a priority queue, it spends $O(n\lg n)$ time inserting vertices, $O(n\lg n)$ time in `EXTRACT-MIN` operations, and $O(m\lg n)$ time in `DECREASE-KEY` operations.
+
+-  (Actually, inserting the n vertices takes just $\Theta(n)$ time, since initially just the source vertex s has the shortest value of 0 and all other vertices have shortest values of $\infty$.)
+- *When the graph is **sparse** — the number $m$ of edges is much less than $n^2$ — implementing the priority queue with a binary heap is more efficient than using a simple array.*
+  - *Graphs that model road networks are sparse, since the average intersection has about four roads leaving it, and so $m$ would be about $4n$.*
+  - *On the other hand, when the graph is **dense** — $m$ is close to $n^2$, so that the graph contains many edges — the $O(m \lg n)$ time that Dijkstra's algorithm spends in `DECREASE-KEY` calls can make it slower than using a simple array for the priority queue.*
+
+
+
+*One other thing about binary heaps: we can use them to sort in $O(n\lg n)$ time:*
+
+```
+Procedure HEAPSORT(A,n)
+
+Inputs:
+ - A: an array.
+ - n: the number of elements in A to sort.
+ 
+Output: An array B containing the elements of A, sorted.
+
+1. Build a binary heap Q from the elements of A.
+2. Let B[1..n] be a new array.
+3. For i=1 to n:
+	A. Call EXTRACT-MIN(Q) and set B[i] to the value returned.
+4. Return the B array.
+```
+
+Step 1 converts the input array into a binary heap, which we can do in one of two ways.
+
+- One way is to start with an empty binary heap and then insert each element of the array, taking $O(n\lg n)$ time.
+- *The other way builds the binary heap directly within the array, working from the bottom up, taking only $O(n)$ time. ??? 这里不懂*
+
+
+
+#### Fibonacci heap implementation
+
+We can also implement a priority queue by a complicated data structure called a “Fibonacci heap,” or “F-heap.” 
+
+With an F-heap, the n `INSERT` and `EXTRACT-MIN` calls take a total of $O(n\lg n)$ time, and the m `DECREASE-KEY` calls take a total of $\Theta (m)$ time, and so Dijkstra’s algorithm takes only $O(n\lg n + m)$ time.
+
+In practice, people do not often use F-heaps, for a couple of reasons:
+
+- One is that an individual operation might take much longer than the average, although in total the operations take the times given above. 
+- The second reason is that F-heaps are a bit complicated, and so the constant factors hidden in the asymptotic notation are not as good as for binary heaps.
 
 
 
 
 
+### Bellman-Ford algorithm
 
-
-
-
-
+If some edge weights are negative, then Dijkstra's algorithm could return incorrect results.
 
 
 
