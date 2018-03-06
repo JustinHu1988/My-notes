@@ -1407,7 +1407,7 @@ Because binary heaps have height `[lg n]???`, we can perform the three priority 
 When Dijkstra's algorithm uses the binary-heap implementation of a priority queue, it spends $O(n\lg n)$ time inserting vertices, $O(n\lg n)$ time in `EXTRACT-MIN` operations, and $O(m\lg n)$ time in `DECREASE-KEY` operations.
 
 -  (Actually, inserting the n vertices takes just $\Theta(n)$ time, since initially just the source vertex s has the shortest value of 0 and all other vertices have shortest values of $\infty$.)
-- *When the graph is **sparse** — the number $m$ of edges is much less than $n^2$ — implementing the priority queue with a binary heap is more efficient than using a simple array.*
+-  *When the graph is **sparse** — the number $m$ of edges is much less than $n^2$ — implementing the priority queue with a binary heap is more efficient than using a simple array.*
   - *Graphs that model road networks are sparse, since the average intersection has about four roads leaving it, and so $m$ would be about $4n$.*
   - *On the other hand, when the graph is **dense** — $m$ is close to $n^2$, so that the graph contains many edges — the $O(m \lg n)$ time that Dijkstra's algorithm spends in `DECREASE-KEY` calls can make it slower than using a simple array for the priority queue.*
 
@@ -1457,15 +1457,59 @@ In practice, people do not often use F-heaps, for a couple of reasons:
 
 If some edge weights are negative, then Dijkstra's algorithm could return incorrect results.
 
+*The Bellman-Ford algorithm can handle negative edge weights*, and *we can use its output to detect and help identify a negative-weight cycle*.
+
+> Bellman-Ford 算法适合于求解含负边（但不含负向环路）的有向图最短路径求解。并且可以用于判断图中是否含有负向环路。
+
+The Bellman-Ford algorithm is remarkably simple.
+
+- After initializing the `shortest` and `pred` values, it just relaxes all m deges n-1 times.
+- The figure below demonstrates how the algorithm operates on a small graph.
+  - The source vertex is `s`, the `shortest` values appear within the vertices, and the shaded edges indicate `pred` values: if edge (u,v) is shaded, the `pred[v]=u`.
+  - In this example, we assume that each pass over all the edges relaxes them in the fixed order: (t,x),(t,y),(t,z),(x,t),(y,x),(y,z),(z,x),(z,s),(s,t),(s,y).
+  - Part (a) shows the situation just before the first pass, and parts (b) through (e) show the situation after each successive pass. The `shortest` and `pred` values in part (e) are the final values.
+
+```
+Procedure BELLMAN-FORD(G,s)
+
+Inputs:
+ - G: a directed graph containing a set V of n vertices and a set E of m directed edges with arbitrary weights.
+ - s: a source vertex in V.
+ 
+Result: Same as DIJKSTRA.
+
+1. Set shortest[v] to ∞ for each vertex v except s, set shortest[s] to 0, and set pred[v] to NULL for each vertex v.
+2. For i=1 to n-1:
+	A. For each edge(u,v) in E:
+		i. Call RELAX(u,v).
+```
 
 
 
+<img src="images/algrithms-unlocked-img-chapter06-bellman-ford.png" width="450">
 
+Why this will work:
 
+- *Every acyclic path must contain at most `n-1` edges, for if a path contains `n` edges then it must visit some vertex twice, which would make a cycle.*
+- *Thus, if there is a shortest path from s to v, then there is one that contains at most `n-1` edges.*
+- *The first time that step `2A` relaxes all edges, it must relax the first edge on this shortest path. The second time that step `2A` relaxes all edges, it must relax the second edge on the shortest path, and so on.*
+- *After the (n-1)st time, all edges on the shortest path have been relaxed, in order, and therefore shortest[v] and pred[v] are correct*.
 
+> 简单来说，求解最短路径时，不会经过正向环路。那么，当没有负向环路的情况下，某顶点最短路径包含的边最多为n-1。而第n轮relax所有子路径时，就会对该条最短路径的第n条边进行优化，因此当循环n-1次遍历后，就可以获得所有顶点的最短路径。
+>
+> 
 
+> *当图中含有负向环路时，将无法求得所有顶点的最短路径。因此，针对这种情况，我们着重于如何找出负向环路。*
 
+*Now, suppose that the graph contains a negative-weight cycle and we've already run the `BELLMAN-FORD` procedure on it :*
 
+- you can go around and around a negative-weight cycle, getting a lower-weight path each time around.
+- That means that there is at least on edge(u,v) on the cycle for which shortest[v] will decrease if you relax it again — even though this edge has already been relaxed `n-1` times.
+
+*Here is how to find a negative-weight cycle, if one exist, after running `BELLMAN-FORD`:*
+
+- Go through the edges once again.
+- ​
 
 
 
