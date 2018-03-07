@@ -1499,7 +1499,17 @@ Why this will work:
 >
 > 
 
-> *当图中含有负向环路时，将无法求得所有顶点的最短路径。因此，针对这种情况，我们着重于如何找出负向环路。*
+> *当图中含有负向环路时，将无法求得所有顶点的最短路径。因此，针对这种情况，我们的重点放在如何找出负向环路：*
+>
+> 1. *在执行n-1次遍历所有边的relax后，再对所有顶点执行一次relax，此时如果还能遇到shortest[u]+weight(u,v)<shortest[v]，则说明顶点v要么处于负向环路里，要么v的前置顶点处于负向环路。*
+> 2. *此时，给所有顶点新增一个属性`visited`，设置为`false`。*
+> 3. *然后，将v的 `visited`设置为`true`。从v开始找前置顶点，并判断前置顶点的`visited`属性是否为`true`：*
+>    1. *如果不是，则将其设置为`true`，继续找前置顶点，重复判断。*
+>    2. *如果是`true`，则停止找前置顶点。而当前这个顶点x可以确定处于负向环路之中。*
+> 4. 新建一个包含负向环路顶点的数组（初始为空），将顶点x加入其中。
+>    1. 寻找x的前置顶点a，将这个前置顶点加入到数组中，然后找到a的前置顶点，如此循环往复，只要找到的前置顶点不等于x，就继续加入数组。直到碰到前置顶点为x时，不再加入数组，停止循环。
+>    2. 此时，数组中已包含此负向环路的所有顶点。
+> 5. 以上是对下方 `FIND-NEGATIVE-WEIGHT-CYCLE` 算法的通俗解释。
 
 *Now, suppose that the graph contains a negative-weight cycle and we've already run the `BELLMAN-FORD` procedure on it :*
 
@@ -1509,21 +1519,53 @@ Why this will work:
 *Here is how to find a negative-weight cycle, if one exist, after running `BELLMAN-FORD`:*
 
 - Go through the edges once again.
-- ​
+- If we find an edge(u,v) for which shortest[u]+weight(u,v)<shortest[v], *then we know that vertex v is either on a negative-weight cycle or is reachable from one*.
+- We can find a vertex on the negative-weight cycle be tracing back the pred values from v, keeping track of which vertices we've visited until we reach a vertex x that we've visited before.
+- Then we can trace back pred values from x until we get back to x, and all vertices in between, along with x, will constitute a negative-weight cycle.
+- The procedure `FIND-NEGATIVE-WEIGHT-CYCLE` below shows how to determine whether a graph has a negative-weight cycle, and how to construct one if it does.
+
+
+```
+Procedure FIND-NEGATIVE-WEIGHT-CYCLE(G)
+
+Input: G: a directed graph containing a set V of n vertices and a set E of m directed edges with arbitrary weights on which the BELLMAN-FORD procedure has already been run.
+
+Output: Either a list of vertices in a negative-weight cycle, in order, or an empty list if the graph has no negative-weight cycles.
+
+1. Go through all edges to find any edge(u,v) such that shortest[u]+weight(u,v)<shortest[v].
+2. If no such edge exists, then return an empty list.
+3. Otherwise, do the following:
+	A. Let `visited` be a new array with one element for each vertex. Set all elements of `visited` to `FALSE`.
+	B. Set x to v.
+	C. While visited[x] is FALSE, do the following:
+		i. Set visited[x] to TRUE.
+		ii. Set x to pred[x].
+	D. At this point, we know that x is a vertex on a negative-weight cycle. Set v to pred[x].
+	E. Create a list cycle of vertices initially containing just x.
+	F. While v is not x, do the following:
+		i. Insert vertex v at the beginning of cycle.
+		ii. Set v to pred[v].
+	G. Return cycle.
+```
+
+
+
+Running time of the Bellman-Ford algorithm: *$\Theta(nm)$.*
+
+To find whether a negative-weight cycle exists, relax each edge once more until either relaxing changes a shortest value or all edges have been relaxed, taking *$O(m)$* time. If there is a negative-weight cycle, it contain at most n edges, and so the time to trace it out is *$O(n)$*.
 
 
 
 
 
+#### Negative-weight cycles relate to arbitrage opportunities
+
+Exchange rates for currencies fluctuate rapidly. Imagine that at some moment in time, the following exchange rates are in effect:
+
+。。。。。。
 
 
 
-
-
-
-
-
-
-
+Here's how to find an arbitrage opportunity
 
 
