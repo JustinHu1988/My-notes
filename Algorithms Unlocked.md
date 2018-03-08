@@ -1561,12 +1561,160 @@ Exchange rates for currencies fluctuate rapidly. Imagine that at some moment in 
 Here's how to find an arbitrage opportunity by finding a negative-weight cycle:
 
 - （这部分已阅读，尚未写笔记）
+- ​
 
 
 
-### The Floyd-Warshall algorithm
+### The **Floyd-Warshall** algorithm
 
-**All-pairs shortest-paths** problem :
+**All-pairs shortest-paths** problem, example: 
+
+*Finding the **diameter** of a network: the longest of all shortest paths.*
+
+- For example: suppose that a directed graph represents a communication network, and the weight of an edge gives the time it takes for a message to traverse a communication link. Then the diameter gives you the longest possible transit time for a message in the network.
+
+  ​
+
+*Runtime for all-pairs shortest-paths by Dijkatra's algorithm / Bellman-Ford algorithm:*
+
+- Of course, we can compute all-pairs shortest paths by computing single-source shortest paths by computing single-source shortest paths from each vertex in turn.
+- If all edge weights are nonnegative, we can run Dijkatra's algorithm from each of the n vertices, each call taking $O(m\lg n)$ time if we use a binary heap or $O(n\lg n + m)$ time if we use a Fibonacci heap, for a total running time of either $O(nm\lg n)$ or $O(n^2\lg n+nm)$.
+  - If the graph is sparse, that approach works well.
+  - But if the graph is dense, so that m is near n^2^, then $O(nm\lg n)$ is $O(n^3\lg n)$. 
+  - Even with a dense graph and a Fibonacci heap, $O(n^2\lg n+mn)$ is $O(n^3)$, and the constant factor induced by the Fibonacci heap can be significant.
+- Of course, if the graph may contain negative-weight edges, then we cannot use Dijkatra's algorithm, and running the Bellman-Ford algorithm from each of n vertices on a dense graph gives a running time of $\Theta(n^2m)$, which is $\Theta(n^4)$.
+
+
+
+Instead, by using the **Floyd-Warshall** algorithm, we can *solve the allpairs problem in $\Theta(n^3)$ time*:
+
+- regardless of whether the graph is sparse, dense, or in between.
+- even allowing the graph to have negative-weight edges by no negative-weight cycles.
+- and the constant factor hidden in the $\Theta$-notation is small.
+- *Moreover, the Floyd-Warshall algorithm illustrates a clever algorithmic technique called **"dynamic programming"**.*
+
+
+
+*The Floyd-Warshall algorithm relies on an obvious property of shortest paths:*
+
+- If a shortest path, call it $p$, from vertex $u$ to vertex $v$ goes from vertex $u$ to vertex $x$ to vertex $y$ to vertex $v$, then teh portion of $p$ that is between $x$ and $y$ is itself a shortest path from $x$ to $y$. That is, **any subpath of a shortest path is itself a shortest path.**
+
+
+
+Three dimensions:
+
+*The Floyd-Warshall algorithm keeps track of path weights and vertex predecessors in arrays indexed in three dimensions*.
+
+- A three-dimensional array would be like a one-dimensional array of two-dimensional arrays.
+- You need an index in each of the three dimensions to identify an entry.
+
+
+
+In the Floyd-Warshall algorithm, we assume that the vertices are numbered from $1$ to $n$. Vertex numbers become important, because the Floyd-Warshall algorithm uses the following definition:
+
+- *$shortest[u,v,x]$ is the weight of a shortest path from vertex $u$ to vertex $v$ in which each intermediate vertex — a vertex on the path other than $u$ and $v$ — is numbered from $1$ to $x$.*
+
+(So think of u, v, and x as integers in the range 1 to n that represent vertices.) 
+
+*This definition does not require the intermediate vertices to consist of $all$ $x$ vertices numbered $1$ to $x$; it just requires each intermediate vertex — however many there are — to be numbered $x$ or lower.* Since all vertices are numbered at most n, it must be the case that $shortest[u,v,n]$ equals $sp(u,v)$, the weight of a shortest path from u to v.
+
+
+
+Let's consider two vertices $u$ and $v$, and pick a number $x$ in the range from $1$ to $n$. 
+
+- Consider all paths from $u$ to $v$ in which all intermediate vertices are numbered at most $x$. 
+- Of all these paths, let path $p$ be one with minimum weight.
+- Path $p$ either contains vertex $x$ or it does not, and we know that, other than possibly $u$ or $v$, it does not contain any vertex numbered higher than $x$. *There are two possibilities:*
+  1. $x$ is not an intermediate vertex in path $p$. Then all intermediate vertices of path $p$ are numbered at most $x-1$. This means, *$shortest[u,v,x]$ equals $shortest[u,v,x-1]$.*
+  2. $x$ appears as an intermediate vertex in path $p$. Because any subpath of a shortest path is itself a shortest path, the portion of path $p$ that goes from $u$ to $x$ is a shortest path from $u$ to $x$. Likewise, the portion of $p$ that goes from $x$ to $v$ is a shortest path from $x$ to $v$.
+     - In this case, the intermediate vertices in each of these subpaths are all numbered at most $x-1$. 
+     - Therefore, *$shortest[u,v,x]$ equals $shortest[u,x,x-1] + shortest[x,v,x-1]$.*
+
+
+
+Because either $x$ is an intermediate vertex in a shortest path from $u$ to $v$ or it's not, we can conclude that *$shortest[u,v,x]$ is the smaller of $shortest[u,x,x-1]+shortest[x,v,x-1]$ and $shortest[u,v,x-1]$.*
+
+
+
+How about *keeping track of predecessors*? Let's define $pred[u,v,x]$ analogously to how we defined $shortest[u,v,x]$, as the predecessor of vertex $v$ on a shortest path from vertex $u$ in which all intermediate vertices are numbered at most $x$.
+
+- We can update the $pred[u,v,x]$ values as we compute the $shortest[u,v,x]$ values, as follows.
+- If $shortest[u,v,x]$ is the same as $shortest[u,v,x-1]$, then the shortest path that we've found from $u$ to $v$ with all intermediate vertices numbered at most $x$ is the same as the one with all intermediate vertices numbered at most $x-1$. Vertex $v$'s predecessor must be the same in both paths, and so we can set $pred[u,v,x]$ to be the same as $pred[u,v,x-1]$. 
+- What about when $shortest[u,v,x]$ is less than $shortest[u,v,x-1]$? That happens when we find a path from $u$ to $v$ that has vertex $x$ as an intermediate vertex and has lower weight than the shortest path from $u$ to $v$ with all intermediate vertices numbered at most $x-1$. Because $x$ must be an intermediate vertex on this newly found shortest path, $v$'s predecessor on the path from $u$ must be the same as $v$'s on the path from $x$. In this case, we set $pred[u,v,x]$ to be the same as $pred[x,v,x-1]$.
+
+
+
+>**Procedure FLOYD-WARSHALL(G)**
+>
+>Input: G: a graph represented by a weighted adjacency matrix W with $n$ rows and $n$ columns (one row and one column per vertex). The entry in row $u$ and column $v$, denoted $w_{uv}$, is the weight of edge(u,v) if this edge is present in G, and it is $\infty$ otherwise.
+>
+>Output: For each pair of vertices $u$ and $v$, the value of $shortest[u,v,n]$ contains the weight of a shortest path from $u$ to $v$, and $pred[u,v,n]$ is the predecessor vertex of $v$ on a shortest path from $u$.
+>
+>1. Let $shortest$ and $pred$ be new $n\times n\times (n+1)$ arrays.
+>
+>2. For each $u$ and $v$ from $1$ to $n$ :
+>
+>   A. Set $shortest[u,v,0]$ to $w_{uv}$.
+>
+>   B. If $(u,v)$ is an edge in G, then set $pred[u,v,0]$ to $u$. Otherwise, set $pred[u,v,0]$ to $NULL$.
+>
+>3. For $x=1$ to $n$ :
+>
+>   A. For $u=1$ to $n$ :
+>
+>   ​	i. For $v=1$ to $n$ :
+>
+>   ​		a. If **$shortest[u,v,x-1] > shortest[u,x,x-1]+ shortest[x,v,x-1]$**, then set $shortest[u,v,x]$ to $shortest[u,x,x-1]+shortest[x,v,x-1]$ and set $pred[u,v,x]$ to $pred[x,v,x-1]$.
+>
+>   ​		b.  Otherwise, set $shortest[u,v,x]$ to $shortest[u,v,x-1]$ and set $pred[u,v,x]$  to $pred[u,v,x-1]$.
+>
+>4. Return the $shortest$ and $pred$ arrays.
+>
+>   ​
+
+Example: for this graph
+
+<img src="images/algrithms-unlocked-img-chapter06-floyd-example-img-01.png" width="130">
+
+The adjacency matrix W, containing the edge weights, is
+
+<img src="images/algrithms-unlocked-img-chapter06-floyd-example-img-02.png" width="160">
+
+Which also gives the $shortest[u,v,0]$ values (the weight of paths with at most one edge). For example, $shortest[2,4,0]$ is 1, because we can get from vertex 2 to vertex 4 directly, with no intermediate vertices, by taking edge(2,4) with weight 1. Similarly, shortest[4,3,0] is -5. Here is a matrix giving the $pred[u,v,0]$ values:
+
+<img src="images/algrithms-unlocked-img-chapter06-floyd-example-img-03.png" width="200">
+
+For example, $pred[2,4,0]$ is 2 because the predecessor of vertex 4 is vertex 2, using the edge(2,4), with weight 1, and $pred[2,3,0]$ is $NULL$ because there is no edge(2,3).
+
+After running the loop of step 3 for $x=1$ (to examine paths that may include vertex 1 as an intermediate vertex), the $shortest[u,v,1]$ and $pred[u,v,1]$ values are
+
+<img src="images/algrithms-unlocked-img-chapter06-floyd-example-img-04.png" width="340">
+
+After the loop runs for $x=2$, the $shortest[u,v,2]$ and $pred[u,v,2]$ values are:
+
+<img src="images/algrithms-unlocked-img-chapter06-floyd-example-img-05.png" width="340">
+
+After $x=3$:
+
+<img src="images/algrithms-unlocked-img-chapter06-floyd-example-img-06.png" width="340">
+
+And our final $shortest[u,v,4]$ and $pred[u,v,4]$ values, after running the loop for $x=4$, are:
+
+<img src="images/algrithms-unlocked-img-chapter06-floyd-example-img-07.png" width="340">
+
+We can see, for example, that the shortest path from vertex 1 to vertex 3 has weight -1. *This path goes from vertex 1 to vertex 2 to vertex 4 to vertex 3, which we can see by tracing back: $pred[1,3,4]$ is 4, $pred[1,4,4]$ is 2, and $pred[1,2,4]$ is 1.*
+
+
+
+Now, it's easy to see that Floyd-Warshall algorithm *runs in $\Theta(n^3)$ time*. 
+
+
+
+It looks as though this algorithm also takes $\Theta(n^3)$ space in memory. After all, it creates two $n\times n \times (n+1)$ arrays. It turns out, however, that we can get away with only *$\Theta(n^2)$ space in memory*. Just create $shortest$ and $pred$ as $n\times n$ arrays, and steps 3Aia and 3Aib keep updating the same shortest[u,v] and pred[u,v] values, these arrays turn out to have the correct values at the end!
+
+
+
+**Dynamic programming**: this technique applies only when:
 
 
 
