@@ -1716,6 +1716,40 @@ It looks as though this algorithm also takes $\Theta(n^3)$ space in memory. Afte
 
 **Dynamic programming**: this technique applies only when:
 
+1. we are trying to find an optimal solution to a problem,
+2. we can break an instance of the problem into instances of one or more subproblems,
+3. we use solutions to the subproblem(s) to solve the original problem, and
+4. if we use a solution to a subproblem within an optimal solution to the original problem, then the subproblem solution we use must be optimal for the subproblem.
+
+
+we can summarize these conditions under the unbrella name of **optimal substructure (最优子结构)** and, put more succinctly, it says that an optimal solution to a problem contains within it optimal solutions to subproblems.
+
+In dynamic programming, we have some notion of the "size" of a subproblem, and we often solve the subproblems in increasing order of size, so that we solve the smallest subproblems first, and then once we have optimal solutions to smaller subproblems, we can try to solve larger subproblems optimally using optimal solutions to the smaller subproblems.
+
+This description of dynamic programming sounds rather abstract, so let's see how the Floyd-Warshall algorithm uses it.
+
+- We state a subproblem as:
+  - Compute $shortest[u,v,x]$, which is the weight of a shortest path from vertex $u$ to vertex $v$ in which each intermediate vertex is numbered from 1 to $x$.
+- Here, the 'size' of a subproblem is $x$. 
+- *We solve the problem of computing $shortest[u,v,x]$ by first computing $shortest[u,v,x-1]$, $shortest[u,x,x-1]$ and $shortest[x,v,x-1]$ and then using the lesser of $shortest[u,v,x-1]$ and $shortest[u,x,x-1]+shortest[x,v,x-1]$ .*
+- Because we have computed all the shortest values where the third index is $x-1$ before we try to compute any of the shortest values where the third index is $x$, we have all the information we need when we compute $shortest[u,v,x]$.
+
+A common practice in dynamic programming is to store optimal solutions to subproblems ($shortest[u,v,x-1]$, $shortest[u,x,x-1]$, and $shortest[x,v,x-1]$) in a table and then look them up as we compute an optimal solution to the original problem ($shortest[u,v,x]$). We call such an approach "bottom up", since it works from smaller subproblems to larger subproblems.
+
+Another approach is to solve subproblems "top down", working from larger subproblems to smaller ones, again storing the result of each subproblem in table.
+
+
+
+# Chapter 7 Algorithms on Strings
+
+
+
+
+
+
+
+
+
 
 
 
