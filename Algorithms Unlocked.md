@@ -1352,10 +1352,6 @@ Inputs and Result: Same as before.
 
 
 
-
-
-
-
 #### Binary heap implementation
 
 A binary heap organizes data as a binary tree stored in an array.
@@ -1556,16 +1552,23 @@ To find whether a negative-weight cycle exists, relax each edge once more until 
 
 
 
-
-
 #### Negative-weight cycles relate to arbitrage opportunities
 
 Exchange rates for currencies fluctuate rapidly. Imagine that at some moment in time, the following exchange rates are in effect:
 
-。。。。。。
+
+
+Here's how to find an arbitrage opportunity by finding a negative-weight cycle:
+
+- （这部分已阅读，尚未写笔记）
 
 
 
-Here's how to find an arbitrage opportunity
+### The Floyd-Warshall algorithm
+
+**All-pairs shortest-paths** problem :
+
+
+
 
 
