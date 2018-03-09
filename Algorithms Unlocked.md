@@ -1744,7 +1744,56 @@ Another approach is to solve subproblems "top down", working from larger subprob
 
 
 
+This chapter focus on algorithms for three problems that take strings as inputs:
 
+1. *Find a longest common subsequence of two strings.*
+2. *Given a set of operations that can transform one string to another, and the cost of each operation, find a lowest-cost way to transform one string to another.*
+3. *Find all occurrences of a pattern string within a string of text.*
+
+The first two of these problems have applications in computational biology.
+
+- The longer a common subsequence we can find between two strands of DNA, the more similar they are.
+- One way to align strands of DNA is to transform one strand to another; the lower the cost of transforming, the more similar the strands.
+
+The last problem, finding occurrences of a pattern within a text, is also known as **string matching**.
+
+
+
+### Longest common subsequence
+
+*A **sequence** is a list of items in which the order of items matters. A given item may appear in a sequence multiple times.*
+
+The particular sequences we'll be working with in this chapter are strings of characters, and we'll use the term 'string' instead of 'sequence'.
+
+
+
+*A **subsequence** Z of a string X is X, possibly with items removed.*
+
+If X and Y are strings, then Z is a **common subsequence** of X and Y if it is a subsequence of both of them.
+
+- For example, if X is the string `CATCGA` and Y is the string `GTACCGTCA`, then `CCA` is a common subsequence of X and Y consisting of three characters.
+- It is not a **longest common subsequence(LCS)**, however, since the common subsequence `CTCA` has four characters, but it is not unique, since `TCGA` is another common subsequence with four characters.
+
+
+
+*The notions of subsequence and substring differ: a substring is a subsequence of a string in which the characters must be drawn from contiguous positions in the string*. For the string `CATCGA`, the subsequence `ATCG` is a substring but the subsequence `CTCA` is not.
+
+
+
+Our goal is, given two strings X and Y, to find a longest common subsequence Z of X and Y. We will use the technique of dynamic programming to solve this problem.
+
+
+
+In order for dynamic programming to apply, we need optimal substructure:
+
+- An optimal solution to a problem contains optimal solutions to its subproblems.
+
+To find an LCS of two strings via dynamic programming, we first need to decide what consistutes a subproblem. Prefixes work:
+
+- If $X$ is a string $x_1x_2x_3…x_m$, then the **$i$th prefix** of $X$ is the string $x_1x_2x_3…x_i$, and we denote it by $X_i$.
+
+
+- Here, we require that $i$ be in the range $0$ to $m$, and $X_0$ is the empty string. For example, if $X$ is `CATCGA`, then $X_4$ is `CATC`.
 
 
 
