@@ -1782,8 +1782,6 @@ If X and Y are strings, then Z is a **common subsequence** of X and Y if it is a
 
 Our goal is, given two strings X and Y, to find a longest common subsequence Z of X and Y. We will use the technique of dynamic programming to solve this problem.
 
-
-
 In order for dynamic programming to apply, we need optimal substructure:
 
 - An optimal solution to a problem contains optimal solutions to its subproblems.
@@ -1796,10 +1794,204 @@ To find an LCS of two strings via dynamic programming, we first need to decide w
 - Here, we require that $i$ be in the range $0$ to $m$, and $X_0$ is the empty string. For example, if $X$ is `CATCGA`, then $X_4$ is `CATC`.
 
 
+We can see that an LCS of two strings contains within it an LCS of the prefixes of the two strings.
 
 
 
+Let's consider two strings $X=x_1x_2x_3…x_m$ and $Y=y_1y_2y_3…y_n$. They have some LCS, say $Z=z_1z_2z_3…z_k$ for some length $k$, which could be anywhere from 0 to the smaller of $m$ and $n$.
+
+What can we deduce about $Z$? Let's look at the last characters in $X$ and $Y$: $x_m$ and $y_n$. Either they are equal or they're not :
+
+- If they're equal, then the last character $z_k$ of $Z$ must be the same as that character.
+  - Now, *$Z_{k-1}$ must be a LCS of $X_{m-1}$ and $Y_{n-1}$.*
+- If they're not equal, then $z_k$ might be the same as either the last character $x_m$ of $X$ or the last character $y_n$ of $Y$, but not of both. Or it might not be the same as the last character of either $X$ or $Y$.
+  - *If $z_k$ is not the same as $x_m$, $Z$ must be an LCS of $X_{m-1}$ and $Y_n$.*
+  - *If $z_k$ is not the same as $y_n$, $Z$ must be an LCS of $X_m$ and $Y_{n-1}$.*
+
+Therefore, this problem has *optimal substructure*:  *an LCS of two strings contains within it an LCS of the prefixes of the two strings.*
+
+...
 
 
 
+We will approach the problem of finding an LCS of X and Y in two steps:
 
+1. First, find the length of an LCS of X and Y.
+   - as well as the lengths of LCS of all prefixes of X and Y.
+2. Then, we will "reverse engineer" how we computed these lengths to find an actual LCS of X and Y.
+
+To make things a little more precise: 
+
+- let's denote the length of an LCS of the prefixes $X_i$ and $Y_i$ by $l[i,j]$. The length of an LCS of $X$ and $Y$ is given by $l[m,n]$. 
+- *$l[0,j]$ and $l[i,0]$ equal 0 for all values of $i$ and $j$.*
+- When both $i$ and $j$ are positive, we determine $l[i,j]$ by looking at smaller values of $i$ and/or $j$ :
+  - *If $i$ and $j$ are positive and $x_i$ is the same as $y_j$, then $l[i,j]$ equals $l[i-1,j-1]+1$.*
+  - *If $i$ and $j$ are positive and $x_i$ differs from $y_j$, then $l[i,j]$ equals the larger of $l[i,j-1]$ and $l[i-1,j]$.*
+
+Think of the values of $l[i,j]$ as being stored in a table. Here's the $l[i,j]$ table for our example strings (we'll see what the shaded parts mean a little later) :
+
+<img src="images/algrithms-unlocked-img-chapter07-table01.png" width="350">
+
+In order to compute table values in increasing order of the indices, before we compute a particular entry $l[i,j]$, where both $i$ and $j$ are positive, we need to compute the entries $l[i,j-1]$, $l[i-1,j]$, and $l[i-1,j-1]$. It's easy to compute the table entries in this way:
+
+- we can compute them either row by row, from left to right within each row, or column by column, from top to bottom within each column.
+
+
+
+> **Procedure COMPUTE-LCS-TABLE(X,Y)**
+>
+> Inputs: X and Y : two strings of length $m$ and $n$, respectively.
+>
+> Output: The array $l[0..m, 0..n]$. The value of $l[m,n]$ is the length of a longest common subsequence of $X$ and $Y$.
+>
+> 1. Let $l[0..m, 0..n]$ be a new array.
+>
+> 2. For $i=0$ to $m$:
+>
+>    A. Set $l[i,0]$ to 0.
+>
+> 3. For $j=0$ to $n$:
+>
+>    A. Set $l[0,j]$ to 0.
+>
+> 4. For $i=1$ to $m$:
+>
+>    A. For $j=1$ to $n$:
+>
+>    ​	i. If $x_i$ is the same as $y_j$, then set $l[i,j]$ to $l[i-1,j-1]+1$.
+>
+>    ​	ii. Otherwise ($x_i$ differs from $y_i$), set $l[i,j]$ to the larger of $l[i,j-1]$ and $l[i-1,j]$. If $l[i,j-1]$ equals $l[i-1,j]$, it doesn't matter which you choose.
+>
+> 5. Return the array $l$.
+
+Since it takes constant time to fill in each entry of the table, and the table contains $(m+1)\cdot(n+1)$ entries, *the running time of COMPUTE-LCS-TABLE is $\Theta(mn)$.*
+
+
+
+Now, we know $l[m,n]$, but we don't know the actual characters in an LCS. *We can use the table, along with the strings $X$ and $Y$, to construct an LCS, using $O(m+n)$ additional time.*
+
+- We determine how we got the value in $l[i,j]$ by reverse engineering this computation, based on $l[i,j]$ and the values it depends on: $x_i$, $y_i$, $l[i-1,j-1]$, $l[i,j-1]$, and $l[i-1,j]$.
+
+  ​
+
+> **Procedure ASSEMBLE-LCS($X,Y,l,i,j$)**
+>
+> Inputs:
+>
+> - $X$ and $Y$ : two strings.
+> - $l$ : the array filled in by the COMPUTE-LCS-TABLE procedure.
+> - $i$ and $j$ : indices into $X$ and $Y$, respectively, as well as into $l$.
+>
+> Output: An LCS of $X_i$ and $Y_j$.
+>
+> 1. If $l[i,j]$ equals 0, then return the empty string.
+> 2. Otherwise (because $l[i,j]$ is positive, both $i$ and $j$ are positive), 
+>    1. if $x_i$ is the same as $y_j$, then return the string formed by first recursively calling ASSEMBLE-LCS($X,Y,l,i-1,j-1$) and then appending $x_i$ (or $y_i$) to the end of the string returned by the recursive call.
+>    2. Otherwise ($x_i$ differs from $y_i$): 
+>       1. if $l[i,j-1]$ is greater than $l[i-1,j]$, then return the string returned by recursively calling ASSEMBLE-LCS($X,Y,l,i,j-1$).
+>       2. Otherwise, return the string returned by recursively calling ASSEMBLE-LCS($X,Y,l,i-1,j$).
+
+In the table above, the shaded $l[i,j]$ entries are those that the recursion visits with the initial call ASSEMBLE-LCS($X,Y,l,6,9$), and the shaded $x_i$ characters are those that are appended to the LCS being constructed.
+
+
+
+### Transforming one string to another
+
+To convert $X$ into $Y$, we'll build a string, which we'll call $Z$, so that when we're done, $Z$ and $Y$ are the same.
+
+Here are the operations that we consider :
+
+- *Copy* a character $x_i$ from $X$ to $Z$ by setting $z_j$ to $x_i$ and then incrementing both $i$ and $j$.
+- *Replace* a character $x_i$ from $X$ by another character $a$ by setting $z_i$ to $a$ and then incrementing both $i$ and $j$.
+- *Delete* a character $x_i$ from $X$ by incrementing $i$ but leaving $j$ alone. 
+- *Insert* a character $a$ into $Z$ by setting $z_j$ to $a$ and then incrementing $j$ but leaving $i$ alone.
+
+Other operations are possible — such as interchanging two adjacent characters, or deleting characters $x_i$ through $x_m$ in a single operation — *but we'll consider just the $copy$, $replace$, $delete$, and $insert$  operations here.*
+
+Each of the transformation operations comes with a cost, which is a constant that depends only on the type of the operation and not on the characters involved. 
+
+- *Our goal, is to find a sequence of operations that transforms $X$ into $Y$ and has a minimum total cost.*
+
+- Let's denote the cost:
+
+  -  $copy$ : $c_C$ 
+  - $replace$ : $c_R$
+  - $delete$ : $c_D$
+  - $insert$ : $c_I$
+
+  *We should assume that each of $c_C$ and $c_R$ is less than $c_D+c_I$, because otherwise we could just pay $c_D+c_I$ to finish the entire transforming.*
+
+
+
+*Why would you want to transform one string to another?*
+
+- Computational biology provides one application: *Computational biologists often align two DNA sequences in order to measure how similar they are.*
+
+
+
+To find the way that produces the best match — having lowest score — we use string transformation with costs *$c_C=-1, c_R=+1$, and $ c_D=c_I=+2$.*
+
+- The more identical characters get matched up, the better the alignment, and *the negative cost of the $copy$ operation provides incentive to match up identical characters.*
+
+
+
+Now let's see how to transform a string $X$ into a string $Y$.
+
+-  We'll *use dynamic programming, with subproblems of the form "convert the prefix string $X_i$ into the prefix string $Y_j$ ", where $i$ runs from $0$ to $m$ and $j$ runs from $0$ to $n$.*
+
+- We'll call this subproblem the "$X_i \to Y_j$ problem", and the problem that we start with is the $X_m \to Y_n$ problem.
+
+- Let's denot the cost of an optimal solution to the $X_i \to Y_j$ problem by $cost[i,j]$.
+
+- When $i$ or $j$ is 0:
+
+  - $cost[0,j]$ equals $j\cdot c_I$.
+  - $cost[i,0]$ equals $i\cdot c_D$.
+  - $cost[0,0]$ equals $0$.
+
+- When $i$ and $j$ are both positive, we need to examine how optimal substructure applies to transforming one string to another.
+
+  *Let's suppose — for the moment — that we know which was the last operation used to convert $X_i$ to $Y_j$ :*
+
+  - If the last operation was a $copy$, then $x_i$ and $y_j$ must have been the same character. The subproblem that remians is converting $X_{i-1}$ to $Y_{j-1}$, and an optimal solution to the $X_i \to Y_j$ problem must include an optimal solution to the $X_{i-1} \to Y_{j-1}$ problem. $cost[i,j]$ equals $cost[i-1,j-1]+c_C$.
+  - If it's a $replace$, then $x_i$ and $y_j$ must differ. Using the same optimal substructure argument as we used for the $copy$ operation, $cost[i,j]$ equals $cost[i-1,j-1]+c_R$.
+  - If it's a $delete$, then we have no restrictions on $x_i$ or $y_j$. Think of the $delete$ operation as skipping over the character $x_i$ and leaving the prefix $Y_j$ alone, so $cost[i,j]=cost[i-1,j]+c_D$.
+  - If it's an $insert$, it leaves $X_i$ alone but adds the character $y_j$, so $cost[i,j]=cost[i,j-1]+c_I$.
+
+- Of course, we don't know in advance which of the four operations was the last one used.
+
+  - we want to use the one that yields the lowest value for $cost[i,j]$.
+  - For a given combination of $i$ and $j$, three of the four operations apply. 
+    - The $delete$ and $insert$ operations always apply when both $i$ and $j$ are positive,  and exactly one of copy and replace applies, depending on whether $x_i$ and $y_j$ are the same character.
+  - *$cost[i,j]$ is the smallest of the following four values:*
+    - $cost[i-1,j-1]+c_C$, but only if $x_i$ and $y_j$ are the same character
+    - $cost[i-1,j-1]+c_R$, but only if $x_i$ and $y_i$ differ
+    - $cost[i-1,j]+c_D$
+    - $cost[i,j-1]+c_I$
+
+- Just as we did for filling in the $l$ table when computing an LCS, we can fill in the $cost$ table row by row.
+
+- *In addition to the $cost$ table, we'll fill in a table $op$, where $op[i,j]$ gives the last operation used to convert $X_i$ to $Y_j$.* We can fill in the entry $op[i,j]$ when we fill in $cost[i,j]$.
+
+- The procedure COMPUTE-TRANSFORM-TABLES treats the $cost$ and $op$ tables as two-dimensional arrays.
+
+> Procedure $COMPUTE-TRANSFORM-TABLES(X,Y,c_C,c_R, c_D,c_I)$
+>
+> $Inputs$:
+>
+> - $X$ and $Y$ : two string of length $m$ and $n$, respectively.
+> - $x_C,c_R,c_D,c_I$ : the costs of the copy, replace, delete, and insert operations, respectively.
+>
+> $Output$ : Arrays $cost[0..m, 0..n]$ and $op[0..m,0..n]$.
+>
+> 1. Let $cost[0..m,0..n]$ and $op[0..m,0..n]$ be new arrays.
+>
+> 2. Set $cost[0,0]$ to 0.
+>
+> 3. For $i=1$ to $m$ :
+>
+>    A. Set $cost[i,0]$ to $i\cdot c_D$, and set $op[i,0]$ to delete $x_i$.
+>
+> 4. For $j=1$ to $n$ :
+>
+>    A. Set $cost[0,j]$ to $j\cdot c{}
