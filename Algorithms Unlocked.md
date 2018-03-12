@@ -1759,7 +1759,7 @@ The last problem, finding occurrences of a pattern within a text, is also known 
 
 
 
-### Longest common subsequence
+### 7.1 Longest common subsequence
 
 *A **sequence** is a list of items in which the order of items matters. A given item may appear in a sequence multiple times.*
 
@@ -1895,7 +1895,9 @@ In the table above, the shaded $l[i,j]$ entries are those that the recursion vis
 
 
 
-### Transforming one string to another
+
+
+### 7.2 Transforming one string to another
 
 To convert $X$ into $Y$, we'll build a string, which we'll call $Z$, so that when we're done, $Z$ and $Y$ are the same.
 
@@ -1915,9 +1917,9 @@ Each of the transformation operations comes with a cost, which is a constant tha
 - Let's denote the cost:
 
   -  $copy$ : $c_C$ 
-  - $replace$ : $c_R$
-  - $delete$ : $c_D$
-  - $insert$ : $c_I$
+  -  $replace$ : $c_R$
+  -  $delete$ : $c_D$
+  -  $insert$ : $c_I$
 
   *We should assume that each of $c_C$ and $c_R$ is less than $c_D+c_I$, because otherwise we could just pay $c_D+c_I$ to finish the entire transforming.*
 
@@ -1975,7 +1977,7 @@ Now let's see how to transform a string $X$ into a string $Y$.
 
 - The procedure COMPUTE-TRANSFORM-TABLES treats the $cost$ and $op$ tables as two-dimensional arrays.
 
-> Procedure $COMPUTE-TRANSFORM-TABLES(X,Y,c_C,c_R, c_D,c_I)$
+> **Procedure $COMPUTE-TRANSFORM-TABLES(X,Y,c_C,c_R, c_D,c_I)$**
 >
 > $Inputs$:
 >
@@ -1994,4 +1996,189 @@ Now let's see how to transform a string $X$ into a string $Y$.
 >
 > 4. For $j=1$ to $n$ :
 >
->    A. Set $cost[0,j]$ to $j\cdot c{}
+>    A. Set $cost[0,j]$ to $j\cdot c_I$, and set $op[0,j]$ to inert $y_i$.
+>
+> 5. For $i=1$ to $m$:
+>
+>    A. For $j=1$ to $n$:
+>
+>    ​	i. Set $cost[i,j]$ and $op[i,j]$ as follows:
+>
+>    ​		a. If $x_i$ and $y_i$ are the same, then set $cost[i,j]$ to $cost[i-1,j-1]+c_C$ and set $op[i,j]$ to $copy\  x_i$.
+>
+>    ​		b. Otherwise ($x_i$ and $y_i$ differ), set $cost[i,j]$ to $cost[i-1,j-1]+c_R$ and set $op[i,j]$ to $replace\ x_i\ by\ y_i$.
+>
+>    ​	ii. If $cost[i-1,j]+c_D<cost[i,j]$, then set $cost[i,j]$ to $cost[i-1,j]+c_D$ and set $op[i,j]$ to $delete\ x_i$.
+>
+>    ​	iii. If $cost[i,j-1]+c_I<cost[i,j]$, then set $cost[i,j]$ to $cost[i,j-1]+c_I$ and set $op[i,j]$ to insert $y_j$.
+>
+> 6. Return the arrays $cost$ and $op$.
+
+<img src="images/algrithms-unlocked-img-chapter07-transform-01.png" width="400">
+
+<img src="images/algrithms-unlocked-img-chapter07-transform-02.png" width="230">
+
+
+
+Because each of the tables contains $(m+1)\cdot(n+1)$ entries, COMPUTE-TRANSFORM-TABLES runs in $\Theta(mn)$ time.
+
+
+
+*To construct the sequence of operations that transforms $X$ to $Y$, we consult the $op$ table, starting at the last entry, op[m,n].*
+
+- We recurse, much as the $ASSEMBLE-LCS$ procedure does, appending each operation encountered from the $op$ table to the end of the sequence of operations: The procedure $ASSEMBLE-TRANSFORMATION(op,m,n)$
+
+
+
+> **Procedure ASSEMBLE-TRANSFORMATION($op,i,j$)**
+>
+> $Inputs:$
+>
+> - $op$ : the operation table filled in by COMPUTE-TRANSFORM-TABLES
+> - $i$ And $j$ : indices into the $op$ table.
+>
+> $Output$ : A sequence of operations that transforms the string X into the string Y, where X and Y are the strings input to COMPUTE-TRANSFORM-TABLES.
+>
+> 1.  If both $i$ and $j$ equal 0, then return an empty sequence.
+>
+> 2. Otherwise, do the following:
+>
+>    A. If $op[i,j]$ is a $copy$ or $replace$ operation, return the sequence formed by first recursively calling ASSENBLE-TRANSFORMATION($op,i-1,j-1$) and then appending $op[i,j]$ onto the sequence returned by the recursive call.
+>
+>    B. If $op[i,j]$ is a $delete$ operation, then return the sequence formed by first recursively calling ASSENBLE-TRANSFORMATION($op,i-1,j$) and then appending $op[i,j]$ onto the sequence returned by the recursive call.
+>
+>    C. If $op[i,j]$ is an $insert$ operation, return the sequence formed by first recursively calling ASSENBLE-TRANSFORMATION($op,i,j-1$) and then appending $op[i,j]$ onto the sequence returned by the recursive call.
+
+The ASSEMBLE-TRANSFORMATION procedure runs in $O(m+n)$ time.
+
+
+
+
+
+### 7.3 String matching
+
+a clever approach to string matching that avoids the wasted time caused by scanning the text repeatedly, *it examines each character of the text exactly once*.
+
+This more efficient approach relies on a **finite automaton (有限自动机)**. 
+
+- Although the name sounds imposing, the concept is quite simple.
+- Applications of finite automata abound, but we'll focus here on using finite automata for string matching.
+
+
+
+*A finite automation, or **FA** for short, is just a set of states and a way to go from state to state based on a sequence of input characters.* 
+
+- The FA starts in a particular state and consumes characters from its input, one character at a time. 
+- Based on the state it's in and the character it has just consumed, it moves to a new state.
+
+
+
+
+...
+
+
+
+Here is the procedure FA-STRING-MATCHER for string matching. It assumes that the $next-state$ table has already been built.
+
+>**Procedure FA-STRING-MATCHER($T,next-state,m,n$)**
+>
+>$Inputs$:
+>
+>- $T, n$ : a text string and its length.
+>- $next-state$ : the table of state transitions, formed according to the pattern being matched.
+>- $m$ : the length of the pattern. The $next-state$ table has rows indexed by $0$ to $m$ and columns indexed by the characters that may occur in the text.
+>
+>$Output$ : Prints out all the shift amounts for which the pattern occurs in the text.
+>
+>1.  Set $state$ to 0.
+>
+>2. For $i=1$ to $n$ :
+>
+>   A. Set $state$ to the value of $next-state[state, t_i]$. 
+>
+>   B. If $state$ equals $m$, then print "The pattern occurs with shift" $i-m$.
+
+
+
+It's plain to see that the running time of FA-STRING-MATCHER is $\Theta(n)$.
+
+That's the easy part. 
+
+
+
+*The hard part is constructing the finite automaton's next-state table for a given pattern.* Recall the idea:
+
+- *When the finite automaton is in state $k$, the $k$ most recent characters it has consumed are the first $k$ characters of the pattern.*
+
+We need a couple of definitions first:
+
+- For $i$ in the range $0$ to $m$, the prefix $P_i$ of the pattern $P$ is the substring consisting of the first $i$ characters of $P$.
+- Define a **suffix** of the pattern accordingly as a substring of characters from the end of $P$.
+  - For example, `AGA` is a suffix of the pattern `ACACAGA`.
+- Define the **concatenation** of a string $X$ and a character $a$ to be a new string formed by appending $a$ to the end of $X$, and we denote it by $X_a$.
+  - For example, the concatenation of the string `CA` with the character `T` is the string `CAT`.
+
+We are finally ready to construct $next-state[k,a]$, where $k$ is a state number running from $0$ to $m$ and $a$ is any character that might appear in the text.
+
+- Take the prefix $P_k$ and concatenate it with the character $a$. Denote the resulting string by $P_ka$.
+
+- Find the longest prefix of $P$ that is also a suffix of $P_ka$. Then $next-state[k,a]$ is the length of this longest prefix.
+
+- When the longest prefix of $P$ that is also a suffix of $P_ka$ turns out to be the empty string, we set $next-state[k,a]$  to $0$.
+
+  ​
+
+How long does it take to fill in the entire $next-state$ table?
+
+- We know that it has one row for each state in the FA, and so it has $m+1$ rows, numbered $0$ to $m$.
+- The number of columns depends on the number of characters that may occur in the text; let's call this number $q$, so that the $next-state$ table has $q(m+1)$ entires.
+
+*To fill in an entry $next-state[k,a]$, we do the following:*
+
+> 1. Form the string $P_ka$.
+>
+> 2. Set $i$ to the smaller of $k+1$ (the length of $P_ka$) and $m$ (the length of $P$).
+>
+> 3. While $P_i$ is not a suffix of $P_ka$, do the following:
+>
+>    A. Set $i$ to $i-1$.
+
+- We don't know in advance how many times the loop of step 3 will run, but we know that it makes at most $m+1$ iterations.
+- We also don't know in advance how many characters of $P_i$ and $P_ka$ must be checked in the test in step 3, but we know that it's always at most $i$, which is at most $m$.
+- So it takes $O(m^2)$ time to fill in $next-state[k,a]$.
+- Because the $next-state$ table contains $q(m+1)$ entries, *the total time to fill it in is $O(m^3q)$.*
+
+
+
+In practice, the time to fill in the $next-state$ table isn't too bad.
+
+Nevertheless, some applications perform string matching frequently, and in these applications the $O(m^3q)$ time to build the $next-state$ table could pose a problem.
+
+*There is a way to cut the time down to $\Theta(mq)$.* In fact, we can do even better. The **"KMP" algorithm** uses a finite automaton but avoids creating and filling in the $next-state$ table altogether. Instead, it uses an array $move-to$ of just $m$ state numbers that allows the FA to emulate having a $next-state$ table, and it takes just *$\Theta(m)$ time* to fill in the move-to array, and the KMP algorithm takes $\Theta(n)$ time to match the pattern against the text, once it has constructed the $move-to$ array.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
