@@ -172,7 +172,7 @@ A problem arises, however:
 
 
 
-### 8.4 The RSA cryptosystem
+### 8.4 *The RSA cryptosystem???*
 
 Public-key cryptography is a lovely concept, but it relies on being able to find functions $F_P$ and $F_S$ that work correctly together, $F_P$ is easy for anyone to compute, and $F_S$ is easy for only the holder of the secret key to compute. We call a scheme that fulfills these criteria a **public-key cryptosystem (公钥加密系统)**, and the **RSA cryptosystem**, or just **RSA**, is one such scheme.
 
@@ -259,38 +259,79 @@ Let's take an example, but using small numbers so that we can understand what's 
 
 
 
-*Here are the details I have to address in order to set up and use RSA:*
+*Here are the details I have to address in order to set up and use RSA:* (*这一部分是难点，原书p150-p155，目前不太理解???*)
 
 - How do I work with numbers with hundreds of digits?
+
 - Although testing whether a number is prime isn't an obstacle, how do I know that I can find large prime numbers in a reasonable amount of time?
-- How do I find $e$ so that $e$ and $r$ are relatively prime?
-- How do I compute $d$ so that it's the multiplicative inverse of $e$, modulo $r$?
-- If $d$ is large, how do I compute $x^d\mod n$ in a reasonable amount of time?
-- How do I know that the functions $F_P$ and $F_S$ are inverses of each other?
+
+- *How do I find $e$ so that $e$ and $r$ are relatively prime? ???*
+
+- *How do I compute $d$ so that it's the multiplicative inverse of $e$, modulo $r$?*
+
+- *If $d$ is large, how do I compute $x^d\mod n$ in a reasonable amount of time?*
+
+- *How do I know that the functions $F_P$ and $F_S$ are inverses of each other?*
+
+  …… 
 
 
 
-##### How to perform arithmetic with large numbers
 
 
+
+### 8.5 Hybrid cryptosystems 
+
+Although we can perform arithmetic with large numbers, in practice we do pay a price in speed. 
+
+- Encrypting and decrypting a long message, containing hundreds or thousands of blocks of plaintext, could cause a noticeable delay.
+- RSA is often used in a **hybrid system (混合加密)**, part public-key and part symmetric-key.
+
+
+
+*Here is how you could send me an encrypted message in a hybrid system:* 
+
+- We agree on which public-key system and symmetric-key system we’re using; let’s say RSA and AES. 
+- You select a key $k$ for AES and encrypt it with my RSA public key, producing $F_P(k)$. 
+- Using the key $k$, you then encrypt the sequence of plaintext blocks with AES to produce a sequence of ciphertext blocks. 
+- You send me $F_P(k)$ and the sequence of ciphertext blocks. 
+- I decrypt $F_P(k)$ by computing $F_S(F_P(k))$, which gives me the AES key $k$, and then I use $k$ to decrypt the ciphertext blocks with AES, thereby recovering the plaintext blocks.
+- If we're using cipher block chaining and we need an initialization vector, then you can encrypt it either with RSA or AES.
+
+
+
+### 8.6 Computing random numbers
+
+Random bits can come only from random processes. How can a program running on a computer be a random process? 
+
+- In many cases, it cannot, because a computer program that is built from well defined, deterministic instructions will always produce the same result given the same data to start with. 
+- *To support cryptographic software, some modern processors provide an instruction that generates random bits based on a random process*, such as *thermal noise within circuits*. 
+- *Designers of these processors face a threefold challenge:* 
+  1. generate the bits at a fast enough rate for applications that demand random numbers
+  2. ensure that the bits generated meet basic statistical tests for randomness
+  3. and consume a reasonable amount of power while generating and testing the random bits.
 
 ​		
-​	
 
-​		
-​	
+Cryptographic programs usually obtain bits from a **pseudorandom number generator (伪随机数产生器)**, or **PRNG**.
 
+- A PRNG is a deterministic program thatproduces a sequence of values, based on an initial value, or seed, and a deterministic rule embodied in the program that says how to generate the next value in the sequence from the current value. 
+- If you start a PRNG with the same seed each time, you’ll get out the same sequence of values each time. 
+- This repeatable behavior is good for debugging, but bad for cryptography. 
+- Recent standards for random number generators for cryptosystems require specific implementations of PRNGs.
 
+If you’re using a PRNG to generate bits that look random, you want to start with a different seed each time, and that seed should be random.
 
-
-
-
-
-
-
-
+- In particular, the seed should be based on bits that are unbiased (notfavoring either 0 or 1), independent (no matter what you know about the previous bits generated, anyone has only a 50% chance of correctly guessing the next bit), and unpredictable to an adversary who is trying to break your cryptosystem. 
+- *If your processor has an instruction that generates random bits, that’s a good way to create the PRNG’s seed*.
 
 
+
+# Chapter 9 Data Compression
+
+
+
+# 
 
 
 
