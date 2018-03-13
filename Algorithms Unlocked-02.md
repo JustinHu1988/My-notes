@@ -209,7 +209,7 @@ In addition, in order for RSA to fulfill the criteria for a public-key crypto sy
 
 
 
-*Here's how I would set myself up to use the RSA cryptosystem.*
+*Here's how I would set myself up to **use the RSA cryptosystem**.*
 
 1. Pick at random two very large prime numbers, $p$ and $q$, that are notequal to each other. How large is very large? At least 1024 bits each,or at least 309 decimal digits. Even larger is better.
 
@@ -334,9 +334,454 @@ If you’re using a PRNG to generate bits that look random, you want to start wi
 
 This chapter is focus on lossless compression.
 
+
+
 ### 9.1 Huffman codes
 
+Suppose that we had a strand of DNA represented by $n$ characters, where 45% of the characters are `A`, 5% are `C`, 5% are `G`, and 45% are `T`, but the characters appear in the strand in no particular order.
 
+- If we used the ASCII character set to represent the strand, with each character occupying eight bits, it would take *$8n$* bits to represent the entire strand. 
+- Of course, we can do better. Since we represent strands of DNA by drawing on only four characters, we really need only two bits to represent each character (00,01,10,11), and so we can reduce the space to *$2n$* bits.
+- But we can do even better by *taking advantage of the relative frequencies of the characters*. Let’s encode the characters with the following bit sequences: *$A=0$, $C=100$, $G=101$, $T= 11$.* *The more frequent characters get the shorter bit sequences.*
+  - Given the frequencies of the four characters, to encode the n-character strand, *we need only $0.45\cdot n\cdot 1 +0.05\cdot n\cdot 3+0.05\cdot n\cdot 3+0.45\cdot n\cdot 2 = 1.65n$ bits, It's even better than $2n$.*
+  - *About the encodings: no code is a prefix of any other code. We call such a code a* **prefix-free code**.
+    - The prime advantage of prefix-free codes emerges when we decompress. Because no code is a prefix of any other code, we can unambiguously match the compressed bits with their original characters as we decompress bits in order.
+
+    ​
+    If we measure the efficiency of compression methods according to the average length of the compressed information, then of the prefix-free codes, **Huffman codes** are the best.
+
+- One disadvantage of traditional Huffman coding is that *it requires the frequencies of all the characters to be known in advance, and therefore compression often requires two passes over the uncompressed text*: one to determine character frequencies, and one to map each character to its code.
+- We’ll see a little later how to avoid the first pass, at the expense of extra computation.
+
+*Once we know the character frequencies, Huffman's method builds a binary tree.*
+
+- This tree tells us how to form the codes, and it's also convenient to have when decompressing.
+
+- For our DNA example, here’s how the process unfolds. We start with four nodes, each a leaf representing one character:
+
+  <img src="images/algrithms-unlocked-img-chapter09-binary-01.png" width="300">
+
+  - The nodes for `C` and `G` have the lowest frequencies, so we create a new node, make these two nodes its children, and give it their combined frequencies:
+
+    <img src="images/algrithms-unlocked-img-chapter09-binary-02.png" width="240">
+
+  - Of the three roots remaining, we continue to choose two lowest frequencie roots, and combine them:
+
+    <img src="images/algrithms-unlocked-img-chapter09-binary-03.png" width="200">
+
+  - Only two roots remain, so let's combine them:
+
+    <img src="images/algrithms-unlocked-img-chapter09-binary-04.png" width="200">
+
+    Now that all the leaves are under this new root, we are done building the binary tree.
+
+*To be a little more precise, let's define a procedure for building the binary tree.*
+
+> **Procedure BUILD-HUFFMAN-TREE($char, freq, n$)**
+>
+> $Inputs:$
+>
+> - $char$ : an array of $n$ uncompressed characters.
+> - $freq$ : an array of $n$ character frequencies.
+> - $n$ : the sizes of the $char$ and $freq$ arrays.
+>
+> $Output:$ The root of the binary tree constructed for Huffman codes.
+>
+> 1. Let $Q$ be an empty priority queue.
+>
+> 2. For $i=1$ to $n$ :
+>
+>    A. Construct a new node $z$ containing $char[i]$ and whose frequency is $freq[i]$.
+>
+>    B. Call $INSERT(Q,z)$. 
+>
+> 3. For $i=1$ to $n-1$:
+>
+>    A. Call $EXTRACT-MIN(Q)$, and set $x$ to the node extracted.
+>
+>    B. Call $EXTRACT-MIN(Q)$, and set $y$ to the node extracted.
+>
+>    C. Construct a new node $z$ whose frequency is the sum of $x$'s frequency and $y$'s frequency.
+>
+>    D. Set $z$'s left child to be $x$ and right child to be $y$.
+>
+>    E. Call $INSERT(Q,z)$.
+>
+> 4. Call $EXTRACT-MIN(Q)$, and return the node extracted.
+
+The running time of $BUILD-HUFFMAN-TREE$.
+
+- *Assuming that the priority queue is immplemented by a binary heap, each $INSERT$ and $EXTRACT-MIN$ operation takes $O(\lg n)$ time.*
+- The precedure calls each of these operations $2n-1$ times, for a total of $O(n\lg n)$ time.
+- All other work takes a total of $\Theta(n)$ time, and so $BUILD-HUFFMAN-TREE$ runs in *$O(n\lg n)$ time.*
+
+
+
+*When decompressing it's convenient to have the binary tree that $BUILD-HUFFMAN-TREE$ constructs.*
+
+- Returning to our DNA example, when decompressing the bit sequence `11001111010100011111001101111011`.
+- we strip off the first 1 and go right from the root, then strip off another 1 and go right again, arriving at the leaf for `T`. We emit `T` and resume searching at the root. 
+- We strip off the next bit, 0, and go left from the root, arriving at the leaf for A, which we emit, and then we go back to the root. 
+- Decompression continues in this way until all the bits of the compressed information have been processed.
+
+If we have the binary tree already built before decompressing, then it takes constant time to precess each bit. 
+
+*So how does the decompression process gain access to the binary tree?*
+
+- One possibility is to include a representation of the binary tree with the compressed information.
+
+- Another possibility is to include a decoding table with the processed information. 
+
+  Each entry of the table would include the character, the number of bits in its code, and the code itself. From this table, it’s possible to build the binary tree in time linear in the total number of bits in all codes.
+
+  ​
+
+The $BUILD-HUFFMAN-TREE$ procedure serves as an example of a **greedy algorithm (贪心算法)**, wherein we make the decision that seems best at the moment.
+
+- Because we want the least-frequently appearing characters far from the root of the binary tree, the greedy approach always selects the two roots with the lowest frequency to place under a new node, which can later become a child of some other node. 
+- Dijkstra’s algorithm is another greedy algorithm, because it always relaxes edges from the vertex with the lowest shortest value of those remaining in its priority queue.
+
+
+
+##### **Adaptive Huffman codes**
+
+Practitioners often find that making two passes over the input, one to compute character frequencies and one to encode the characters, is too slow. 
+
+Instead, the compression and decompression programs work adaptively, updating character frequencies and the binary tree as they compress or decompress in just one pass.
+
+The compression program starts with an empty binary tree.
+
+- Each character it reads from the input is either new or already in the binary tree. 
+  - If the character is already in the binary tree, then the compression program emits the character’s code according to the current binary tree, increases the character’s frequency, and, if necessary, updates the binary tree to reflect the new frequency.
+  - If the character is not already in the binary tree, then the compression program emits the character unencoded(as is), adds it to the binary tree, and updates the binary tree accordingly.
+
+The decompression program mirrors what the compression programdoes. 
+
+- It, too, maintains a binary tree as it processes the compressed information. 
+- When it sees bits for a character in the binary tree, it goes down the tree to determine which character the bits encode, emits this character, increases the character’s frequency, and updates the binary tree.
+- When it sees a character not yet in the tree, the decompression program emits the character, adds it to the binary tree, and updates the binary tree.
+
+
+
+Something is amiss here, however. Bits are bits, whether they represent ASCII characters or bits in a Huffman code. 
+
+*How can the decompression program determine whether the bits it’s looking at represent an encoded or an unencoded character?*
+
+- Does the bit sequence 101 rep-resent the character currently encoded as 101, or is it the start of aneight-bit unencoded character? 
+- *The answer is to precede each unencoded character with an **escape code**:* 
+  - a special code indicating that the next set of bits represents an unencoded character. 
+  - If the original text contains k different characters, then only k escape codes will appear in the compressed information, each one preceding the first occurrence of a character. 
+  - Escape codes will usually appear infrequently, and so we don’t want to assign them short bit sequences at the expense of a more frequently occurring character. 
+  - *A good way to ensure that escape codes are not short is to include an escape code character in the binary tree, but nail down its frequency to be 0 always.* 
+  - As the binary tree is updated, the escape code’s bit sequence will change in both the compression and decompression programs, but its leaf will always be the farthest from the root.
+
+
+
+
+
+### 9.2 Fax machines
+
+Earlier, I mentioned that fax machines compress information to indicate the colors and lengths of runs of identical pels in the rows of the image being transmitted. 
+
+This scheme is known as **run-length encoding (行程长度压缩算法) **. *Fax machines combine run-length encoding with Huffman codes*. 
+
+- In the standard for fax machines that use regular phone lines, $104$ codes indicate runs of different lengths of white pels, and $104$ codes indicate runs of different lengths of black pels. 
+- *The codes for white-pel runs are prefix-free, as are the codes for black-pel runs, though some of the codes for runs of white pels are prefixes of codes for runs of black pels and vice versa.*
+
+
+
+To determine which codes to use for which runs, a standards committee took a set of eight representative documents and counted how often each run appeared. 
+
+- They then constructed Huffman codes for these runs. 
+- The most frequent runs, and hence the shortest codes, were for runs of two, three, and four black pels, with codes 11, 10, and 011, respectively. 
+- Other common runs were one black pel (010), five and sixblack pels (0011 and 0010), two to seven white pels (all with four-bitcodes), and other relatively short runs. 
+- One fairly frequent run consisted of 1664 white pels, representing an entire row of white pels. 
+- Other short codes went to runs of white pels whose lengths are powers of 2 or sums of two powers of 2 (such as 192, which equals $2^7+2^6$). Runs can be encoded by concatenating encodings of shorter runs. 
+- Earlier, I gave asan example the code for a run of 140 white pels, 10010001000. Thiscode is actually the concatenation of the codes for a run of 128 whitepels (10010) and a run of 12 white pels (001000).
+
+
+
+In addition to compressing information only within each row of the image, some fax machines *compress in both dimensions of the image*.
+
+- *Runs of same-color pels can occur vertically as well as horizontally,and so instead of treating each row as if it were encountered in isolation, a row is encoded according to where it differs from the preceding row.* 
+- For most rows, the difference from the previous row is just a few pels.
+- *This scheme entails the risk that errors propagate: an encoding or transmission error causes several consecutive rows to be incorrect.*
+- For this reason, *fax machines that use this scheme and transmit over phone lines limit the number of consecutive rows that can use it, so that after a certain number of rows, they transmit a full row image using the Huffman coding scheme*, rather than transmitting just the differences from the previous row.
+
+
+​			
+​		
+​	
+
+### 9.3 LZW compression
+
+​		
+**LZW** makes a single pass over its input for compression and for decompression. 
+
+- In both, *it builds a dictionary of character sequences that it has seen, and it uses indices into this dictionary to represent character sequences.* 
+- Think of the dictionary as an array of character strings. We can index into this array, so that we can speak of its $i$th entry. 
+- Toward the beginning of the input, the sequences tend to be short, and representing the sequences by indices could result in expansion, rather than compression. But as LZW progresses through its input, the sequences in the dictionary become longer, and representing them by an index can save quite a bit of space.
+
+*Both the compressor and decompressor seed the dictionary with a one-character sequence for each character in the character set.*
+
+- Using the full ASCII character set, the dictionary starts with 256 single-character sequences; the ith entry in the dictionary holds the character whose ASCII code is i.
+
+
+
+> **Procedure $LZW-COMPRESSOR(text)$**
+>
+> $Input:$ $text:$A sequence of characters in the ASCII character set.
+>
+> $Output:$ A sequence of indices into a dictionary.
+>
+> 1. For each character $c$ in the ASCII character set:
+>
+>    A. Insert $c$ into the dictionary at the index equal to $c$'s numeric code in ASCII.
+>
+> 2. Set $s$ to the first character from $text$.
+>
+> 3. While $text$ is not exhausted, do the following:
+>
+>    A. Take the next character from $text$, and assign it to $c$.
+>
+>    B. If $sc$ is in the dictionary, then set $s$ to $sc$.
+>
+>    C. Otherwise, do the following:
+>
+>    ​	i. *Output the index of $s$ in the dictionary.*
+>
+>    ​	ii. Insert $sc$ into the next available entry in the dictionary.
+>
+>    ​	iii. Set $s$ to the single-character string $c$.
+>
+> 4. *Output the index of $s$ in the dictionary.*
+
+Let's run through an example, compressing the text `TATTAGATCTTAATATA`.
+
+- After step 1, the dictionary has one-character strings for each of the 256 ASCII characters in entries 0 through 255. Step 2 sets the string s to hold just the first input character, `T`.
+
+
+- *The following table shows what happens upon each iteration of the loop in step 3.*
+
+  <img src="images/algrithms-unlocked-img-chapter09-LZW-01.png" width="400">
+
+- This example is a little too small to show the real benefit of LZW compression. 
+
+  - The input occupies 16 bytes, and the output consists of 10 dictionary indices. 
+  - Each index requires more than one byte. Even if we use two bytes per index in the output, it occupies 20 bytes. If each index occupies four bytes, a common size for integer values, the output takes 40 bytes.
+
+
+
+
+
+LZW compression helps only if we can decompress. *Fortunately, the dictionary does not have be stored with the compressed information.*
+
+*Here is how LZW decompression works:*
+
+- Like the compressor, the decompressor seeds the dictionary with the 256 single-character sequences corresponding to the ASCII character set. 
+- It reads a sequence of indices into the dictionary as its input, and it mirrors what the compressor did to build the dictionary. Whenever it produces output, it’s from a string that it has added to the dictionary.
+- *the decompressor needs to keep track of two consecutive strings that it outputs. If the decompressor outputs strings $X$ and $Y$, in that order, then it concatenates the first character of $Y$ onto $X$ and then inserts the resulting string into the dictionary.*
+
+
+
+*On rare occasions, the next dictionary index in the decompressor’s input is for an entry not yet in the dictionary.*
+
+- *It happens when the index output by the compressor is for the string most recently inserted into the dictionary.*
+  - This situation occurs only when the string at this index starts and ends with the same character.
+- *if the next dictionary index in the decompressor’s input is for an entry not yet in the dictionary, the decompressor can output the string it had most recently output, concatenated with the first character of this string, and insert this new string into the dictionary.*
+
+
+
+> **Procedure $LZW-DECOMPRESSOR(indices)$**
+>
+> $Input:$ $indices:$ a sequence of indices into a dictionary, created by LZW-COMPRESSOR.
+>
+> $Output:$ The text that LZW-COMPRESSOR took as input.
+>
+> 1. For each character $c$ in the ASCII character set:
+>
+>    A. Insert $c$ into the dictionary at the index equal to $c$'s numeric code in ASCII.
+>
+> 2. Set $current$ to the first index in $indices$.
+>
+> 3. Output the string in the dictionary at index $current$.
+>
+> 4. While $indices$ is not exhausted, do the following:
+>
+>    A. Set $previous$ to $current$.
+>
+>    B. Take the number from $indices$ and assign it to $current$.
+>
+>    C. If the dictionary contains an entry indexed by $current$, then do the following:
+>
+>    ​	i. Set $s$ to be the string in the dictionary entry indexed by $current$.
+>
+>    ​	ii. Output the string $s$.
+>
+>    ​	iii. Insert, into the next available entry in the dictionary, the string at the dictionary entry indexed by $previous$, concatenated with the first character of $s$.
+>
+>    D. Otherwise (the dictionary does not yet contain an entry indexed by $current$), do the following:
+>
+>    ​	i. Set s to be the string at the dictionary entry indexed by $previous$, concatenated with the first character of this dictionary entry.
+>
+>    ​	ii. Output the string $s$.
+>
+>    ​	iii. Insert, into the next available entry in the dictionary, the string $s$.
+
+
+
+The following table shows what happens in each iteration of the loop in step $4$:
+
+<img src="images/algrithms-unlocked-img-chapter09-LZW-02.png" width="400">
+
+Except for the last iteration, the input index is already in the dictionary, so that step $4D$ runs only in the last iteration.
+
+*Notice that the dictionary built by LZW-DECOMPRESSOR matches the one built by LZW-COMPRESSOR.*
+
+​			
+​		
+
+##### How to look up information in the dictionary
+
+*How to look up information in the dictionary in the LZW-COMPRESSOR and LZW-DECOMPRESSOR procedures:*
+
+- The latter is easy: just keep track of the last dictionary index used, and if the index in current is less than or equal to the last-used index, then the string is in the dictionary.	
+
+- The LZW-COMPRESSOR procedure has a more difficult task: given a string, determine whether it’s in the dictionary and, if it is, at what index.
+
+  - Of course, we could just perform a linear search on the dictionary, but if the dictionary contains n items, each linear search takes $O(n)$ time. 
+  - We can do better by using either one of a couple of data structures. 
+    - One is called a **trie (字典树)**, and it’s like the binary tree we built for Huffman coding, except that each node can have many children, not just two, and each edge is labeled with an ASCII character. 
+    - The other data structure is a **hash table (散列表)**, and it provides a simple way to find strings in the directory that is fast on average.
+
+
+  ​		
+
+#### LZW improvements		
+
+1. *LZW + Huffman coding*
+
+   We can observe a couple of properties of the indices that the LZW compressor produces.
+
+   - First, many of them are low numbers, meaning that they have many leading zeros in their 32-bit representations. 
+   - Second, some of the indices are going to occur much more frequently than others.
+
+*When both of these properties hold, Huffman coding is likely to yield good results, which beats Huffman coding alone.*
+
+
+
+2. *Other approaches to LZW compression focus on reducing the number of bits necessary to hold the indices that the compressor outputs.*
+
+   Because many of the indices are small numbers, one approach is to use fewer bits for smaller numbers, but reserve, say, the first two bits to indicate how many bits the number requires.
+
+   Here’s one scheme:
+
+   - If the first two bits are `00`, then the index is in the range 0 to 63($2^6-1$), requiring another six bits, and hence one byte in all.
+   - If the first two bits are `01`, then the index is in the range 64 ($2^6$)to 16,383 ($2^{14}-1$), requiring another 14 bits, and hence two bytes in all.
+   - If the first two bits are `10`, then the index is in the range 16,384 ($2^{14}$)to 4,194,303 ($2^{22}-1$), requiring another 22 bits, and hence three bytes in all.
+   - Finally, if the first two bits are `11`, then the index is in the range4,194,304 ($2^{22}$) to 1,073,741,823 ($2^{30}-1$), requiring another 30 bits,and hence four bytes in all.
+
+
+
+3. In one approach, once the dictionary reaches a maximum size, no other entries are ever inserted. 
+4. In another approach, once the dictionary reaches a maximum size, it is cleared out (except for the first 256 entries), and the process of filling the dictionary restarts from the point in the text where the dictionary filled. 
+
+In all of these approaches, the decompressor must mirror the compressor’s action.
+
+
+​			
+​		
+​	
+
+
+
+# Chapter 10 Hard? Problems
+
+
+
+### 10.1 Brown trucks
+
+
+
+**Traveling-salesman problem (旅行商问题)**.
+
+- a traveling salesman has to visit $n$ cities, starting and ending at the same city, and visit all the cities with the shortest possible tour.
+
+*No algorithm that runs in time $O(n^c)$, for any constant $c$, has ever been found for the traveling-salesman problem.*
+
+
+
+Many problems — thousands of them — share this characteristic: 
+
+- for an input of size $n$, we know of no algorithm that runs in time $O(n^c)$ for any constant $c$, yet nobody has proven that no such algorithm could exist.
+- These problems come from a wide variety of domains — logic, graphs, arithmetic, and scheduling among them.
+
+
+
+*If there were an algorithm that ran in $O(n^c)$ time for any of these problems, where $c$ is a constant, them there would be an algorithm that ran in $O(n^c)$ for all of these problems.*
+
+We call these problems **NP-complete (NP完全)**.
+
+An algorithm that runs in time $O(n^c)$ on an input of size $n$, where $c$ is a constant, is a **polynomial-time algorithm (多项式-时间算法)**, so called because $n^c$ with some coefficient would be the most significant tern in the running time.
+
+​		
+*We know of no polynomial-time algorithm for any NP-complete problem, but nobody has proven that it’s impossible to solve some NP-complete problem in polynomial time.*
+
+...
+
+
+
+
+
+### 10.2 The classes P and NP and NP-completeness
+
+Computer scientists generally regard problems solvable by polynomial-time algorithms as “tractable,” meaning “easy to deal with.” If a polynomial-time algorithm exists for a problem, then we say that this problem is in the **class P (P类)**.
+
+
+
+If it is possible to verify a proposed solution to a problem in time polynomial in the size of the input to the problem, then we say that this problem is in the **class NP**.
+
+- We call the proposed solution a **certificate (证书)**, and in order for the problem to be in NP, the time to verify the certificate needs to be polynomial in the size of the input to the problem and the size of the certificate.
+
+
+
+
+If you can solve a problem in polynomial time, then you can certainly verify a certificate for that problem in polynomial time. In other words, *every problem in P is automatically in NP*.
+
+The reverse — is every problem in NP also in P? — is the question that has perplexed computer scientists for all these years. We often call it the **"$P=NP?$ problem"**.
+
+
+
+The NP-complete problems are the "hardest" in NP.
+
+*Informally, a problem is **NP-complete** if it satisfies two conditions:*
+
+1. it's in NP.
+2. if a polynomial-time algorithm exists for the problem, then there is a way to convert every problem in NP into this problem in such a way as to solve then all in polynomial time.
+
+If a polynomial-time algorithm exists for any NP-complete problem — that is, if any NP-complete problem is in P — then $P=NP$.
+
+Because NP-complete problems are the hardest in NP, if it turns out that any problem in NP is not polynomial-time solvable, then none of the NP-complete problems are. 
+
+A problem is **NP-hard** if it satisfies the second condition for NP-completeness but may or may not be in NP.
+
+
+
+*Here’s a handy list of the pertinent definitions:*
+
+- **P**: problems solvable in polynomial time.
+  - i.e., we can solve the problem in time polynomial in the size of the input to the problem.
+- **Certificate**: a proposed solution to a problem.
+- **NP**: problems verifiable in polynomial time.
+  - i.e., given a certificate,we can verify that the certificate is a solution the problem in timepolynomial in the size of the input to the problem and the size of thecertificate.
+- **NP-hard**: a problem such that if there is a polynomial-time algorithm to solve this problem, then we can convert every problem in NP into this problem in such a way to solve every problem in NP in polynomial time.
+- **NP-complete**: a problem that is NP-hard and also in NP.
+
+
+
+
+
+### 10.3 Decision problems and reductions
 
 
 
