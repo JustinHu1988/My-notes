@@ -783,6 +783,37 @@ A problem is **NP-hard** if it satisfies the second condition for NP-completenes
 
 ### 10.3 Decision problems and reductions
 
+*When we talk about the classes P and NP, or about the concept of NP-completeness, we restrict ourselves to **decision problems**:* 
+
+- their output is a single bit, indicating "yes" or "no".
+- For example:
+  - Does the graph have an Euler tour?
+  - Does the graph have a hamiltonian cycle?
+
+Some problems, however, are optimization problems, where we want to find the best possible solutions, rather than decision problems. 
+
+Fortunately, we can often bridge part of this gap by recasting an optimization problem as a decision problem. 
+
+- For example, let’s consider the shortest-path problem. There, we used the Bellman-Ford algorithm to find shortest paths. 
+  - How can we pose the shortest-path problem as a yes/no problem? 
+  - We can ask “Does the graph contain a path between two specific vertices whose path weight is at most a given value $k$?”
+  - We’re not asking for the vertices or edges on the path, but just whether such a path exists. 
+  - Assuming that path weights are integers, we can find the actual weight of the shortest path between the two vertices by asking yes/no questions. 
+  - How? Pose the question for $k=1$. If the answer is no, then try with $k=2$. If the answer is no, try with $k=4$. Keep doubling the value of $k$ until the answer is yes. 
+  - If that last value of $k$ was $k'$, then the answer is somewhere between $k'/2$ and $k'$. 
+  - Then find the true answer by using binary search with an initial interval of $k'/2$ to $k'$. 
+  - This approach won’t tell us which vertices and edges a shortest path contains, but at least it will tell us the weight of a shortest path.
+
+
+
+The second condition for a problem to be NP-complete requires that *if a polynomial-time algorithm exists for the problem, then there is a way to convert every problem in NP into this problem in such a way as to solve them all in polynomial time.*			
+
+- Focusing on decision problems, let's see the general idea behind *converting one decision problem $X$ into another decision problem $Y$, such that if there's a polynomial-time algorithm for $Y$ then there's a polynomial-time algorithm for $X$.*
+- We call such a conversion a **reduction (归约)** because we're “reducing” solving problem $X$ to solving problem $Y$.
+- ​
+
+
+
 
 
 
