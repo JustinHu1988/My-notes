@@ -311,7 +311,6 @@ Random bits can come only from random processes. How can a program running on a 
   2. ensure that the bits generated meet basic statistical tests for randomness
   3. and consume a reasonable amount of power while generating and testing the random bits.
 
-​		
 
 Cryptographic programs usually obtain bits from a **pseudorandom number generator (伪随机数产生器)**, or **PRNG**.
 
@@ -327,11 +326,19 @@ If you’re using a PRNG to generate bits that look random, you want to start wi
 
 
 
+
+
+
+
 # Chapter 9 Data Compression
 
+This chapter is focus on lossless compression.
+
+### 9.1 Huffman codes
 
 
-# 
+
+
 
 
 
