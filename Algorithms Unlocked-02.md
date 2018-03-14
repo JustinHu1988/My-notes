@@ -891,16 +891,247 @@ Bear in mind, too, that there’s no limit on how many other problems we can red
 
 
 
-#### 10.4 A Mother Problem
+### 10.4 A Mother Problem
+
+Different books list different Mother Problems. That’s fine, since once you reduce one Mother Problem to some other problem, that other problem could also serve as the Mother Problem.
+
+One Mother Problem often seen is **boolean formula satisfiability**.
+
+
+
+Typical boolean operations:
+
+- $AND$
+- $OR$
+- $NOT$
+- $XOR$
+- $IMPLIES$
+- $IFF$
+
+There are 16 possible boolean operators that take two operands, but these are the most common.
+
+A **boolean formula** consists of boolean valued variables, boolean operators, and parentheses for grouping.
+
+In the **boolean formula satisfiability problem**, *the input is a boolean formula, and we ask whether there is some way to assign the values 0 and 1 to the variables in the formula so that it evaluates to 1. If there is such a way, we say that the formula is satisfiable.* 
+
+For example:
+
+- the boolean formula:
+
+  $((w\ IMPLIES\ x)\ OR\ NOT(((NOT\ w)IFF\ y)OR\ z))AND(NOT\ x)$
+
+  is satisfiable: let $w=0,x=0,y=1,z=1$. Then the formula evaluates to 1.
+
+- On the other hand, here's a simple formula that is not satisfiable:
+
+  $x\ AND(NOT\ x)$
+
+  No matter $x$ is 0 or 1, the result is always 0.
+
+
+
+### 10.5 A sampler of NP-complete problems
+
+With boolean formula satisfiability as our Mother Problem, let’s see some of the problems that we can show are NP-complete by using polynomial-time reductions. Here’s the family tree of reductions that we’ll see:
+
+<img src="images/algrithms-unlocked-img-chapter10-reduction-06.png" width="350">
+
+
+
+#### 10.5.1 3-CNF satisfiability
+
+Because boolean formulas can contain any of the 16 two-operand boolean operators, and because they can be parenthesized in any number of ways, it’s difficult to reduce directly from the boolean formula satisfiability problem — the Mother Problem. 
+
+Instead, *we will define a related problem that is also about satisfying boolean formulas, but that has some restrictions on the structure of the formula that is the input to the problem.* It will be much easier to reduce from this restricted problem. 
+
+*Let’s require that the formula be $AND$s of clauses, where each clause is an $OR$ of three terms, and each term is a **literal**: either a variable or the negation of a variable (such as $NOT\ x$).* 
+
+A boolean formula in this form is in **3-conjunctive normal form**, or **3-CNF**. 
+
+For example, the boolean formula
+
+<img src="images/algrithms-unlocked-img-chapter10-reduction-07.png" width="350">
+
+is in 3-CNF. Its first clause is $(w\ OR(NOT\ w)\ OR(NOT\ x))$.
+
+
+
+Deciding whether a boolean formula in 3-CNF has a satisfying assignment to its variables — the **3-CNF satisfiability problem** — is NP-complete. 
+
+- A certificate is a proposed assignment of the values `0` and `1` to the variables. Checking a certificate is easy: just plug in the proposed values for the variables, and verify that the expression evaluates to `1`.
+- *To show that 3-CNF satisfiability is NP-hard, we reduce from (unrestricted) boolean formula satisfiability. (Here won't go into the details).*
+
+
+
+Although it’s NP-complete, there is a polynomial-time algorithm to determine whether a 2-CNF formula is satisfiable.
+
+- A 2-CNF formula is just like a 3-CNF formula except that it has two literals, not three, in each clause. 
+- *A small change like that takes a problem from being as hard as the hardest problem in NP to being easy*!
+
+
+
+#### 10.5.2 Clique	
+
+Now we’re going to see an interesting reduction, for problems in different domains: 
+
+- from 3-CNF satisfiability to a problem having to do with undirected graphs.
+
+
+*A **clique (团（图论）)** in an undirected graph $G$ is a subset $S$ of vertices such that the graph has an edge between every pair of vertices in $S$. The **size of a clique** is the number of vertices it contains.*
+
+
+
+*The **clique problem** takes two inputs:*
+
+- *a graph $G$*
+- *a positive integer $k​$*
+
+*and asks thether $G$ has a k-clique: a clique of size $k$.*		
+​	
+
+For example: the graph below has a clique of size 4:
+
+<img src="images/algrithms-unlocked-img-chapter10-reduction-08.png" width="150">
+
+Verifying a certificate is easy. The certificate is the k vertices claimed to form a clique, and we just have to check that each of the k vertices has an edge to the other k-1. This check is easily performed in time polynomial in the size of the graph. Now we know that the *clique problem is in NP*.
+
+
+
+*How can a problem in satisfying boolean formulas reduce to a graph problem?* 
+
+- We start with a boolean formula in 3-CNF.
+
+  - Suppose that the formula is $C_1\ AND\ C_2\ AND\ C_3\ … AND\ C_k$, where each $C_r$ is one of $k$ clauses.
+  - From this formula, we will construct a graph in polynomial time, and this graph will have a $k$-clique if and only if the 3-CNF formula is satisfiable.
+
+- *We need to see three things:* 
+
+  - *the construction*
+  - *an argument that the construction runs in time polynomial in the size of the 3-CNF formula*
+  - *a proof that the graph has a $k$-clique if and only if there is some way to assign to the variables of the 3-CNF formula so that it evaluates to 1.*
+
+- To construct a graph from a 3-CNF formula, let's focus on the $r$th clause, $C_r$. 
+
+  - It has three literals, let's call them $l_1^r,l_2^r,and\ l_3^r$, so that $C_r$ is $l_1^r\ OR\ l_2^r\ OR\ l_3^r$. Each literal is either a variable or the negation of a variable.
+
+  - We create one vertex for each literal, so that for clause $C_r$, we create a triple of vertices: $v_1^r,v_2^r,and\ v_3^r$.
+
+  - We add an edge between vertices $v_i^r$ and $v_j^s$ if two conditions hold:
+
+    - $v_i^r$ and $v_j^s$ are in different triples; that is, $r$ and $s$ are different clause numbers, and
+    - Their corresponding literals are not negations of each other.
+
+    For example:
+
+    <img src="images/algrithms-unlocked-img-chapter10-reduction-09.png" width="450">
+
+- It's easy enough to see that this reduction can be performed in polynomial time.
+
+  - If the 3-CNF formula has $k$ clauses, then it has $3k$ literals, and so the graph has $3k$ vertices.
+  - At most, *each vertex has an edge to all the other $3k-1$ vertices (??? have contradiction with previous paragraph)*, and so the number of edges is at most $3k(3k-1)$, which equals $9k^2-3k$.
+  - *The size of the graph constructed is polynomial in the size of the 3-CNF input, and it's easy to determine which edges go into the graph.*
+
+- Finally, we need to show that the constructed graph has a $k$-clique if and only if the 3-CNF formula is satisfiable.
+
+  - We start by assuming that the formula is satisfiable, and we’ll show that the graph has a k-clique.
+
+    - If there exists a satisfying assignment, each clause $C_r$ contains at least one literal $l_i^r$ that evaluates to 1, and each such literal corresponds to a vertex $v_i^r$ in the graph. 
+    - If we select one such literal from each of the $k$ clauses, we get a corresponding set $S$ of $k$ vertices. I claim that $S$ is a $k$-clique. 
+    - Consider any two vertices in $S$. They correspond to literals in different clauses that evaluate to 1 in the satisfying assignment.
+    - These literals cannot be negations of each other, because if they were, then one of them would evaluate to 1 but the other would evaluate to 0.
+    - Since these literals are not negations of each other, we created an edge between the two vertices when we constructed the graph. 
+    - Because we can pick any two vertices in $S$ as this pair, we see that there are edges between all pairs of vertices in $S$. Hence, $S$, a set of $k$ vertices, is a $k$-clique.
+
+  - Now we have to show the other direction: if the graph has a $k$-clique $S$, then the 3-CNF formula is satisfiable.
+
+    - *No edges in the graph connect vertices in the same triple, and so $S$ contains exactly one vertex per triple,* and so $S$ contains exactly one vertex per triple. 
+
+    - For each vertex $v_i^r$ in S, assign 1 to its corresponding literal $l_i^r$ in the 3-CNF formula.
+
+    - *Since each clause has a literal that evaluates to 1, each clause is satisfied, and so the entire 3-CNF formula is satisfied.* 
+
+    - If any variables don’t correspond to vertices in the clique, assign values to them arbitrarily; they won’t affect whether the
+      formula is satisfied.
+
+
+      ​
+
+​		
+*Thus, we have shown that there exists a polynomial-time reduction from the NP-complete problem of 3-CNF satisfiability to the problem of finding a $k$-clique.* 
+
+- If you were given a boolean formula in 3-CNF with $k$ clauses, and you had to find a satisfying assignment for the formula, you could use the construction we just saw to convert the formula in polynomial time to an undirected graph, and determine whether the graph had a $k$-clique. 
+- If you could determine in polynomial time whether the graph had a $k$-clique, then you would have determined in polynomial time whether the 3-CNF formula had a satisfying assignment. 
+- Since 3-CNF satisfiability is NP-complete, so is determining whether a graph contains a $k$-clique. 
+- As a bonus, if you could determine not only whether the graph had a $k$-clique, but which vertices constituted the k-clique, then you could use this information to find the values to assign to the variables of the 3-CNF formula in a satisfying assignment.
 
 
 
 
 
+#### 10.5.3 Vertex cover
+
+A **vertex cover (顶点覆盖)** in an undirected graph $G$ is a subset $S$ of the vertices such that every edge in $G$ is incident on at least one vertex in $S$. 
+
+We say that each vertex in $S$ "covers" its incident edges.
+
+The **size of a vertex cover** is the number of vertices it contains.
+
+**Vertex-cover problem** takes as input an undirected graph $G$ and a positive integer $m$. It asks whether $G$ has a vertex cover of size $m$.
 
 
 
+When you have a certificate, it's easy to verify in time polynomial in the size of the graph that the proposed vertex cover has size $m$ and really does cover all the edges, and *so we see that this problem is in NP*.
 
+we can reduce the clique problem to the vertex-cover problem.
+
+- Suppose that the input to the clique problem is an undirected graph $G$ with $n$ vertices and a positive integer $k$. 
+
+- *In polynomial time, we’ll produce an input graph $\overline G$ to the vertex-cover problem such that $G$ has a clique of size $k$ if and only if $\overline G$ has a vertex cover of size $n-k$.* 
+
+- This reduction is really easy:
+
+  - *The graph $\overline G$ has the same vertices as $G$, and it has exactly the opposite edges as $G$.*
+
+  - In other words, edge($u,v$) is in $\overline G$ if and only if $(u,v)$ is not in $G$. 
+
+  - You might have guessed that *the vertex cover of size $n-k$ in $\overline G$ consists of the vertices not in the clique of $k$ vertices in $G$* — and you would be correct! 
+
+  - Here are examples of graphs $G$ and $\overline G$, with eight vertices. The five vertices forming a clique in $G$ and the remaining three vertices forming a vertex cover in $\overline G$ are heavily shaded:
+
+    <img src="images/algrithms-unlocked-img-chapter10-reduction-10.png" width="400">
+
+  - Note that every edge in $\overline G$ is incident on at least one heavily shaded vertex.
+
+*We need to show that $G$ has a $k$-clique if and only if $\overline G$ has a vertex cover of size $n-k$.* 
+
+- *First, suppose G has a k-clique:*
+  - Start: 
+    - supposing that $G$ has a $k$-clique $C$.
+    - Let $S$ consist of the $n-k$ vertices not in $C$.
+    - The graph $\overline G$ has the same vertices as $G$, and it has exactly the opposite edges as $G​$.
+  - Let($u,v$) be any edge in $\overline G$, It's in $\overline G$ because it was not in $G$. Because ($u,v$) is not in $G$, at least one of the vertices $u$ and $v$ is not in the clique $C$ of $G$, because an edge connects every pair of vertices in $C$.
+  - Since at least one of $u$ and $v$ is not in $C$, at least one of the vertices in $S$, which means that edge($u,v$) is incident on at least one of the vertices in $S$.
+  - Since we chose ($u,v$) to be any edge in $\overline G$, we see that $S$ is a vertex cover for $\overline G$.
+- *Now we go the other way, suppose $\overline G$ has a vertex cover of size $n-k$:*
+  - Start:
+    - Suppose that $\overline G$ has a vertex cover $S$ containing $n-k$ vertices, and let $C$ consist of the $k$ vertices not in $S$.
+    - Every edge in $\overline G$ is incident on some vertex in $S$. In other words, if ($u,v$) is an edge in $\overline G$, then at least one of $u$ and $v$ is in $S$.
+  - if neither $u$ nor $v$ is in $S$, then $(u,v)$ is not in $\overline G$, and therefore, $(u,v)$ is in $G$. In other words, if both $u$ and $v$ are in $C$, then the edge($u,v$) is present in $G$.
+  - Since $u$ and $v$ are any pair of vertices in $C$, we see that there is an edge in $G$ between all pairs of vertices in $C$.
+  - That is, $C$ is a $k$-clique.
+
+Thus, we have shown that there exists a polynomial-time reduction from the NP-complete problem of determining whether an undirected graph contains a $k$-clique to the problem of determining whether an undirected graph contains a vertex cover of size $n-k$.
+
+
+
+Since the clique problem is NP-complete, so is the vertex-cover problem. 
+
+As a bonus, if you could determine not only whether G had a vertex cover of
+$n-k$ vertices, but which vertices constituted the cover, then you could use this information to find the vertices in the $k$-clique.
+
+
+
+#### 10.5.4 Hamiltonian cycle and Hamiltonian path 			
 
 
 
