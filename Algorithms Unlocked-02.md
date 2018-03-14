@@ -860,7 +860,53 @@ The second condition for a problem to be NP-complete requires that *if a polynom
 
        <img src="images/algrithms-unlocked-img-chapter10-reduction-04.png" width="450">
 
-    4. Now we note that if we immediately follow the polynomial-time reduction for $Z$ to $X$ 
+    4. Now we note that if we immediately follow the polynomial-time reduction for $Z$ to $X$ by the polynomial-time reduction from $X$ to $Y$, we have a polynomial-time reduction from $Z$ to $Y$:
+
+       <img src="images/algrithms-unlocked-img-chapter10-reduction-05.png" width="450">
+
+       This figure is the same as figure 1 
+
+    5. so we can say  there is a way to convert any problem (say $Z$) in NP into $Y$ such that if $Y$ has a polynomial-time algorithm, so does $Z$. So $Y$ is a NP-hard problem.
+
+- We just showed that if problem $X$ is NP-hard and there is a polynomial-time reduction algorithm that transforms an input $x$ to $X$ into an input $y$ to problem $Y$, then $Y$ is NP-hard, too.
+
+  -  because $X$ being NP-hard means that every problem in NP reduces to it in polynomial time,  *we picked any problem $Z$ in NP that reduces to $X$ in polynomial time and showed that showed that it also reduces to $Y$ in polynomial time.*
+
+
+
+
+Our ultimate goal is to show that problems are NP-complete. *So now all we have to do to show that a problem $Y$ is NP-complete is:*
+
+- show that it's in NP, which we can do by showing that there's a way to verify a certificate for $Y$ in polynomial time, and
+- take some other problem $X$ that we know to be NP-hard and give a polynomial-time reduction from $X$ to $Y$.
+
+
+
+There is one more little detail that I've ignored so far: the Mother Problem.
+
+- We need to start with some NP-complete problem $M$ (the **Mother Problem**)  that every problem in NP reduces to in polynomial time.
+- Then we can reduce $M$ to some other problem in polynomial time to show that the other problem is NP-hard, reduce the other problem to yet some other problem to show that the latter is NP-hard, and so on.
+
+Bear in mind, too, that there’s no limit on how many other problems we can reduce a single problem to, so that the family tree of NP-complete problems starts with the Mother Problem and then branches out.
+
+
+
+#### 10.4 A Mother Problem
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
