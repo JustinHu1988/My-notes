@@ -806,17 +806,61 @@ Fortunately, we can often bridge part of this gap by recasting an optimization p
 
 
 
+
 The second condition for a problem to be NP-complete requires that *if a polynomial-time algorithm exists for the problem, then there is a way to convert every problem in NP into this problem in such a way as to solve them all in polynomial time.*			
 
 - Focusing on decision problems, let's see the general idea behind *converting one decision problem $X$ into another decision problem $Y$, such that if there's a polynomial-time algorithm for $Y$ then there's a polynomial-time algorithm for $X$.*
+
 - We call such a conversion a **reduction (归约)** because we're “reducing” solving problem $X$ to solving problem $Y$.
-- ​
 
+- Here's the idea:
 
+  <img src="images/algrithms-unlocked-img-chapter10-reduction-01.png" width="450">
 
+  We’re given some input $x$ of size $n$ to problem $X$. We transform this input into an input $y$ to problem $Y$, and we do so in time polynomial in $n$, say $O(n^c)$ for some constant $c$. The way we transform input $x$ into input $y$ has to obey an important property: if algorithm $Y$ decides “yes” on input $y$, then algorithm $X$ should decide “yes” on input $x$, and if $Y$ decides “no” on $y$, then $X$ should decide “no” on $x$. We call this transformation a **polynomial-time reduction algorithm (多项式-时间规约算法)**.
 
+- *Let's see how long the entire algorithm for problem $X$ takes.*
 
+  - First, we know that:
+    - *The reduction algorithm $R$ is a polynomial-time algorithm, on a input of size $n$, it runs in $O(n^c)$ time for some constant $c$.*
+    - *$Y$ is a polynomial-time algorithm, on an input of size $m$, it runs in time $O(m^d)$ for some constant $d$.* 
+    - *We want to know the running time of $X$.*
+  - Then, $R$ takes $O(n^c)$ time, and its output size cannot be longer than the time it took, so let's say *the size of $R$'s output* is $O(n^c)$.
+  - This output is the input $y$ to the algorithm for problem $Y$. So the input size of $Y$ here is $O(n^c)$, Then the algorithm for $Y$ takes time $(O((n^c)^d))$, or $O(n^{cd})$. 
+  - $cd$ is a constant, so in this situation, the algorithm for $Y$ is also a polynomial-time algorithm.
+  - The total time for the algorithm for problem $X$ is $O(n^c+n^{cd})$, which is also a polynomial-time algorithm.
+  - *This approach shows that if problem $Y$ is "easy" (solvable in polynomial time), the so is problem $X$.*
 
+- *But actually we'll use polynomial-time reducitons to show not that problems are easy, but that they are hard:*
+
+  **If problem $X$ is NP-hard and we can reduce it to problem $Y$ in polynomial time, then problem $Y$ is NP-hard as well.**
+
+- Let's see why should this statement hold:
+
+  - Suppose that:
+
+    - problem $X$ is NP-hard
+    - There is a polynomial-time reduction algorithm $R$ to convert inputs to $X$ into inputs to $Y$.
+
+  - Because $X$ is NP-hard, there is a way to convert any problem (say $Z$) in NP into $X$ such that if $X$ has a polynomial-time algorithm, so does $Z$.
+
+    - So, *we need to prove that*: there is a way to convert any problem (say $Z$) in NP into $Y$ such that if $Y$ has a polynomial-time algorithm, so does $Z$.
+
+  - Here is the prove:
+
+    1. We know: we can convert inputs to $Z$ into inputs to $X$ with a polynomial-time reduction:
+
+       <img src="images/algrithms-unlocked-img-chapter10-reduction-02.png" width="450">
+
+    2. And we can convert inputs to $X$ into inputs to $Y$ with a polynomial-time reduction, so we can expand $X$ as we did earlier:
+
+       <img src="images/algrithms-unlocked-img-chapter10-reduction-03.png" width="450">
+
+    3. Instead of grouping the polynomial-time reduction for $X$ to $Y$ and the algorithm for $Y$ together, let's group the two polynomial-time reductions together:
+
+       <img src="images/algrithms-unlocked-img-chapter10-reduction-04.png" width="450">
+
+    4. Now we note that if we immediately follow the polynomial-time reduction for $Z$ to $X$ 
 
 
 
