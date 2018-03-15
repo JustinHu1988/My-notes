@@ -771,13 +771,23 @@ A problem is **NP-hard** if it satisfies the second condition for NP-completenes
 
 - **P**: problems solvable in polynomial time.
   - i.e., we can solve the problem in time polynomial in the size of the input to the problem.
+
 - **Certificate**: a proposed solution to a problem.
+
 - **NP**: problems verifiable in polynomial time.
   - i.e., given a certificate,we can verify that the certificate is a solution the problem in timepolynomial in the size of the input to the problem and the size of thecertificate.
+
 - **NP-hard**: a problem such that if there is a polynomial-time algorithm to solve this problem, then we can convert every problem in NP into this problem in such a way to solve every problem in NP in polynomial time.
-- **NP-complete**: a problem that is NP-hard and also in NP.
 
+- **NP-complete**: a problem that is *NP-hard* and *also in NP*.
 
+  - **To prove a problem is NP-complete:**
+
+    - *First, prove it's a NP problem*
+
+    - *Second, prove there is a polynomial-time reduction algorithm from another NP-complete problem to it.*
+
+      ​
 
 
 
@@ -986,8 +996,8 @@ Now we’re going to see an interesting reduction, for problems in different dom
 - *a graph $G$*
 - *a positive integer $k​$*
 
-*and asks thether $G$ has a k-clique: a clique of size $k$.*		
-​	
+	and asks thether $G$ has a k-clique: a clique of size $k$.*		
+	​	
 
 For example: the graph below has a clique of size 4:
 
@@ -1054,7 +1064,8 @@ Verifying a certificate is easy. The certificate is the k vertices claimed to fo
       formula is satisfied.
 
 
-      ​
+
+
 
 ​		
 *Thus, we have shown that there exists a polynomial-time reduction from the NP-complete problem of 3-CNF satisfiability to the problem of finding a $k$-clique.* 
@@ -1133,12 +1144,180 @@ $n-k$ vertices, but which vertices constituted the cover, then you could use thi
 
 #### 10.5.4 Hamiltonian cycle and Hamiltonian path 			
 
+The **hamiltonian-cycle problem**: 
+
+- *does a connected, undirected graph contain a hamiltonian cycle (a path that starts and ends at the same vertex and visits all other vertices exactly once)?*
+
+	 closely related problem is the **hamiltonian-path problem**, *which asks whether the graph contains a path that visits each vertex exactly once, but does not require that the path be a closed cycle.*	
+
+	hese problem, too, is NP-complete, and later we will show that the longest-acyclic-path problem is also NP-complete.		
+
+
+
+For both of the hamiltonian problems, the certificate is obvious: the order of the vertices in the hamiltonian cycle or path. (For a hamiltonian cycle, don't repeat the first vertex at the end.)
+
+- Given a certificate, we need only check that each vertex appears exactly once in the list and that the graph contains an edge between each pair of consecutive vertices in the ordering.
+- For the hamiltonian-cycle problem, we also have to check that an edge exists between the first and last vertices.
+
+
+
+*Reduction from the vertex-cover problem to the hamiltonian-cycle problem.*
+
+… … 
+
+*Reduce the hamiltonian-cycle problem to the hamiltonian-path problem.*
+
+… … 
+
+
+
+#### 10.5.5 Traveling salesman
+
+In the decision version of the **traveling-salesman problem**, we are given a complete undirected graph with a nonnegative integer weight on each edge, and a nonnegative integer $k$. 
+
+- A **complete graph** has an edge between every pair of vertices, so that if a complete graph has $n$ vertices, then it has $n(n-1)/2$ edges. 
+
+*We ask whether the graph has a cycle containing all vertices whose total weight is at most $k$.*
+
+1. It's pretty easy to show that this problem is in NP.
+2. To show that traveling-salesman problem is NP-hard, we reduce from the hamiltonian-cycle problem, another simple reduction.
+
+Reduce from the hamiltonian-cycle problem to traveling-salesman problem:
+
+- Given a graph $G$ as input to the hamiltonian-cycle problem, we construct a complete graph $G'$ with the same vertices as $G$. Set the weight of edge($u,v$) in $G'$ to 0 if (u,v) is an edge in $G$, and set it to 1 if there is no edge(u,v) in G.
+- Set $k$ to 0. This reduction takes time polynomial in the size of $G$, since it adds at most $n(n-1)/2$ edges.
+
+
+
+To show that the reduction works, we need to show that $G$ has a hamiltonian cycle if an only if $G'$ has a cycle of weight 0 that includes all the vertices.
+
+-  Suppose that $G$ has a hamiltonian cycle. Then each edge on the cycle is in $G$, and so each of these edges gets a weight of 0 in $G'$. Thus, $G'$ has a cycle containing all the vertices, and the total weight of this cycle is 0.
+- Conversely, now suppose that $G'$ has a cycle containing all the vertices and whose total weight is 0. Then each edge on this cycle must also be in $G$, and so $G$ has a hamiltonian cycle.
+
+	​	
+
+#### 10.5.6 Longest acyclic path
+
+In the decision version of the longest-acyclic-path problem, we are given an undirected graph $G$ and an integer $k$, and we ask whether $G$ contains two vertices that have an acyclic path between them with at least $k$ edges.
+
+Once again, a certificate for the longest-acyclic-path problem is easy to verify. It consists of the vertices in the proposed path, in order. We can check in polynomial time that the list contains at least $k+1$ vertices($k+1$ because a path with $k$ edges contains $k+1$ vertices) with no vertex repeated and that there is an edge between every pair of consecutive vertices in the list.
+
+Yet another simple reduction shows that this problem is NP-hard. We reduce from the hamiltonian-path problem. Given a graph $G$ with $n$ vertices as input to the hamiltonian-path problem, the input to the longest-acyclic-path problem is the graph $G$, unchanged, and the integer $k=n-1$. If this isn’t a polynomial-time reduction, I don’t know what is.
+
+We show that the reduction works by showing that $G$ has a hamiltonian path if and only if it has an acyclic path containing at least $n-1$edges. But a hamiltonian path is an acyclic path containing $n-1$ edges, so we’re done!
+
+
+
+#### 10.5.7 Subset sum	
+
+In the **subset-sum problem (子集和问题)**, *the input is a finite set $S$ of positive integers, in no particular order, and a target number $t$, which is also a positive integer. We ask whether there exists a subset $S'$ of $S$ whose elements sum to exactly $t$.*
+
+
+
+A certificate is a subset of $S$, which we can verify by just adding up the numbers in the subset and checking that their sum equals $t$.
+
+
+
+The subset-sum problem is NP-hard by reducing from 3-CNF satisfiability.
+
+- Here is another reduction that crosses problem domains, transforming a problem in logic into an arithmetic problem.
+
+W start with a 3-CNF boolean formula $F$ that has $n$ variables and $k$ clauses.
+
+-  Let's name the variables $v_1,v_2,v_3,…,v_n$ and the clauses $C_1,C_2,C_3,…,C_k$.
+
+- Each clause contains exactly three literals (each literal is either $v_i$ or NOT $v_i$) joined together by ORs, and the entire formula $F$ is $C_1\ AND\ C_2\ AND\ C_3\ AND … AND\ C_k$.
+
+  For a given assignment of `0` or `1` to each variable, each clause is satisfied if any of its literals evaluates to `1`, and the full formula $F$ is satisfied only if all of its clauses are satisfied.
+
+Before we construct the set $S$ for the subset-sum problem, let's construct the target number $t$ from the 3-CNF formula $F$.
+
+- We'll construct it as a decimal integer with $n+k$ digits.
+- The least significant $k$ digits of $t$ correspond to the $k$ clauses of $F$, and each of these digits is a `4`.
+- The most significant $n$ digits of $t$ correspond to the $n$ variables of $F$, and each of these digits is a `1`.
+- If the formula $F$ has, say, three variables and four clauses, then $t$ comes out to `1114444`.
+- As we'll see, if there is a subset of $S$ that sums to $t$, then the digits of $t$ that correspond to the variables (the `1`s) will ensure that we assign a value to each variable in `F`, and the digits of $t$ that correspond to the clauses (the `4`s) will ensure that each clause of $F$ is satisfied.
+
+The set $S$ will consist of $2n+2k$ integers.
+
+- *It contains integers $x_i$ and $x_i'$ for each of the $n$ variables $v_i$ in the 3-CNF formula $F$, and it contains integers $q_j$ and $q_j'$ for each of the $k$ clauses $C_j$ in $F$.*
+
+- We construct each integer in $S$ digit by digit, in decimal.
+
+- For example, when $n=3$ and $k=4$:
+
+  - so 3-CNF formula is $F=C_1\ AND\ C_2\ AND\ C_3\ AND\ C_4$, and let the clauses be:
+
+    - $C_1 = v_1\ OR\ (NOT\ v_2)\ OR\ (NOT\ v_3)$
+    - $C_2 = (NOT\ v_1)\ OR\ (NOT\ v_2)\ OR\ (NOT\ v_3)$
+    - $C_3 = (NOT\ v_1)\ OR\ (NOT\ v_2)\ OR\ v_3$
+    - $C_4 = v_1\ OR\ v_2\ OR\ v_3$
+
+  - here are the corresponding set $S$ and target $t$ :
+
+    <img src="images/algrithms-unlocked-img-chapter10-table-01.png" width="300">
+
+  - Note that the shaded elements of $S$ — 1000110, 101110,10011,1000,2000,200,10,1,2 — sum to 1114444.
+
+    We'll soon see what these elements correspond to in the 3-CNF formula $F$.
+
+- We construct the integers in $S$ so that, digit by digit, every column in the above diagram sums to either `2` (the leftmost $n$ columns) or `6` (the rightmost `k` columns).
+
+  - Note that when elements in $S$ are added up, no carries out of any digit position can occur and we can work with the numbers digit by digit.
+
+- In the diagram, each row is labeled by an element in $S$.
+
+  - The first $2n$ rows correspond to the $n$ variables of the 3-CNF formula,
+  - the last $2k$ rows are "slack" whose purpose we'll see a little later.
+  - The rows labeled by elements $x_i$ and $x_i'$ correspond respectively to occurrences of the literals $v_i$ and $NOT\ v_i$ in $F$.
+  - The goal is to include in the subset $S'$ exactly $n$ of the first $2n$ rows — indeed, just one of each $x_i$, $x_i'$ pair — which will correspond to a satisfying assignment for the 3-CNF formula $F$.
+  - Because we require that the rows we choose from the literals add up to `1` in each of the leftmost $n$ columns,  we ensure that, for each variable $v_i$ in the 3-CNF formula, we include in $S'$ a row for one of $x_i$ and $x_i'$, but not both.
+  - The rightmost $k$ columns ensure that the rows we include in $S'$ are literals that satisfy each clause in the 3-CNF formula.
+
+- Let’s focus for the moment on the $n$ leftmost columns, which are labeled by the variables $v_1, v_2, ... , v_n$. 
+
+  - For a given variable $v_i$ , both $x_i$ and $x_i'$ have a `1` in the digit corresponding to $v_i$ , and they have `0` in all other digit positions corresponding to other variables. 
+  - Because the target $t$ has a 1 in each of the variable positions, exactly one of $x_i$ and $x_i'$ must be in the subset $S'$ in order to contribute to the sum.
+  - *Having $x_i$ in $S'$ corresponds to setting $v_i$ to `1`, and having $x_i'$ in $S'$ corresponds to setting $v_i$ to `0`.*
+
+- Now we turn our attention to the rightmost $k$ columns, which correspond to the clauses.
+
+  - These columns ensure that each clause is satisfied, as we will see below.
+  - *If the literal $v_i$ appears in clause $C_j$, then $x_i$ has a `1` in the column for $C_j$; If the literal $NOT\ v_i$ appears in clause $C_j$, then $x_i'$ has a `1` in the $C_j$ column.*
+  - Because each clause in a 3-CNF formula contain exactly three distinct literals, the column for each clause must contain exactly three `1`s among all the $x_i$ and $x_i'$ rows.
+  - For a given clause $C_j$, the rows among the first $2n$ that are included in $S'$ correspond to satisfying `0`, `1`, `2`, or `3` of the literals in $C_j$, and so these rows contribute `0`, `1`, `2`, or `3` to the sum for $C_j$'s column.
+
+- But the target digit for each clause is `4`, and that's where the "slack" elements $q_j$ and $q_j'$, for $j=1,2,3,…,k$, come in.
+
+  - They ensure that for each clause, the subset $S'$ includes some literal in the clause (some $x_i$ or $x_i'$ that has a `1` in the column for that clause).
+  - The row for $q_j$ has a `1` in the column for clause $C_j$ and 0 everywhere else, and the row for $q_j'$ is the same except that it has a `2`.
+  - *We can add in these rows to achieve the target digit of `4`, but only if the subset $S'$ includes at least one literal from $C_j$.* （简单来说，就是至少$C_j$ 中要包含一个`1`值，不全是`0`。 这里要仔细理解one literal指的是什么，要充分结合上方两段加重文字，理解：$x_i$行意味着变量$v_i$取值为`1`, 而$x_i'$行意味着变量$NOT\ v_i$取值为`1`。） 
+  - …省略部分内容
+
+​		
+Now that we’ve seen the reduction, we can see that it takes polynomial time. We’re creating $2n+2k+1$ integers (including the target $t$ ), each with $n+k$ digits. 
+
+- You can see from the diagram that of the integers constructed, no two are equal, and so $S$ really is a set. (The definition of a set does not allow repeated elements.)	
+
+ *这个规约证明在原书中有后续阐述，我在这里写一下自己的理解*：
+
+- 证明 the 3-CNF formula $F$ has a satisfying assignment if and only if there exists a subset $S'$ of $S$ that sums to exactly $t$.
+
+
+  根据上面的铺垫阐述，相当于(不全，只写了关于`4`的，前面n位`1`较好证明，不理解时可参考原书)：
+
+  - 当确定好所有变量的取值，即提供了一个证书后，若这个解满足3-CNF，那么：每一个分句$C_j$里的三个值，至少有一个是`1`，才能满足结果为真，也才能在归约后，通过在下面的$2k$行中进行补齐得到`4`；
+
+    若某个$C_j$的三个取值都是`0`，将不满足3-CNF，同时，也将无法补齐到`4`。
+
+  - 反之亦然，若图表中每一项都能补齐到`4`（这里等价于子集和等于$t$）：说明补齐操作前至少是`1`，也就说明规约前的每个$C_j$中至少有一个值为`1`，即原证书可以满足3-CNF；
+
+    若补不到`4`，说明补齐操作前为 `0`，那么对应的分项$C_j$将为`0 OR 0 OR 0`，不满足3-CNF.
 
 
 
 
-
-
+#### 10.5.8 Partition
 
 
 
