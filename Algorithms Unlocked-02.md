@@ -439,7 +439,7 @@ If we have the binary tree already built before decompressing, then it takes con
 The $BUILD-HUFFMAN-TREE$ procedure serves as an example of a **greedy algorithm (贪心算法)**, wherein we make the decision that seems best at the moment.
 
 - Because we want the least-frequently appearing characters far from the root of the binary tree, the greedy approach always selects the two roots with the lowest frequency to place under a new node, which can later become a child of some other node. 
-- Dijkstra’s algorithm is another greedy algorithm, because it always relaxes edges from the vertex with the lowest shortest value of those remaining in its priority queue.
+- Dijkstra's algorithm is another greedy algorithm, because it always relaxes edges from the vertex with the lowest shortest value of those remaining in its priority queue.
 
 
 
@@ -996,8 +996,8 @@ Now we’re going to see an interesting reduction, for problems in different dom
 - *a graph $G$*
 - *a positive integer $k​$*
 
-	and asks thether $G$ has a k-clique: a clique of size $k$.*		
-	​	
+  and asks thether $G$ has a k-clique: a clique of size $k$.*		
+  ​	
 
 For example: the graph below has a clique of size 4:
 
@@ -1148,9 +1148,9 @@ The **hamiltonian-cycle problem**:
 
 - *does a connected, undirected graph contain a hamiltonian cycle (a path that starts and ends at the same vertex and visits all other vertices exactly once)?*
 
-	 closely related problem is the **hamiltonian-path problem**, *which asks whether the graph contains a path that visits each vertex exactly once, but does not require that the path be a closed cycle.*	
+   closely related problem is the **hamiltonian-path problem**, *which asks whether the graph contains a path that visits each vertex exactly once, but does not require that the path be a closed cycle.*	
 
-	hese problem, too, is NP-complete, and later we will show that the longest-acyclic-path problem is also NP-complete.		
+   hese problem, too, is NP-complete, and later we will show that the longest-acyclic-path problem is also NP-complete.		
 
 
 
@@ -1194,7 +1194,7 @@ To show that the reduction works, we need to show that $G$ has a hamiltonian cyc
 -  Suppose that $G$ has a hamiltonian cycle. Then each edge on the cycle is in $G$, and so each of these edges gets a weight of 0 in $G'$. Thus, $G'$ has a cycle containing all the vertices, and the total weight of this cycle is 0.
 - Conversely, now suppose that $G'$ has a cycle containing all the vertices and whose total weight is 0. Then each edge on this cycle must also be in $G$, and so $G$ has a hamiltonian cycle.
 
-	​	
+  ​	
 
 #### 10.5.6 Longest acyclic path
 
@@ -1294,10 +1294,10 @@ The set $S$ will consist of $2n+2k$ integers.
   - *We can add in these rows to achieve the target digit of `4`, but only if the subset $S'$ includes at least one literal from $C_j$.* （简单来说，就是至少$C_j$ 中要包含一个`1`值，不全是`0`。 这里要仔细理解one literal指的是什么，要充分结合上方两段加重文字，理解：$x_i$行意味着变量$v_i$取值为`1`, 而$x_i'$行意味着变量$NOT\ v_i$取值为`1`。） 
   - …省略部分内容
 
-​		
-Now that we’ve seen the reduction, we can see that it takes polynomial time. We’re creating $2n+2k+1$ integers (including the target $t$ ), each with $n+k$ digits. 
+    ​
+    Now that we’ve seen the reduction, we can see that it takes polynomial time. We’re creating $2n+2k+1$ integers (including the target $t$ ), each with $n+k$ digits. 
 
-- You can see from the diagram that of the integers constructed, no two are equal, and so $S$ really is a set. (The definition of a set does not allow repeated elements.)	
+  - You can see from the diagram that of the integers constructed, no two are equal, and so $S$ really is a set. (The definition of a set does not allow repeated elements.)
 
  *这个规约证明在原书中有后续阐述，我在这里写一下自己的理解*：
 
@@ -1319,16 +1319,212 @@ Now that we’ve seen the reduction, we can see that it takes polynomial time. W
 
 #### 10.5.8 Partition
 
+The **partition problem** is closely related to the subset-sum problem. 
+
+In fact, it’s a special case of the subset-sum problem: if $z$ equals the sum of all the integers in the set $S$, then the target $t$ is exactly $z/2$.
+
+- In other words, the goal is to determine whether there exists a partition of the set $S$ into two disjoint sets $S'$ and $S''$ such that each integer in $S$ is in either $S'$ or $S''$ but not both (that’s what it means for $S'$ and $S''$ to partition $S$) and the sum of the integers in $S'$ equals the sum of the integers in $S''$. As in the subset-sum problem, a certificate is a subset of $S$.
+
+To show that the partition problem is NP-hard, we reduce from the subset-sum problem. 
+
+- Given a set $R$ of positive integers and a positive integer target $t$ as input to the subset-sumproblem, 
+- in polynomial time we construct a set $S$ as input to the partition problem. 
+- First, compute $z$ as the sum of all the integers in $R$. We assume that $z$ is not equal to $2t$, because if it is, then the problem is already a partition problem. 
+- Then choose any integer $y$ that is greater than botht $t+z$ and $2z$.
+- Define the set $S$ to contain all the integers in $R$ and two additional integers: $y-t$ and $y-z+t$. Because $y$ is greater than both $t+z $ and $2z$, we know that both $y-t$ and $y-z+t$ are greater than $z$, and so these two integers cannot be in $R$.
+- Note that the sum of all the integers in $S$ equals $z+(y-t)+(y-z+t)$, which is just $2y$. Therefore, if $S$ is partitioned into two disjoint subsets with equal sums, each subset must sum to $y$.
+
+
+
+...证明过程略，可参考原书，（目前有些不明白反向论证时的具体前提条件）
 
 
 
 
 
+#### 10.5.9 Knapsack
+
+In the **knapsack problem (背包问题)**, we are given a set of $n$ items, each with a weight and a value, and we ask whether there exists a subset of itemswhose total weight is at most a given weight $W$ and whose total value is at least a given value $V$. 
+
+This problem is the decision version of an optimization problem where we want to load up a knapsack with the most valuable subset of items, subject to not exceeding a weight limit. This optimization problem has obvious applications, such as deciding which items to take backpacking or what loot a burglar should choose to pilfer.
+
+The partition problem is really just a special case of the knapsack problem, in which the value of each item equals its weight and both $W$ and $V$ equal half the total weight. 
+
+If we could solve the knapsack problem in polynomial time, then we could solve the partition problem in polynomial time. Therefore, *the knapsack problem is at least as hard as the partition problem*, and we don’t even need to go through the full reduction process to show that the knapsack problem is NP-complete.
 
 
 
 
 
+### 10.6 General strategies
+
+There is no one-size-fits-all way to reduce one problem to another in order to prove NP-hardness. Some reductions are pretty simple, such as reducing the hamiltonian-cycle problem to the traveling-salesman problem, and some are extremely complicated. 
+
+
+
+Here are a few things to remember and some strategies that often help:
+
+#### 10.6.1 Go from general to specific
+
+When reducing problem $X$ to problem $Y$, you always have to start with an arbitrary input to problem $X$. But you are allowed to restrict the input to problem $Y$ as much as you like. 
+
+- For example, when reducing from 3-CNF satisfiability to the subset-sum problem, the reduction had to be able to handle any 3-CNF formula as its input, but the subset-sum input it produced had a particular structure: $2n+2k$ integers in the set, and each integer was formed in a particular way. 
+- *The reduction was not able to produce every possible input to the subset-sum problem, but that was OK.* *The point is that we can solve a 3-CNF satisfiability problem by transforming the input into an input to the subset-sum problem* and then using the answer to the subset-sum problem as the answer to the 3-CNF satisfiability problem.
+
+
+
+*Take note, however, that every reduction has to be of this form:*
+
+- *Transform **any** input to problem $X$ into **some** input to problem $Y$, even when chaining together reductions.*
+- If you want to reduce problem $X$ to problem $Y$ and also problem $Y$ to problem $Z$, 
+  - the first reduction has to transform any input to $X$ into some input to $Y$, 
+  - and the second reduction has to transform any input to $Y$ into some input to $Z$. 
+  - *It’s not enough for the second reduction to transform only the types of inputs to $Y$ that are produced by the reduction from $X$.*
+
+
+
+#### 10.6.2 Take advantage of restrictions in the problem you're reducing from
+
+In general, when reducing from problem $X$ to problem $Y$, you may choose problem $X$ to impose more restrictions on its input. 
+
+- For example, it’s almost always much easier to reduce from 3-CNF satisfiability than to reduce from the Mother Problem of boolean formula satisfiability. Boolean formulas can be arbitrarily complicated, but you’ve seen how we can exploit the structure of 3-CNF formulas when reducing.
+
+Likewise, it’s usually more straightforward to reduce from the hamiltonian-cycle problem than from the traveling-salesman problem, even though they are so similar. 
+
+- That’s because in the traveling-salesman problem, the edge weights can be any positive integers, not just the `0` or `1` that we required when reducing to it. 
+- The hamiltonian-cycle problem is more restricted because each edge has only one of two “values”: present or absent.
+
+
+
+#### 10.6.3 Look for special cases
+
+Several NP-complete problems are just special cases of other NP-complete problems, much as the partition problem is a special case of the knapsack problem. 
+
+If you know that problem $X$ is NP-complete and that it’s a special case of problem $Y$, then problem $Y$ must be NP-complete as well. 
+
+That is because, as we saw for the knapsack problem, a polynomial-time solution for problem $Y$ would automatically give a polynomial-time solution for problem $X$. More intuitively, problem $Y$, being more general than problem $X$, is at least as hard.
+
+
+
+#### 10.6.4 Select an appropriate problem to reduce from
+
+It’s often a good strategy to reduce from a problem in the same, or at least a related, domain as the problem you’re trying to prove NP-complete. 
+
+- For example, we showed that the vertex-cover problem — a graph problem — was NP-complete by reducing from the clique problem — also a graph problem. From there, the NP-completeness family tree showed that we reduced to the hamiltonian-cycle, hamiltonian-path, traveling-salesman, and longest-acyclic-path problems, all of which are on graphs.
+
+Sometimes, however, it’s best to leap from one domain to another,such as when we reduced from 3-CNF satisfiability to the clique problem or to the subset-sum problem.
+
+- 3-CNF satisfiability often turns out to be a good choice to reduce from when crossing domains.
+
+Within graph problems, if you need to select a portion of the graph, without regard to ordering, then the vertex-cover problem is often agood place to start. If ordering matters, then consider starting from the hamiltonian-cycle or hamiltonian-path problem.
+
+
+
+#### 10.6.5 Make big rewards and big panlties
+
+When we transformed the input graph $G$ to the hamiltonian-cycle problem to the weighted graph $G'$ as input to the traveling-salesman problem.
+
+- we really wanted to encourage using edges present in $G$ when choosing edges for the traveling-salesman tour. 
+- We did so by giving these edges a very low weight: `0`. In other words, we gave a big reward for using these edges.
+
+Alternatively, we could have given the edges in $G$ a finite weight and given edges not in $G$ infinite weight:
+
+- thereby exacting a hefty penalty for using edges not in $G$. 
+- If we had taken this approach and given each edge in $G$ a weight of $W$ , then we would have had to set the target weight $k$ of the entire traveling-salesman tour to $nW$.
+
+
+
+#### 10.6.6 Design widgets
+
+Widgets can be useful for enforcing certain properties.　本书没有详述。
+
+
+
+
+
+### 10.7 Perspective
+
+
+
+**When a problem is NP-complete, it means that some inputs are troublesome, but not necessarily that all inputs are bad.**
+
+- For example, finding a longest acyclic path in a directed graph is NP-complete, but if you know that the graph is acyclic, then you can find a longest acyclic path in not just polynomial time, but in $O(n+m)$ time (where the graph has $n$ vertices and $m$ edges). Recall that we did just that when finding a critical path in a PERT chart in Chapter 5. 
+- As another example, if you’re trying to solve the partition problem and the integers in the set sum to an odd number, then you know that there’s no way to partition the set so that both parts have equal sums.
+
+
+
+**From here on, let’s focus on optimization problems whose decision variants are NP-complete, such as the traveling-salesman problem.**
+
+- some fast methods give good, and often very good, results.
+
+- The technique of **branch and bound (分支限界法)** organizes a search for an optimal solution into a tree-like structure, and it cuts off hunks of the tree, thereby eliminating large portions of the search space, based on the simple idea that if it can determine that all the solutions emanating from one node of the search tree cannot be any better than the best solution found so far, then don't bother checking solutions within the space represented by that node or anything below it.
+
+- Another technique that often helps is **neighborhood search (邻域搜索)**, which takes one solution and applies local operations to try to improve the solution until no further improvement occurs.
+
+  - Consider the traveling-salesman problem where all vertices are points in the plane and the weight of each edge is a planar between the points. Even with this restriction, the problem is NP-complete.
+
+    In the **2-opt** technique, whenever two edges cross, switch them, which results in a shorter cycle:
+
+    <img src="images/algrithms-unlocked-img-chapter10-figure-01.png" width="270">
+
+- Moreover, a host of **approximation algorithms (近似算法)** *give results that are guaranteed to be within a certain factor of the optimal value*.
+
+  - For example, if the input to the traveling-salesman problem obeys the **triangle inequality (三角不等式)** — for all vertices $u$, $v$, and $x$, the weight of edge ($u,v$) is at most the sum of the weights of edges ($u,x$) and ($x,v$) — then there is a simple approximation algorithm that always finds a traveling-salesman tour whose total weight is at most twice that of the lowest, and this algorithm runs in time linear in the size of the input.
+  - There is an even better polynomial-time approximation algorithm for this situation, giving a tour whose total weight is at most $3/2$ times the lowest.
+
+- Strangely enough, if two NP-complete problems are closely related,the solution produced by a good approximation algorithm for one might produce a poor solution for the other.
+
+  - That is, a solution that is nearly optimal for one of the problems doesn’t necessarily map to a solution that is anywhere nearly optimal for the other problem.
+
+- Nevertheless, in many real-world situations, a nearly optimal solution is good enough. 
+
+  - Harking back to the discussion about the package-delivery company with brown trucks, they are happy to find nearly optimal routes for their trucks, even if the routes are not necessarily the best possible. Every dollar that they can save by planning efficient routes helps their bottom line.
+
+
+
+
+
+### 10.8 Undecidable problems
+
+For some problems, no algorithm is possible.
+
+- That is, there are problems for which it is provably impossible to create an algorithm that always gives a correct answer.
+
+
+We call such problems **undecidable (不可判定问题)**, and the best-known one is the **halting-problem (停机问题)**, proven undecidable by the mathematician Alan Turing in 1936.
+
+- In the halting problem:
+
+  - Inputs: a computer program $A$ and the input $x$ to $A$.
+  - Goal: determine whether program A, running on input $x$, ever halts. That is, does $A$ with input $x$ run to completion?
+
+  ​
+
+Because it’s not possible to write a program that determines whether another program running on a particular input even halts, it’s also not possible to write a program that determines whether another program meets its specification. 
+
+- How can one program tell whether another program gives the right answer if it can’t even tell whether the program halts? 
+- So much for perfect automated software testing!
+
+​					
+Lest you think that the only undecidable problems have to do with properties of computer programs, **Post’s Correspondence Problem (PCP, 波斯特对应问题)** is about strings.
+
+...关于问题描述在此省略，书中描述较简单，需要今后找更具体材料学习
+
+
+
+Although Post’s Correspondence Problem might not seem particularly interesting on its own, we can reduce it to other problems to show that they, too, are undecidable. 
+
+- It’s the same basic idea as we used to show that a problem is NP-hard: given an instance of PCP, transform it into an instance of some other problem Q, such that the answer to the instance of Q gives the answer to the instance of PCP. If we could decide Q, then we could decide PCP; but since we know that we cannot decide PCP, then Q must be undecidable.
+
+
+
+Among the undecidable problems that we can reduce PCP to are several having to do with **context-free grammars (CFGs, 上下文无关文法)**, which describe the syntax of most programming languages. 
+
+- A CFG is a set of rules for generating a **formal language (形式语言)**, which is a fancy way to say “a set of strings.” 
+- By reducing from PCP, we can prove that it’s undecidable whether two CFGs generate the same formal language, whether two CFGs generate any strings in common, or whether a given CFG is ambiguous: are there two different ways to generate the same string using the rules of the CFG?
+
+​		
+​	
 
 
 
