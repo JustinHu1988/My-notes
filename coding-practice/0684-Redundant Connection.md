@@ -52,9 +52,7 @@ We have overhauled the problem description + test cases and specified clearly th
  * @return {number[]}
  */
 var findRedundantConnection = function(edges) {
-
     let map = new Map();
-
     for(let i=0; i<edges.length; i++){
         if(map.has(edges[i][0])){
             map.get(edges[i][0]).set(i, edges[i]);
@@ -69,7 +67,6 @@ var findRedundantConnection = function(edges) {
             map.get(edges[i][1]).set(i, edges[i]);
         }
     }
-
     function init(value, key, map){
         value.forEach(function(v, k, m){
             if(key!==v[0]){
@@ -86,14 +83,12 @@ var findRedundantConnection = function(edges) {
         });
         map.delete(key);
     }
-
     map.forEach(function(value, key, map){
         if(value.size===1){
             init(value, key, map);
         }
     });
     let index = 0;
-
     map.forEach(function(value, key, map){
         value.forEach(function(v, k, m){
             if(k>index){
@@ -101,7 +96,6 @@ var findRedundantConnection = function(edges) {
             }
         });
     });
-
     return edges[index];
 };
 
