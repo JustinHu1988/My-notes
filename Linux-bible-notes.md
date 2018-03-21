@@ -206,7 +206,7 @@ If a command resides in several locations, you can add the `-a` option to have a
 
 
 
-If a command is not in your `PATH` variable, you can use the `locate` command to try to find it.
+*If a command is not in your `PATH` variable, you can use the `locate` command to try to find it.*
 
 - *Using `locate`, you can search any part of the system that is accessible to you (some files are only accessible to the root user.)*
 
@@ -314,7 +314,7 @@ $ history 8
 
 A number precedes each command line in the list. You can recall one of those commands using an exclamation point (`!`).
 
-- Keep in mind that when using an exclamation point, the command runs blind, without presenting an opportunity to confirm the command you’re referencing.
+- Keep in mind that when using an exclamation point, the command runs blind, without presenting an opportunity to confirm the command you're referencing.
 
 
 
@@ -345,8 +345,8 @@ Another way to work with your history list is to use the *`fc` command:*
 
 -  Type `fc` followed by a history line number, and that command line is opened in a text editor.
   - Make the changes that you want.
-- When you exit the editor, the command runs.
-- You can also give a range of line numbers.
+-  When you exit the editor, the command runs.
+-  You can also give a range of line numbers.
   - All the commands open in your text editor, and then run one after the other when you exit the editor.
 
 
@@ -366,7 +366,7 @@ After you close your shell, the history list is stored in the `.bash_history` fi
 >
 >
 > ​				
-> 
+>
 
 ## Connecting and expanding commands
 
@@ -483,8 +483,8 @@ Sometimes, you want to pass arithmetic results to a command.
 
 There are two forms you can use to expand an arithmetic expression and pass it to the shell: 
 
-- `$[expression]`
-- `$(expression)`
+- **`$[expression]`**
+- **`$(expression)`**
 
 
 
@@ -717,7 +717,7 @@ Your prompt consists of a set of characters that appear each time the shell is r
 
 ### Adding environment variables
 
-*You might want to consider adding a few environment variables to your `.bashrc` file.* These can help make working with the shell more efficient and effective:
+*You might want to consider adding a few environment variables to your `$HOME/.bashrc` file.* These can help make working with the shell more efficient and effective:
 
 - `TMOUT`
 
@@ -733,7 +733,7 @@ Your prompt consists of a set of characters that appear each time the shell is r
     PATH=$PATH:/getstuff/bin ; export PATH
     ```
 
-    *(???这个方法感觉是临时添加？如何写入`.bashrc`文件里)*This example first reads all the current path directories into the new PATH (`$PATH`), adds the /getstuff/bin directory, and then exports the new PATH.
+    *(直接添加在`.bashrc`文件里)*This example first reads all the current path directories into the new PATH (`$PATH`), adds the /getstuff/bin directory, and then exports the new PATH.
 
     >CAUTION:*
     >
@@ -766,6 +766,74 @@ Your prompt consists of a set of characters that appear each time the shell is r
 
 
 
+## Getting Information about Commands
+
+
+
+- Check the PATH.
+
+  - Type `echo $PATH`
+    - You see a list of the directories containing commands that are immediately accessible to you.
+  - *Then, you can use `ls` to list the contents of those directories, you will see most standard Linux commands.*
+    - For example: `ls /bin`.
+
+- Use the `help` command.
+
+  - Some commands are built into the shell, so they do not appear in a directory.
+
+    The `help` command lists those commands and shows options available with each of them.
+
+  - For help with a particular built-in command, type `help command`, replacing `command` with the name that interests you.
+
+- Use `--help` with the command.
+
+- Use the `info` command.
+
+  - Not all commands have information available in the info database, but sometimes more information can be found there than on a man page.
+
+- Use the `man` command.
+
+
+
+Man pages are the most common means of getting information about commands, as well as other basic components of a linux system.
+
+**Manual Page Sections:** 
+
+| Section Number | Section Name                            | Description                              |
+| -------------- | --------------------------------------- | ---------------------------------------- |
+| 1              | User Commands                           | Commands that can be run from the shell by a regular user (typically no administrative privilege is needed) |
+| 2              | System Calls                            | Programming functions used within an application to make calls to the kernel |
+| 3              | C Library Functions                     | Programming functions that provide interfaces to specific programming libraries (such as those for certain graphical interfaces or other libraries that operate in user space.) |
+| 4              | Devices and Special Files               | Filesystem nodes that represent hardware devices (such as terminals or CD drives) or software devices (such as random number generators) |
+| 5              | File Formats and Conventions            | Types of files (such as a graphics or word processing file) or specific configuration files (such as the `passwd` or `group` file). |
+| 6              | Games                                   | Games available on the system            |
+| 7              | Miscellaneous                           | Overviews of topics such as protocols, filesystems, character set standards, and so on. |
+| 8              | System Administration Tools and Daemons | Commands that require root or other administrative privileges to use |
+
+
+
+Options to the `man` command enable you to search the man page database or display man pages on the screen.
+
+For example:
+
+```
+$ man -k passwd 
+...
+passwd(1)
+passwd(5)
+$ man passwd
+$ man 5 passwd
+```
+
+- *Using the `-k` option, you can search the name and summary sections  of all man pages installed on the system.*
+- If you type `man -k passwd`, you will see a list of name contains `passwd`.
+  - *`passwd(1)`  is `passwd` command in section 1 of the man pages;*
+  - *`passwd(5)` is `passwd` file in section 5.*
+- *If you want to explicitly request the section 5 man page, you can type `man 5 passwd`.*
+- While you are displaying a man page, *you can press the forward slash `/` and type a term to search the document for that term.*
+  - *Press `n` to repeat the search forward;*
+  - *Press `N` to repeat the search backward.*
+  - Type `q` to quit the man page.
 
 
 
@@ -773,19 +841,117 @@ Your prompt consists of a set of characters that appear each time the shell is r
 
 
 
+# Chapter 4 Moving around the Filesystem
+
+One of the defining properties of UNIX systems on which Linux is based is that :
+
+- nearly everything you need to identify on your system (data, commands, symbolic links, devices, and directories) is represented by items in the filesystems. 
+
+Knowing where things are and understanding how to get around the filesystem from the shell are critical skills in Linux.
 
 
 
+In Linux, files are organized within a hierarchy of directories. 
+
+- Each directory can contain files, as well as other directories. 
+- You can refer to any file or directory using either a full path or a relative path.
 
 
 
+**Root directory**, represented by a single slash (`/`).	
 
 
 
+The Linux  lesystem is organized as a hierarchy of directories:
+
+<img src="images/linux-bible-chapter-04-01.png" width="400">
+
+*Some of these Linux directories may interest you:*
+
+- `/bin`—Contains common Linux user commands, such as `ls`, `sort`, `date`, and `chmod`.
+- `/boot`—Has the bootable Linux kernel and boot loader configuration files (GRUB).
+- `/dev`—Contains files representing access points to devices on your systems. 
+  - These include:
+    - terminal devices (`tty*`), 
+    - floppy disks (`fd*`), 
+    - hard disks (`hd*` or `sd*`), 
+    - RAM(`ram*`)
+    - CD-ROM (`cd*`) 
+  - Users can access these devices directly through these device files; however, applications often hide the actual device names from end users.
+- `/etc`—Contains administrative configuration files. 
+  - Most of these files are plaintext files that can be edited with any text editor if the user has proper permission.
+- `/home`—Contains directories assigned to each regular user with a login account.
+  - (The root user is an exception, using `/root` as his or her home directory.)
+- `/media`—Provides a standard location for automounting devices (removable media in particular). 
+  - If the medium has a volume name, that name is typically used as the mount point. For example, a USB drive with a volume name of `myusb` would be mounted on `/media/myusb`.
+- `/lib`—Contains shared libraries needed by applications in `/bin` and `/sbin` to boot the system.
+- `/mnt`—A common mount point for many devices before it was supplanted by the standard `/media` directory. 
+  - Some bootable Linux systems still use this directory to mount hard disk partitions and remote filesystems. 
+  - Many people still use this directory to temporarily mount local or remote filesystems that are not mounted permanently.
+- `/misc`—A directory sometimes used to automount filesystems upon request.
+- `/opt`—Directory structure available to store add-on application software.
+- `/proc`—Contains information about system resources.
+- `/root`—Represents the root user's home directory. 
+  - The home directory for root does not reside beneath `/home` *for security reasons.*
+- `/sbin`—Contains administrative commands and daemon processes.
+- `/tmp`—Contains temporary files used by applications.
+- `/usr`—Contains user documentation, games, graphical files (X11), libraries (lib),and a variety of other commands and files that are not needed during the bootprocess. 
+  - The `/usr` directory is meant for files that don't change after installation(in theory, `/usr` could be mounted read-only).
+- `/var`—Contains directories of data used by various applications. 
+  - In particular, this is where you would place files that you share as an FTP server (`/var/ftp`) or a
+    web server (`/var/www`). 
+  - It also contains all system log files (`/var/log`) and spool files in `/var/spool` (such as `mail`, `cups`, and `news`). 
+  - *The `/var` directory contains directories and files that are meant to change often.* 
+  - *On server computers, it is common to create the `/var` directory as a separate filesystem, using a filesystem type that can be easily expanded.*
+
+​		
+
+> Linux Filesystems versus Windows-Based Filesystems
+>
+> ■ In MS-DOS and Windows filesystems, drive letters represent different storage devices (forexample, A: is a  oppy drive and C: is a hard disk). *In Linux, all storage devices are connected to the filesystem hierarchy.* So the fact that all of `/usr` may be on a separate hard disk or that `/mnt/remote1` is a filesystem from another computer is invisible to the user.
+>
+> ■ *Slashes*, rather than backslashes, are used to separate directory names in Linux. So `C:\home\joe` in a Microsoft system is `/home/joe` in a Linux system.
+>
+> ■ Filenames almost always have suffixes in DOS (such as `.txt` for text files or `.doc` forword-processing files). Although at times you can use that convention in Linux, three-character suffixes have no required meaning in Linux. They can be useful for identifying a file type. Many Linux applications and desktop environments use  le suf xes to determine the contents of a file. In Linux, however, DOS command extensions such as `.com`, `.exe`, and `.bat` don’tnecessarily signify an executable. (*Permission flags make Linux files executable.*)
+>
+> ■ Every file and directory in a Linux system has permissions and ownership associated with it.
+
+​				
+
+## Using Basic Filesystem Commands
+
+When you log in to a Linux system and open a shell, you are placed in your home directory. In Linux, most of the files you save and work with will probably be in that directory or subdirectories that you create.
 
 
 
+**Commands to Create and Use Files**
+
+| Command | Result                                   |
+| ------- | ---------------------------------------- |
+| `cd`    | Changes to another direcotry             |
+| `pwd`   | Prints the name of the current working directory |
+| `mkdir` | Creates a directory                      |
+| `chmod` | *Changes the permission on a file or directory* |
+| `ls`    | List the contents of a directory         |
+
+- Return your home directory:
+
+  ```
+  $ cd
+  $ cd ~
+  ```
+
+  - Tilde `~` can represent your home directory. So you can:
+
+    ```
+    $ cd ~/Music
+    $ pwd
+    /home/justin/Music
+    ```
+
+- Use `..` to go to a directory above the current directory.
 
 
 
+## Using Metacharacters and Operators
 
