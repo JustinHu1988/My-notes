@@ -904,7 +904,7 @@ The Linux  lesystem is organized as a hierarchy of directories:
   - *The `/var` directory contains directories and files that are meant to change often.* 
   - *On server computers, it is common to create the `/var` directory as a separate filesystem, using a filesystem type that can be easily expanded.*
 
-​		
+    ​
 
 > Linux Filesystems versus Windows-Based Filesystems
 >
@@ -953,5 +953,114 @@ When you log in to a Linux system and open a shell, you are placed in your home 
 
 
 
+
 ## Using Metacharacters and Operators
+
+Whether you are listing, moving, copying, removing, or otherwise acting on files in your Linux system, metacharacters and operators help you to work with files more efficiently.
+
+- Metacharacters can help you match one or more files without completely typing each file name.
+- Operators enable you to direct information from one command or file to another command or file.
+
+### Using file-matching metacharacters
+
+- `*` — Matches any number of characters
+- `?` — Matches any one character.
+- `[...]` — Matches any one of the characters between the brackets, which can include a hyphen-separated range of letters or numbers.
+
+For example:
+
+- First, let's create some empty files:
+
+  ```
+  $ touch apple banana grape grapefruit watermelon
+  ```
+
+  *The `touch` command creates empty files.*
+
+- Now, let's try to use some metacharacters:
+
+  ```
+  $ ls a*
+  apple
+  $ ls g*
+  grape grapefruit 
+  $ ls g*t 
+  grapefruit
+  $ ls *e*
+  apple grape grapefruit watermelon 
+  $ ls *n*
+  banana watermelon
+  $ ls ????e
+  apple grape
+  $ ls g???e* 
+  grape grapefruit
+  $ ls [abw]*
+  apple banana watermelon 
+  $ ls [agw]*[ne]
+  apple grape watermelon
+  $ ls [a-g]*
+  apple banana grape grapefruit
+  ```
+
+  ​
+
+### Using file-redirection metacharacters
+
+- `<` — Directs the contents of a file to the command.
+  - In most cases, this is the default action expected by te command and the use of the character is optional;
+  - Using `less bigfile` is the same as `less < bigfile`.
+- `>` — Directs the standard output of a command to a file.
+  - If the file exists, the content of that file is overwritten.
+- `2>` — Directs standard error (error messages) to the file.
+- `&>` — Directs both standard output and standard error to the file.
+- `>>` — Directs the output of a command to a file
+  - adding the output to the end of the existing file.
+
+For example:
+
+```
+$ mail root < ~/.bashrc
+$ man chmod | col -b > /tmp/chmod
+$ echo "I finished the project on $(date)" >> ~/projects
+```
+
+
+
+Another type of redirection, referred to as *here text* (also called a *here document*), enables you to type text that can be used as standard input for a command.
+
+- *Here documents involve entering two less-than characters (`<<`) after a command, followed by a word.*
+
+- *All typing following that word is taken as user input until the word is repeated on a line by itself.*
+
+- Example:
+
+  ```
+  $mail root cnegus rjones bdecker <<thetext
+  > I want to tell everyone that there will be a 10 a.m.
+  > meeting in conference room B. Everyone should attend.
+  >
+  > -- James
+  > thetext
+  $
+  ```
+
+- This example sends a mail message to root, census, rjones, and bdecker usernames. The text entered between `<<thetext` and `thetext` becomes the content of the message.
+
+- A common use of here text is to use it with a text editor to create or add to a file from within a script:
+
+  ```
+  /bin/ed /etc/resolv.conf <<resendit 
+  a
+  nameserver 100.100.100.100
+  .
+  w
+  q 
+  resendit
+  ```
+
+  With these lines added to a script run by the root user, the `ed` text editor adds the IP address of a DNS server to the `/etc/resolv.conf` file.
+
+### Using brace expansions characters
+
+By using curly braces(`{}`), you can expand out a set of characters 
 
