@@ -9,7 +9,7 @@ Many of the important ideas of C stem from the language BCPL, the influence of B
 
 BCPL and B are "typeless" languages. By contrast, C provides a variety of data types:
 
-- The fundamental types are characters, integers and floating-point numbers of several sizes
+- The fundamental types are *characters*, *integers* and *floating-point* numbers of several sizes
 - In addition, there is a hierarchy of derived data types created with `pointers`, `arrays`, `structures`, and `unions`.
 - Expressions are formed from operators and operands; any expression, including an assignment or a function call, can be a statement. 
   - Pointers provide for machine-independent address arithmetic.	
@@ -26,11 +26,11 @@ C provides the fundamental control-flow constructions required for well-structur
 
 ### Function 
 
-Functions may return values of basic types, structures, unions, or pointers.
+*Functions may return values of basic types, structures, unions, or pointers.*
 
 Any function may be called recursively. 
 
-Local variables are typically "automatic," or created anew with each invocation. 
+*Local variables are typically "automatic," or created anew with each invocation.* 
 
 *Function definitions may not be nested but variables may be declared in a block-structured fashion.???*
 
@@ -48,7 +48,6 @@ Variables may be:
 
 A preprocessing step performs macro substitution on program text, inclusion of other source files, and conditional compilation.
 
-​		
 ​		
 
 ### Relatively "Low level"	
@@ -105,7 +104,7 @@ int main()
 ```c
 #include <stdio.h> //tells the compiler to include information about the standard input/output library; This line arrpears at the beginning of many C source files.
 int main() //define a function named main, receives no arguments. see Note-001.
-{ //the statements fo a function are enclosed in braces {}.
+{ //the statements of a function are enclosed in braces {}.
     printf("hello, world\n"); // calls library function printf to print this sequence of character; "\n" represents the newline character. see Note-002.
 }
 ```
@@ -151,7 +150,7 @@ int main() //define a function named main, receives no arguments. see Note-001.
 >
 >   - Notice that *`\n` represents only a single character.*
 >
->     An **escape sequence (转义序列)** like `\n` provides a general and extensible mechanism for representing hard-to-typeor invisible characters. Among the others that C provides are `\t` for tab, `\b` for backspace, `\n` for the double quote, and `\\` for the backslash itself. Thereis a complete list in Section 2.3.
+>     An **escape sequence (转义序列)** like `\n` provides a general and extensible mechanism for representing hard-to-type or invisible characters. Among the others that C provides are `\t` for tab, `\b` for backspace, `\"` for the double quote, and `\\` for the backslash itself. There is a complete list in Section 2.3.
 
 ​			
 
@@ -1855,7 +1854,7 @@ else
 
 
 
-### 3.4 switch
+### 3.4 Switch
 
 The `switch` statement is a multi-way decision that tests whether an expression matches one of a number of `constant` integer values, and branches accordingly:
 
