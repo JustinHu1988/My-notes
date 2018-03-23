@@ -27,12 +27,12 @@ $ grep justin /etc/passwd
 justin:x:1000:1000:Justin Hu,,,:/home/justin:/bin/bash
 ```
 
-- `$ date`
-- `$ pwd`
+- **`date`**
+- **`pwd`**
   - shows your current working directory
-- `$ hostname`
+- **`hostname`**
   - shows your computer's hostname
-- `$ ls`
+- **`ls`**
   - Lists the files and directories in your current directory
 
 
@@ -54,7 +54,7 @@ $ ls -lat
 
 
 
-Some commands include options that are represented by a whole word. To tell a command to use a whole word as an option, you typically precede it with a double hyphen (--). 
+Some commands include options that are represented by a whole word. To tell a command to use a whole word as an option, you typically precede it with a double hyphen (`—`). 
 
 ```
 $ ls --help
@@ -62,7 +62,7 @@ $ ls --help
 
 Without the double hyphen, the letters `h`,`e`,`l`,and `p` would be interpreted as separate options. 
 
-- (There are some commands that don’t follow the double hyphen convention, using a single hyphen before a word, but most commands use double hyphens for word options.)
+- (There are some commands that don't follow the double hyphen convention, using a single hyphen before a word, but most commands use double hyphens for word options.)
 
 
 
@@ -131,7 +131,7 @@ To find commands you type, the shell looks in what is referred to as your path. 
 
 
 
-*The better way is to have commands stored in well-known directories and then add those directories to your shell’s PATH environment variable*.
+*The better way is to have commands stored in well-known directories and then add those directories to your shell's **`$PATH`** environment variable*.
 
 - The path consists of a list of directories that are checked sequentially for the commands you enter. To see your current path, type the following:
 
@@ -188,14 +188,14 @@ Not all the commands you run are located in directories in your `PATH` variable.
 4. **Built-in command.**
    - This is a command built into the shell. 
    - As a result, there is no representation of the command in the filesystem. Some of the most common commands you will use are shell built-in commands, such as:
-     - `cd` (to change directories), 
-     - `echo` (to output text to the screen), 
-     - `exit` (to exit from a shell), 
-     - `fg` (to bring a command running in the background to the foreground), 
-     - `history` (to see a list of commands that were previously run), 
+     - **`cd`** (to change directories), 
+     - **`echo`** (to output text to the screen), 
+     - **`exit`** (to exit from a shell), 
+     - **`fg`** (to bring a command running in the background to the foreground), 
+     - **`history`** (to see a list of commands that were previously run), 
      - `pwd` (to list the present working directory), 
-     - `set` (to set shell options), 
-     - `type` (to show the location of a command).
+     - **`set`** (to set shell options), 
+     - **`type`** (to show the location of a command).
 5. **Filesystem command**.
    - This command is stored in and executed from the computer's filesystem.
    - These are the commands that are indicated by the value of the `PATH` variable.
@@ -208,7 +208,7 @@ If a command resides in several locations, you can add the `-a` option to have a
 
 *If a command is not in your `PATH` variable, you can use the `locate` command to try to find it.*
 
-- *Using `locate`, you can search any part of the system that is accessible to you (some files are only accessible to the root user.)*
+- *Using **`locate`**, you can search any part of the system that is accessible to you (some files are only accessible to the root user.)*
 
 
 
@@ -320,10 +320,10 @@ A number precedes each command line in the list. You can recall one of those com
 
 There are several ways to run a command immediately from this list, including the following:
 
-- `!n` — Run command number.
+- **`!n`** — Run command number.
   - replace the `n` with the number of the command line and that line is run.
-- `!!` — *Run previous command.*
-- `!?string?` — *Run command containing string*.
+- **`!!`** — *Run previous command.*
+- **`!?string?`** — *Run command containing string*.
   - This runs the most recent command that contains a particular string of characters.
 
 
@@ -341,7 +341,7 @@ There are several ways to run a command immediately from this list, including th
 
 ​			
 
-Another way to work with your history list is to use the *`fc` command:*
+Another way to work with your history list is to use the **`fc`** *command:*
 
 -  Type `fc` followed by a history line number, and that command line is opened in a text editor.
   - Make the changes that you want.
@@ -356,9 +356,9 @@ After you close your shell, the history list is stored in the `.bash_history` fi
 
 
 
-> NOTE
+> *NOTE*
 >
-> Some people disable the history feature for the root user by setting the `HISTFILE` to `/dev/null` or simply leaving `HISTSIZE` blank. This prevents information about the root user’s activities from potentially being exploited. 
+> Some people disable the history feature for the root user by setting the **`HISTFILE`** to `/dev/null` or simply leaving `HISTSIZE` blank. This prevents information about the root user’s activities from potentially being exploited. 
 >
 > If you are an administrative user with root privileges, you may want to consider emptying your  file upon exiting as well for the same reasons. 
 >
@@ -378,19 +378,19 @@ To allow commands to be strung together, the shell uses *metacharacters*.
 
 - *Metacharacters include:*
 
-  - pipe character `|`
-  - ampersand `&`
-  - semicolon `;`
-  - right parenthesis `)`
-  - left parenthesis `(`
-  - Less than sign `<`
-  - Greater than sign `>`
+  - pipe character **`|`**
+  - ampersand **`&`**
+  - semicolon **`;`**
+  - right parenthesis **`)`**
+  - left parenthesis **`(`**
+  - Less than sign **`<`**
+  - Greater than sign **`>`**
 
   ​
 
 ### Piping between commands
 
-The pipe(`|`) metacharacter *connects the output from one command to the input of another command.*
+The pipe(**`|`**) metacharacter *connects the output from one command to the input of another command.*
 
 For example:
 
@@ -406,7 +406,7 @@ This command lists the contents of the `/etc/passwd` file and pipes the output t
 
 Sometimes, you may want a sequence of commands to run, *with one command completing before the next command begins*. 
 
-You can do this by typing several commands on the same command line and separating them with semicolons (`;`):
+You can do this by typing several commands on the same command line and separating them with semicolons (**`;`**):
 
 For example:
 
@@ -430,7 +430,7 @@ For example:
 
 Some commands can take a while to complete.
 
-Sometimes, you may not want to tie up your shell waiting for a command to finish. In those cases, *you can have the commands run in the background by using the ampersand (`&`).*
+Sometimes, you may not want to tie up your shell waiting for a command to finish. In those cases, *you can have the commands run in the background by using the ampersand (**`&`**).*
 
 
 
@@ -455,7 +455,7 @@ For example:
 
 In this way, you can have the standard output of a command become an argument for another command.
 
-The two forms of command substitution are `$(command)` and `` `command` `` (backticks, not single quotes).
+The two forms of command substitution are **`$(command)`** and **`` `command` ``** (backticks, not single quotes).
 
 For example:
 
@@ -466,7 +466,7 @@ $ vi $(find /home | grep xyzzy)
 - the command substitution is done before the `vi` command is run.
 - First, the find command starts at the `/home` directory and prints out all files and directories below that point in the filesystem.
 - The output is piped to the `grep` command, which filters out all files except for those that include the string `xyzzy` in the filename. 
-- Finally, the vi command opens all filenames for editing (one at a time) that include xyzzy. (If you run this and are not familiar with vi, you can type `:q!` to exit the file.)
+- Finally, the vi command opens all filenames for editing (one at a time) that include xyzzy. (If you run this and are not familiar with vi, you can type **`:q!`** to exit the file.)
 
 
 
@@ -506,7 +506,7 @@ There are 14 files in this directory.
 
 ### Expanding variables
 
-Variables that store information within the shell can be expanded using the dollar sing(`$`) metacharacter.
+*Variables that store information within the shell can be expanded using the dollar sing(**`$`**) metacharacter.*
 
 When you expand an environment variable on a command line, the value of the variable is printed instead of the variable name itself, as follows:
 
@@ -514,25 +514,25 @@ When you expand an environment variable on a command line, the value of the vari
 $ ls -l $BASH
 ```
 
-Using `$BASH` as an argument to ls -l causes a long listing of the bash command to be printed.
+Using **`$BASH`** as an argument to ls -l causes a long listing of the bash command to be printed.
 
-​			
+
 ​		
 
 ## Using Shell Variables
 
 The shell itself stores information that may be useful to the user’s shell session in what are called **variables**. 
 
-- *You can see all variables set for your current shell by typing the `set` command.*			
+- *You can see all variables set for your current shell by typing the **`set`** command.*			
 
 A subset of your local variables are referred to as **environment variables**.
 
 - Environment variables are variables that are ecported to any new shells opened from the current shell.
-- *Type `env` to see environment variables*.
+- *Type **`env`** to see environment variables*.
 
 
 
-Because there are always multiple ways to do anything in Linux, you can also type `declare` to get a list of the current environment variables and their values along with a list of shell functions.
+Because there are always multiple ways to do anything in Linux, you can also type **`declare`** to get a list of the current environment variables and their values along with a list of shell functions.
 
 
 
@@ -555,35 +555,35 @@ When you start a shell, many environment variables are already set
 
 *Some variables that either are set when you use a bash shell or can be set by you to use with different features：*
 
-| Variable         | Description                              |
-| :--------------- | ---------------------------------------- |
-| `BASH`           | This contains the full pathname of the `bash` command. This is usually `/bin/bash`. |
-| `BASH_VERSION`   | This is a number representing the current version of the `bash` command. |
-| `EUID`           | This is the effective user ID number of the current user. It is assigned when the shell starts, based on the user's entry in the `etc/passwd` file. |
-| `FCEDIT`         | If set, this variable indicates the text editor used by the `fc` command to edit `history` commands. |
-| `HISTFILE`       | This is the location of your history file. It is typically located at `$HOME/.bash_history` |
-| `HISTFILESIZE`   | This is the number of history entries that can be stored. |
-| `HISTCMD`        | This returns the number of the current command in the `history` list. |
-| `HOME`           | This is your home directory. It is your current working directory each time you log in or type the `cd` command with any options. |
-| `HOSTTYPE`       | This is a value that describes the computer architecture on which the Linux system is running. For AMD 64-bit machines, the value is x86_64. |
-| `MAIL`           | This is the location of your mailbox file. The file is typically your username in the `var/spool/mail` directory. |
-| `OLDPWD`         | This is the directory that was the working directory before you changed to the current working directory. |
-| `OSTYPE`         | This name identifies the current operating system. |
-| `PATH`           | This is the colon-separated list of directories used to find commands that you type. For the root user, the value also includes `/sbin:/usr/sbin:/usr/local/sbin` You need to type the full path or a relatie path to a command you want to run that is not in your `PATH`. |
-| `PPID`           | This is the process ID of the command that started the current shell. |
-| `PROMPT_COMMAND` | This can be set to a command name that is run each time before your shell prompt is displayed. Setting `PROMPT_COMMAND=date` lists the current date/time before the prompt appears. |
-| `PS1`            | This sets the value of your shell prompt. There are many items that you can read into your prompt(date, time, username, hostname, and so on). |
-| `PWD`            | This is the directory that is assigned as your current directory. This value changes each time you change directories using the `cd` command. |
-| `RANDOM`         | Accessing this variable causes a random number to be generated. |
-| `SECONDS`        | This is the number of seconds since the time the shell was started. |
-| `SHLVL`          | This is the number of shell levels associated with the current shell session. |
-| `TMOUT`          | This can be set to a number representing the number of seconds the shell can be idle without receiving input. After the number of seconds is reached, the shell exits. |
+| Variable           | Description                              |
+| :----------------- | ---------------------------------------- |
+| **`BASH`**         | This contains the full pathname of the `bash` command. This is usually `/bin/bash`. |
+| **`BASH_VERSION`** | This is a number representing the current version of the `bash` command. |
+| **`EUID`**         | This is the effective user ID number of the current user. It is assigned when the shell starts, based on the user's entry in the `etc/passwd` file. |
+| **`FCEDIT`**       | If set, this variable indicates the text editor used by the `fc` command to edit `history` commands. |
+| **`HISTFILE`**     | This is the location of your history file. It is typically located at `$HOME/.bash_history` |
+| `HISTFILESIZE`     | This is the number of history entries that can be stored. |
+| `HISTCMD`          | This returns the number of the current command in the `history` list. |
+| `HOME`             | This is your home directory. It is your current working directory each time you log in or type the `cd` command with any options. |
+| `HOSTTYPE`         | This is a value that describes the computer architecture on which the Linux system is running. For AMD 64-bit machines, the value is x86_64. |
+| `MAIL`             | This is the location of your mailbox file. The file is typically your username in the `var/spool/mail` directory. |
+| `OLDPWD`           | This is the directory that was the working directory before you changed to the current working directory. |
+| `OSTYPE`           | This name identifies the current operating system. |
+| `PATH`             | This is the colon-separated list of directories used to find commands that you type. For the root user, the value also includes `/sbin:/usr/sbin:/usr/local/sbin` You need to type the full path or a relatie path to a command you want to run that is not in your `PATH`. |
+| `PPID`             | This is the process ID of the command that started the current shell. |
+| `PROMPT_COMMAND`   | This can be set to a command name that is run each time before your shell prompt is displayed. Setting `PROMPT_COMMAND=date` lists the current date/time before the prompt appears. |
+| **`PS1`**          | This sets the value of your shell prompt. There are many items that you can read into your prompt(date, time, username, hostname, and so on). |
+| `PWD`              | This is the directory that is assigned as your current directory. This value changes each time you change directories using the `cd` command. |
+| `RANDOM`           | Accessing this variable causes a random number to be generated. |
+| `SECONDS`          | This is the number of seconds since the time the shell was started. |
+| `SHLVL`            | This is the number of shell levels associated with the current shell session. |
+| `TMOUT`            | This can be set to a number representing the number of seconds the shell can be idle without receiving input. After the number of seconds is reached, the shell exits. |
 
 
 
 ### Creating and using aliases
 
-*You can add and list aliases with the `alias` command.*
+*You can add and list aliases with the **`alias`** command.*
 
 For example:
 
@@ -601,7 +601,7 @@ $ alias rm='rm -i'
 
 
 
-*If you want to remove an alias, type `unalias`.*
+*If you want to remove an alias, type **`unalias`**.*
 
 - (Remember that if the alias is set in a configuration file, it will be set again when you open another shell.)
 
@@ -611,8 +611,8 @@ $ alias rm='rm -i'
 
 Type: 
 
-- `exit`
-- Ctrl+D.
+- **`exit`**
+- **Ctrl+D**.
 
 
 
@@ -636,21 +636,21 @@ Several configuration files support how your shell behaves.
 
 
 
-The following table shows the files that are of interest to anyone using the bash shell in Linux.(`~` in the filenames to indicate that the file is located in each user's home directory.)
+The following table shows the files that are of interest to anyone using the bash shell in Linux.(**`~`** in the filenames to indicate that the file is located in each user's home directory.)
 
 | File              | Description                              |
 | ----------------- | ---------------------------------------- |
 | `/etc/profile`    | This sets up user environment information for every user. It is executed when you first log in. This file provides values for your path, in addition to setting environment variables for such things as the location of your mailbox and the size of your history files. Finally, `/etc/profile` gathers shell settings from configuration files in the `etc/profile.d` directory. |
 | `/etc/bashrc`     | This executes for every user who runs the bash shell, each time a bash shell is opened. It sets the default prompt and may add one or more aliases. Values in this file can be overridden by information in each user's `~/.bashrc` file. |
 | `~/.bash_profile` | This is used by each user to enter information that is specific to his or her use of the shell. It is executed only once, when the user logs in. By default, it sets a few environment variables and executes the user's `.bashrc` file. This is a good place to add environment variables because, once set, they are inherited by future shells. |
-| `~/.bashrc`       | This contains the information that is specific to your bash shells. *It is read when you log in and also each time you open a new bash shell.* This is the best location to add aliases so that your shell picks them up. |
+| `~/.bashrc`       | This contains the information that is specific to your bash shells. *It is read when you log in and also each time you open a new bash shell. This is the best location to add aliases so that your shell picks them up.* |
 | `~/.bash_logout`  | This executes each time you log out (exit the last bash shell). By default, it simply clears your screen. |
 
 - *To change the `/etc/profile` or `etc/bashrc` files, you must be the root user.*
 - *Users can change the information in the `$HOME/.bash_profile`, `$HOME/.bashrc` and `$HOME/.bash_logout` files in their own home directories.*
 - ​
 
-Until you learn to use the `vi` editor, you can use a simple editor called `nano` to edit plain-text files.
+Until you learn to use the `vi` editor, you can use a simple editor called **`nano`** to edit plain-text files.
 
 For example:
 
@@ -660,7 +660,7 @@ For example:
 
   *With the file open in `nano`, move the cursor down to the bottom of the file. Type the line you want (for example, you could type alias `d='date +%D'`).*
 
-  To save the file, press `Ctrl+O` (the letter O); to quit, press `Ctrl+X`. The next time you log in or open a new shell, you can use the new alias (in this case, just type `d`). 
+  To save the file, press **Ctrl+O** (the letter O); to quit, press **Ctrl+X**. The next time you log in or open a new shell, you can use the new alias (in this case, just type `d`). 
 
 - *To have the new information you just added to the file available from the current shell, type the following:*
 
@@ -685,7 +685,7 @@ Your prompt consists of a set of characters that appear each time the shell is r
 - *If you are setting your prompt temporarily by typing at the shell, you should put the value of `PS1` in quotes.* 
   - For example, you could type export `PS1="[\t \w]\$ "` to see a prompt that looks like this: `[20:26:32 /var/spool]$`.
 
-- *To make a change to your prompt permanent, add the value of `PS1` to your `.bashrc` file in your home directory.*
+- *To make a change to your prompt permanent, add the value of **`PS1`** to your `.bashrc` file in your home directory.*
 
   - There may already be a `PS1` value in that file that you can modify. Refer to the Bash Prompt HOWTO (http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO) for information on changing colors, commands, and other features of your bash shell prompt.
 
@@ -719,9 +719,9 @@ Your prompt consists of a set of characters that appear each time the shell is r
 
 *You might want to consider adding a few environment variables to your `$HOME/.bashrc` file.* These can help make working with the shell more efficient and effective:
 
-- `TMOUT`
+- **`TMOUT`**
 
-- `PATH`
+- **`PATH`**
 
   - If you often use directories of commands that are not in your path, you can permanently add them. 
 
@@ -858,15 +858,13 @@ In Linux, files are organized within a hierarchy of directories.
 
 
 
-**Root directory**, represented by a single slash (`/`).	
-
-
+**Root directory**, represented by a single slash (**`/`**).
 
 The Linux  lesystem is organized as a hierarchy of directories:
 
 <img src="images/linux-bible-chapter-04-01.png" width="400">
 
-*Some of these Linux directories may interest you:*
+**Some of these Linux directories may interest you:**
 
 - `/bin`—Contains common Linux user commands, such as `ls`, `sort`, `date`, and `chmod`.
 - `/boot`—Has the bootable Linux kernel and boot loader configuration files (GRUB).
@@ -926,13 +924,13 @@ When you log in to a Linux system and open a shell, you are placed in your home 
 
 **Commands to Create and Use Files**
 
-| Command | Result                                   |
-| ------- | ---------------------------------------- |
-| `cd`    | Changes to another direcotry             |
-| `pwd`   | Prints the name of the current working directory |
-| `mkdir` | Creates a directory                      |
-| `chmod` | *Changes the permission on a file or directory* |
-| `ls`    | List the contents of a directory         |
+| Command     | Result                                   |
+| ----------- | ---------------------------------------- |
+| `cd`        | Changes to another direcotry             |
+| `pwd`       | Prints the name of the current working directory |
+| **`mkdir`** | Creates a directory                      |
+| **`chmod`** | *Changes the permission on a file or directory* |
+| `ls`        | List the contents of a directory         |
 
 - Return your home directory:
 
@@ -941,7 +939,7 @@ When you log in to a Linux system and open a shell, you are placed in your home 
   $ cd ~
   ```
 
-  - Tilde `~` can represent your home directory. So you can:
+  - Tilde **`~`** can represent your home directory. So you can:
 
     ```
     $ cd ~/Music
@@ -949,7 +947,7 @@ When you log in to a Linux system and open a shell, you are placed in your home 
     /home/justin/Music
     ```
 
-- Use `..` to go to a directory above the current directory.
+- Use **`..`** to go to a directory above the current directory.
 
 
 
@@ -963,9 +961,9 @@ Whether you are listing, moving, copying, removing, or otherwise acting on files
 
 ### Using file-matching metacharacters
 
-- `*` — Matches any number of characters
-- `?` — Matches any one character.
-- `[...]` — Matches any one of the characters between the brackets, which can include a hyphen-separated range of letters or numbers.
+- **`*`** — Matches any number of characters
+- **`?`** — Matches any one character.
+- **`[...]`** — Matches any one of the characters between the brackets, which can include a hyphen-separated range of letters or numbers.
 
 For example:
 
@@ -975,7 +973,7 @@ For example:
   $ touch apple banana grape grapefruit watermelon
   ```
 
-  *The `touch` command creates empty files.*
+  *The **`touch`** command creates empty files.*
 
 - Now, let's try to use some metacharacters:
 
@@ -1004,16 +1002,16 @@ For example:
 
   ​
 
-### Using file-redirection metacharacters
+### *Using file-redirection metacharacters*
 
-- `<` — Directs the contents of a file to the command.
+- **`<`** — Directs the contents of a file to the command.
   - In most cases, this is the default action expected by te command and the use of the character is optional;
   - Using `less bigfile` is the same as `less < bigfile`.
-- `>` — Directs the standard output of a command to a file.
+- **`>`** — Directs the standard output of a command to a file.
   - If the file exists, the content of that file is overwritten.
-- `2>` — Directs standard error (error messages) to the file.
-- `&>` — Directs both standard output and standard error to the file.
-- `>>` — Directs the output of a command to a file
+- **`2>`** — Directs standard error (error messages) to the file.
+- **`&>`** — Directs both standard output and standard error to the file.
+- **`>>`** — Directs the output of a command to a file
   - adding the output to the end of the existing file.
 
 For example:
@@ -1026,9 +1024,9 @@ $ echo "I finished the project on $(date)" >> ~/projects
 
 
 
-Another type of redirection, referred to as *here text* (also called a *here document*), enables you to type text that can be used as standard input for a command.
+Another type of redirection, referred to as **here text** (also called a *here document*), enables you to type text that can be used as standard input for a command.
 
-- *Here documents involve entering two less-than characters (`<<`) after a command, followed by a word.*
+- *Here documents involve entering two less-than characters (**`<<`**) after a command, followed by a word.*
 
 - *All typing following that word is taken as user input until the word is repeated on a line by itself.*
 
@@ -1062,5 +1060,5 @@ Another type of redirection, referred to as *here text* (also called a *here doc
 
 ### Using brace expansions characters
 
-By using curly braces(`{}`), you can expand out a set of characters 
+By using curly braces(**`{}`**), you can expand out a set of characters 
 
