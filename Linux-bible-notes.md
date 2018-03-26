@@ -1062,3 +1062,275 @@ Another type of redirection, referred to as **here text** (also called a *here d
 
 By using curly braces(**`{}`**), you can expand out a set of characters 
 
+
+
+…..
+
+…….
+
+
+
+
+
+
+
+# Chapter 5 Working with Text Files
+
+## Editing Files with vim
+
+Two main operating mode:
+
+- command
+- input
+
+vi editor starts in command mode.
+
+
+
+*Adding text:*
+
+- `a`
+  - add command. 
+  - input text that starts to the right of the cursor.
+- `A`
+  - Add at end command. 
+  - Input text starting at the end of the current line.
+- `i`
+  - Insert command.
+  - Input text that starts to the left of the cursor.
+- `I`
+  - Insert at beginning command.
+  - Input text that starts at the beginning of the current line.
+- `o`
+  - open below command.
+  - Open a line below the current line and put you in insert mode.
+- `O`
+  - Open above command.
+  - Open a line above the current line and imputs you in insert mode.
+
+
+
+*Moving around in the text:*
+
+- Arrow keys / `h`,`l`,`j`,`k`;
+- `w`
+  - to the beginning of the next word (delimited by the spaces, tabs or punctuation).
+- `W`
+  - to the beginning of the next word (delimited by the spaces, tabs).
+- `b`
+  - to the beginning of the previous word (delimited by the spaces, tabs or punctuation).
+- `B`
+  - to the beginning of the previous word (delimited by the spaces, tabs).
+- `0`(zero)
+  - to the beginning of teh current line.
+- `$`
+  - to the end of the current line.
+- `H`
+  - to the Upper-left corner of the screen
+- `M`
+  - to the first character of the middle line on the screen.
+- `L`
+  - to the lower-left corner of the screen.
+
+
+
+*Deleting, copying, and changing text:*
+
+- `x`
+  - Deletes the character under the cursor.
+- `X`
+  - Deletes the character directly before the cursor.
+- `d<?>`
+  - Deletes come text.
+- `c<?>`
+  - Changes come text.
+- `y<?>`
+  - Yanks (copies) come text.
+
+`<?>` *after each letter in the preceding list identifies the place where you can use a movement command to choose what you are deleting, changing, or yanking.*
+
+For example:
+
+- `dw`
+  - Delete a word after the current cursor position.
+- `db`
+  - Delete a word before the current cursor position.
+- `dd`
+  - Delete the entire current line.
+- `c$`
+  - *Erase from the current character to the end of the current line (`$`) and goes into input mode.*
+- `c0`
+  - *Erase from te previous character to the beginning of the current line.*
+- `cl`
+  - Erase the current letter and goes into input mode.
+- `cc`
+  - Erase the line and goes intto input mode.
+- `yy`
+  - Copy(`y`) the current line(`y`) into the buffer.
+- `y)`
+  - Copy the current sentence(`)`) to the right of the cursor, into the buffer.
+- `y}`
+  - Copy the current paragraph, to the right of the cursor, into the buffer.
+
+
+
+*Any of the commands just shown can be further modified using numbers, as you can see in the following examples:*
+
+- `3dd`
+  - Deletes(`d`) three(`3`) line(`d`), beginning at the current line.
+- `3dw`
+  - Deletes(`d`) the next three(`3`) words(`w`).
+- `5cl`
+  - Changes(`c`) the next five(`5`) letters(`l`).*(that is, removes the letters and enters input mode)*.
+- `12j`
+  - Moves down(`j`) 12 lines(`12`).
+- `5cw`
+  - Erases(`c`) the next five (`5`) words(`w`) and goes into input mode.
+- `4y)`
+  - Copies(`y`) the next four(`4`) sentences(`)`).
+
+
+
+*Pasting (putting) text*
+
+- `P`
+  - Puts the copied text to the left of the cursor if the text consists of letters or words.
+  - Puts the copied text above the current line if the copied text contains lines of text.
+- `p`
+  - Puts the copied text to the right of the cursor if the text consists of letters or words.
+  - Puts the copied text below the current line if the copied text contains lines of text.
+
+
+
+*Repeating commands*
+
+- `.`
+
+
+
+*Exiting vi*
+
+- `ZZ`
+  - Saves the current changes to the file and exits from `vi`.
+- `:w`
+  - Saves the current file but doesn't exit from `vi`.
+- `:wq`
+  - Works the same as `ZZ`.
+- `:q`
+  - Quits the current file.
+  - This works only if you don't have any unsaved changes.
+- `:q!`
+  - Quits the current file and doesn't save the changes you just made to the file.
+
+
+
+*The following tips to smooth out your first trials with `vi`:*
+
+- `Esc`
+  - Back to command mode.
+- `u`
+  - *Undo the previous change.*
+- `Ctrl+R`
+  - *Redo, undoes your undo.*
+- `:!command`
+  - *Run a shell command while you are in `vi` using `:!` followed by a shell command name.*
+- `Ctrl+G`
+  - Display some messages.
+
+
+
+*Skipping around in the file:*
+
+- `Ctrl+f`
+  - One page ahead
+- `Ctrl+b`
+  - One page back
+- `Ctrl+d`
+  - One-half page ahead
+- `Ctrl+u`
+  - One-half page back
+- `G`
+  - to the last line of the file.
+- `1G`
+  - to the first line of the file.
+- `35G`
+  - to any line number.
+
+
+
+*Search for text:*
+
+- `/hello`
+  - Search forward for the word `hello`.
+- `?goodbye`
+  - Search backward for the word `goodbye`.
+- `/The.*foot`
+  - Searches forward for a line that has the word `The` in it and also, after that at some point, the word `foot`.
+- `?[pP]rint`
+  - Searches backward for either `print` or `Print`. 
+  - *Remember that casematters in Linux, so make use of brackets to search for words that could have different capitalization.*
+
+*After you have entered a search term, simply type `n` or `N` to search again* in the same direction(`n`) or the opposite direction (`N`) for the term.
+
+
+
+*Using ex mode:*
+
+When you type a colon and the cursor goes to the bottom of the screen, you are essentially in `ex` mode.
+
+- `:g/Local`
+  - search for the word `Local`, and prints every occurrence of that lie from the file.
+- `:s/Local/Remote`
+  - Substitute `Remote` for the first occurrence of the word `Local` on the current line.
+- `:s/Local/s//Remote`
+  - Substitute `Remote` for the first occurrence of the word `Local` on every line.
+- `:s/Local/s//Remote/g`
+  - Substitute `Remote` for the every occurrence of the word `Local` in the entire file.
+- `:s/Local/s//Remote/gp`
+  - Substitutes every occurrence of the word `Local` withthe word `Remote` in the entire file, and then prints each line so you can see thechanges (piping it through less if output fills more than one page).
+
+
+
+*Learning more about vim: **vimtutor**.*
+
+
+
+
+
+## Finding Files
+
+- `locate` — find commands by name;
+- `find` — find files based on lots of different attributes;
+- `grep` — search within text files to find line in files that contain search text.
+
+
+
+#### Using `locate` to find files by name
+
+On most Linux systems, the `updatedb` command runs once per day to gather the names of files throughout your Linux system into a database.
+
+By running the `locate` command, you can search that database to find the location of files stored in that database.
+
+
+
+- faster
+- `locate` cannot find any files added to the system since the previous time the database was created.
+  - Not every file in your filesystem is stored in the database. The contents of the `/etc/updatedb.conf` file limit which filenames are collected by pruning out select mount types, filesystem types, file types, and mount points.
+  - ​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

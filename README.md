@@ -1,7 +1,3 @@
-# learning-note
-My learning notes for many subjects/books.
-
-### Now Learning:
 
 **Books**:
 
