@@ -1313,10 +1313,190 @@ By running the `locate` command, you can search that database to find the locati
 
 
 
+Compare `locate` with `find`
+
 - faster
 - `locate` cannot find any files added to the system since the previous time the database was created.
-  - Not every file in your filesystem is stored in the database. The contents of the `/etc/updatedb.conf` file limit which filenames are collected by pruning out select mount types, filesystem types, file types, and mount points.
-  - ​
+  - Not every file in your filesystem is stored in the database. 
+  - *The contents of the `/etc/updatedb.conf` file limit which filenames are collected by pruning out select mount types, filesystem types, file types, and mount points.???*
+- *As a regular user, you can't see any files from the locate database that you can't see in the filesystem normally.*
+- When you search for a string, the string can appear anywhere in a file's path.
+- If you add files to your system after `updatedb` runs, you can't locate those files until `updatedb` runs again.
+  - To get the database to contain all files up to the current moment, you can simply run `updatedb` from the shell as root.
+
+
+
+
+Unlike the `find` command, which uses the `-name` option to find filenames, the `locate` command locates teh string you enter if it exists in any part of the file's path.
+
+
+
+#### Searching for files with `find`
+
+The best command for searching your filesystem for files, based on a variety of attributes.
+
+After files are found, you can act on those files as well by running any commands you want on them.
+
+- slower than `locate`, but gives you an up-to-the-moment view of the files on your Linux system.
+  - You can also tell `find` to start at a particular point in the filesystem, so the search can go faster by limiting the area of the filesystem being searched.
+- Nearly any file attribute you can think of can be used as a search option.
+
+The `find` command finds all files and directories below the current directory.
+
+```
+$ find $HOME -ls
+```
+
+A special option to the find command is `-ls`. A long listing (ownership, permission, size, and so on) is printed with each file when you add `-ls` to the find command (similar to output of the `ls -l` command). 
+
+
+
+>If, as a regular user, you are searching an area of the  lesystem where you don’t have full permission to access all files it contains (such as the /etc directory), you might receive lots of error messages when you search with find. To get rid of those messages, direct standard errors to `/dev/null`. To do that, add the following to the end of the
+>command line: `2> /dev/null`. The 2> redirects standard error (STDERR) to the next option (in this case `/dev/null`, where the output is discarded).
+
+
+
+*Finding file by name:*
+
+- To find files by name, you can use the `-name` and `-iname` options.
+
+- To make the search more flexible, you can use file-matching characters, such as asterisks(`*`) and question mark(`?`), as in the following examples:
+
+  ```
+  # find /etc -name passwd 
+  /etc/pam.d/passwd
+  /etc/passwd
+  # find /etc -iname '*passwd*' 
+  /etc/pam.d/passwd 
+  /etc/passwd-
+  /etc/passwd.OLD 
+  /etc/passwd 
+  /etc/MYPASSWD 
+  /etc/security/opasswd
+  ```
+
+  - Using the `-name` option and no asterisks, the first example above lists any files in the `/etc` directory that are named `passwd` exactly.
+  - By using `-iname` instead, you can match any combination of upper and lower case. 
+  - Using asterisks, you can match any filename that includes the word `passwd`.
+
+
+
+*Finding file by size:*
+
+`-size` option enables you to search for files that are exactly, smaller than, or larger than a selected size, as you can see in the following examples:
+
+```
+$ find /usr/share/ -size +10M
+$ find /mostlybig -size -1M
+$ find /bigdata -size +500M -size -5G -exec du -sh {} \;
+```
+
+- The first example in the preceding code finds files larger than 10MB. 
+- The second finds files less than 1MB. 
+- In the third example, I’m searching for ISO images and video files that are between 500MB and 5GB. This includes an example of the `-exec` option (which I describe later) to run the `du` command on each file to see its size.
+
+
+
+*Finding files by user*
+
+You can search for a particular owner(`-user`) or group(`-group`) when you try to find files.
+
+By using `-not` and `-or`, you can refine your search for files associated with specific users or groups, as you can see in the following examples:
+
+```
+$ find /home -user chris -ls
+# find /home -user chris -or -user joe -ls
+# find /etc -group ntp -ls
+# find /var/spool -not -user root -ls		
+```
+
+- The first example outputs a long listing of all files under the `/home` directory that are owned by the user chris. 
+- The next lists files owned by chris or joe. 
+- The find command of `/etc` turns up all files that have `ntp` as their primary group assignment. 
+- The last example shows all files under `/var/spool` that are not owned by root.
+
+
+
+*Finding files by permission*
+
+Searching for files by permission is an excellent way to turn up security issues on your system or uncover access issues.
+
+Just as you changed permissions on files using numbers or letters (with the `chmod` command), you can likewise find files based on number or letter permissions along with the `-perm` options.
+
+```
+$ find /bin -perm 755 -ls
+$ find /home/justin/ -perm -222 -type d -ls
+```
+
+- Each of those three numbers varies from no permission (0) to full read/write/execute permission (7), by adding read (4), write (2), and execute (1) bits together. 
+- With a hyphen (`-`) in front of the number, all three of the bits indicated must match; with a plus (`+`) in front of it, any of the numbers can match for the search to find a file. The full, exact numbers must match if neither a hyphen or plus is used.
+- Notice that, in this case, the -type d is added to match only directories.
+
+```
+$ find /myreadonly -perm +222 -type f
+$ find . -perm -002 -type f -ls
+```
+
+- Using `-perm +222`, you can find any file (-type `f`) that has write permission turned on for the user, group, or other.
+- The last example, `-perm +002`, is very useful for finding files that have open write permission for “other,” regardless of how the other permission bits are set.
+
+​			
+
+*Finding files by date and time*
+
+*Date and time stamps are stored for each file when it is created, when it is accessed, when its content is modified, or when its metadata is changed.*
+
+- *Metadata includes owner, group, time stamp, file size, permissions, and other information stored in the file's inode.*
+
+You might want to search for file data or metadata changes for any of the following reasons:
+
+- You just changed the contents of a configuration file, and you can't remember which one, So you search `/etc` to see what has changed in the past 10 minutes:
+
+  ```
+  $ find /etc/ -mmin -10
+  ```
+
+- You suspect that someone hacked your system three days ago. So you search the system to see if any commands have had their ownership or permissions changed in the past three days:
+
+  ```
+  $ find /bin /usr/bin /sbin /usr/sbin -ctime -3
+  ```
+
+- You want to find files in your FTP server (`var/ftp`) and web server (`/var/www`) that have not be accessed in more than 300 days, so you see if any need to be deleted:
+
+  ```
+  $ find /var/ftp /var/www -atime +300
+  ```
+
+- *The `time` options enable you to search based on the number of days since each file was accessed(`-atime`), was changed(`-ctime`), or has its metadata changed(`-mtime`). The `min` options do the same in minutes.*
+
+  - Numbers that you give as arguments to the `min` and `time` options are preceded by a hyphen or a plus.
+    - Hyphen indicate a time from the current time to that number of minutes or days ago.
+    - Plus sign indicate time from the number of minutes or days age and older.
+    - With no hyphen or plus, the exact number is matched.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
