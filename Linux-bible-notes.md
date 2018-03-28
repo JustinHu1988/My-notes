@@ -1333,7 +1333,7 @@ Unlike the `find` command, which uses the `-name` option to find filenames, the 
 
 #### Searching for files with `find`
 
-The best command for searching your filesystem for files, based on a variety of attributes.
+*The best command for searching your filesystem for files, based on a variety of attributes.*
 
 After files are found, you can act on those files as well by running any commands you want on them.
 
@@ -1440,7 +1440,7 @@ $ find . -perm -002 -type f -ls
 - Using `-perm +222`, you can find any file (-type `f`) that has write permission turned on for the user, group, or other.
 - The last example, `-perm +002`, is very useful for finding files that have open write permission for “other,” regardless of how the other permission bits are set.
 
-​			
+  ​		
 
 *Finding files by date and time*
 
@@ -1471,18 +1471,183 @@ You might want to search for file data or metadata changes for any of the follow
 - *The `time` options enable you to search based on the number of days since each file was accessed(`-atime`), was changed(`-ctime`), or has its metadata changed(`-mtime`). The `min` options do the same in minutes.*
 
   - Numbers that you give as arguments to the `min` and `time` options are preceded by a hyphen or a plus.
-    - Hyphen indicate a time from the current time to that number of minutes or days ago.
-    - Plus sign indicate time from the number of minutes or days age and older.
-    - With no hyphen or plus, the exact number is matched.
+    - *Hyphen indicate a time from the current time to that number of minutes or days ago.*
+    - *Plus sign indicate time from the number of minutes or days age and older.*
+    - *With no hyphen or plus, the exact number is matched.*
 
 
 
 
+*Using `-not` `-and` `-or` when finding files*
+
+Example:
+
+- There is a shared directory called `/var/all`. This command line enables you to find files that are owned by either `joe` or `chris`.
+
+  ```
+  $ find /var/all \( -user joe -or -user chris \) -ls
+  ```
+
+- This command line searches for files owned by the user `joe`, but only those that are not assigned to the group `joe`:
+
+  ```
+  $ find /var/all -user joe -not -group joe -ls
+  ```
+
+- You can also add multiple requirements on your searches. Here, a file must be owned by the user `joe` and must also be more than 1MB in size:
+
+  ```
+  $ find /var/all -user joe -and -size +1M -ls
+  ```
+
+  ​
+
+*Finding files and executing commands:*
+
+- One of the most powerful features of the find command is the capability to execute commands on any files you find.
+
+- With **the `exec` option**, the command you use is executed on every file found, without stopping to ask if that's okay.
+
+- **The `-ok` option** stops at each matched file and asks whether you want to run the command on it.
+
+- The syntax for using `-exec` and `-ok` is the same:
+
+  ```
+  $ find [options] -exec command {} \;
+  $ find [options] -find command {} \;
+  ```
+
+  - The set of curly braces indicates where on the command line to read in each file that is found. Each file can be included in the command line multiple times, if you laike.
+  - To end the line, you need to add a backslash and semicolon (`\;`).
+
+- Example:
+
+  - This command finds any file named `iptables` under the `/etc` directory and includes that name in the output of an echo command:
+
+    ```
+    $ find /etc -iname iptables -exec echo "I found {}" \;
+    I found /etc/bash_completion.d/iptables
+    I found /etc/sysconfig/iptables
+    ```
+
+  - This command finds every file under the `usr/share` directory that is more than 5MB in size. Then it lists the size of each file with the `du` command. The output of `find` is then sorted by size, from largest to smallest. With `-exec` entered, all entires found are processed, without prompting:
+
+    ```
+    $ find /usr/share -size +5M -exec du {} \; | sort -nr
+    ```
+
+  - The `-ok` option enables you to choose, one at a time, whether each file found is acted upon by the command you enter. The next example shows that: find all files that belong to `joe` in the `/var/allusers` directory (and its subdirectories) and move them to the `tmp/joe` directory.
+
+    ```
+    # find /var/allusers/ -user joe -ok mv {} /tmp/joe/ \;
+    ```
+
+    Notice in the preceding code that you are prompted for each file that is found before it is moved to the /tmp/joe directory. You would simply type y and press Enter at each line to move the file, or just press Enter to skip it.
+
+
+
+#### Searching in files with `grep`
+
+- If you want to search for files that contain a certain search term, you can use the grep command. 
+
+- With `grep`, you can search a single file or search a whole directory structure of files recursively.
+
+- *When you search, you can have every line containing the term printed on your screen (standard output) or just list the names of the files that contain the search term.*
+
+- By default, grep searches text in a case-sensitive way, although you can do case-insensitive searches as well.
+
+- *Instead of just searching files, you can also use grep to search standard output.*
+
+  - if a command turns out lots of text and you want to find only lines that contain certain text, you can use grep to filter just want you want.
+
+- Example:
+
+  ```
+  $ grep desktop /etc/services
+  $ grep -i desktop  /etc/services
+  ```
+
+- To search for lines that don't comain a selected text string, use the `-v` option.
+
+  - Example:
+
+    ```
+    $ grep -vi tcp /etc/services
+    ```
+
+    all lines from the `etc/services` file are displayed except those containing the text `tcp` (case-insensitive).
+
+- To do recursive searches, use the `-r` option and a directory as an argument.
+
+- `-l` options just lists files that include the search text, without showing the actual lines of text.
+
+- Example:
+
+  ```
+  $ grep -rli preedns /usr/share/doc/
+
+  $ grep -ri --color root /etc/sysconfig/
+  ```
+
+- *To search the output of a command for a term, you can pipe the output to the `grep` command.*
+
+  - For example, I know that IP addresses are listed on output line from the `ip` command that include the string `inet`. So I can use `grep` to just display those lines:
+
+    ```
+    $ ip addr show | grep inet
+    ```
+
+    ​
 
 
 
 
+​					
+Being able to work with plain-text files is a critical skill for using Linux. Because so many configuration files and document files are in plain-text format, you need to become proficient with a text editor to effectively use Linux. Finding filenames and content in files are also critical skills. In this chapter, you learned to use the locate and `find` commands for finding files and `grep` for searching files.
 
+
+
+​			
+
+# Chapter 6 Managing Running Processes
+
+From a shell, you can launch processes, and then pause, stop, or kill them. You can also put them in the background and bring them to the foreground.
+
+
+
+## Understanding Processes
+
+A process is a running instance of a command.
+
+- Process ID
+- Each process, when it is run, is associated with a particular user account and group account.
+
+> Commands that display information about running processes get most of that information from raw data stored in the `/proc` file system. Each process stores its information in a subdirectory of `/proc`, named after the process ID of that process.
+
+## Listing Processes
+
+- `ps`
+- `top`
+
+#### `ps`
+
+The most common utility for checking running processes is the `ps` command.
+
+- Example:
+
+  ```
+  $ ps u
+  USER PID %CPU %MEM  VSZ  RSS   TTY STAT START TIME COMMAND 
+  jake 2147 0.0  0.7 1836 1020  tty1 S+   14:50 0:00 -bash 
+  jake 2310 0.0  0.7 2592  912  tty1 R+   18:22 0:00 ps u
+  ```
+  - the `u` option asks that usernames be shown, as well as other information such as the time the process started and memory and CPU usage for processes associated with the current user.
+  - The processes shown are associated with the current terminal(`tty1`).
+  - The first process show that the user named `jake` opened a bash shell after logging in.
+  - The next process shows that `jake` has run the `ps u` command.
+  - `tty1` is being used for the login session.
+  - The `STAT` column represents the state of the process, with `R` indicating a currently running process and `S` representing a sleeping process.
+    - Several other values can appear under the `STAT` column. For example, a plus sign (`+`) indicates that the process is associated with the foreground operations.
 
 
 
