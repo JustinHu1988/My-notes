@@ -1641,37 +1641,60 @@ The most common utility for checking running processes is the `ps` command.
   jake 2147 0.0  0.7 1836 1020  tty1 S+   14:50 0:00 -bash 
   jake 2310 0.0  0.7 2592  912  tty1 R+   18:22 0:00 ps u
   ```
+
   - the `u` option asks that usernames be shown, as well as other information such as the time the process started and memory and CPU usage for processes associated with the current user.
   - The processes shown are associated with the current terminal(`tty1`).
   - The first process show that the user named `jake` opened a bash shell after logging in.
   - The next process shows that `jake` has run the `ps u` command.
   - `tty1` is being used for the login session.
-  - The `STAT` column represents the state of the process, with `R` indicating a currently running process and `S` representing a sleeping process.
+  - `STAT`: The `STAT` column represents the state of the process, with `R` indicating a currently running process and `S` representing a sleeping process.
     - Several other values can appear under the `STAT` column. For example, a plus sign (`+`) indicates that the process is associated with the foreground operations.
+  - `PID`: You can use the `PID` if you ever need to kill a runaway process or send another kind of signal to a process.
+  - `VSZ`: (virtual set size) shows the size of the image process (in kilobytes).
+  - `RSS`: shows the size of the program in memory.
+    - The `VSZ` and `RSS` sizes may be different because `VSZ` is the amount of memory allocated for the process, whereas `RSS` is the amount that is actually being used. `RSS` memory represents physical memory that cannot be swapped.
+  - `TIME`: shows teh cumulative system time used. (Many commands consume very little CPU time, as reflected by `0:00` for processes that haven't even used a a whole second of CPU time).
 
 
 
+To page through all the processes running on your Linux system for the current user, add the pipe (`|`) and the `less` command to `ps ux`:
+
+```
+$ ps ux | less
+```
+
+To page through all processes running for all users on your system, use the `ps aux` command as follows:
+
+```
+$ ps aux | less
+```
 
 
 
+The `ps` command can be customized to display selected columns of information and to sort information by one of those columns.
+
+- *the next example lists every running process (`-e`) and then follows the `-o` option with every column of information I want to display,* including:
+
+  ```
+  $ ps -eo pid,user,uid,group,gid,vsz,rss,comm | less
+  ```
+
+  The process ID (`pid`), username (`user`), user ID (`uid`), group name (`group`), group ID (`gid`), virtual memory allocated (`vsz`), resident memory used (`rss`), and *the full command line that was run (`comm`)*. By default, output is sorted by process ID number.
+
+- *If you want to sort by a specific column, you can use the `--sort=` option.*
+
+  ```
+  $ ps -eo pid,user,group,gid,vsz,rss,comm --sort=-rss | less
+  ```
+
+  Because I want to see the highest ones first, I put a hyphen in front of that option to sort (`sort=-rss`).
+
+
+  ​
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### `top`
 
 
 
