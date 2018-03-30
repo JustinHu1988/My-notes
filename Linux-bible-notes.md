@@ -1690,11 +1690,192 @@ The `ps` command can be customized to display selected columns of information an
   Because I want to see the highest ones first, I put a hyphen in front of that option to sort (`sort=-rss`).
 
 
-  ​
-
 
 
 #### `top`
+
+The top command provides a screen-oriented means of displaying processes running on your system. When you are running the top, you can press:
+
+- `h` — help
+- `M` - sort by memory usage instead of CPU
+- `P` - return to sorting by CPU
+- `1` - toggle showing CPU usage of all your CPUs.
+- `R` - reverse sort your output
+- `u` - enter a username to display process only for a particular user.
+
+
+
+A common practice is to use `top` to find processes that are consuming too much memory or processing power and then act on those processes in some way.
+
+- A process consuming too much CPU can be reniced to give it less priority to the processors.
+  - *Renicing a process*: `r` - PID - Enter - type a number
+- A process consuming too much memory can be killed.
+  - *Killing a process*: `k` - `15` / `9`
+
+
+
+You also can list processes with System Monitor.
+
+
+
+## Managing Background and Foreground Processes
+
+Although the bash shell doesn't include a GUI for running many programs at once, it does let you move active programs between the background and foreground. 
+
+In this way, you can have lots of stuff running and selectively choose the one you want to deal with at the moment.
+
+
+
+- To stop a running command and put it in the background, press **`Ctrl+Z`**.
+- Any command running in the background might spew output during commands that you run subsequently from that shell.
+  - For example, if output appears from a command running in the background during a `vi` session, simply press **`Ctrl+L`** to redraw the screen to get rid of the output.
+
+
+
+
+
+#### Starting background processes
+
+To place a program in the background at the time you run the program:
+
+- Type an ampersand(**`&`**) at the end of the command line:
+
+  ```
+  $ find /usr > /tmp/allusrfiles &
+  [3] 15971
+  ```
+
+  This example command finds all files on your Linux system (starting from `/usr`), prints those filenames, and puts those names in the file `/tmp/allusrfiles`. The ampersand (`&`) runs that command line in the background. Notice that the job number, `[3]`, and process ID number, `15971`, are displayed when the command is launched. 
+
+- To check which commands you have running in the background, use the **`jobs`** command.
+
+  ```
+  $ jobs
+  [1]  Stopped (tty output) vi /tmp/myfile
+  [2]  Running find /usr -print > /tmp/allusrfiles &
+  [3]  Running nroff -man /usr/man2/* >/tmp/man2 &
+  [4]- Running nroff -man /usr/man3/* >/tmp/man3 &
+  [5]+ Stopped nroff -man /usr/man4/* >/tmp/man4
+  ```
+
+  - The first job shows a text-editing command (`vi`) that I placed in the background and stopped by pressing `Ctrl+Z` while I was editing. 
+
+  - Job 2 shows the find command I just ran.
+
+  - Jobs 3 and 4 show `nroff` commands currently running in the background. 
+
+  - Job 5 had been running in the shell (foreground) until I decided too many processes were running and pressed `Ctrl+Z` to stop job 5 until a few processes had completed.
+
+  - The plus sign (`+`) next to number 5 shows that it was most recently placed in the background.
+
+  - The minus sign (`-`) next to number 4 shows that it was placed in the background just before the most recent background job. 
+
+  - Because job 1 requires terminal input, it cannot run in thebackground. As a result, it is `Stopped` until it is brought to the foreground again.
+
+  - To see the process ID for the background job, add a `-l` option to the jobs command.
+
+    - If you type `ps`, you can use the process ID to figure out which command is for a particular background job.
+
+      ​
+
+#### Using foreground and background commands
+
+You can use **`fg`** to bring any of the commands on the jobs list to the foreground.
+
+- For example:
+
+  ```
+  $ fg %1
+  ```
+
+- *Caution*: Before you put a text processor, word processor, or similar program in the background, make sure you save your file. It's easy to forget you have a program in the background, and you will lose your data if you log out or the computer reboots.
+
+- `%` — Refers to the most recent command put into the background (indicated by the plus sign when you type the `jobs` command).
+
+- `%string` — Refers to a job where the command begins with a particular `string` of character.
+
+  - the `string` must be unambiguous.
+
+- `%?string` — Refers to a job where the command line contains a `string` at any point.
+
+  - the string must be unambiguous or the match fails.
+
+- `%--` — Refers to the previous job stopped before the one most recently stopped.
+
+
+
+If a command is stopped, you can start it running again in the background using the **`bg`** command.
+
+- For example:
+
+  ```
+  $ bg %5
+  ```
+
+
+
+
+
+## Killing and Renicing Processes
+
+- The `kill` command can send a kill signal to any process to end it, assuming you have permission to do so.
+- The `nice` and `renice` commands can be used to set or change the processor priority of a process.
+
+
+
+#### `kill` and `killall`
+
+Although usually used for ending a running process, the **`kill`** and **`killall`** commands can actually be used to send any valid signal to a running process.
+
+- Besides telling a process to end, a signal might tell a process to reread configuration files, pause (stop), or continue after being paused, to name a few possibilities.
+- *Signals are represented by both numbers and names:*
+  - `SIGTERM(15)`
+    - The default signal, which tries to terminate a process cleanly.
+  - `SIGKILL(9)`
+    - To kill a process immediately.
+  - `SIGHUP(1)`
+    - tells a process to reread its configuration files.
+  - `SIGSTOP(17,19,23)`
+    - Pauses a process.
+    - Different numbers are used in different computer architectures. 
+      - For most **x86** and **power PC** architectures, use the middle value.
+      - The first value usually works for **Alpha** and **Sparc**.
+      - The last one is for **MIPS** architecture.
+  - `SIGCONT(19,18,25)`
+    - Continues a stopped process.
+  - `SIGINT(2)`
+    - Interrupt from keyboard.
+  - `SIGQUIT(3)`
+    - Quit from keyboard.
+  - `SIGABRT(6)`
+    - Abort signal from abort(3).
+- Different processes respond to different signals.
+- Processes cannot block `SIGKILL` and `SIGSTOP` signals.
+- Type `man 7 signal` to read about other available signals.
+
+
+
+Using `kill` to signal processes by `PID`:
+
+- ​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
