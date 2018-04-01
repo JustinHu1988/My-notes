@@ -1828,6 +1828,7 @@ If a command is stopped, you can start it running again in the background using 
 Although usually used for ending a running process, the **`kill`** and **`killall`** commands can actually be used to send any valid signal to a running process.
 
 - Besides telling a process to end, a signal might tell a process to reread configuration files, pause (stop), or continue after being paused, to name a few possibilities.
+
 - *Signals are represented by both numbers and names:*
   - `SIGTERM(15)`
     - The default signal, which tries to terminate a process cleanly.
@@ -1849,20 +1850,60 @@ Although usually used for ending a running process, the **`kill`** and **`killal
     - Quit from keyboard.
   - `SIGABRT(6)`
     - Abort signal from abort(3).
+
 - Different processes respond to different signals.
+
 - Processes cannot block `SIGKILL` and `SIGSTOP` signals.
+
 - Type `man 7 signal` to read about other available signals.
 
-
-
-Using `kill` to signal processes by `PID`:
-
-- ​
+  ​
 
 
 
+*Using `kill` to signal processes by `PID`:*
+
+- using commands such as `ps` and `top`, you can find processes you want to send a signal to.
+
+- for example:
+
+  ```
+  $ kill 10432
+  $ kill -15 10432
+  $ kill -SIGKILL 10432
+  ```
+
+- *Another useful signal is `SIGHUP`.* Some server processes, such as the `httpd` process, which provide web services, respond to a `SIGHUP(1)` signal by rereading its configuration files.
+
+  - In fact, the command `service httpd reload` or `systemctl reload httpd` actually sends `SIGHUP` to `httpd` processes running on your system to tell them that configuration files need to be read again.
+
+  - If the `httpd` process had a `PID` of 1833, you could use either of these command to have it read configuration files again:
+
+    ```
+    # kill -1 1833
+    # systemctl reload httpd
+    ```
+
+    ​
 
 
+*Using `killall` to signal processes by name:*
+
+- the potential downside is that you can kill more processes than you mean to if you are not careful. 
+
+  - typing `killal bash` may kill a bunch of shells that you don't mean to kill.
+
+- example:
+
+  ```
+  $ killall -9 testme
+  ```
+
+- `killall` command can be particularly useful if you want to kill a bunch of commands of the same name.
+
+
+
+#### Setting processor priority with `nice` and `renice`
 
 
 
