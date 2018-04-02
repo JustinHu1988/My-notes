@@ -1905,6 +1905,275 @@ Although usually used for ending a running process, the **`kill`** and **`killal
 
 #### Setting processor priority with `nice` and `renice`
 
+Every process running on your system has a nice value between `-20` and `19`.
+
+- By default, the nice value is set to `0`.
+- *The lower the nice value, the more access to the CPUs the process has.*
+- As regular user:
+  - Can set nice value only from `0` to `19`.
+  - Can set the nice value higher, not lower.
+  - Only the user's own processes.
+
+
+
+`nice` command can run a command with a particular nice value:
+
+- ```
+  # nice +5 updatedb
+  ```
+
+
+
+When a process is running, you can change the nice value using the `renice` command:
+
+- ```
+  # renice -n -5 20284
+  ```
+
+
+
+## Limiting Processes with cgroups
+
+`nice` doesn't limit the total amount of resources a particular user or application can consume from a Linux system.
+
+
+
+**Cgroups** can be used to identify a process as a **task**, belonging to a particular **control group**.
+
+- Tasks can be set up in a hierarchy where, for example, there may be a task called daemons that sets default limitations for all daemon server processes, then subtasks that may set specific limits on a web server daemon (`httpd`) or FTP service daemon (`vsftpd`).
+- As a task launches a process, other processes the initial process launches (called **child processes**) inherit the limitations set for the parent process. Those limitations might say that all the processes in a control group have access only to particular processors and certain sets of RAM. Or they may allow access only to up to 30 percent of the total processing power of a machine.
+
+
+
+The types of resources that can be limited by cgroups include the following:
+
+- Storage (blkio) — Limits total input and output access to storage devices (such as hard disks, USB drives, and so on).
+- Processor scheduling (cpu) — Assigns the amount of access a cgroup has to be scheduled for processing power.
+- Process accounting (cpuacct) — Reports on CPU usage. This information can be leveraged to charge clients for the amount of processing power they use.
+- CPU assignment (cpuset) — On systems with multiple CPU cores, assigns a task to a particular set of processors  and associated memory.
+- Device access (devices) — Allows tasks in a cgroup to open or create(mknod) selected device types.
+- Suspend/resume (freezer) — Suspends and resumes cgroup tasks.
+- Memory usage (memory) — Limits memory usage by task. It also creates reports on memory resources used.
+- Network bandwidth (net_cls) — Limits network access to selected cgrouptasks. This is done by tagging network packets to identify the cgroup task that originated the packet and having the Linux traffic controller monitor and restrict packets coming from each cgroup.
+- Network traffic (net_prio) — Sets priorities of network traffic coming from selected cgroups and lets administrators change these priorities on the fly.
+- Name spaces (ns) — Separates cgroups into namespaces, so processes in one cgroup can only see the namespaces associated with the cgroup. Namespaces can include separate process tables, mount tables, and network interfaces.
+
+Knowing how Linux can limit and contain the resource usage by the set of processes assigned to a task will ultimately help you manage your computing resources better. If you are interested in learning more about cgroups, you can refer to the following:
+
+- Red Hat Enterprise Linux Resource Management and Linux Containers Guide—https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html-single/Resource_Management_and_Linux_Containers_Guide/index.html
+- Kernel documentation on cgroups—Refer to files in the /usr/share/doc/kernel-doc-*/Documentation/cgroups directory after installing thekernel-doc package.
+
+​			
+​		
+
+# Chapter 7 Writing Simple Shell Scripts
+
+A **shell script** is a group of commands, functions, variables, or just about anything else you can use from a shell.
+
+- This items are typed into a plain text file. That file can then be run as a command.
+- Linux systems have traditionally used system initialization shell scripts during system startup to run commands needed to get services going.
+- *You can create your own shell scripts to automate the tasks you need to do regularly.*
+
+
+
+## Understanding Shell Scripts
+
+Shell scripts are capable of handling everything from simple one-line commands to something as complex as starting up your Linux system.
+
+
+
+#### Executing and debugging shell scripts
+
+- One of the primary advantages of shell scripts is that they can be opened in any text editor to see what they do.
+- A big disadvantage is that large or complex shell scripts often execute more slowly than compiled programs.
+
+
+
+You can *execute a shell script in two basic ways*:
+
+- *The filename is used as an argument to the shell (such as `bash myscript`).*
+  - In this method, the file does not need to be executable; it just contains a list of shell commands.
+  - The shell specified on the command line is used to interpret the commands in the script file.
+  - This is most common for quick, simple tasks.
+- The shell script may also have the name of the interpreter placed in the first line of the script preceded by `#!`(as `#!/bin/bash`), and have the execute bit of the file containing the script set (using `chmod +x filename`).
+  - *You can then run your script just like any other program in your path simple by typing the name of the script on the command line.*
+
+
+
+When scripts are executed in either manner, options for the program may be specified on the command line.
+
+- Anything following the name of the script is referred to as a **command-line argument**.
+
+
+
+As with writing any software, there is no substitute for clear and thoughtful design and lots of comments.
+
+- The pound sign(`#`) prefaces comments and can take up an entire line or exist on the same line after script code.
+
+- It is best to implement more complex shell scripts in stages, making sure the logic is sound at each step before continuing. *Here are a few good, concise tips to make sure things are working as expected during testing:*
+
+  - In some cases, you can place an `echo` statement at the beginning of lines within the body of a loop and surround the command with quotes. That way, rather than executing the code, you can see what will be executed without making any permanent changes.
+
+  - To achieve teh same goal, you can place dummy `echo` statements throughout the code. If these lines get printed, you know the correct logic branch is being taken.
+
+  - You can use `set -x` near the beginning of the script to display each command that is executed or launch your scripts using:
+
+    ```
+    $ bash -x myscript
+    ```
+
+  - Because useful scripts have a tendency to grow over time, keeping your code readable as you go along is extremely important. Do what you can to keep the logic of your code clean and easy to follow.
+
+
+
+#### Understanding shell variables
+
+Often within a shell script, you want to reuse certain items of information. During the course of processing the shell script, the name or number representing this information may change.
+
+To store information used by a shell script in such a way that it can be easily reused, you can set variables. Variable names within shell scripts are case-sensitive and can be defined in the following manner:
+
+```
+NAME=value
+```
+
+- The first part of a variable is the variable name
+- the second part is the value set for that name.
+- Be sure that the `NAME` and `value` touch the equal sign, without any spaces.
+
+
+
+*Variables can be assigned from constants, such as text, numbers, and underscores.*
+
+- This is useful for initializing values or saving lots of typing for long constants.
+
+- The following examples show variables set to a string of characters (`CITY`) and a numeric value (`PI`):
+
+  ```
+  CITY="Springfield"
+  PI=3.14159265
+  ```
+
+*Variables can contain the output of a command or command sequence.*
+
+- You can accomplish this by preceding the command with a dollar sign and open parenthesis, and following it with a closing parenthesis.
+
+  For example: `MYDATE=$(date)` assigns the output from the `date` command to the `MYDATE` variable. 
+
+- Enclosing the command in backticks (`` `) can have the same effect.
+
+- In this case, the `date` command is run when the variable is set and not each time the variable is read.
+
+
+
+> *Escaping Special Shell Characters (`$`,`` `, ` * `,`!`,...)*
+>
+> - If you want to have the shell interpret a single character literally, precede it with a backslash (`\`).
+>
+> - To have a whole set of characters interpreted literally, surround those characters with single quotes (`'`).
+>
+> - Using *double quotes* is a bit trickier. Surround a set of text with double quotes if you want all but a few characters used literally.
+>
+>   - with text surrounded with double quotes, `$`,`` `, `!` are interpreted specially, but other characters are not.
+>
+>   - For example:
+>
+>     ```
+>     $ echo '$HOME *** `date`'
+>     $HOME *** `date`
+>     $ echo "$HOME *** `date`"
+>     /Users/justin *** Mon Apr 2 16:40:27 CST 2018
+>     ```
+>
+>     ​
+>
+> Using variables is a great way to get information that can change from computer to computer or from day to day.
+
+
+
+*Some examples of variable assignment:*
+
+```
+MACHINE=`uname -n`
+#Sets the output of the uname -n command to the MACHINE variable.
+
+NUM_FILES=$(/bin/ls | wc -l)
+#set NUM_FILES to the number of files in the current directory by piping (|) the output of the ls command to the word count command (wc -l).
+
+BALANCE="$CurBalance"
+#BALANCE is set to the value of the CurBalance variable.
+
+```
+
+
+
+###### *Special shell positional parameters*
+
+There are special variables that the shell assigns for you.
+
+One set of commonly used variables is called **positional parameters** or **command line arguments** and is referenced as `$0`, `$1`, `$2`, … `$n`.
+
+- `$0` is special and is assigned the name used to invoke your script.
+
+- The others are assigned the values of the parameters passed on the command line, in teh order they appeared.
+
+- For example, you had a shell script named `myscript` that contained the following:
+
+  ```
+  #!/bin/bash
+  # Script to echo out command-line arguments
+  echo "The first argument is $1, the second is $2."
+  echo "The command itself is called $0."
+  ```
+
+  Assuming the script is executable and located in a directory in your `$PATH`, the following shows what would happen if you ran that command with `foo` and `bar` as arguments:
+
+  ```
+  $ chmod 755 /home/justin/bin/myscript
+  $ myscript foo bar
+
+  The first argument is foo, the second is bar.
+  The command itself is called /home/justin/bin/myscript
+  ```
+
+- Another variable, *`$#`, tells you how many parameters your script was given.* In the example, `$#` would be `2`.
+
+- *`$@` variable holds all the arguments entered at the command line*.
+
+- *`$?` receives the exit status of the last command executed.*
+
+  - a value of zero means the command exited successfully
+  - anything other than zero indicates an error of some kine.
+
+*For a complete list of special shell variables, refer to the `bash` man page.*
+
+
+
+###### Reading in parameters
+
+**`read`** command:
+
+- you can prompt the user for information, and store that information to use later in your script.
+
+- Example:
+
+  ```
+  #!/bin/bash
+  read -p "Type in an adjective, noun and verb (past tense): " a1 n1 v1
+  echo "He sighed and $v1 to the elixir. Then he ate the $a1 $n1."
+  ```
+
+  ​
+
+
+
+
+
+
+
+
+
+
+
 
 
 
