@@ -455,7 +455,7 @@ For example:
 
 In this way, you can have the standard output of a command become an argument for another command.
 
-The two forms of command substitution are **`$(command)`** and **`` `command` ``** (backticks, not single quotes).
+*The two forms of command substitution are **`$(command)`** and **`` `command` ``** (backticks, not single quotes).*
 
 For example:
 
@@ -1963,8 +1963,8 @@ Knowing how Linux can limit and contain the resource usage by the set of process
 - Red Hat Enterprise Linux Resource Management and Linux Containers Guide—https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html-single/Resource_Management_and_Linux_Containers_Guide/index.html
 - Kernel documentation on cgroups—Refer to files in the /usr/share/doc/kernel-doc-*/Documentation/cgroups directory after installing thekernel-doc package.
 
-​			
-​		
+  ​		
+  ​	
 
 # Chapter 7 Writing Simple Shell Scripts
 
@@ -2150,7 +2150,7 @@ One set of commonly used variables is called **positional parameters** or **comm
 
 ###### Reading in parameters
 
-**`read`** command:
+**`read`** *command:*
 
 - you can prompt the user for information, and store that information to use later in your script.
 
@@ -2162,18 +2162,143 @@ One set of commonly used variables is called **positional parameters** or **comm
   echo "He sighed and $v1 to the elixir. Then he ate the $a1 $n1."
   ```
 
+  if this script were called `sillyscript`, here is how it might run:
+
+  ```
+  $ chmod 755 /home/justin/bin/sillyscript
+  $ sillyscript
+  Type in an adjective, noun and verb (past tense): hairy football danced
+  He sighed and danced to teh elixir. Then he ate the hairy football.
+  ```
+
+
+
+
+###### Parameter expansion in bash
+
+As mentioned earlier, if you want the value of a variable, you precede it with a `$` (for example, `$CITY`).
+
+*This is really just shorthand for the notation `${CITY}`.*
+
+- Curly braces are used when the value of the parameter needs to be placed next to other text without a space.
+
+- Bash has special rules that allow you to expand the value of a variable in different ways. For example:
+
+  - `${var:-value}`: If variable is unset or empty, expand this to `value`.
+  - `${var#pattern}`: Chop the shortest match for `pattern` from the front of `var`'s value.
+  - `${var##pattern}`: Chop the longest match for `pattern` from the front of `var`'s value.
+  - `${var%pattern}`: Chop the shortest match for `pattern` from the end of `var`'s value.
+  - `${var%%pattern}`: Chop the longest match for `pattern` from the end of `var`'s value.
+
+- Try:
+
+  ```
+  $ THIS="Example"
+  $ THIS=${THIS:-"Not Set"}
+  $ THAT=${THAT:-"Not Set"}
+  $ echo $THIS
+  Example
+  $ echo $THAT
+  Not Set
+
+  MYFILENAME=/home/digby/myfile.text
+  FILE=${MYFILENAME##*/}    #FILE becomes myfile.txt
+  DIR=${MYFILENAME%/*}    #DIR becomes /home/digby
+  NAME=${FILE%.*}    #NAME becomes myfile
+  EXTENSION=${FILE##*.}    #EXTENSION becomes txt
+  ```
+
+
+
+#### Performing arithmetic in shell scripts
+
+Bash uses **untyped variables**.
+
+- Unless you tell it otherwise with **`declare`**, your variables are just a bunch of letters to bash.
+- But when you start trying to do arithmetic with them, bash converts then to integers if it can.
+
+
+
+Integer arithmetic can be performed using the built-in **`let`** command or through the external **`expr`** or **`bc`** commands.
+
+- for example, after setting the variable `BIGNUM` value to `1024`, the three commands that follow would all store the value `64` in the `RESULT` variable.
+
+  ```
+  BIGNUM=1024
+  let RESULT=$BIGNUM/16
+  RESULT=`expr $BIGNUM / 16`
+  RESULT=`echo "$BIGNUM / 16" | bc`
+  let foo=$RANDOM; echo $foo
+  ```
+
+Another way to incrementally grow a variable is to use **`$(())`** notation with `++I` added to increment the value of I.
+
+- For example:
+
+  ```
+  $ I=0
+  $ echo The value of I after increment is $((++I))
+  The value of I after increment is 1
+
+  $ echo The value of I before and after increment is $((I++)) and $I
+  The value of I before and after increment is 1 and 2
+  ```
+
   ​
 
+> *Note*:
+>
+> Although most elements of shell scripts are relatively freeform (where whitespace, such as spaces or tabs , is insignificant), both `let` and `expr` are particular about spacing.
+>
+> The `let` command insists on no spaces between each operand and the mathematical operator, whereas the syntax of the `expr` command requires whitespace between each operand and its operator.
+>
+> In contrast to those, `bc` isn't picky about spaces, but can be trickier to use because it does floating-point arithmetic.
+
+To see a complete list of the kinds of arithmetic you can perform using the `let` command, type **`help let`** at the bash prompt.
 
 
 
+#### Using programming constructs in shell scripts
 
+###### "If … then" statements
 
+The most commonly used programming construct is conditional execution, or the `if` statement. There are several variations of `if` statements for testing various types of conditions.
 
+- ```
+  VARIABLE=1
+  if [ $VARIABLE -eq 1 ] ; then
+  echo "The variable is 1"
+  fi
+  ```
 
+  - This is tests if `VARIABLE` is set ot the number 1. If it is, then the `echo` command is used to say that it is set to 1. 
+  - *The `fi` statement then indicates that the `if` statement is complete and processing can continue.*
 
+- Instead of using `-eq`, you can use the equal sign (`=`), as shown in the following example.
 
+  - *The `=` works best for comparing string values, while `-eq` is often better for comparing numbers.*
+  - Using the `else` statement, different words can be echoed if the criterion of the `if` statement isn't met.
+  - *Keep in mind that it's good practice to put strings in double quotes.*
 
+  ```
+  STRING="Friday"
+  if [ $STRING = "Friday" ] ; then
+  echo "WhooHoo. Friday."
+  else
+  echo "Will Friday ever get here?"
+  fi
+  ```
+
+- You can also reverse tests with an exclamation mark(`!`).
+
+  ```
+  STRING="FRIDAY"
+  if [ "$STRING != "Monday" ]; then
+  echo "At least it's not Monday"
+  fi
+  ```
+
+  ​
 
 
 
