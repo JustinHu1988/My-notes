@@ -1995,7 +1995,7 @@ You can *execute a shell script in two basic ways*:
   - In this method, the file does not need to be executable; it just contains a list of shell commands.
   - The shell specified on the command line is used to interpret the commands in the script file.
   - This is most common for quick, simple tasks.
-- The shell script may also have the name of the interpreter placed in the first line of the script preceded by `#!`(as `#!/bin/bash`), and have the execute bit of the file containing the script set (using `chmod +x filename`).
+- *The shell script may also have the name of the interpreter placed in the first line of the script preceded by `#!`(as `#!/bin/bash`), and have the execute bit of the file containing the script set (using `chmod +x filename`).*
   - *You can then run your script just like any other program in your path simple by typing the name of the script on the command line.*
 
 
@@ -2260,7 +2260,7 @@ To see a complete list of the kinds of arithmetic you can perform using the `let
 
 #### Using programming constructs in shell scripts
 
-###### "If … then" statements
+###### "**If … then**" statements
 
 The most commonly used programming construct is conditional execution, or the `if` statement. There are several variations of `if` statements for testing various types of conditions.
 
@@ -2298,7 +2298,205 @@ The most commonly used programming construct is conditional execution, or the `i
   fi
   ```
 
+- `elif` stands for "else if":
+
+  ```
+  filename="$HOME"
+  if [ -f "$filename" ] ; then
+  	echo "$filename is a regular file"
+  elif [ -d "$filename" ] ; then
+  	echo "$filename is a directory"
+  else
+  	echo "I have no idea what $filename is"
+  fi
+  ```
+
+
+As you can see from the preceding examples, the condition you are testing is placed between square brackets `[ ]`.
+
+- When a test expression is evaluated, it returns either a value of `0`, meaning that it is true, or a `1`, meaning that it is false.
+
+Notice that the `echo` lines are indented. The indentation is optional and done only to make the script more readable. 
+
+
+
+**Operators for Test Expressions**
+
+| Operator          | What is Being Tested?                    |
+| ----------------- | ---------------------------------------- |
+| `-a file`         | Does the file exist? (Same as `-e`)      |
+| `-b file`         | Is the file a block special device?      |
+| `-c file`         | Is the file character special (for example, a character device)? Used to identify serial lines and terminal devices. |
+| `-d file`         | Is the file a directory?                 |
+| `-e file`         | Does the file exist?                     |
+| `-f file`         | Does the file exist, and is it a regular file (for example, not a directory, socket, pipe, link, or device file)? |
+| `-g file`         | Does the file have the set-group-id(SGID) bit set? |
+| `-h file`         | Is the file a symbolic link? (Same as `-L`) |
+| `-k file`         | Does the file have the sticky bit set?   |
+| `-L file`         | Is the file a symbolic link?             |
+| `-n string`       | Is the length of the string greater than 0 bytes? |
+| `-O file`         | Do you own the file?                     |
+| `-p file`         | Is the file a named pipe?                |
+| `-r file`         | is the file readable by you?             |
+| `-s file`         | Does the file exist, and is it larger than 0 bytes? |
+| `-S file`         | Does the file exist, and is it a socket? |
+| `-t fd`           | Is the file descriptor connected to a terminal? |
+| `-u file`         | Does the file have the set-user-id(SUID) bit set? |
+| `-w file`         | Is the file writable by you?             |
+| `-x file`         | Is the file executable by you?           |
+| `-z string`       | Is the length of the string 0(zero) bytes? |
+| `expr1 -a expr2`  | Are both the first expression and the second expression true? |
+| `expr1 -o expr2`  | Is either of the two expressions true?   |
+| `file1 -nt file2` | Is the first file newer than the second file (using the modification timestamp)? |
+| `file1 -ot file2` | Is the first file older than the second file (using the modification timestamp)? |
+| `file1 -ef file2` | Are the two files associated by a link (a hard link or a symbolic link)? |
+| `var1 = var2`     | Is the first variable equal to the second variable? |
+| `var1 -eq var2`   | Is the first variable equal to the second variable? |
+| `var1 -ge var2`   | Is the first variable greater than or equal to the second variable? |
+| `var1 -gt var2`   | Is the first variable greater than the second variable? |
+| `var1 -le var2`   | Is the first variable less than or equal to the second variable? |
+| `var1 -lt var2`   | Is the first variable less than the second variable? |
+| `var1 != var2`    | Is the first variable not equal to the second variable? |
+| `var1 -ne var2`   | Is the first variable not equal to the second variable? |
+
+
+
+- There is also a special shorthand method of performing tests that can be useful for simple *one-command actions*.
+
+  - **`||`**: 
+
+    ```
+    # [ test ] || action
+    # Perform simple single command if test is false
+    dirname="/tmp/testdir"
+    [ -d "$dirname" ] || mkdir "$dirname"
+    ```
+
+  - **`&&`**:
+
+    ```
+    # [ test ] && {action}
+    # Perform simple single action if test is true
+    [ $# -ge 3 ] && echo "There are at least 3 command line arguments."
+    ```
+
+- *You can combine the `&&` and `||` operators to make a quick, one-line if -then-else statement.*
+
+  - The following example tests that the directory represented by `$dirname` already exists. If it does, a message says the directory already exists. If it doesn't, the statement creates the directory:
+
+    ```
+    dirname=mydirectory
+    [ -e $dirname ] && echo $dirname already exists || mkdir $dirname
+    ```
+
+
+
+###### The **`case`** command
+
+Similar to a `switch` statement in programming languages.
+
+General form of **`case`** statement:
+
+```
+case "VAR" in
+	Result1)
+		{ body };;
+	Result2)
+		{ body };;
+	*)
+		{ body };;
+esac
+```
+
+- You can use the `case` command to help with your backups.
+
+  - For example:
+
+    ```
+    # Our VAR doesn't have to be a variable,
+    # it can be the output of a command as well
+    # Perform action based on day of week
+    case `date +%a` in
+    	"Mon")
+    		BACKUP=/home/myproject/data0
+    		TYPE=/dev/rft0
+    		;;  # Note the use of the double semi-colon to end each option
+    	"Tue" | "Thu")   # Note the use of the "|" to mean "or"
+    		BACKUP=/home/myproject/data1
+    		TYPE=/dev/rft1
+    		;;
+    	"Wed" | "Fri")
+    		BACKUP=/home/myproject/data2
+    		TYPE=/dev/rft2
+    		;;
+    	*)   # Don't do backups on the weekend.
+    		BACKUP="none"
+    		TYPE=/dev/null
+    		;;
+    esac
+    ```
+
+- The asterisk(`*`) is used as a catchall, similar to the `default` keyword in the C programming language.
+
+
+
+###### The "**for … do**" loop
+
+The syntax:
+
+```
+for VAR in LIST
+do
+	{ body }
+done
+```
+
+- The `for` loop assigns the values in `LIST` to `VAR` one at a time. Then for each value, the body in braces between `do` and `done` is executed.
+
+- *`VAR` can be any variable name, and `LIST` can be composed of pretty much any list of values or anything that generates a list.*
+
+  - For example:
+
+    ```
+    for NUMBER in 0 1 2 3 4 5 6 7 8 9
+    do
+    	echo The number is $NUMBER
+    done
+
+    for FILE in `/bin/ls`  # equal to for FILE in `ls`
+    do
+    	echo $FILE
+    done
+    ```
+
+
+- *You can also write it this way, which is somewhat cleaner:*
+
+  ```
+  for NAME in John Paul Ringo George ;  do
+  	echo $NAME is my favorite Beatle
+  done
+  ```
+
+- *Each element in the `LIST` is separated from the next by whitespace.*
+
+  - *This can cause trouble if you're not careful because some commands, such as `ls -l`, output multiple fields per line, each separated by whitespace.*
+
+- The string `done` ends the `for` statement.
+
+- If you're a die-hard C programmer, *bash allows you to use C syntax to control your loops:*
+
+  ```
+  LIMIT=10
+  # Double parentheses, and no $ on LIMIT even though it's a variable!
+  for ((a=1; a <= LIMIT; a++)) ; do
+  	echo "$a"
+  done
+  ```
+
   ​
+
+###### The "**while … do**" and "**until … do**" loops
 
 
 
