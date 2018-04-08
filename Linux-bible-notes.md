@@ -2543,12 +2543,238 @@ Another way to output the number `0123456789` is to use an `until` loop as follo
 
 
 
-#### Trying some useful text manipulation programs
+#### Trying some useful *text manipulation programs*
 
 Bash is great and has lots of built-in commands, but it usually needs some help to do anything really useful. 
 
 - Some of the most common useful programs you'll see used are `grep`, `cut`, `tr`, `awk`, and `sed`.
-- As with all the best UNIX tools, most of these programs are designed to work with standard input and 
+- As with all the best UNIX tools, most of these programs are designed to work with standard input and standard output, so you can easily use them with pipes and shell scripts.
+
+
+
+
+###### The general regular expression parser
+
+**general regular expression parser (`grep`)** :
+
+- a way to find patterns in files or text. 
+
+- Think of it as a useful search tool.
+
+- Gainning expertise with regular expressions is quite a challenge, but after you master it, you can accomplish many useful things with just the simplest forms.
+
+- For example:
+
+  - You can display a list of all regular user accounts by using `grep` to search for all lines that contain the text `/home` in the `etc/passwd` file as follows:
+
+    ```
+    $ grep /home /etc/passwd
+    ```
+
+  - or you could find all environment variables that begin with `HO` using the following command:
+
+    ```
+    $ env | grep ^HO
+    ```
+
+    ​
+
+###### Remove sections of lines of text(`cut`)
+
+The **`cut`** command can extract fields from a line of text or from files.
+
+- It is very useful for parsing system configuration files into easy-to-digest chunks.
+
+- *You can specify the field separator you want ot use and the fields you want, or you can break up a line based on bytes.*
+
+- For example:
+
+  ```
+  $ grep /home /etc/passwd | cut -d':' -f6 -
+  ```
+
+  This `grep` command line pipes a list of regular users from the `etc/passwd` file and displays the sixth field (`-f6`) as delimited by a colon (`-d':'`). 
+
+  The hyphen at the end tells `cut` to read from standard input (from the pipe).
+
+
+
+###### Translate or delete characters
+
+**`tr`** command is a character-based translator that can be used to replace one character or set of characters with another or to remove a character from a line of text.
+
+- *For example:*
+
+  ```
+  $ FOO="Mixed UPpEr aNd LoWeR cAsE"
+  $ echo $FOO | tr [A-Z] [a-z]
+  ```
+
+  - Translates all uppercase letters to lowercase letters and displays the words `mixed upper and lower case` as a result.
+
+  ```
+  for file in * ; do
+  	f=`echo $file | tr [:blank:] [_]`
+  	[ "$file" = "$f" ] || mv -i -- "$file" "$f"
+  done
+  ```
+
+  - The `tr` command is used on a list of filenames to rename any files in that list so that any tabs or spaces (as indicated by the `[:blank:]` option) contained in a filename are translated into underscores.
+
+
+
+###### The stream editor (`sed`)
+
+The **`sed`** command is a simple scriptable editor, so it can perform only simple edits, such as:
+
+- removing lines that have text matching a certain pattern
+- replacing one pattern of characters with another
+- and so on
+
+
+
+
+
+- You can use the `sed` command to essentially do what the `grep` example does: Search the `/etc/passwd` file for the word `home`.
+
+  ```
+  $ sed -n '/home/p' /etc/passwd
+  ```
+
+- ```
+  $ sed 's/Mac/Linux/g' somefile.txt > fixed_file.txt
+  ```
+
+  In this example, `sed` searches the file `some file.txt` and replaces every instance of the string `Mac` with `Linux`.
+
+  - Notice that the letter `g` is needed at the end of the substitution command to cause every occurrence of `Mac` on each line to be changed to `Linux`. *(Otherwise, only the first instance of `Mac` on each line is changed.)*
+  - The output is then sent ot the `fixed_file.txt` file.
+  - *The output from `sed` goes to `stdout`, so this command redirects the output to a file for safekeeping.*
+
+  *You can get the same result using a pipe:*
+
+  ```
+  $ cat somefile.txt | sed 's/Mac/Linux/g' > fixed_file.txt
+  ```
+
+- ```
+  $ cat somefile.txt | sed 's/ *$//' > fixed_file.txt
+  ```
+
+  By searching for a pattern and replacing it with a null pattern, you delete the original pattern.
+
+  - This example searches the contents of the `somefile.txt` file and replaces extra blank spaces at the end of each line (`s/ *$`) with nothing(`//`).
+  - Results go to the `fixed_file.txt` file.
+
+
+
+#### Using simple shell scripts
+
+Sometimes, the simplest of scripts can be most useful. 
+
+- If you type the same sequence of commands repetitively, it makes sense to store those commands(once!) in a file.
+
+
+
+The following sections offer a couple of simple, but useful, shell scripts.
+
+###### Telephone list
+
+This idea has been handed down from generation to generation of old UNIX hacks.
+
+It's really quite simple, but it employs several of the concepts just introduced.
+
+```
+#!/bin/bash                  
+# (@)/ph
+# A very simple telephone list
+# Type "ph new name number" to add to the list, or
+# just type "ph name" to get a phone number
+
+PHONELIST=~/.phonelist.txt
+
+# If no command line parameters ($#), there
+# is a problem, so ask what they're talking about.
+if [ $# -lt 1 ]; then
+	echo "Whose phone number did you want?"
+	exit 1
+fi
+
+# Did you want to add a new phone number?
+if [ $1 = "new" ]; then
+	shift
+	  echo $* >> $PHONELIST
+	echo $* added to database
+	exit 0
+fi
+
+# Nope. But does the file have anything in it yet?
+# This might be our first time using it, after all.
+if [ ! -s $PHONELIST ] ; then
+	echo "No names in the phone list yet!"
+	exit 1
+else
+	grep -i -q "$*" $PHONELIST   # Quietly search the file
+	if [ $? -ne 0 ] ; then   # Did we find anything?
+		echo "Sorry, that name was not found in the phone list"
+		exit 1
+	else
+		grep -i "$*" $PHONELIST
+	fi
+fi
+exit 0
+```
+
+So, if you created the telephone list file as `ph` in your current directory, you could type the following from the shell to try out your `ph` script:
+
+```
+$ chmod 755 ph
+$ ./ph new "Marry Jones" 608-555-1212
+Mary Jones 608-555-1212 added to database
+$ ./ph Mary
+Mary Jones 608-555-1212
+```
+
+- The `chmod` command makes the `ph` script executable.
+- The `./ph` command runs the `ph` command from the current directory with the `new` option.
+- This adds Mary Jones as the name and 608-555-1212 as the phone number to the database (`$HOME/.phone.txt`). 
+- The next `ph` command searches the database for the name Mary and displays the phone entry for Mary.
+- If the script works, add it to a directory in your path (such as `$HOME/bin`).
+
+
+
+###### Backup script
+
+Because nothing work forever and mistakes happen, backups are just a fact of life when dealing with computer data.
+
+This simple script backs up all the data in the home directories of all the users on your Fedora or RHEL system:
+
+```
+#!/bin/bash
+# (@)/my_backup
+# A very simple backup script
+#
+
+# Change the TYPE device to match your system.
+# Check /var/log/messages to determine your tape device.
+# You may also need to add scsi-tape support to your kernel.
+TYPE=/dev/rft0
+
+# Rewind the tape device $TYPE
+mt $TYPE rew
+# Get a list of home directories
+HOMES=`grep /home /etc/passwd` | cut -f6 -d':'`
+# Back up the data in those directories
+tar cvf $TYPE $HOMES
+# Rewin and eject the tape
+mt $TYPE rewoffl
+```
+
+
+
+## Summary
+
+Writing shell scripts gives you the opportunity to automate many of your most common system administration tasks.
 
 
 
@@ -2556,15 +2782,166 @@ Bash is great and has lots of built-in commands, but it usually needs some help 
 
 
 
+# Chapter 8 Learning System Administration
+
+## Understanding System Administration
+
+If you are the system administrator of a Linux system, you generally log in as a regular user account and then ask for administrative privileges when you need them.
+
+This is often done with one of the following:
+
+- **`su`** command:
+  - Often, `su` is used to open a shell as root user.
+  - After it is open, the administrator can run multiple commands and then exit to return to a shell as a regular user.
+- **`sudo`** command:
+  - With `sudo`, a regular user is given root privileges, but only when that user runs the `sudo` command to run another command.
+  - After running that one command with `sudo`, the user is immediately returned to a shell and acts as the regular user again.
+- Graphical windows:
+  - Many graphical administration windows can be started by a regular user. With some tools, when root privilege is needed, you are prompted for the root password.
 
 
 
+Tasks that can be done by only the root user tend to be those that affect the system as a whole or impact the security or health of the system. The following is a list of common features that a system administrator is expected to manage:
+
+- *Filesystems*
+  - The root user has permission to access files owned by any user.
+- *Software installation*
+- *User accounts*
+- *Network interfaces*
+  - In the past, the root user had to configure network interfacesand start and stop those interfaces. 
+  - Now, many Linux desktops allow regular users to start and stop network interfaces from their desktop using Network Manager.This is particularly true for wireless network interfaces, which can come and go by location, as you move your Linux laptop or handheld device around.
+- *Servers*
+  - Configuring web servers, file servers, domain name servers, mail servers, and  dozens of other servers requires root privilege, as does starting and stopping those services.
+  - Contents, such as web pages, can be added to servers by non-root users if you configure your system to allow that.
+  - Services are ofthen run as special administrative user accounts, such as `apache`(for the `httpd` service) and `rpc` (for the `rpcbind` service). So if someone cracks a service, they can't get root privilege to other services or system resouces.
+- *Security features*
+  - Setting up security features, such as firewalls and user access lists, is usually done with root privilege.
+  - It's also up to the root user to monitor how the services are being used and make sure that server resources are not exhausted or abused.
 
 
 
+## Using Graphical Administration Tools
+
+#### Using system-config-* tools
+
+…….???
+
+#### Using browser-based admin tools
+
+…… ???
 
 
 
+## Using the root user account
+
+set root password for Ubuntu:
+
+```
+sudo passwd root
+```
+
+In this way, you can use root account on Ubuntu.
 
 
 
+#### Becoming root from the shell (`su` command)
+
+Although you can become the superuser by logging in as root, sometimes that is not convenient.
+
+Then you can use `su` command, and then type the root user's password.
+
+- At this point, you have full permission to run any command and use any file on the system.
+
+- However, one thing that the `su` command doesn't do when used this way is read in the root user's environment. As a result, *you may type a command that you know is available and get the message `Command Not Found`.*
+
+- *To fix this problem, use the `su` command with the dash(`-`) option instead, like this:*
+
+  ```
+  $ su -
+  Password: ******
+  #
+  ```
+
+- after you type the password, everything that normally happens at login for the root user happens after the `su` command is completed.
+
+  - Your current directory will be root's home directory (probably `/root`)
+  - Things such as the root user's `PATH` variable are used.
+
+- If you become the root user by just typing `su`, rather than `su -`, you don't change directories or the environment of the current login session.
+
+
+
+You can also use the `su` command to become a user other than root.
+
+```
+$ su - justin
+```
+
+
+
+When you are finished using superuser permissions, return to the previous shell by exiting the current shell by pressing **Ctrl+D** or by typing **`exit`**:
+
+
+
+#### Gaining administrative access with `sudo`
+
+Using `sudoers`, for any users or groups on the system, you can do the following:
+
+- Assign root privilege for any command they run with `sudo`.
+- Assign root privilege for a select set of commands.
+- Give users root privilege without telling them the root password because the only have to provide their when user password to gain root privilege.
+- Allow users, if you choose, to run `sudo` without entering a password at all.
+- Track which users have run administrative commands on your system.
+  - *Using `su`, all you know is that someone with the root password logged in, whereas the `sudo` command logs which user runs an administrative command.*
+
+
+
+*With the `sudoers` facility, giving full or limited root privileges to any user simple entails adding the user to `/etc/sudoers` and defining what privilege you want that user to have.*
+
+- Then the user can run any command he or she is privileged to use by preceding that command with the `sudo` command.
+
+
+
+> TIP
+>
+> if you look at the `sudoers` file in Ubuntu, you see that the initial user on the system already has privilege, by default, for the admin group members.
+>
+> To give any other user the same privilege, you could simply add the additional user to the admin group when you run `visudo`.
+
+
+
+Here is an example of how to use the `sudo` facility to cause the user named `justin` to have full `root` privilege.
+
+1. As the root user, edit the `/etc/sudoers` file by running the **`visudo`** command:
+
+   ```
+   # /usr/sbin/visudo
+   ```
+
+2. Add the following line to allow `justin` to have full root privileges on the computer:
+
+   ```
+   justin    ALL=(ALL)    ALL
+   ```
+
+   This line causes justin to provide a password (his own password) in order to use administrative commands.
+
+   To allow justin to have that privilege without using a password, type the following line instead:
+
+   ```
+   justin    ALL=(ALL)    NOPASSWD: ALL
+   ```
+
+3. Save the changes to the `/etc/sudoers/` file.
+
+
+
+>after entering your password successfully in the first `sudo` command, you can enter as many `sudo` commands as you want for the next 5 minutes without having to enter the password again. *(You can change the timeout value from 5 minutes to any length of time you want by setting the `passwd_timeout` value in the `/etc/sudoers` file*.)
+
+ 
+
+*the `/etc/sudoers` file gives you an incredible amount of flexibility in permitting individual users and groups to use individual applications or groups of applications.* Refer to the `sudoers` and `sudo` man pages for information about how to tune your `sudo` facility.
+
+
+
+​	
