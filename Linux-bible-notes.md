@@ -812,9 +812,9 @@ Man pages are the most common means of getting information about commands, as we
 
 
 
-Options to the `man` command enable you to search the man page database or display man pages on the screen.
+*Options to the `man` command enable you to search the man page database or display man pages on the screen.*
 
-For example:
+**For example:
 
 ```
 $ man -k passwd 
@@ -2782,7 +2782,7 @@ Writing shell scripts gives you the opportunity to automate many of your most co
 
 
 
-# Chapter 8 Learning System Administration
+# Chapter 8 Learning System Administration ???
 
 ## Understanding System Administration
 
@@ -2936,12 +2936,316 @@ Here is an example of how to use the `sudo` facility to cause the user named `ju
 
 
 
->after entering your password successfully in the first `sudo` command, you can enter as many `sudo` commands as you want for the next 5 minutes without having to enter the password again. *(You can change the timeout value from 5 minutes to any length of time you want by setting the `passwd_timeout` value in the `/etc/sudoers` file*.)
 
- 
+
+>after entering your password successfully in the first `sudo` command, you can enter as many `sudo` commands as you want for the next 5 minutes without having to enter the password again. *(You can change the timeout value from 5 minutes to any length of time you want by setting the `passwd_timeout` value in the `/etc/sudoers` file*.)
+>
+>
 
 *the `/etc/sudoers` file gives you an incredible amount of flexibility in permitting individual users and groups to use individual applications or groups of applications.* Refer to the `sudoers` and `sudo` man pages for information about how to tune your `sudo` facility.
 
 
 
-​	
+## Exploring Administrative Commands, Configuration Files, and Log Files
+
+
+
+#### Administrative commands
+
+When you log in as root (or use `su -`), your `$PATH` variable is set to include some directories that contain commands for the root user.
+
+In the past, these have included the following:
+
+- `/sbin`
+  - Contained commands needed to boot your system, including commands for checking filesystems(`fsck`) and turn on swap devices (`swapon`).
+- `/usr/sbin`
+  - Contained commands for such things as managing user accounts (such as `useradd`) and checking processes that are holding files open (such as `lsof`).
+  - Commands that run as daemon processes are also contained in this directory.
+    - Daemon processes are processes that run in the background, waiting for service requests such as those to access a printer or a web page. (Look for commands that end in `d`, such as `sshd`, `pppd` and `cupsd`).
+
+The `/sbin` and `/usr/sbin` directories are still used in Ubuntu as described here.
+
+However, for RHEL 7 and the latest Fedora releases, all administrative commands from the two directories are stored in the `/usr/sbin` directory (which is symbolically linked to `/sbin`). Also, only `/usr/sbin` is added to the PATH of the root user, as well as the PATH of all regular users.
+
+
+
+Some administrative commands are contained in regular user directories (such as `/bin` and `/usr/bin`).
+
+- This is expecially true of commands that have some options available to everyone.
+- A example is the `/bin/mount` command, which anyone can use to list mounted filesystems, but only root can use to mount filesystems. (Some desktops, however, are configured to let regular users use mount to mount CDs, DVDs, or other removable media.)
+
+
+
+*To find commands intended primarily for the system administrator, check out the section 8 manual pages (usually in `/usr/share/man/man8`).* They contain descriptions adn option for most linux administrative commands.
+
+*If you want to add commands to your system, consider adding them to directories such as `/usr/local/bin` or `/usr/local/sbin`.*
+
+
+
+#### Administrative configuration files
+
+Configuration files are another mainstay of Linux administration.
+
+- Almost everything you set up for your particular computer — user accounts, network addresses, or GUI preferences — is stored in plaintext files.
+- This has some advantages and some disadvantages:
+  - The advantage of plain text files is that it's easy to read and change them.
+  - The downside is that as you edit configuration files, no error checking is going on. You have to run the program that reads these files (such as a network daemon or the X desktop) to find out whether you set up the files correctly.
+- While some configuration files use standard structures, such as XML, for storing information, many do not. So you need to learn the specific structure rules for each configuration file.
+  - A comma or a quote in the wrong place can sometimes cause an entire interface to fail.
+
+
+
+You can check in many ways that the structures of many configuration files is correct:
+
+- Some software packages offer a command to test the sanity of the configuration file tied to a package before you start a service.
+- The daemon process providing a service offers an option for checking your config file.
+  - For example, run `http -t` to check your Apache web server configuration before starting your web server.
+
+
+
+> Some text editors, such as the `vim` command (not `vi`), understand the structure of some types of configuration files.
+>
+> If you open such a configuration file in `vim`, notice that different elements of the file are shown in different colors.
+>
+> In particular, you can see comment lines in a different color than data.
+
+
+
+Throughout this book, you’ll find descriptions of the configuration files you need to set up the different features that make up Linux systems. *The two major locations of configuration files*:
+
+- your home directory (where your personal configuration files are kept) 
+- the `/etc` directory (which holds system-wide configuration files).
+
+
+
+*Following are descriptions of directories (and subdirectories) that contain useful configuration files.* Those descriptions are followed by some individual configuration files in `/etc` that are of particular interest. Viewing the contents of Linux configuration files can teach you a lot about administering Linux systems.
+
+- `$HOME`
+  - All users store information in their home directories that directs how theirlogin accounts behave. 
+  - Many configuration files are directly in each user’s home directory (such as `/home/joe`) and begin with a dot (`.`). 
+  - There are dot files that define the behavior of each user’s shell,the desktop look-and-feel, and options used with your text editor. 
+  - There are even files such as those in each user’s `$HOME/.ssh` directory that configure permissions for logging into remote systems. 
+- `/etc`
+  - This directory contains most of the basic Linux system configuration files.
+- `/etc/cron*`
+  - Directories in this set contain files that define how the `crond` utility runs applications on a daily (`cron.daily`), hourly (`cron.hourly`), monthly (`cron.monthly`), or weekly (`cron.weekly`) schedule.
+- `/etc/cups`
+  - Contains files used to configure the CUPS printing service.
+- `/etc/default`
+  - Contains files that set default values for various utilities.
+- `/etc/httpd`
+  - Contains a variety of files used to configure the behavior of your Apache web server (specifically, the `httpd` daemon process). (On Ubuntu and other Linux systems, `/etc/apache` or `/etc/apache2` is used instead.)
+- `/etc/init.d`
+  - Contains the permanent copies of System V-style run-level scripts.
+  - These scripts are often linked from the `/etc/rc?.d` directories to have each service associated with a script started or stopped for the particular run level. The `?` is replaced by the run-level number (`0` through `6`). Although System V init scripts are still supported, most services are now managed by the `systemd` facility.
+- `/etc/mail`
+  - Contains files used to configure your sendmail mail transport agent.
+- `/etc/pcmcia`
+  - Contains configuration files that allow you to have a variety
+    of PCMCIA cards configured for your computer (if the pcmcia utils package is installed). PCMCIA slots are those openings on your laptop that enable you to have credit-card-sized cards attached to your computer. You can attach devices such as modems and external CD-ROMs. With many devices now available as USB devices, PCMCIA slots are less common than they were.
+- `/etc/postfix`
+  - Contains configuration files for the postfix mail transport agent.
+- `/etc/ppp`
+  - Contains several configuration files used to set up Point-to-Point Protocol (PPP) so you can have your computer dial out to the Internet. (PPP was more commonly used when dial-up modems were popular.)
+- `/etc/rc?.d`
+  - There is a separate `rc?.d` directory for each valid system state:
+    - `rc0.d` (shutdown state), 
+    - `rc1.d` (single-user state), 
+    - `rc2.d` (multiuser state), 
+    - `rc3.d`(multiuser plus networking state), 
+    - `rc4.d` (user-defined state), 
+    - `rc5.d` (multiuser,networking, plus GUI login state),
+    - `rc6.d` (reboot state).
+- `/etc/security`
+  - Contains files that set a variety of default security conditions
+    for your computer, basically defining how authentication is done. 
+  - These files are part of the `pam` (pluggable authentication modules) package.
+- `/etc/skel`
+  - Any files contained in this directory are automatically copied to a user’s home directory when that user is added to the system. 
+  - By default, most of these files are dot (`.`) files, such as `.kde` (a directory for setting KDE desktop defaults) and `.bashrc` (for setting default values used with the bash shell).
+- `/etc/sysconfig`
+  - Contains important system configuration files that are created and maintained by various services (including `iptables`, `samba`, and most networking services).
+  - These files are critical for Linux distributions, such as Fedora and RHEL, that use GUI administration tools but are not used on other Linux systems at all.
+- `/etc/systemd`
+  - Contains files associated with the `systemd` facility, for managing the boot process and system services. 
+  - In particular, when you run `systemctl` commands to enable and disable services, files that make that happen are stored in subdirectories of the `/etc/systemd/system` directory.
+- `etc/xinetd.d`
+  - Contains a set of files, each of which defines an on-demand network service that the `xinetd` daemon listens for on a particular port.
+  - When the `xinetd` daemon process receives a request for a service, it uses the information in these files to determine which daemon processes to start ot handle the request.
+
+
+
+*The following are some interesting configuration files in `/etc`:*
+
+- `aliases`
+  - Can contain distribution lists used by the Linux mail services. (This file is located in `/etc/mail` in Ubuntu when you install the sendmail package.)
+- `bashrc`
+  - Sets system-wide defaults for bash shell users. (This may be called `bash.bashrc` on some Linux distributions.)
+- `crontab`
+  - Sets times for running automated tasks and variables associated with the `cron` facility (such as the SHELL and PATH associated with `cron`).
+- `csh.cshrc` (or `cshrc`)
+  - Sets system-wide defaults for `csh` (C shell) users.
+- `exports`
+  - Contains a list of local directories that are available to be shared by remote computers using the Network File System (NFS).
+- `fstab`
+  - Identifies the devices for common storage media (hard disk, floppy, CD-ROM, and so on) and locations where they are mounted in the Linux system.
+  - This is used by the `mount` command to choose which filesystems to mount when the system first boots.
+- `group`
+  - Identifies group names and group IDs (GIDs) that are defined on the system. 
+  - Group permissions in Linux are defined by the second of three sets of `rwx`(read, write, execute) bits associated with each file and directory.
+- `gshadow`
+  - Contains shadow passwords for groups.
+- `host.conf`
+  - Used by older applications to set the locations in which domain names (for example, `redhat.com`) are searched for on TCP/IP networks (such asthe Internet). 
+  - By default, the local hosts file is searched and then any name server entries in `resolv.conf`.
+- `hostname`
+  - Contains the host name for the local system (beginning in RHEL 7 andrecent Fedora and Ubuntu systems).
+- `hosts`
+  - Contains IP addresses and host names that you can reach from your computer. (Usually this file is used just to store names of computers on your LAN or small private network.)
+- `hosts.allow`
+  - Lists host computers that are allowed to use certain TCP/IP services from the local computer. (This and `hosts.deny` are part of the TCP Wrappers service.)
+- `hosts.deny`
+  - Lists host computers that are not allowed to use certain TCP/IP services from the local computer (although this file is used if you create it, it doesn’t exist by default).
+
+
+- `inittab`
+  - On earlier Linux systems, contained information that defined which programs start and stop when Linux boots, shuts down, or goes into different states in between.
+  - This configuration file was the first one read when Linux started the init process. 
+  - This file is no longer used on Linux systems that support `systemd`.
+- `mtab`
+  - Contains a list of filesystems that are currently mounted.
+- `mtools.conf`
+  - Contains settings used by DOS tools in Linux.
+- `named.conf`
+  - Contains DNS settings if you are running your own DNS server (bind or bind9 package).
+- `nsswitch.conf`
+  - Contains name service switch settings, for identifying where critical systems information (user accounts, host name-to-address mappings, and so on) comes from (local host or via network services).
+- `ntp.conf`
+  - Includes information needed to run the Network Time Protocol (NTP).
+- `passwd`
+  - Stores account information for all valid users on the local system. 
+  - Also includes other information, such as the home directory and default shell. 
+  - (Rarely includes the user passwords themselves, which are typically stored in the `/etc/shadow` file.)
+- `printcap`
+  - Contains definitions for the printers configured for your computer.
+  - (If the `printcap` file doesn’t exist, look for printer information in the `/etc/cups` directory.)
+- `profile`
+  - Sets system-wide environment and startup programs for all users.
+  - This file is read when the user logs in.
+- `protocols`
+  - Sets protocol numbers and names for a variety of Internet services.
+- `rpc`
+  - Defines remote procedure call names and numbers.
+- `services`
+  - Defines TCP/IP and UDP service names and their port assignments.
+- `shadow`
+  - Contains encrypted passwords for users who are defined in the `passwd` file.
+  - (This is viewed as a more secure way to store passwords than the original encrypted password in the `passwd` file. The `passwd` file needs to be publicly readable, whereas the `shadow` file can be unreadable by all but the root user.)
+- `shells`
+  - Lists the shell command-line interpreters (`bash`, `sh`, `csh`, and so on) that are available on the system, as well as their locations.
+- `sudoers`
+  - Sets commands that can be run by users, who may not otherwise have permission to run the command, using the `sudo` command. 
+  - In particular, this file is used to provide selected users with root permission.
+- `rsyslog.conf`
+  - Defines what logging messages are gathered by the `rsyslogd` daemon and what files they are stored in. 
+  - (Typically, log messages are stored in files contained in the `/var/log` directory.)
+
+
+- `termcap`
+  - Lists definitions for character terminals, so character-based applications know what features are supported by a given terminal. 
+  - Graphical terminals and applications have made this file obsolete to most people.
+- `xinetd.conf`
+  - Contains simple configuration information used by the `xinetd` daemon process.
+  - This file mostly points to the `/etc/xinetd.d` directory for information about individual services.
+
+
+
+Another directory, `/etc/X11`, includes subdirectories that each contain system-wide configuration files used by X and different X window managers available for Linux. 
+
+- The `xorg.conf` file (configures your computer and monitor to make it usable with X) and configuration directories containing files used by `xdm` and `xinit` to start X are in here.
+
+Directories relating to window managers contain files that include the default values that a user will get if that user starts one of these window managers on your system. Window managers that may have system-wide configuration files in these directories include `twm` (`twm/`) and `xfce` (`xdg/`).
+
+
+
+#### Administrative log files and systems journal
+
+One of the things that Linux does well is keep track of itself.
+
+- This is a good thing, when you consider how much is going on in a complex operating system.
+- Sometimes you are trying to get a new facility to work and it fails without giving you the foggiest reason why. 
+- Other times, you want to monitor your system to see whether people are trying to access your computer illegally. 
+- In any of those cases, you want to be able to refer to messages coming from the kernel and services running on the system.
+
+
+
+For Linux systems that don’t use the `systemd` facility, the main utility for logging error and debugging messages is the `rsyslogd` daemon. 
+
+- Some older Linux systems use `syslogd` and `syslogd` daemons.
+- Although you can still use `rsyslogd` with `systemd` systems, `systemd` has its own method of gathering and displaying messages called the systemd journal (`journalctl` command).
+
+
+
+###### Using `journalctl`  to view the systemd journal 
+
+The primary command for viewing messages from the `systemd` journal is the **`journalctl`** command.
+
+- The boot process, the kernel and all systemd-managed services direct their status and error messages to the `systemd` journal.
+
+
+
+Using the `journalctl` command, you can display journal messages in many different ways.
+
+- For examples:
+
+  ```
+  # journalctl
+  # journalctl --list-boots | head
+  # journalctl -b eb3d5cbdda8f4f8da7bdbc71fb94e61e
+  # journalctl -k
+  ```
+
+  - In these examples, the `journalctl` command with no options lets you page through all message in the `systemd` journal.
+  - To list the boot IDs for each time the system was booted, use the `-list-boots` option.
+  - To view messages associated with a particular boot instance, use the `-b` option with one of the boot instances.
+  - To see only kernel messages, use the `-k` option.
+
+- Here are some more examples:
+
+  ```
+  # journalctl _SYSTEMD_UNIT=sshd.service
+  # journalctl PRIORITY=0
+  # journalctl -a -f
+  ```
+
+  - Use the `_SYSTEMD_UNIT=` options to show messages for specific services or for any other `systemd` unit file (such as other services or mounts).
+  - To see messages associated with a particular syslog log level (from 0 to 7).
+  - To follow messages as they come in, use the `-f` option; to show all fields, use the `-a` option.
+
+
+
+###### Managing log messages with `rsyslogd`
+
+The `rsyslogd` facility, and its predecessor `syslogd`, gather log messages and directthem to log files or remote log hosts. 
+
+- Logging is done according to information in the `/etc/rsyslog.conf` file. 
+- Messages are typically directed to log files that are usually in the `/var/log` directory, but can also be directed to log hosts for additional security.Here are a few common log files:
+  - `boot.log` — Contains boot messages about services as they start up.
+  - `messages` — Contains many general informational messages about the system.
+  - `secure` — Contains security-related messages, such as login activity or any other act that authenticates users.
+  - `XFree86.0.log` or `Xorg.0.log` — Depending on which X server you are using, contains messages about your video card, mouse, and monitor configuration.
+
+Refer to Chapter 13, “Understanding Server Administration,” for information on configuring the `rsyslogd` facility.
+
+
+
+
+
+## Using Other Administrative Accounts
+
+
+
+
+
+
+
