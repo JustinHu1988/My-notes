@@ -3243,6 +3243,185 @@ Refer to Chapter 13, “Understanding Server Administration,” for information 
 
 ## Using Other Administrative Accounts
 
+You don’t hear much about logging in with other administrative user accounts (besides root) on Linux systems. It was a fairly common practice in UNIX systems to have several different administrative logins that allowed administrative tasks to be split among several users. For example, people sitting near a printer could have `lp` permissions to move print jobs to another printer if they knew a printer wasn’t working.
+
+
+
+… … 
+
+
+
+## Checking and Configuring Hardware
+
+The growing use of removable devices has made it important for Linux to do the following:
+
+- Efficiently manage hardware that comes and goes.
+- Look at the same piece of hardware in different ways (For example, be able to see a printer as a fax machine, scanner, and storage device, as well as a printer).
+
+
+
+This section covers several issues related to getting your hardware working properly in Linux. 
+
+- First, it describes how to check information about the hardware components of your system. 
+- It then covers how to configure Linux to deal with removable media. 
+- Finally, it describes how to use tools for manually loading and working with drivers for hardware that is not detected and loaded properly.
+
+
+
+#### Checking your hardware
+
+*There are a few ways to view kernel boot messages after Linux comes up.*
+
+- **`dmesg`**
+  - See what hardware was detected and which drivers were loaded by the kernel at boot time.
+  - *If something goes wrong detectigng your hardware or loading drivers, you can refer to this information to see the name and model number of hardware that's not working. Then, you can search Linux forums or documentation to try to solve the problem.*
+- displaying the contents of the `/var/log/dmesg` file, if it exists.
+- `journalctl` command to show the messages associated with a particular boot instance.
+
+
+
+> After your system is running, many kernel messages are sent to the `/var/log/messages` file.
+>
+> So, for example, if you want to see what happens when you plug in a USB drive, you can type `tail -f /var/log/messages` and watch as devices and mount points are created.
+>
+> Likewise, you can use the `journalctl -f` command to follow messages as they come into the `systemd` journal.
+
+
+
+After your system is up and running, some other commands let you look at detailed information about your computer's hardware:
+
+- *The **`lspci`** command lists PCI buses on your computer and devices connected to them.*
+  - If you are having trouble getting any of these devices to work, noting the model names and numbers gives you something to Google for.
+  - *To get more verbose output from `lspci`, add one or more `-v` options.*
+
+
+- If you are specifically interested in USB devices, try the **`lsusb`** command.
+  - By default, `lsusb` *lists information about the computer’s USB hubs along with any USB devices connected to the computer’s USB ports.*
+  - As with `lspci`, you can add one or more `-v` options to see more details.
+
+
+- To see details about your processor, run the **`lscpu`** command. That command gives basic information about your computer’s processors.
+
+
+
+
+
+#### Managing removable hardware
+
+… … 
+
+
+
+#### Working with loadable modules
+
+If you have added hardware to your computer that isn't properly detected, you might need to manually load a module for that hardware.
+
+- Linux comes with a set of commands for loading, unloading, and getting information about hardware modules.
+
+
+
+Kernel modules are installed in `/lib/modules/` subdirectories.
+
+- The name of each subdirectory is based on the release number of the kernel.
+- Modules in those directories can then be loaded and unloaded as they are needed.
+
+
+
+Commands for listing, loading, unloading, and getting information about modules are available with linux.
+
+- The following sections describe how to use those modules.
+
+
+
+###### Listing loaded modules
+
+**`lsmod`**: to see which modules are currently loaded into the running kernel on your computer.
+
+**`modinfo`**: To find information about any of the loaded modules.
+
+- For example:
+
+  ```
+  # /sbin/modinfo -d e1000
+  Intel(R) PRO/1000 Network Driver
+  ```
+
+- Not all modules have descriptions available and, if nothing is available, no data is returned.
+
+- *You can also use the `-a` option to see the author of the module or `-n` to see the object file representing the module.*
+
+
+
+###### Loading modules
+
+*You can load any module (as root user) that has been compiled and installed (to a `/lib/modules` subdirectory) into your running kernel using the **`modprobe`** command.*
+
+- A common reason for loading a module is to use a feature temporarily (such as loading a module to support a special filesystem on a floppy you want to access). 
+- Another reason to load a module is to identify that module as one that will be used by a particular piece of hardware that could not be autodetected.
+
+
+
+Example:
+
+… … 
+
+
+
+*The `modprobe` command loads modules temporarily — they disappear at the next reboot. To permanently add the module to your system, add the `modprobe` command line to one of the startup script run at boot time.*
+
+
+
+###### Removing modules
+
+**`rmmod`** : remove a module from a running kernel.
+
+- For example, to remove the module `parrot_pc` from the current kernel, type the following:
+
+  ```
+  # rmmod parport_pc
+  ```
+
+- *If it is not currently busy, the `parport_pc` module is removed from the running kernel. If it is busy, try killing any process that might be using the device. Then run `rmmod` again.*
+
+
+
+Sometimes, the module you are trying to remove depends on other modules that may beloaded. For instance, the `usbcore` module cannot be unloaded while the USB printer module (`usblp`) is loaded, as shown here:
+
+```
+# rmmod usbcore
+ERROR: Module usbcore is in use by wacom,usblp,ehci_hcd,ohci_hcd
+```
+
+*Instead of using `rmmod` to remove modules, you could use the `modprobe -r` command. With `modprobe -r`, instead of just removing the module you request, you can also remove dependent modules that are not being used by other modules.*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
