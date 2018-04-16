@@ -3398,11 +3398,37 @@ ERROR: Module usbcore is in use by wacom,usblp,ehci_hcd,ohci_hcd
 
 
 
+# 9: Installing Linux
+
+
+
+… … 
 
 
 
 
 
+# 10: Getting and Managing Software
+
+
+
+## Going Beyond the Software Window
+
+some examples of why you might want go beyond what you can do with the Software window:
+
+- More repositories
+- Beyond desktop applications
+- Flexibility
+- More complex queries
+  - Using commands such as `yum` and `rpm`, you can get detailed information about packages, package groups, and repositories.
+- Software validation
+- Managing software installation
+
+
+
+
+
+## Understanding Linux RPM and DEB Software Packaging
 
 
 
