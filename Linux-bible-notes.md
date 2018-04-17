@@ -3430,27 +3430,102 @@ some examples of why you might want go beyond what you can do with the Software 
 
 ## Understanding Linux RPM and DEB Software Packaging
 
+On the first Linux systems, if you wanted to add software, you would grab the source code from a project that produced it, compile it into runnable binaries, and drop it onto your computer. If you were lucky, someone would have already compiled it in a form that would run on your computer.
 
 
 
+The form of the package could be a **tarball**, containing: 
+
+- executable files (commands)
+- documentation
+- configuration files
+- libraries
+
+A tarball is a single file in which multiple files are gathered together for convenient storage or distribution.
+
+- When you install software from a tarball, the files from that tarball might be spread across your Linux system in appropriate directories.
+
+Although it is easy to create a tarball and just drop a set of software onto your Linux system, this method of installing software makes it difficult to do these things:
+
+- Get dependent software
+  - You would need to know if the software you were installing depended on other software being installed for your software to work. Then you would have to track down that software and install that too (which might itself have some dependencies).
+- List the software
+  - Even if you knew the name of the command, you might not know where its documentation or configuration files were located when you looked for it later.
+- Remove the software
+  - Unless you kept the original tarball or a list of files, you wouldn’t know where all the files were when it came time to remove them. Even if you knew, you would have to remove each one individually.
+- Update the software
+  - Tarballs are not designed to hold metadata about the contents they contain. After the contents of a tarball are installed, you may not have a way to tell what version of the software you are using, making it difficult to track down bugs and get new versions of your software.
+
+To deal with these problems, packages progressed from simple tarballs to more complex packaging. With only a few notable exceptions (such as Gentoo, Slackware, and a few others), *the majority of Linux distributions went to one of two packaging formats — DEB and RPM:*
+
+- **DEB (.deb) packaging**
+  - The Debian GNU/Linux project created `.deb` packaging, which is used by Debian and other distributions based on Debian (Ubuntu, Linux Mint, KNOPPIX, and so on). 
+  - Using tools such as `apt-get` and `dpkg`, Linux distributions could install, manage, upgrade, and remove software.
+- **RPM (.rpm) packaging**
+  - Originally named Red Hat Package Manager but later recursively renamed RPM Package Manager, RPM is the preferred package format for SUSE, Red Hat distributions (RHEL and Fedora), and those based on Red Hat distributions (CentOS, Oracle Linux, and so on). 
+  - The `rpm` command was the firsttool to manage RPMs, but later `yum` was added to enhance the RPM facility.
 
 
 
+#### Understanding DEB packaging
+
+Debian software packages hold multiple files and metadata related to some set of software in the format of an `ar` archive file.
+
+- The files can be executables (commands), comfiguration files, documentation, and other software items.
+- The metadata includes such things as dependencies, licensing, package sizes, descriptions, and other information.
 
 
 
+Multiple command-line and graphical tools are available for working with DEB files in Ubuntu, Debian, and other Linux distributions. Some of these include the following:
+
+- Ubuntu Software Center
+
+- `aptitude` commands
+
+- `apt*` : There is a set of apt commands (`apt-get`, `apt-config`, `apt-cache`, and so on) that you can use to manage package installation.
+
+  - *here are a few examples of commands that can help you install and manage packages with* `apt*` *command*. In this case, I’m looking for and installing the `vsftpd` package:
+
+    ```
+    $ sudo apt-get update    #Get the latest package versions
+    $ sudo apt-search vsftpd	#Find package by keyword
+    $ sudo apt-cache show vsftpd	#Display information about a package
+    $ sudo apt-get install vsftpd	#Install the vsftpd package
+    $ sudo apt-get upgrade		#Update installed packages
+    $ sudo apt-cache pkgnames	#List all packages that are installed
+    ```
+
+  - There are many other uses of `apt*` commands that you can try out.
+
+  - *use `man apt` to get an understanding of what the `apt` and related commands can do.*
 
 
 
+#### Understanding RPM packaging
+
+An RPM package is a consolidation of files needed to provide a feature, such as a word processor, a photo viewer, or a file server. 
+
+- Inside an RPM can be the commands, configuration files, and documentation that make up the software feature. 
+- However, an RPM file also contains metadata that stores information about the contents of that package, where the package came from, what it needs to run, and other information.
 
 
 
+*Managing RPM Packages:*
+
+- The first tool to be developed for installing RPM packages, however, was the `rpm` command. Using `rpm`, you can install, update, query, validate, and remove RPM packages. The command, however, has some major drawbacks:
+  - Dependencies
+    - Most RPM packages are dependent on some other software
+      (library, executables, and so on) being installed on the system for that package to work. When you try to install a package with rpm, if a dependent package is not installed, the package installation fails, telling you which components were
+      needed. 
+    - At that point, you have to dig around to find what package contained that component. When you go to install it, that dependent package might itself have dependencies you need to install to get it to work. *This situation is lovingly referred*
+      *to as “dependency hell” and is often used as an example of why DEB packages were better than RPMs.* DEB packaging tools were made to automatically resolve package dependencies well before RPM-related packaging tools could do that.
+  - Location of RPMs
+    - The rpm command expects you to provide the exact location of the RPM file when you try to install it. 
+- YUM project set out to solve the headache of managing dependencies with RPM packages.
 
 
 
-
-
-
+## Managing RPM Packages with YUM
 
 
 
