@@ -4071,9 +4071,47 @@ After covering basic partitions, I describe how *logical volume management (LVM)
 
 ## Unserstanding Disk Storage
 
+The basics of how data storage works are the same in most modern operating systems. 
+
+- When you install the operating system, the disk is divided into one or more partitions.
+- Each partition is formatted with a filesystem.
+- In the case of Linux, some of the partitions may be specially formatted for elements such as a **swap area** or **LVM** physical volumes.
+- If RAM fills up, by running too many processes or a process with memory leak, new processes fail if your system doesn't have a way to extend system memory. That's where a swap area comes in.
+  - A swap space is a hard disk swap partition or a swap file where your computer can "swap out" data from RAM that isn't being used at the moment and then "swap in" the data back to RAM when it is again needed.
+- Another special partition is a logical volume management (LVM) physical volume.
+  - LVM physical volumes enable you to create pools of storage space called **volume groups (卷组)**. 
+  - From those volume groups, you have much more flexibility for growing and shrinking logical volumes than you have resizing disk partition directly.
 
 
 
+For Linux, at least one disk partition is required, assigned to the root(`/`) of the entire Linux system.
+
+However, it is more common to have separate partitions that are assigned to particular directories, such as `/home`, `/var`, and/or `/tmp`. 
+
+- Each of the partitions is connected to the larger Linux filesystem by mounting it to a point in the filesystem where you want that partition to be used.
+- Any file added to the mount point directory of a partition, or a subdirectory, is stored on that partition.
+
+
+
+> Note:
+>
+> The word *mount* refers to the action of connecting a filesystem from a hard disk, USB drive, or network storage device to a particular point in the filesystem.
+>
+> This action is done using the `mount` command, along with options to tell the command where the storage device is and what directory in the filesystem to connect it to.
+
+An entry in the `/etc/fstab` file tells Linux each partition's device name and where to mount it (as well as other bits of information). The mounting is done when the system boots.
+
+
+
+*Most of this chapter focuses on :*
+
+- understanding how your computer's disk is partitioned and connected to form your linux filesystem, 
+- how to partition disks, format filesystems and swap space, and have those items used when the system boots. 
+- how to do partitioning and filesystem creation manually.
+
+
+
+## Partitioning Hard Disks
 
 
 
