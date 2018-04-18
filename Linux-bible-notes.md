@@ -3512,7 +3512,7 @@ An RPM package is a consolidation of files needed to provide a feature, such as 
 
 *Managing RPM Packages:*
 
-- The first tool to be developed for installing RPM packages, however, was the `rpm` command. Using `rpm`, you can install, update, query, validate, and remove RPM packages. The command, however, has some major drawbacks:
+- The first tool to be developed for installing RPM packages, however, was the **`rpm`** command. Using `rpm`, you can install, update, query, validate, and remove RPM packages. The command, however, has some major drawbacks:
   - Dependencies
     - Most RPM packages are dependent on some other software
       (library, executables, and so on) being installed on the system for that package to work. When you try to install a package with rpm, if a dependent package is not installed, the package installation fails, telling you which components were
@@ -3526,6 +3526,580 @@ An RPM package is a consolidation of files needed to provide a feature, such as 
 
 
 ## Managing RPM Packages with YUM
+
+The **Yellowdog Updater Modified (YUM)** project set out to solve the headache of managing dependencies with RPM packages.
+
+- *Its major contribution was to stop thinking about RPM packages as individual components and think of them as parts of larger software repositories.*
+- With repositories, the problem of dealing with dependencies fell not to the person who installed the software, but to the Linux distribution or third-party software distributor that makes the software available.
+- So, for example, it would be up to the Fedora project to make sure that every component needed by every package in its Linux distribution could be resolved by some other package in the repository.
+- *Repositories could also build on each other.*
+
+
+
+The yum repositories could be put in a directory on a web server(`http://`), an FTP server(`ftp://`), or a local medium such as a CD, DVD, or local directory(`file://`).
+
+The locations of these repositories would then be stored on the user's system in the `/etc/yum.conf` file or, more typically, in separate configuration files in the `/etc/yum.repos.d` directory.
+
+
+
+#### Understanding how yum work
+
+Basic syntax of the **`yum`** command:
+
+```
+# yum [options] command
+```
+
+Using that syntax, you can find packages, see package information, find out about package groups, update packages, or delete packages.
+
+With the YUM repository and configuration in place, a user can install a package by simply typing something like this:
+
+```
+# yum install firefox
+```
+
+The result of a `yum install package` command is that the package requested is copied from the yum repository to the local system. The files in the package are put in the filesystem where needed (`/etc`, `/bin`, `/usr/share/man`, and so on). Information about the package is stored in the local RPM database, where it can be queried.
+
+
+
+<img src="images/linux-bible-chapter10-2.png" width="600">
+
+
+
+**… … p242 **
+
+1. Checking `/etc/yum.conf`
+2. Checking `/etc/sysconfig/rhm/up2date` (RHEL only)
+3. Checking `/etc/yum.repos.d/*.repo` files
+4. Downloading RPM packages and metadata from a YUM repository
+5. RPM packages installed to Linux file system
+6. Store YUM repository metadata to local RPM database
+
+
+
+#### Using YUM with third-party software repositories
+
+some third-party repositories have these limitations:
+
+- They may have less stringent requirements for redistribution and freedom from patent constraints than the Fedora and RHEL repositories have.
+- They may introduce some software conflicts.
+- They may include software that is not open source and, although it may be free for personal use, may not be redistributable.
+- They may slow down the process of installing all your packages (because metadata is downloaded for every repository you have enabled).
+
+… … 
+
+
+
+#### Managing software with the YUM command
+
+… … 
+
+
+
+
+
+
+
+## Installing, Querying, and Verfying Software with the `rpm` command
+
+… … 
+
+
+
+## Managing Software in the Enterprise
+
+… … 
+
+
+
+
+
+# 11 Managing User Accounts
+
+Adding and managing users are common tasks for Linux systems administrators.
+
+- *User accounts* keep boundaries between the people who use your systems and between the processes that run on your systems.
+- *Groups* are a way of assigning rights to your system that can be assigned to multiple users at once.
+
+
+
+This chapter describes not only how to create a new user, but also how to create predefined settings and files to configure the user’s environment.
+
+- Using tools such as the `useradd` and `usermod` commands, you can assign settings such as the location of a home directory, a default shell, a default group, and specific user ID and group ID values.
+
+
+
+## Creating User Accounts
+
+#### Adding users with `useradd`
+
+After opening a Terminal window with root permission, you simply invoke `useradd` at the command prompt, with details of the new account as parameters.
+
+*The only required parameter is the login name of the user*, but you probably want to include some additional information ahead of it.
+
+Each item of account information is preceded by a single-letter option code with a dash in front of it. The options available with `useradd` include the following:
+
+- `-c "comment here"`
+  - Provide a description of the new user account.
+  - Typically, this is the person’s full name.
+  - Replace `comment` with the name of the useraccount (`-c Jake`).
+  - Use quotes to enter multiple words (for example, `-c "Jake Jackson"`).
+- `-d home_dir`
+  - Set the home directory to use for the account.
+  - The default is to name it the same as the login name and to place it in `/home`.
+  - Replace `home_dir` with the directory name to use (for example, `-d /mnt/homes/jake`).
+- `-D`
+  - Rather than create a new account, save the supplied information as the new default settings for any new accounts that are created.
+- `-e expire_date`
+  - Assign the expiration date for the account in YYYY-MM-DD format. 
+  - Replace `expire_date` with a date you want to use. (For example, to expire an account on May 5, 2017, use `-e 2017-05-05`.)
+- `-f -1`
+  - Set the number of days after a password expires until the account is permanently disabled. 
+  - The default, `-1`, disables the option.
+  - Setting this to `0` disables the account immediately after the password has expired. Replace -1 (that’s minusone) with the number to use.
+- `-g group`
+  - Set the primary group (it must already exist in the `/etc/group` file) the new user will be in.
+  - Replace group with the `group` name (for example, `-g wheel`). 
+  - Without this option, a new group is created that is the same as the username and is used as that user’s primary group.
+- `-G grouplist`
+  - Add the new user to the supplied comma-separated list of supplementary groups (for example, `-G wheel,sales,tech,lunch`).
+  - (If you use `-G` later with `usermod`, be sure to use `-aG` and not just `-G`. If you don’t, existing supplementary groups are removed and the groups you provide here are the only ones assigned.)
+- `-k skel_dir`
+  - Set the skeleton directory containing initial configuration files and login scripts that should be copied to a new user’s home directory. 
+  - This parameter can be used only in conjunction with the `-m` option. Replace `skel_dir` with the directory name to use. (Without this option, the `/etc/skel` directory is used.)
+
+
+- `-m`
+  - Automatically create the user’s home directory and copy the files in the skeleton directory (`/etc/skel`) to it. (This is the default action for Fedora and RHEL, so it’s not required. It is not the default for Ubuntu.)
+- `-M`
+  - Do not create the new user’s home directory, even if the default behavior is set to create it.
+- `-n`
+  - Turn off the default behavior of creating a new group that matches the name and user ID of the new user. 
+  - This option is available with Fedora and RHEL systems.Other Linux systems often assign a new user to the group named users instead.
+- `-o`
+  - Use with `-u uid` to create a user account that has the same UID as another username.
+  - (This effectively lets you have two different usernames with authority over the same set of files and directories.)
+- `-p passwd`
+  - Enter a password for the account you are adding.
+  - This must be an encrypted password. 
+  - Instead of adding an encrypted password here, you can simply use the passwd user command later to add a password for user. *(To generate an encrypted MD5 password, type `openssl passwd`.)*
+- `-s shell`
+  - Specify the command shell to use for this account.
+  - Replace `shell` with the command shell (for example, `-s /bin/csh`).
+- `-u user_id`
+  - Specify the user ID number for the account (for example, `-u 793`).
+  - Without the `-u` option, the default behavior is to automatically assign the next available number. Replace `user_id` with the ID number.
+
+
+
+For example:
+
+- Create an account for a new user.
+
+  ```
+  # useradd -c "Sara Green" sara
+  ```
+
+- Set the initial password for `sara`:
+
+  ```
+  # passwd sara
+  ```
+
+  - keep in mind that running passwd as root user lets you add short or blank passwords that regular users cannot add themselves.
+
+*In creating the account for Sara, the `useradd` command performs several actions:*
+
+- Reads the `/etc/login.defs` and `/etc/default/useradd` files to get default values to use when creating accounts.
+- Checks command-line parameters to find out which default values to override.
+- Creates a new user entry in the `/etc/passwd` and `/etc/shadow` files based on the default values and command-line parameters.
+- Creates any new group entries in the `/etc/group` file. (Fedora creates a group using the new user’s name.)
+- Creates a home directory, based on the user’s name, in the `/home` directory.
+- Copies any files located within the `/etc/skel` directory to the new home directory. This usually includes login and application startup scripts.
+
+
+
+Here’s an example that uses a few more options to do so:
+
+```
+# useradd -g users -G wheel,apache -s /bin/tcsh -c "Sara Green" sara
+```
+
+- In this case, `useradd` is told to make `users` the primary group sara belongs to (`-g`), add her to the wheel and apache groups, and assign `tcsh` as her primary command shell (`-s`). A home directory in `/home` under the user’s name (`/home/sara`) is created by default. 
+
+
+
+This command line results in a line similar to the following being added to the **`/etc/passwd`** file:
+
+```
+sara:x:1002:1007:Sara Green:/home/sara:/bin/tcsh
+```
+
+- *Each line in the `/etc/passwd` file represents a single user account record.*
+- *Each field is separated from the next by a colon (`:`) character. The field’s position in the sequence determines what it is:*
+  - The login name is first. 
+  - *The password field contains an `x` because, in this example, the shadow password file is used to store encrypted password data (in `/etc/shadow`).*
+  - The user ID selected by `useradd` is 1002. 
+  - The primary group ID is 1007, which corresponds to a private sara group in the `/etc/group` file.
+  - The comment field was correctly set to `Sara Green`
+  - the home directory was automatically assigned as `/home/sara`
+  - and the command shell was assigned as `/bin/tcsh`, exactly as specified with the `useradd` options.
+
+
+
+The **`/etc/group`** file holds information about the different groups on your Linux system and the user who belong to them.
+
+- Groups are useful for enabling multiple users to share access to the same files while denying access to others.
+
+- Here is the `/etc/group` entry created for `sara`:
+
+  ```
+  sara:x:1007
+  ```
+
+- Each line in the group file contains the name of a group, a group password (usually filled with an `x`), the group ID number associated with it, and a list of users in that group.
+
+- By default, each user is added to his or her own group, beginning with the next available GID, starting with 1000.
+
+
+
+#### Setting user defaults
+
+*The `useradd` command determines the default values for new accounts by reading the **`/etc/login.defs`** and **`/etc/default/useradd`** files.*
+
+- You can modify those defaults by editing the files manually with a standard text editor.
+
+
+
+You can see default settings by typing the `useradd` command with the `-D` option:
+
+```
+# useradd -D
+```
+
+You can also use the `-D` option to change defaults. Not all useradd
+options can be used in conjunction with the -D option. You can use only the five options listed here:
+
+- `-b default_home`
+  - Set the default directory in which user home directories are created. 
+  - Replace `default_home` with the directory name to use (for example, `-b /garage`). Usually, this is `/home`.
+- `-e default_expire_date`
+  - Set the default expiration date on which the user account is disabled. 
+  - The `default_expire_date` value should be replaced with a date in the form YYYY-MM-DD (for example, `-e 2011-10-17`).
+- `-f default_inactive`
+  - Set the number of days after a password has expired before the account is disabled.
+  - Replace `default_inactive` with a number representing the number of days (for example, `-f 7`).
+- `-g default_group`
+  - Set the default group that new users will be placed in. 
+  - Normally, `useradd` creates a new group with the same name and ID number asthe user. Replace `default_group` with the group name to use (for example, `-g bears`).
+- `-s default_shell`
+  - Set the default shell for new users.
+  - Typically, this is `/bin/bash`. 
+  - Replace `default_shell` with the full path to the shell that you want as the default for new users (for example, `-s /usr/bin/ksh`).
+
+
+
+For example:
+
+```
+# useradd -D -b /home/everyone -s /bin/tcsh
+```
+
+
+
+In addition to setting up user defaults, an administrator can create files that are copied to each user's home directory for use.
+
+- These files can include login scripts and shell configuration files (such as `.bashrc`).
+
+*Other commands that are useful for working with user accounts include `usermod` and `userdel`.*
+
+
+
+#### Modifying users with `usermod`
+
+The **`usermod`** command provides a simple and straightforward method for changing account parameters. 
+
+Many of the options available with it mirror those found in `useradd`. The options that can be used with this command include the following:
+
+- `-c username`
+  - Change the description associated with the user account. 
+  - Replace `username` with the name of the user account (`-c jake`). Use quotes to enter multiple words (for example, `-c "Jake Jackson"`).
+
+- `-d home_dir`
+
+  - Change the home directory to use for the account.
+  - The default is to name it the same as the login name and to place it in `/home`. Replace `home_dir` with the directory name to use (for example, `-d /mnt/homes/jake`).
+
+- `-e expire_date`
+
+  - Assign a new expiration date for the account in YYYY-MM-DD format.
+  - Replace `expire_date` with a date you want to use. (For October 15, 2017,use `-e 2017-10-15`.)
+
+- `-f -1`
+
+  - Change the number of days after a password expires until the account is permanently disabled.
+  - The default, `-1`, disables the option. 
+  - Setting this to `0` disables the account immediately after the password has expired. Replace `-1` with the number to use.
+
+- `-g group`
+
+  - Change the primary group (as listed in the `/etc/group` file) the user will be in.
+  - Replace group with the group name (for example, `-g wheel`).
+
+- `-G grouplist`
+
+  - Set the user’s secondary groups to the supplied comma-separated list of groups.
+  - If the user is already in at least one group besides the user’s private group, you must add the `-a` option as well (`-Ga`). 
+  - If not, the user belongs to only the new set of groups and loses membership to any previous groups.
+
+- `-l login_name`
+
+  - Change the login name of the account.
+
+- `-L`
+
+  - Lock the account by putting an exclamation point at the beginning of the encrypted password in `/etc/shadow`. 
+  - This locks the account, while still allowing you to leave the password intact (the `-U` option unlocks it).
+
+- `-m`
+
+  - Available only when `–d` is used, this causes the contents of the user’s home directory to be copied to the new directory.
+
+- `-o`
+
+  - Use only with `-u uid` to remove the restriction that UIDs must be unique.
+
+- `-s shell`
+
+  - Specify a different command shell to use for this account. Replace
+
+  `shell` with the command shell (for example, `-s bash`).
+
+- `-u user_id`
+
+  - Change the user ID number for the account. 
+  - Replace `user_id` with the ID number (for example, `-u 1474`).
+
+- `-U`
+
+  - Unlocks the user account (by removing the exclamation mark at the beginning of the encrypted password).
+
+
+
+For example:
+
+```
+# usermod -s /bin/csh chris
+# usermod -Ga sales,marketing, chris
+```
+
+
+
+#### Deleting users with `userdel`
+
+**`userdel`** is used to remove users. The following command removes the user chris:
+
+```
+# userdel -r chris
+```
+
+- Here, the user chris is removed from the `/etc/password` file. The `-r` option removes the user's home directory as well.
+
+- If you choose not to use `-r`, as follows, the home directory for chris is not removed:
+
+  ```
+  # userdel chris
+  ```
+
+
+
+Keep in mind that simply removing the user account does not change anything about the files that user leaves around the system (except those that are deleted when you use `-r`). However, ownership of files left behind appears as belonging to the previous owner’s user ID number when you run `ls -l` on the files.
+
+*Before you delete the user, you may want to run a find command to find all files that would be left behind by the user. After you delete the user, you could search on user ID tofind files left behind. Here are two find commands to do those things:???*
+
+```
+# find / -user chris -ls
+# find / -uid 504 -ls
+```
+
+Because files that are not assigned to any username are considered to be a security risk, it is a good idea to find those files and assign them to a real user account. 
+
+Here’s an example of a find command that finds all files in the file system that are not associated with any user (the files are listed by UID):
+
+```
+find / -nouser -ls
+```
+
+
+
+
+
+​			
+​		
+
+## Understanding Group Accounts	
+
+Group accounts are useful if you want to share a set of files with multiple users. You can create a group and change the set of files to be associated with that group. The root user can assign users to that group so they can have access to files based on that group’s permission. Consider the following file and directory:
+
+```
+$ ls -ld /var/salesdocs /var/salesdocs/file.txt
+drwxrwxr-x. 2 root sales 4096 Jan 14 09:32 /var/salesstuff/
+-rw-rw-r--. 1 root sales 0 Jan 14 09:32 /var/salesstuff/file.txt
+```
+
+
+
+#### Using group accounts
+
+Every user is assigned to a primary group. 
+
+- The primary group is indicated by the number in the third field of each entry in the **`/etc/passwd`** file, for example, the group ID 1007 here:
+
+  ```
+  sara:x:1002:1007:Sara Green:/home/sara:/bin/tcsh
+  ```
+
+- That entry points to an entry in the **`/etc/group`** file:
+
+  ```
+  sara:x:1007
+  ```
+
+Here are a few facts about using groups:
+
+- When `sara` creates a file or directory, by default, that file or directory is assigned to `sara`’s primary group (also called `sara`).
+
+- The user `sara` can belong to zero or more **supplementary groups**.
+
+  - If `sara` were a member of groups named `sales` and `marketing`, those entries could look like the following in the `/etc/group` file:
+
+    ```
+    sales:x:1302:joe,bill,sally,sara
+    marketing:x:1303:mike,terry,sara
+    ```
+
+- The user sara can’t add herself to a supplementary group. She can’t even add another user to her sara group. Only someone with root privilege can assign users to groups.
+
+- Any file assigned to the sales or marketing group is accessible to sara with group and other permissions (whichever provides the most access). 
+
+  - *If sara wants to create a file with the sales or marketing groups assigned to it, she could use the **`newgrp`** command.* 
+
+  - In this example, sara uses the `newgrp` command to have `sales` become her primary group temporarily and creates a file:
+
+    ```
+    [sara]$ touch file1
+    [sara]$ newgrp sales
+    [sara]$ touch file2
+    [sara]$ ls -l file*
+    -rw-rw-r--. 1 sara sara 0 Jan 18 22:22 file1 
+    -rw-rw-r--. 1 sara sales 0 Jan 18 22:23 file2
+    [sara]$ exit
+    ```
+
+- *It is also possible to allow users to temporarily become a member of a group with the `newgrp` command without actually being a member of that group.*
+
+  - To do that, someone with root permission can use **`gpasswd`** to set a group password (such as `gpasswd sales`). 
+  - After that, any user can type `newgrp` sales into a shell and temporarily use sales as their primary group by simply entering the group password when prompted.
+
+
+
+#### Creating group accounts
+
+As the root user, you can create new groups from:
+
+- the User Manager window;
+
+- the command line with the **`groupadd`** command;
+
+  - for example:
+
+    ```
+    # groupadd kings
+    # groupadd -g 1325 jokers
+    ```
+
+  - the group named `kings` is created with the next available group ID. After that, the group `jokers` is created using the `1325` group ID.
+
+  - Some administrators like using an undefined group number under 1000 so the group they create doesn’t intrude on the group designations above 1000 (so UID and GID numbers can go along in parallel).
+
+    ​
+
+Group ID:
+
+- Group ID numbers from 0 through 999 are assigned to special administrative groups. 
+  - For example, the root group is associated with GID 0.
+- Regular groups begin at 1000 (for some linux distributions).
+
+
+
+To change a group later, use the **`groupmod`** command:
+
+```
+# groupmod -g 330 jokers
+# groupmod -n jacks jokers
+```
+
+- In the first example, the group ID for `jokers` is changed to 330. 
+- In the second, the name `jokers` is changed to `jacks`.
+
+
+
+## Managing Users in the Enterprise
+
+… … 
+
+
+
+## Centralizing User Accounts
+
+… … 
+
+
+
+
+
+# 12 Managing Disks and Filesystems
+
+This chapter describes how to work with hard disks. 
+
+- Hard disk tasks include partitioning, adding filesystems, and managing those filesystems in various ways.
+- Storage devices that are attached to the systems from removable devices and network devices can be partitioned and managed in the same ways.
+
+After covering basic partitions, I describe how *logical volume management (LVM)* can be used to make it easier to grow, shrink, and otherwise manage filesystems more efficiently.
+
+
+
+## Unserstanding Disk Storage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
