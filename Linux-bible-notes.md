@@ -814,7 +814,7 @@ Man pages are the most common means of getting information about commands, as we
 
 *Options to the `man` command enable you to search the man page database or display man pages on the screen.*
 
-**For example:
+**For example:**
 
 ```
 $ man -k passwd 
@@ -3467,7 +3467,7 @@ To deal with these problems, packages progressed from simple tarballs to more co
 
 
 
-#### Understanding DEB packaging
+#### *Understanding DEB packaging*
 
 Debian software packages hold multiple files and metadata related to some set of software in the format of an `ar` archive file.
 
@@ -3482,7 +3482,7 @@ Multiple command-line and graphical tools are available for working with DEB fil
 
 - `aptitude` commands
 
-- `apt*` : There is a set of apt commands (`apt-get`, `apt-config`, `apt-cache`, and so on) that you can use to manage package installation.
+- **`apt*`** : There is a set of apt commands (`apt-get`, `apt-config`, `apt-cache`, and so on) that you can use to manage package installation.
 
   - *here are a few examples of commands that can help you install and manage packages with* `apt*` *command*. In this case, I’m looking for and installing the `vsftpd` package:
 
@@ -4111,7 +4111,308 @@ An entry in the `/etc/fstab` file tells Linux each partition's device name and w
 
 
 
+
 ## Partitioning Hard Disks
+
+Partition tables:
+
+- **Master Boot Record (MBR)**
+  - MBR partitions are limited to 2TB in size.
+- **Global Unique Identifiers (GUID)**
+  - GUID partitions can create partitions up to 9.4ZB
+
+
+
+#### Viewing disk partitions
+
+**`# fdisk -l /dev/sd?`**
+
+Your first primary hard disk usually appears as `/dev/sda`.
+
+When a USB flash drive is inserted, it is assigned to the next available `sd` device. For example:`# fdisk -l /dev/sdb`.
+
+
+
+#### Creating a single-partition disk
+
+… 
+
+
+
+#### Creating a multiple-partition disk
+
+… 
+
+
+
+## Using Logical Volume Management Partitions
+
+Logical volume management (LVM) offers lots of flexibility and efficiency in dealing with constantly changing storage needs.
+
+- With LVM, physical disk partitions are added to pools of space called volume groups.
+- Logical volumes are assigned space from volume groups as needed.
+- This gives you these abilities:
+  - Add more space to a logical volume from the volume group while the volume is still in use.
+  - Add more physical volumes to a volume group if the volume group begins to run out of space. The physical volumes can be from disks.
+  - Move data from one physical volume to another, so you can remove smaller disks and replace them with larger ones while the filesystems are still in use — again, without downtime.
+  - With LVM it is also easier to shrink filesystems to reclaim disk space, although shrinking does require that you unmount the logical volume (but no reboot is needed). LVM also supports advanced features, such as mirroring and working in clusters.
+
+
+
+#### Checking an existing LVM
+
+The following command displays the partitions on my first hard disk:
+
+```
+# fdisk -l /dev/sda | grep /dev/sda
+```
+
+Next, use the pvdisplay command to see if that partition is being used in an LVM group:
+
+```
+# pvdisplay /dev/sda2
+```
+
+
+
+… … 
+
+
+
+#### Creating LVM logical volumes
+
+… … 
+
+#### Growing LVM logical volumes
+
+… … 
+
+
+
+## Mounting Filesystems
+
+How filesystems are set up to connect permanently to your Linux system.
+
+When you boot linux, usually all the linux partitions on your hard disk are listed in your **`/etc/fstab`** file and are mounted.
+
+- This section describes what you might expect to find in that file.
+- It also describes how you can mount other partitions so that they become part of your linux filesystem.
+
+
+
+The **`mount`** command is used not only to mount local storage devices, but also to mount other kinds of filesystems on your Linux system. For example:
+
+- `mount` can be used to mount directories (folders) over the network from NFS or Sambra servers.
+- It can be used to mount filesystems from a new hard drive or USB flash drive that is not configured to auto mount.
+- It can also mount filesystem image files using loop devices.
+
+
+
+#### Supported filesystems
+
+To see filesystem types that are loaded in your kernel, type **`cat /proc/filesystems`**.
+
+- befs
+  - Filesystem used by the BeOS operating system.
+- btrfs
+  - A copy-on-write filesystem that implements advanced filesystem features. 
+  - It offers fault tolerance and easy administration. 
+  - The btrfs file system has recently grown in popularity for enterprise applications.
+- cifs
+  - Common Internet Filesystem (CIFS), the virtual filesystem used to access servers that comply with the SNIA CIFS specification.
+  - CIFS is an attempt to refine and standardize the SMB protocol used by Samba and Windows file sharing.
+- ext4
+  - Successor to the popular ext3 filesystem.
+  - It includes many improvements over ext3, such as support for volumes up to 1 exbibyte and file sizes up to 16 tebibytes. (This replaced ext3 as the default filesystem used in Fedora and RHEL. It has since been supplanted by xfs as the default for RHEL.)
+- ext3
+  - Ext filesystems are the most common in most Linux systems. 
+  - The ext3 filesystem, also called the third extended filesystem, includes journaling features that, compared to ext2, improve a filesystem’s capability to recover from crashes.
+- ext2
+  - The default filesystem type for earlier Linux systems. 
+  - Features are the sameas ext3, except that ext2 doesn’t include journaling features.
+- ext
+  - This is the first version of ext3. It is not used very often anymore.
+- iso9660
+  - Evolved from the High Sierra filesystem (the original standard for CD-ROMs). 
+  - Extensions to the High Sierra standard (called Rock Ridge extensions) allow iso9660 filesystems to support long filenames and UNIX-style information (such as file permissions, ownership, and links).
+  - Data CD-ROMs typically use this filesystem type.
+- kafs
+  - AFS client filesystem.
+  - Used in distributed computing environments to share files with Linux, Windows, and Macintosh clients.
+- minix
+  - Minix filesystem type, used originally with the Minix version of UNIX.
+  - It supports filenames of up to only 30 characters.
+- msdos
+  - An MS-DOS filesystem. You can use this type to mount floppy disks that come from Microsoft operating systems.
+- vfat
+  - Microsoft extended FAT (VFAT) filesystem.
+- umsdos
+  - An MS-DOS filesystem with extensions to allow features that are similar to UNIX (including long filenames).
+- proc
+  - Not a real filesystem, but rather a filesystem interface to the Linux kernel.
+  - You probably won’t do anything special to set up a proc filesystem. However, the `/proc` mount point should be a proc filesystem.
+  - Many utilities rely on `/proc` to gain access to Linux kernel information.
+- reiserfs
+  - ReiserFS journaled filesystem.
+  - ReiserFS was once a common default filesystem type for several Linux distributions.
+  - However, ext and xfs filesystemsare by far more common filesystem types used with Linux today.
+- swap
+  - Used for swap partitions.
+  - Swap areas are used to hold data temporarily when RAM is used up.
+  - Data is swapped to the swap area and then returned to RAM when it is needed again.
+- squashfs
+  - Compressed, read-only filesystem type.
+  - Squashfs is popular on live CDs,where there is limited space and a read-only medium (such as a CD or DVD).
+- nfs
+  - Network Filesystem (NFS) type of filesystem.
+  - NFS is used to mount filesystems on other Linux or UNIX computers.
+- hpfs
+  - Filesystem is used to do read-only mounts of an OS/2 HPFS filesystem.
+- ncpfs
+  - A filesystem used with Novell NetWare.
+  - NetWare filesystems can be mounted over a network.
+- ntfs
+  - Windows NT filesystem.
+  - Depending upon the distribution you have, it may be supported as a read-only filesystem (so that you can mount and copy files from it).
+- affs
+  - Filesystem used with Amiga computers.
+- ufs
+  - Filesystem popular on Sun Microsystems’ operating systems (that is, Solaris and SunOS).
+- jfs
+  - A 64-bit journaling filesystem by IBM that is relatively lightweight for themany features it has.
+- xfs
+  - A high performance filesystem originally developed by Silicon Graphics that works extremely well with large files.
+  - This filesystem is the default type for RHEL 7.
+- gfs2
+  - A shared disk filesystem that allows multiple machines to all use the same shared disk without going through a network filesystem layer such as CIFS, NFS, and so on.
+
+
+
+To see the list of filesystems that come with the kernel you are currently using, type `ls /lib/modules/'kernelversion'/kernel/fs/`. The 'kernelversion' need to be replaced by teh actual directory name.
+
+- The actual modules are stored in subdirectories of that directory.
+- Mounting a filesystem of a supported type causes the filesystem module to be loaded. if it is not already loaded.
+
+
+
+*Type **`man fs`** to see descriptions of linux filesystems.*
+
+
+
+#### Enabling swap areas
+
+A swap area is an area of the disk that is made available to Linux if the system runs out of memory(RAM).
+
+- If your RAM is full and you try to start another application without a swap area, that application will fail.
+- With a swap area, Linux can temporarily swap out data from RAM to the swap area and then get it back when needed. You take a performance hit, but it is better than having processes fail.
+
+
+
+To create a swap area from a partition or a file, use the **`mkswap`** command.
+
+To temporarily enable that swap area, you can use the **`swapon`** command.
+
+
+
+*For example, here's how to check your available swap space, create a swap file, enable the swap file, and then check that the space is available on your system: (here use a command **`dd`**)*
+
+```
+# free -m
+
+# dd if=/dev/zero of=/var/tmp/myswap bs=1M count=1024
+# mkswap /var/opt/myswap
+# swapon /var/opt/myswap
+# free -m
+```
+
+The `free` command shows the amount of swap before and after creating, making, and enabling the swap area with the `swapon` command. **???**
+
+- That amount of swap is available immediately and temporarily to your system.
+
+To make that swap area permanent, you need to add it to your **`etc/fstab`** file. Here is an example:
+
+```
+/var/opt/myswap swap swap defaults 0 0
+```
+
+This entry indicates that the swap file named `/var/opt/myswap` should be enabled at boot time.
+
+Because there is no mount point for a swap area, the second field is just set to swap, as is the partition type.
+
+To test that the swap file works before rebooting, you can enable it immediately (**`swapon -a`**) and check that the additional swap area appears.
+
+
+
+#### Disabling a swap area
+
+**`swapoff`** command.
+
+
+
+- First, make sure that no space is being used on the swap device (using the **`free`** command).
+
+- Then use `swapoff` to turn off the swap area so you can reuse the space. For example:
+
+  ```
+  # free -m
+
+  # swapoff /var/opt/myswap
+
+  # free -m
+  ```
+
+  ​
+
+#### Using the fstab file to define mountable file systems
+
+The **/etc/fstab** file contains definitions for each partition, along with options describing how the partition is mounted.
+
+
+
+To see all the UUIDs assigned to storage devices on your system, type the **`blkid`** command.
+
+
+
+… … 
+
+
+
+To help you understand the contents of the `/etc/fstab` file, here is what is in each field of that file:
+
+- Field 1
+  - The name of the device representing the filesystem.
+  - This field can include the `LABEL` or `UUID` option, with which you can indicate a volume label or universally unique identifier (UUID) instead of a device name.
+  - The advantage to this approach is that because the partition is identified by volume name, you can move a volume to a different device name and not have to change the fstab file.
+  - (See the description of the `mkfs` command in the section “Using the mkfsCommand to Create a Filesystem” for information on creating and using labels.)
+- Field 2
+  - The mount point in the filesystem.
+  - The filesystem contains all data from the mount point down the directory tree structure unless another filesystem is mounted at some point beneath it.
+- Field 3
+  - The filesystem type.
+- Field 4
+  - Use defaults or a comma-separated list of options (no spaces) you want to use when the entry is mounted.
+  - See the `mount` command manual page (under the `-o` option) for information on other supported options.
+
+
+- Field 5
+  - The number in this field indicates whether the filesystem needs to be dumped (that is, have its data backed up).
+  - A `1` means that the filesystem needs to be dumped, and a `0` means that it doesn’t. (This field is no longer particularly useful because most Linux administrators use more sophisticated backup options than the dump command. Most often, a `0` is used.)
+- Field 6
+  - The number in this field indicates whether the indicated filesystem should be checked with `fsck` when the time comes for it to be checked: `1` means it needsto be checked first, `2` means to check after all those indicated by `1` have already been checked, and `0` means don’t check it.
+
+
+
+*If you want to find out more about mount options as well as other features of the `/etc/fstab` file, there are several man pages you can refer to, including `man 5 nfs` and `man 8 mount`.*
+
+
+
+#### Using the `mount` command to mount file systems
+
+
+
+
+
+
 
 
 
