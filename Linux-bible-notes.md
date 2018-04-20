@@ -4408,6 +4408,59 @@ To help you understand the contents of the `/etc/fstab` file, here is what is in
 
 #### Using the `mount` command to mount file systems
 
+*Linux systems automatically run `mount -a` (mount all filesystems from the `/etc/fstab` file) each time you boot.*
+
+For that reason, you generally use the **`mount`** command only for special situations. In particular, the average user or administrator *uses `mount` in two ways*:
+
+- To display the disks, partitions, and remote filesystems currently mounted
+- To temporarily mount a filesystem.
+
+
+
+- With no options, `mount` can see what filesystems are currently mounted on the local Linux system.
+
+- Mount a filesystem manually. 
+
+  - For example, to mount read-only a disk partition `sdb1` that has an older `ext3` filesystem, you could type this:
+
+  ```
+  # mkdir /mnt/temp
+  # mount -t ext3 -o ro /dev/sdb1 /mnt/tmp
+  ```
+
+- Another reason to use the `mount` command is to remount a partition to change its mount options. 
+
+  - Suppose you want to remount `/dev/sdb1` as read/write, but you do not want ot unmount it (maybe someone is using it). You could use the remount option as follows:
+
+    ```
+    # mount -t ext3 -o remount,rw /dev/sdb1
+    ```
+
+
+
+#### Mounting a disk image in loopback
+
+Another valuable way to use the `mount` command has to do with disk images. 
+
+- If you download a CD or floppy disk image from the Internet and you want to see what it contains, you can do so without burning it to CD or floppy.
+
+- With the image on your hard disk, create a mount point and use the `-o loop` option to mount it locally.
+
+- For example:
+
+  ```
+  # mkdir /mnt/mycdimage
+  # mount -o loop whatever-i686-disc1.iso /mnt/mycdimage
+  ```
+
+  - In this example, the `/mnt/mycdimage` directory is created, and then the disk image file `whatever-i686-disc1.iso` residing in the current directory is mounted on it.
+  - You can now `cd` to that directory, view the contents of it, and copy or use any of its contents.
+  - This is useful for downloaded CD images from which you want to install software without having to burn the image to CD.
+  - You could also share that mount point over NFS, so you could install the software from another computer.
+  - When you are finished, just type `umount/mnt/mycdimage` to unmount it.
+
+- Other options to `mount` are available only for sepcific filesystem types. See the `mount` manual page for those and other useful options.
+
 
 
 
