@@ -4464,6 +4464,79 @@ Another valuable way to use the `mount` command has to do with disk images.
 
 
 
+#### Using the `umount` command
+
+When you are finished using a temporary filesystem, or you want to unmount a permanent filesystem temporarily, use the **`umount`** command.
+
+To use `umount`, you can give it either a directory name or a device name. For example:
+
+```
+# umount /mnt/test
+```
+
+This unmount the device from the mount point `/mnt/test`. You can also unmount using this form:
+
+```
+# umount /dev/sdb1
+```
+
+*In general, it's better to use the directory name (`/mnt/test`) because the `umount` command will fail if the device is mounted in more than one location.  (Device names all begin with `/dev`). ???*
+
+
+
+*If you get the message `device is busy`:*
+
+- The `umount` request has failed because:
+  - either an application has a file open on the device 
+  - or you have a shell open with a directory on the device as a current directory.
+- Stop the processes or change to a directory outside the device you are trying to unmount for the `umount` request to succeed.
+- An alternative for unmounting a busy device is the `-l` option. With `umount -l` (a lazy unmount), the unmount happens as soon as the device is no longer busy.
+
+To unmount a remote NFS filesystem that's no longer available (for example, the server went down), you can use the `umount -f` option to forcibly unmount the NFS filesystem.
+
+
+
+A useful tool for discovering what's holding open a device you want to unmount is the **`lsof`** command.
+
+- Type `lsof` with the name of the partition you want to unmount. The output shows you what commands are holding files open on that partition.
+- The `fuser-v` command can be used in the same way.
+
+
+
+## Using the `mkfs` Command to Create a Filesystem
+
+*With **`mkfs`** command, you can create a filesystem for any supported filesystem type on a disk or partition that you choose.*
+
+*Before you create a new filesystem, make sure of the following:*
+
+- You have partitioned the disk as you want (using the `fdisk` command).
+- You get the device name correct, or you may end up overwriting your hard disk by mistake.
+  - For example, the first partition on the second SCSI or USB flash drive on your system is `/dev/sdb1` and the third disk is `/dev/sdc1`.
+- To unmount the partition if it's mounted before creating the filesystem. 
+
+
+
+The following are two examples of using `mkfs` to create a filesystems on two partitions on a USB flash drive located as the first and second partitions on the third SCSI disk (`/dev/sdc1` and `/dev/sdc2`). The first creates an xfs partition, while the second creates an ext4 partition.
+
+```
+# mkfs -t ext4 /dev/sdc1
+# mkfs -t ext4 /dev/sdc2
+```
+
+
+
+Now mount this filesystem (`mkdir /mnt/myusb` ; `mount /dev/sdc1 /mnt /myusb`), change to `/mnt/myusb` as your current directory (`cd /mnt/myusb`), and create files on it as you please.
+
+
+
+
+
+# 13 Understanding Sever Administration
+
+
+
+
+
 
 
 
