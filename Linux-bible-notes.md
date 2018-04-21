@@ -3480,7 +3480,7 @@ Multiple command-line and graphical tools are available for working with DEB fil
 
 - Ubuntu Software Center
 
-- `aptitude` commands
+- **`aptitude`** commands
 
 - **`apt*`** : There is a set of apt commands (`apt-get`, `apt-config`, `apt-cache`, and so on) that you can use to manage package installation.
 
@@ -4535,27 +4535,86 @@ Now mount this filesystem (`mkdir /mnt/myusb` ; `mount /dev/sdc1 /mnt /myusb`), 
 
 
 
+## Starting with Server Administration
+
+#### Step 1: Install the server
+
+Any general-purpose Linux system offers the software packages needed to supply every major type of server available.
+
+Sometimes, multiple software packages associated with a particular type of server are gathered together in Package Groups (sometimes called Package Collections). Other times, you just need to install the server packages you want individually.
 
 
 
+Here are some server package categories in Fedora and some of the packages available in each category:
+
+- System Logging Server
+  - The **`rsyslog`** service allows the local system to gather log messages delivered from a variety of components on the system. 
+  - It can also act as a remote logging server, gathering logging messages sent from other logging servers. (The `rsyslog` service is described later in this chapter.) 
+  - In recent Ubuntu,Fedora, and RHEL systems, log messages are gathered in the `systemd` journal, *which can be picked up and redirected by the `rsyslog`* service or displayed locallyby the `journalctl` command.
+- Print Server
+  - The Common UNIX Printing Service (`cups` package) is used most often to provide print server features on Linux systems. 
+  - Packages that provide graphical administration of CUPS (`system-config-printer`) and printer drivers(`foomatic`, `hpijs`, and others) are also available when you install CUPS. (SeeChapter 16, “Configuring a Print Server.”)
+- *Web Server*
+  - The Apache (`httpd` package) web server is the software used most often to serve web pages (HTTP content). 
+  - Related packages include modules to help serve particular types of content (Perl, Python, PHP, and SSL connections).
+  - Likewise, there are packages of related documentation (`httpd-manual`), tools for monitoring web data (webalizer), and tools for providing web proxy services(squid). (See Chapter 17, “Configuring a Web Server.”)
+- *FTP Server*
+  - The Very Secure FTP daemon (`vsftpd` package) is the default FTP server used in Fedora and RHEL.
+  - Other FTP server packages include `proftpd` and `pure-ftpd`. (See Chapter 18, “Configuring an FTP Server.”)
+
+- Windows File Server
+
+  - Samba (`samba` package) allows a Linux system to act as a Windows file and print server.
+
+    (See Chapter 19, “Configuring a Windows File Sharing(Samba) Server.”)
+
+- *NFS*
+
+  - Network File System (NFS) is the standard Linux and UNIX feature for providing shared directories to other systems over a network.
+  - The `nfs-utils` package provides NFS services and related commands. (See Chapter 20, “Configuringan NFS File Server.”)
+
+- Mail Server
+
+  - These types of packages enable you to configure e-mail servers, sometimes referred to as a Mail Transport Agent (MTA) server. 
+  - You have several choices of e-mail servers, including `sendmail` (default in Fedora), `postfix`(default in RHEL), and `exim`. Related packages, such as `dovecot`, allow the mailserver to deliver e-mail to clients.
+
+- Directory Server
+
+  - Packages in this category provide remote and local authentication services. These include Kerberos (`krb5-server`), LDAP (`openldap-servers`), and NIS (`ypserv`).
+
+- *DNS Server*—The Berkeley Internet Name Domain service (bind) provides the software needed to configure a server to resolve host names into IP addresses.
+
+- *Network Time Protocol Server*—The `ntpd` package provides a service you can enable to sync up your system clock with clocks from public or private NTP servers.
+
+-  *SQL Server*
+
+  - The PostgreSQL (`postgresql` and `postgresql-server` packages) service is an object-relational database management system.  Related packages provide PostgreSQL documentation and related tools. 
+  - The MySQL (`mysql` and `mysql-server` packages) service is another popular open source SQL database server. 
+  - Recently, a new community-developed branch of MySQL called *MariaDB* has supplanted MySQL on many Linux distributions.
 
 
 
+#### Step 2: Configure the server
+
+Most server software packages are installed with a default configuration that leans more toward security than immediate full use. Here are some things to think about when you set out to configure a server.
+
+- Using configuration files
+
+  - *Most Linux servers are configured using plain text files in the `/etc` directory (or subdirectories)*.
+  - Often, there is a primary configuration file; sometimes, there is a related
+    configuration directory in which files ending in `.conf` can be pulled into the main
+    configuration file.
+  - The one downside to plain-text configuration files is that you don't get the kind of immediate error checking you get when you use graphical administration tools. 
+    - You either have to run a test command (if the service includes one) or actually try to start the service to see if there is any problem with your configuration file.
+    - *Tip:* Instead of using `vi` to edit configuration files, use `vim` instead. *Using the `vim` command can help you catch configuration file errors as you are editing*.
+
+- Checking the default configuration
+
+  ……. 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+#### Step 3: Start the server
 
 
 
