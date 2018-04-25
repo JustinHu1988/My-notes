@@ -4616,6 +4616,150 @@ Most server software packages are installed with a default configuration that le
 
 #### Step 3: Start the server
 
+… 
+
+#### Step 4: Secure the server
+
+- Password protection
+- Firewalls
+  - The **`iptables`** firewall service can track and respond to every packet coming from and going to network interfaces on your computer.
+- TCP Wrappers
+  - Using the **`/etc/hosts.allow`** and **`/etc/hosts.deny`** files, you can allow or deny access to those services that have the TCP Wrapper features enabled.
+  - Access can be allowed or denied based on IP address or host name.
+- SELinux
+  - Security Enhanced Linux feature.
+  - A major function of SELinux is to protect the contents of your Linux system from the processes running on the system.
+  - In other words, SELinux makes sure that a web server, FTP server, Samba server, or DNS server can access only a restricted set of files on the system (as defined by file contexts) and allow only a restricted set of features (as defined by Booleans and limited port access).
+- Security settings in configuration files
+
+
+
+#### Step 5: Monitor the server
+
+- Configure logging
+  - Using the **`rsyslog`** service (`rsyslogd` daemon), you can gather critical information and error conditions into log files about many different services.
+  - **`logwatch`** feature scans your log files each night and sends critical information gathered from those files to an e-mail account of your choice.
+  - **`logrotate`** feature backs up log files into compressed archives when the logs reach a certain size or pass a set amount of time since the previous backup.
+- Run system activity reports
+  - The sar facility (which is enabled by the sysstat package) can be configured to watch activities on your system, such as memory usage, CPU usage, disk latency, network activities, and other resource drains.
+- Keep system software up to date
+  - As security holes are discovered and patched, you must make sure that the updated software packages containing those patches are installed on your servers.
+- Check the filesystem for signs of crackers
+  - To check your filesystem for possible intrusion, you can run commands such as **`rpm -V`** to check if any commands, document files, or configuration files have been tampered with on your system.
+
+
+
+## Managing Remote Access with the Secure Shell Service
+
+The Secure Shell tools are a set of client and server applications that allow you to do basic communications between client computers and your Linux server.
+
+The tools include:
+
+- **`ssh`**
+- **`scp`**
+- **`sftp`**
+- And many others.
+
+With Secure Shell tools, both the authentication process and all communications that follow are encrypted.
+
+On Ubuntu, only the `opens-clients` package is installed. It includes the functionality of the `openssh` package. If you need the server installed, use the `sudo apt-get install openssh-server` command.
+
+
+
+#### Starting the opens-server service
+
+- Commands to Determine sshd Status
+
+  - ```shell
+    status ssh
+    ```
+
+- Commands to Start sshd
+
+  - ```shell
+    service ssh start
+    ```
+
+- Commands to Start sshd at Boot
+
+  - ```shell
+    update-rc.d ssh defaults
+    ```
+
+When you install openssh-server on Ubuntu, the sshd daemon is configured to start automatically at boot.
+
+
+
+… 
+
+
+
+
+
+#### Using SSH client tools
+
+*remote login:*
+
+- for example, Logging in to `johndoe`'s account on `10.140.67.23`:
+
+  ```Bash
+  ssh johndoe@10.140.67.23
+  ```
+
+- When you type `yes` to continue the first log in, you accept the remote host's public key.
+
+  - the remote host's public key is downloaded to the client in the client's **`~/.ssh/known_hosts`** file.
+  - Now, data exchanged between these two systems can be encrypted and decrypted using RSA asymmetric encryption.
+
+- After you are logged in to the remove system, you can begin typing shell commands.
+
+  - The connection functions like a normal login. The only difference is that the data is encrypted as it travels over the network.
+
+- type **`exit`** to end the remote connection.
+
+- **`~.ssh/known_hosts`** will contain the public key of the remote host along with it IP address.
+
+  - Your server's public and private keys are stored in the **`/etc/ssh`** directory.
+
+> TIP
+>
+> Any later attempts by this user to contact the server at 10.140.67.23 are authenticated using this stored key. If the server should change its key (which happens if the operating system is reinstalled), attempts to ssh to that system result in a refused connection and dire warnings that you may be under attack. If the key has indeed changed, to be able to `ssh` to that address again, just remove the host’s key (the whole line) from your `know_hosts` file and you can copy over the new key.
+>
+> 
+
+*Using `ssh` for remote execution:*
+
+- For example:
+
+  ```shell
+  ssh johndoe@10.140.67.23 hostname
+  ```
+
+- If you run a remote execution command with `ssh` that includes options or arguments, be sure to *surround the whole remote command line in quotes*.
+
+- If you refer to files or directories in your remote commands, relative paths are interpreted in relation to the user's home directory.
+
+  ```shell
+  ssh johndoe@10.140.67.23 "cat myfile"
+  ```
+
+- If X11 forwarding is enabled on the server (`X11Forwarding yes` is set in the **`/etc/sshd/sshd_config`** file), you can run graphical applications from the server securely over the SSH connection using `ssh -X`. For example:
+
+  ```shell
+  ssh -X johndoe@10.140.67.23 system-config-date
+  ```
+
+- If you want to run several X commands and don’t want to have to reconnect each time, you can use X11 forwarding directly from a remote shell as well. Put them in the background and you can have several remote X applications running on your local desktop at once.
+
+
+
+*Copying files between systems with `scp` and `rsync`*:
+
+
+
+
+
+
 
 
 
