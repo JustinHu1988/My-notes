@@ -30,12 +30,12 @@ For more information about these commands, use `man command`.
 
 
 
-
-
 ## Managing filesystem
 
 - **`mkdir`**
   - Make directories
+- **`rmdir`**
+  - Remove empty directories
 - **`rm`**
   - remove files or directories
 - **`mv`**
@@ -155,7 +155,235 @@ For more information about these commands, use `man command`.
 
 
 
+
 ## Managing text file
+
+#### Use **`find`** to search files
+
+- Find `txt` and `pdf` files in current directory:
+
+  ```shell
+  find . \( -name "*.txt" -o -name "*.pdf" \) -print
+  ```
+
+- Use *regular expression* to find txt and pdf:
+
+  ```shell
+  find . -regex ".*\(\.txt|\.pdf\)$"
+  ```
+
+- `find . -iregex pattern`
+
+  - Like -regex, but the match is case insensitive.
+
+- Find all files that are *not* `txt`
+
+  ```shell
+  find . ! -name "*.txt" -print
+  ```
+
+- Print files in current directory (**`-maxdepth`** is equal to 1)
+
+  ```shell
+  find . -maxdepth 1 -type f
+  ```
+
+- Find files by *type*:
+
+  ```shell
+  find . -type d -print
+  ```
+
+- *`find` can distinguish between file, symbolic link and directory, but can not distinguish between binary file and text file.*
+
+###### Search by time:
+
+- Files were accessed in 7 days ago(exactly):
+
+  ```shell
+  find . -atime 7 -type f -print
+  ```
+
+- Files were accessed in last 7 days:
+
+  ```shell
+  find . -atime -7 -type f -print
+  ```
+
+- Files were accessed before 7 days ago:
+
+  ```shell
+  find . -atime +7 -type f -print
+  ```
+
+###### Search by size:
+
+- Find files which is greater than 2k:
+
+  ```Shell
+  find . -type f -size +2k
+  ```
+
+###### Search by user
+
+- files is owned by certain user:
+
+  ```shell
+  find . -type f -user justin -print
+  ```
+
+
+
+#### After you find files
+
+- Delete:
+
+  ```shell
+  find . -type f -name "*.swp" -delete
+
+  #or
+
+  find . -type f -name "*.swp" | xargs rm
+  ```
+
+- execute some command (**`-exec`** action):
+
+  - Change current directory files ownership:
+
+    ```shell
+    find . -type f -user root -exec chown weber {} \
+    ```
+
+    *`{}` is a special string, for every matched file, `{}` will be replaced by its filename.*
+
+  - Copy all the files to another directory:
+
+    ```shell
+    find . -type f -mtime +10 -name ".txt" -exec cp {} 
+    ```
+
+    ​
+
+- **combine multiple commands:**
+
+  If you want to execute many commands after find files, you can write a shell script, then execute it after `-exec` action:
+
+  ```shell
+  -exec ./commands.sh {} \;
+  ```
+
+
+
+#### *check file type*
+
+**`file`**: determines file type
+
+- for example:
+
+  ```shell
+  file filename
+  ```
+
+  ​
+
+*Command combination to find all binary files in current directory:*
+
+```Shell
+ls -lrt | awk '{print $9}' | xargs file | grep ELF | awk '{print $1}' | tr -d ':'
+```
+
+
+
+#### **`grep`** text search
+
+- Basic syntax:
+
+```shell
+grep match_pattern file
+```
+
+
+
+- Basic options:
+
+  - `-o`
+
+    - Print only the matched (non-empty) parts of a matching line, with each such part on a separate output line.
+
+  - `-v`
+
+    - Invert the sense of matching, to select non-matching lines.
+
+  - `-c`
+
+    - Suppress normal output; instead print a count of matching line for each input file.
+
+  - `-n`
+
+    - Prefix each line of output with the 1-based line number within its input file.
+
+  - `-i`
+
+    - Ignore case distinctions in both the PATTERN and the input files.
+
+  - `-l`
+
+    - Suppress normal output; instead print the name of each input file from which output would normally have been printed. The scanning will stop on the first match.
+
+  - **`-R`**
+
+    - Read all files under each directory, recursively. Follow all symbolic links.
+
+    - for example:
+
+      ```shell
+      grep "class" . -R -n
+      ```
+
+  - `-e`
+
+    - Use PATTERN as the pattern. If this option is used multiple times or is combined with the `-f` option, search for all patterns given. This option can be used to protect a pattern beginning with "-".
+
+    - For example:
+
+      ```shell
+      grep -e "class" -e "vitural" file
+      ```
+
+
+
+#### **`xargs`** 
+
+`xargs` build and execute command line from standard input.
+
+- *`xargs` reads items from the standard input, delimited by blanks (which can be protected with double or single quotes or a backslash) or newlines, and executes the command (default is **`/bin/echo`**) one or more times with any initial-arguments followed by items read from standard input.*
+- Blank lines on the standard input are ignored.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
