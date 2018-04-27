@@ -362,17 +362,254 @@ grep match_pattern file
 
 
 
+Options:
+
+- `-d` : Input items are terminated by the specified character.
+  - The specified delimiter may be a single character, a C-style character escape such as `\n`
+- `-n max-args` : use at most `max-args` arguments per command line.
+- `-l [max-lines]` : Use at most `max-lines` nonblank input lines per command line.
+- `-I replace-str` : 
+- `-O` : Input items are terminated by a null character instead of by whitespace.
 
 
 
+#### **`sort`**
+
+Sort lines of text files.
 
 
 
+#### **`uniq`**
+
+Report or omit repeated lines.
+
+For example:
+
+- Delete repeated lines:
+
+  ```shell
+  sort unsort.txt | uniq
+  ```
+
+- Count the number of same lines:
+
+  ```shell
+  sort unsort.txt | uniq -c
+  ```
+
+- Find out repeated lines:
+
+  ```shell
+  sort unsort.txt | uniq -d
+  ```
+
+Options:
+
+- `-s` : avoid comparing the first N characters
+- `-w` : compare no more than N characters in lines
 
 
 
+#### **`tr`**
+
+Translate or delete characters.
+
+*Translate, squeeze, and/or delete characters from standard input, writing to standard output.*
 
 
+
+For example:
+
+```shell
+echo 12345 | tr '0-9' '9876543210'  # 87654
+cat text | tr '\t' ' '
+
+# delete all digits
+cat file | tr -d '0-9'
+
+# delete all non-digit characters (except ' ' and '\n')
+cat file | tr -d -c '0-9 \n'
+
+# delete redundant white space:
+cat file | tr -s ' '
+
+```
+
+
+
+**`tr [OPTION]... SET1 [SET2]`:**
+
+- SETs are specified as strings of characters. Most represent themselves.
+- Interpreted sequences are:
+  - `\NNN` : character with octal value NNN (1 to 3 octal digits)
+  - `\\` : backslash
+  - `\a` : audible BEL
+  - `\b` : backspace
+  - `\f` : form feed
+  - `\n` : new line
+  - `\r` : return
+  - `\t` : horizontal tab
+  - `\v` : vertical tab
+  - `CHAR1-CHAR2`
+    - All characters from `CHAR1` to `CHAR2` in ascending order.
+  - `[CHAR*]` :
+    - in SET2, copies of `CHAR` until length of SET1.
+  - `[CHAR*REPEAT]` :
+    - REPEAT copies of CHAR, REPEAT octal if starting with 0. 
+  - `[:alnum:]` :
+    - all letters and digits 
+  - `[:alpha:]` :
+    - all letters 
+  - `[:digit:]` :
+    - all digits 
+  - `[:cntrl:]` :
+    - All control characters 
+  - `[:print:]` :
+    - All printable characters, including space 
+  - `[:graph:]` :
+    - All printable characters, not including space 
+  - `[:space:]` : 
+    - All horizontal or vertical space
+  - `[:blank:]` : 
+    - All horizontal whitespace
+  - `[:upper:]` :
+    - all upper case letters
+  - `[:lower:]` :
+    - all lower case letters
+  - `[:punct:]` :
+    - all punctuation characters
+  - `[:xdigit:]`:
+    - all hexadecimal digits
+  - `[=CHAR=]`:
+    - all characters which are equivalent to CHAR
+
+
+
+For example:
+
+```shell
+tr '[:lower:]' '[:upper:]'
+```
+
+
+
+#### **`cut`**
+
+```shell
+cut OPTION... [FILE]...
+```
+
+Remove sections from each line of files.
+
+- Print selected parts of lines from each FILE to standard output.
+- With no FILE, or when FILE is `-`, read standard input.
+- Mandatory arguments to long options are man dater for short options too.
+
+
+
+Options:
+
+- `-f`
+
+  - Select only these fields; also print any line that contains no delimiter character, unless the `-s` option is specified.
+
+  - For exmaple:
+
+    ```shell
+    cut -d ' ' -f 2 file # cut the second word of each line of the file
+    ```
+
+- `-c`
+
+- `-b`
+
+- `-d`
+
+  ​
+
+Use one, and only one of `-b`, `-c` or `-f`. Each `LIST` is made up of one range, or many ranges separated by commas.
+
+- Selected input is written in the same order that it is read, and is written exactly once. Each *range* is one of:
+  - `N`
+    - N'th byte, character or field, counted from 1.
+  - `N-`
+    - From N'th byte, character or field, to end of line.
+  - `N-M`
+    - from N'th to M'th (included) byte, character or field.
+  - `-M`
+    - From first to M'th (included) byte, character or field.
+
+
+
+#### **`paste`**
+
+Merge lines of files.
+
+```shell
+paste [OPTION]... [FILE]...
+```
+
+- Write lines consisting of the sequentially corresponding lines from each FILE, separated by TABs, to standard output.
+- With no FILE, or when FILE is `-`, read standard input.
+
+
+
+Options:
+
+- `-d, --delimiters=LIST`
+  - reuse characters from LIST instead of TABs
+- `-s, --serial`
+  - Paste one file at a time instead of in parallel
+- `-z, --zero-terminated`
+  - line delimiter is NUL, not newline
+
+
+
+For example:
+
+```shell
+cat file1
+1
+2
+
+cat file2
+colin
+book
+
+paste file1 file2 -d ','
+1,colin
+2,book
+```
+
+
+
+#### **`wc`**
+
+Print newline, word, and byte counts for each file.
+
+```shell
+wc -l file  # print the newline counts
+wc -w file  # print the word counts
+wc -m file  # print the character counts
+wc -c file  # print the byte counts
+wc -L file  # print the maximum display width
+```
+
+
+
+#### **`sed`**
+
+Stream editor for filtering and transforming text.
+
+```shell
+sed [OPTION]... {script-only-if-no-other-script} [input-file]...
+```
+
+Sed is a stream editor.
+
+- A stream editor is used to perform basic text transformations on an input stream (a file or input from a pipeline).
+- While in some ways similar to an editor which permits scripted edits (such as `ed`), sed works by making only one pass over the input(s), and is consequently more efficient.
+- But, it is sed's ability to filter text in a pipeline which particularly distinguishes it from other types of editors.
 
 
 
