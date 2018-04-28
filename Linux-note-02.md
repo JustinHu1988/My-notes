@@ -360,8 +360,6 @@ grep match_pattern file
 - Blank lines on the standard input are ignored.
 
 
-
-
 Options:
 
 - `-d` : Input items are terminated by the specified character.
@@ -415,8 +413,6 @@ Options:
 Translate or delete characters.
 
 *Translate, squeeze, and/or delete characters from standard input, writing to standard output.*
-
-
 
 For example:
 
@@ -541,6 +537,8 @@ Use one, and only one of `-b`, `-c` or `-f`. Each `LIST` is made up of one range
 
 
 
+
+
 #### **`paste`**
 
 Merge lines of files.
@@ -609,7 +607,93 @@ Sed is a stream editor.
 
 - A stream editor is used to perform basic text transformations on an input stream (a file or input from a pipeline).
 - While in some ways similar to an editor which permits scripted edits (such as `ed`), sed works by making only one pass over the input(s), and is consequently more efficient.
-- But, it is sed's ability to filter text in a pipeline which particularly distinguishes it from other types of editors.
+- But, it is *sed's ability to filter text in a pipeline* which particularly distinguishes it from other types of editors.
+
+
+
+
+Examples:
+
+- ```shell
+  # replace the first 'text' of each line by 'replace_text'
+  sed 's/text/replace_text/' file
+
+  # replace all the 'text' by 'replace_text'
+  sed 's/text/replace_text/g' file
+
+  # remove blank lines
+  sed '/^$/d' file
+
+  # 
+  echo this is en example | sed 's/\w+/[&]/g'
+  $>[this] [is] [en] [example]
+
+  #
+  sed 's/hello\([0-9]\)/\1/'
+
+  #
+  sed 's/$var/HLLOE/'
+
+  # when we use double quote, we can conpute the variable in the double first
+  #eg:
+  p=pattern
+  r=replaced
+  echo "line con a pattern" | sed "s/$p/$r/g"
+  $> line con a replaced
+
+  #
+  sed 's/^.\{3\}/&\//g' file
+  ```
+
+
+
+#### **`awk`**
+
+Pattern scanning and text processing language.
+
+- The AWK language is useful for manipulation of data files, text retrieval and processing, and for prototyping and experimenting with algorithms.
+- An AWK program is a sequence of pattern {action} pairs and function definitions.
+  - Short programs are entered on the command line usually enclosed in `' '` to avoid shell interpretation.
+  - Longer programs can be read in from a file with the `-f` option.
+- Data input is read from the list of files on the command line or from standard input when the list is empty.
+- The input is broken into records as determined by the record separator variable, $RS$. Initially, $RS$ = "\n" and records are synonymous with lines.
+- Each record is compared against each pattern and if it matches,  the program text for {action} is executed.
+
+
+
+```shell
+awk ' BEGIN{ statements } statements2 END{statements} '
+```
+
+1. Execute the BEGIN statement
+2. read input from files or standard input, then execute statements2, repeat until all inputs has been read.
+3. Execute the END statement.
+
+
+
+For example:
+
+- ```shell
+  echo -e "line1\nline2" | awk 'BEGIN{print "start"} {print} END{print "end"}'
+  start
+  line1
+  line2
+  end
+  ```
+
+- ```shell
+  echo | awk ' {var1="v1"; var2="V2"; var3="v3"; print var1, var2, var3;} '
+  v1 V2 v3
+  ```
+
+- ```shell
+  echo | awk ' {var1="v1";var2="V2";var3="v3"; print var1 "-" var2 "--" var3;} '
+  v1-V2--v3
+  ```
+
+
+
+…… 
 
 
 
@@ -619,6 +703,71 @@ Sed is a stream editor.
 
 
 
+## Disk management
+
+#### **`df`**
+
+Report file system disk space usage.
+
+Options:
+
+- `-h, --human-readable`
+  - Print sizes in powers of 1024.
+
+#### **`du`**
+
+Estimate file space usage.
+
+For example:
+
+- ```shell
+  du -sh # see the usage of current directory
+
+  # check all the subdirectories sorted by size
+  for i in `ls`; do du -sh $i; done | sort
+  #or
+  du -sh `ls` | sort
+  ```
+
+
+
+#### **`tar`**
+
+Tar stores and extracts files from a tape or disk archive.
+
+- The first argument to tar should be a function;
+  - Either one of the letters `Acdrtux` or one of the long function names.
+  - A function letter need not be prefixed with `-`, and may be combined with other single-letter options.
+  - A long function name must be prefixed with `--`.
+- Some options take a parameter; 
+  - with the single-letter form these must be given as separate arguments.
+  - With the long form, they may be given by appending `=value` to the option.
+
+
+
+For example:
+
+```shell
+tar -cvf etc.tar /etc # archive, not compress
+
+tar -xvf demo.tar # extract
+```
+
+
+
+#### **`gzip`**
+
+Compress or expand files.
+
+
+
+For example:
+
+```shell
+gzip demo.txt  # compress, generate demo.txt.gz
+
+gunzip demo.txt.gz # expand
+```
 
 
 
