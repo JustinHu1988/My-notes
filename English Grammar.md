@@ -1253,6 +1253,17 @@ Whose与of which的替换：
 
 
 
+# Some notes
+
+##### will be doing
+
+- In this program we*'ll be discussing* the lovely topic of lunch, and what our lunch choices say about us.
+- What are you doing for lunch today?
+
+
+
+##### Get on with
+
 
 
 

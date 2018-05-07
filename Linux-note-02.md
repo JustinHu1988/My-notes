@@ -733,7 +733,7 @@ For example:
 
 #### **`tar`**
 
-Tar stores and extracts files from a tape or disk archive.
+*Tar stores and extracts files from a tape or disk archive.*
 
 - The first argument to tar should be a function;
   - Either one of the letters `Acdrtux` or one of the long function names.
@@ -757,9 +757,7 @@ tar -xvf demo.tar # extract
 
 #### **`gzip`**
 
-Compress or expand files.
-
-
+*Compress or expand files.* 
 
 For example:
 
@@ -772,4 +770,79 @@ gunzip demo.txt.gz # expand
 
 
 
+
+## Process management
+
+
+
+**`ps`** : report a snapshot of the current processes.
+
+- `ps` displays information about a selection of the active processes.
+- If you want a repetitive update of the selection and the displayed information, use **`top`** instead.
+
+
+
+**`top`** : 
+
+- The `top` program provides a dynamic real-time view of a running system.
+- It can display system summary information as well as a list of processes or threads currently being managed by the Linux kernel.
+
+
+
+**`lsof`** :
+
+- List open files.
+- Options:
+  - In the absence of any options, `lsof` lists all open files belonging to all active processes.
+
+
+
+**`kill`** :
+
+- Send a signal to a process.
+
+- The default signal for `kill` is `TERM`.
+
+  - ```shell
+    kill PID
+
+    kill -9 3434
+    ```
+
+
+
+**`pmap`** : 
+
+- Report memory map of a process.
+
+
+
+## 性能监控
+
+**`sar`**:
+
+
+
+**`vmstat`** :
+
+- Report virtual memory statistics.
+- `vmstat` reports information about processes, memory, paging, block IO, traps, disks and cpu activity.
+
+**`watch`** :
+
+- `watch` runs command repeatedly, displaying its output and errors.
+- This allows you to watch the program output change over time.
+- By default, the program is run every 2 seconds, `watch` will run until interrupted.
+
+
+
+**`free`** : 
+
+- Display amount of free and used memory in the system.
+
+
+
+
+
+## Network tools
 
