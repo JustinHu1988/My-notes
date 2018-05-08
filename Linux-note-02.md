@@ -846,3 +846,9 @@ gunzip demo.txt.gz # expand
 
 ## Network tools
 
+**`netstat`** : Print network connections, routing tables, interface statistics, masquerade connections, and multicast meberships.
+
+- `netstat` prints information about the Linux networking subsystem. The type of information printed is controlled by the first argument
+- by default, `netstat` displays a list of open sockets.
+  - If you don't specify any address families, then the active sockets of all configured address families will be printed.
+
