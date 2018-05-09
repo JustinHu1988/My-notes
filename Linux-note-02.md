@@ -73,7 +73,7 @@ For more information about these commands, use `man command`.
 
 - **`cat`**
   - Concatenate files and print on the standard output
-- **`vi`**
+- **`vim`**
   - a programmers text editor
 - **`head`**
   - Output the first part of files

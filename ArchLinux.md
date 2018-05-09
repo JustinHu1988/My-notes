@@ -120,6 +120,8 @@ The following partitions are required for a chosen device:
 
 
 
+
+
 ##### 6. Format the partitions
 
 *Once the partitions have been created, each must be formatted with an appropriate **file system**.* For example: **`mkfs.ext4`**
@@ -168,4 +170,76 @@ mount /dev/sda2 /mnt/boot
 
 
 ## 2. Installation
+
+##### 1. Select the mirrors
+
+Packages to be installed must be downloaded from mirror servers, which are defined in **`/etc/pacman.d/mirrorlist`**.
+
+- The higher a mirror is placed in the list, the more priority it is given when downloading a package.
+- You may want to move the geographically closest mirrors to the top of the list.
+- This file will later be copied to the new system by `pacstrap`, so it is worth getting right.
+
+For example :
+
+```shell
+# copy all china mirrors to the top of the list (this is not the best way)
+grep -A 1 'China' /etc/pacman.d/mirrorlist | grep -v '\-\-' > /etc/pacman.d/mr
+
+cat /etc/pacman.d/mirrorlist >> /etc/pacman.d/mr
+
+mv /etc/pacman.d/mr /etc/pacman.d/mirrorlist
+```
+
+
+
+##### 2. Install the base packages
+
+Use the **[pacstrap](https://projects.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)** script to install the [base](https://www.archlinux.org/groups/x86_64/base/) package group:
+
+```shell
+pacstrap -i /mnt base
+```
+
+This group does not include all tools from the live installation, such as [btrfs-progs](https://www.archlinux.org/packages/?name=btrfs-progs) or specific wireless firmware; see [packages.both](https://projects.archlinux.org/archiso.git/tree/configs/releng/packages.both) for comparison.
+
+To [install](https://wiki.archlinux.org/index.php/Install) packages and other groups such as [base-devel](https://www.archlinux.org/groups/x86_64/base-devel/), append the names to *pacstrap* (space separated) or to individual [pacman](https://wiki.archlinux.org/index.php/Pacman) commands after the [#Chroot](https://wiki.archlinux.org/index.php/Installation_guide#Chroot) step.
+
+
+
+## 3. Configure the system
+
+##### 1. Fstab
+
+Generate an **`fstab`** file (use `-U` or `-L` to define by `UUID` or labels, respectively):
+
+```shell
+genfstab -U /mnt >> /mnt/etc/fstab
+```
+
+Check the resulting file in `/mnt/etc/fstab` afterwards, and edit it in case of errors.
+
+
+
+> `/etc/fstab`: *static information about the filesystems.*
+>
+> - The file `fstab` contains descriptive information about the filesystems the system can mount.
+> - `fstab` is only read by programs, and not written, it is the duty of the system administrator to properly create and maintain this file.
+> - *The order of records in `fstab` is important because `fsck`(8), `mount`(8), and `umount`(8) sequentially iterate through `fstab` doing their thing.*
+> - Each filesystem is described on a separate line. Fields on each line are separated by tabs or spaces.
+
+
+
+##### 2. Chroot
+
+Change root into the new system:
+
+```shell
+arch-chroot /mnt
+```
+
+
+
+> **Chroot** is an operation that changes the apparent root directory for the current running process and their children. A program that is run in such a modified environment cannot access files and commands outside that environmental directory tree. This modified environment is called a *chroot jail*.
+
+
 
