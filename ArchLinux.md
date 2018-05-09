@@ -1,5 +1,3 @@
-> Arch Linux
-
 # Installation
 
 ## 1. Pre-installation
@@ -240,6 +238,185 @@ arch-chroot /mnt
 
 
 > **Chroot** is an operation that changes the apparent root directory for the current running process and their children. A program that is run in such a modified environment cannot access files and commands outside that environmental directory tree. This modified environment is called a *chroot jail*.
+
+
+
+##### 3. Time zone
+
+Set the Time zone:
+
+```shell
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+
+Run [hwclock(8)](https://jlk.fjfi.cvut.cz/arch/manpages/man/hwclock.8) to generate `/etc/adjtime`:
+
+```shell
+# Set the Hardware Clock from the System Clock, and update the timestamps in /etc/adjtime
+hwclock --systohc
+```
+
+
+
+> `ln` - make links between files
+
+
+
+##### 4. Locale
+
+Uncomment `en_US.UTF-8 UTF-8` and other needed [localizations](https://wiki.archlinux.org/index.php/Localization) in `/etc/locale.gen`, and generate them with `locale-gen`:
+
+```shell
+# edit /etc/locale.gen, uncomment en_US.UTF-8 UTF-8 zh_CN.UTF-8 zh_TW.UTF-8, then save file
+nano /etc/locale.gen
+
+# generate locale:
+locale-gen
+```
+
+
+
+Set the `LANG` [variable](https://wiki.archlinux.org/index.php/Variable) in [locale.conf(5)](https://jlk.fjfi.cvut.cz/arch/manpages/man/locale.conf.5) accordingly, for example:
+
+```shell
+# if you want use chinese text
+echo LANG=zh_CN.UTF-8 > /etc/locale.conf
+```
+
+> The `/etc/locale.conf file` configures system-wide locale settings. It is read at early boot by `systemd`(1).
+
+
+
+If you [set the keyboard layout](https://wiki.archlinux.org/index.php/Installation_guide#Set_the_keyboard_layout), make the changes persistent in [vconsole.conf(5)](https://jlk.fjfi.cvut.cz/arch/manpages/man/vconsole.conf.5):
+
+```Shell
+/etc/vconsole.conf
+-------------------------
+# 示例未完成
+```
+
+> The `/etc/vconsole.conf` file configures the virtual console, i.e. keyboard mapping and console font.
+
+
+
+##### 5. Hostname
+
+Create the [hostname](https://wiki.archlinux.org/index.php/Hostname) file:
+
+```shell
+echo justinLinux > /etc/hostname
+```
+
+> Hostname is a unique name created to identify a machine on a network, configured in `/etc/hostname`. 
+>
+> - The `/etc/hostname` file configures the name of the local system that is set during boot using the `sethostname`(2) system call. 
+> - It should contain a single newline-terminated hostname string.
+
+
+
+Add matching entries to [hosts(5)](https://jlk.fjfi.cvut.cz/arch/manpages/man/hosts.5):
+
+```shell
+/etc/hosts
+-------------------------
+127.0.0.1	localhost
+::1			localhost
+127.0.1.1	justinLinux.localdomain	justinLinux
+```
+
+> If the system has a permanent IP address, it should be used instead of `127.0.1.1`.
+
+
+
+##### 6. Network configuration
+
+```shell
+systemctl enable dhcpcd.service
+```
+
+
+
+The newly installed environment has no network connection activated by default. See [Network configuration#Network managers](https://wiki.archlinux.org/index.php/Network_configuration#Network_managers).
+
+For [Wireless configuration](https://wiki.archlinux.org/index.php/Wireless_configuration), [install](https://wiki.archlinux.org/index.php/Install) the [iw](https://www.archlinux.org/packages/?name=iw) and [wpa_supplicant](https://www.archlinux.org/packages/?name=wpa_supplicant) packages, as well as needed [firmware packages](https://wiki.archlinux.org/index.php/Wireless#Installing_driver.2Ffirmware). Optionally install [dialog](https://www.archlinux.org/packages/?name=dialog) for usage of *wifi-menu*.
+
+
+
+##### 7. Root password
+
+```shell
+passwd
+```
+
+
+
+##### 8. Boot loader
+
+A Linux-capable boot loader must be installed in order to boot Arch Linux. See [Category:Boot loaders](https://wiki.archlinux.org/index.php/Category:Boot_loaders) for available choices.
+
+If you have an Intel CPU, install the [intel-ucode](https://www.archlinux.org/packages/?name=intel-ucode) package in addition, and [enable microcode updates](https://wiki.archlinux.org/index.php/Microcode#Enabling_Intel_microcode_updates).
+
+
+
+In order to boot Arch Linux, you must install a Linux-capable boot loader to the [Master Boot Record](https://wiki.archlinux.org/index.php/Master_Boot_Record) or the [GUID Partition Table](https://wiki.archlinux.org/index.php/GUID_Partition_Table). The boot loader is the first piece of software started by the [BIOS](https://en.wikipedia.org/wiki/BIOS) or [UEFI](https://wiki.archlinux.org/index.php/UEFI). It is responsible for loading the kernel with the wanted [kernel parameters](https://wiki.archlinux.org/index.php/Kernel_parameters), and [initial RAM disk](https://wiki.archlinux.org/index.php/Mkinitcpio) before initiating the [boot process](https://wiki.archlinux.org/index.php/Boot_process). 
+
+> - Boot loaders only need to support the file system on which kernel and initramfs reside (the file system on which `/boot` is located).
+
+
+
+Now we use boot loader **grub** :
+
+- install grub package:
+
+  ```shell
+  pacman -S grub
+  ```
+
+- Then, install GRUB on your drive:
+
+  ```shell
+  grub-install --recheck /dev/sda
+  ```
+
+- Generate a default configuration file:
+
+  ```shell
+  grub-mkconfig -o /boot/grub/grub.cfg
+  ```
+
+
+
+## 4. Reboot
+
+```shell
+exit
+
+umount -R /mnt
+
+reboot
+```
+
+
+
+## 5. Post-installation
+
+See [General recommendations](https://wiki.archlinux.org/index.php/General_recommendations) for system management directions and post-installation tutorials (like setting up a graphical user interface, sound or a touchpad).
+
+For a list of applications that may be of interest, see [List of applications](https://wiki.archlinux.org/index.php/List_of_applications).
+
+
+
+
+
+# General recommendations
+
+
+
+
+
+
+
+
 
 
 
