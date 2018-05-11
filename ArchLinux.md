@@ -100,8 +100,6 @@ timedatectl status
     cfdisk
     ```
 
-    ​
-
   - 这两个工具可以任选其一，重点是：
 
     - 将物理存储设备（如果只有一个，一般是`sda`）分区（例如：`sda1`, `sda2`，可以只有一个分区）。
@@ -410,9 +408,129 @@ For a list of applications that may be of interest, see [List of applications](h
 
 # General recommendations
 
+## System administration
+
+##### Users and groups
+
+You should create and use unprivileged user account for more tasks, only using the root account for system adminstration.
+
+- Users and groups are a mechanism for access control.
+  - See [Users and groups#User management](https://wiki.archlinux.org/index.php/Users_and_groups#User_management) for details.
+- Administrators may fine-tune group membership and ownership to grant or deny users and services access to system resources. 
+  - Read the [Users and groups](https://wiki.archlinux.org/index.php/Users_and_groups) article for details and potential security risks.
 
 
 
+##### Privilege escalation
+
+**`su`** and **`sudo`** commands allow you to run commands as another user.
+
+
+
+##### Service management
+
+Arch Linux uses **`systemd`** as the **`init`** process, which is a system and service manager for Linux.
+
+
+
+##### System maintenance
+
+Arch is a rolling release system and has rapid package turnover, so users have to take some time to do [system maintenance](https://wiki.archlinux.org/index.php/System_maintenance). Read [Security](https://wiki.archlinux.org/index.php/Security) for recommendations and best practices on hardening the system.
+
+
+
+## Package management
+
+For more, please see [FAQ#Package management](https://wiki.archlinux.org/index.php/FAQ#Package_management) and [Category:Package management](https://wiki.archlinux.org/index.php/Category:Package_management).
+
+
+
+##### **pacman**
+
+[pacman](https://wiki.archlinux.org/index.php/Pacman) is the Arch Linux package manager: all users are required to become familiar with it before reading any other articles.
+
+- The `pacman` package manager is one of the major distinguishing features of Arch Linux.
+- Pacman keeps the system up to date by synchronizing package lists with the master server. This server/client model also allows the user to download/install packages with a simple command, complete with all required dependencies.
+- Pacman is written in the C programming language and uses the `tar` format for packaging.
+
+See [pacman/Tips and tricks](https://wiki.archlinux.org/index.php/Pacman/Tips_and_tricks) for suggestions on how to improve your interaction with `pacman` and package management in general.
+
+- For general methods to improve the flexibility of the provided tips or `pacman` itself, see [Core utilities](https://wiki.archlinux.org/index.php/Core_utilities) and [Bash](https://wiki.archlinux.org/index.php/Bash).
+
+
+
+##### Repositories
+
+See [Official repositories](https://wiki.archlinux.org/index.php/Official_repositories) for details about the purpose of each officially maintained repository.
+
+- If you plan on using 32-bit applications, you will want to enable the [multilib](https://wiki.archlinux.org/index.php/Multilib) repository.
+- [Unofficial user repositories](https://wiki.archlinux.org/index.php/Unofficial_user_repositories) lists several other unsupported repositories.
+- You may consider installing the [pkgstats](https://wiki.archlinux.org/index.php/Pkgstats) service.
+
+
+
+##### Mirrors
+
+Visit [Mirrors](https://wiki.archlinux.org/index.php/Mirrors) for steps on taking full advantage of using the fastest and most up to date mirrors of the official repositories. 
+
+- As explained in the article, a particularly good advice is to routinely check the [Mirror Status](https://www.archlinux.org/mirrors/status/) page for a list of mirrors that have been recently synced.
+
+
+
+##### **Arch Build System**
+
+The Arch Build System is a *ports-like* system for building and packaging software from source code. 
+
+- While `pacman` is the specialized Arch tool for binary package management (including packages built with the ABS),  *ABS is a collection of tools for compiling source into installable `.pkg.tar.xz` packages.*
+
+
+
+- **ports-like system**: 
+  - *Ports* is a system used by BSD to *automate the process of building software from source code*. 
+  - The system uses a *port* to download, unpack, patch, compile, and install the given software. 
+  - A port is merely a small directory on the user's computer, named after the corresponding software to be installed, that contains a few files with the instructions for building and installing the software from source. This makes installing software as simple as typing `make` or `make install clean` within the port's directory.
+- ABS is a similar concept:
+  - ABS  is made up of a directory tree that can be checked out using SVN.
+  - This tree represents, but does not contain, all official Arch software.
+  - Subdirectories do not contain the software package not the source but rather a [PKGBUILD](https://wiki.archlinux.org/index.php/PKGBUILD) file and sometimes other files.
+  - By issuing [`makepkg`](https://wiki.archlinux.org/index.php/Makepkg) inside a directory containing a `PKGBUILD`, the software is first compiled and then packaged within the build directory. 
+  - Then you can use `pacman` to install or upgrade your new package.
+
+
+
+##### **ABS overview**
+
+'ABS' may be used as an umbrella term since it includes and relies on several other components; therefore, though not technically accurate, 'ABS' can refer to the following tools as a complete toolkit:
+
+- **SVN tree**
+
+  - The directory structure containing files needed to build all official packages but not the packages themselves nor the source files of the software. It is available in svn and git repositories.
+
+- **PKGBUILD**
+
+  - `PKGBUILD` is a Bash script that contains the URL of the source code along with the compilation and packaging instructions.
+
+- **`makepkg`**
+
+  - Packages in Arch Linux are built using the [makepkg](https://wiki.archlinux.org/index.php/Makepkg) utility. 
+
+  - `makepkg` is a shell command tool. 
+
+  - When `makepkg` is run, it searches for a `PKGBUILD` file in the current directory and reads it. automatically downloads and compiles the sources and creates a `.pkg.tar*` according to the `PKGEXT` array in `makepkg.conf`. 
+
+  - The resulting package contains binary files and installation instructions, readily installable with `pacman`.
+
+    > You may also use `makepkg` to make your own custom packages from the [AUR](https://wiki.archlinux.org/index.php/AUR) or third-party sources. See [Creating packages](https://wiki.archlinux.org/index.php/Creating_packages) for more information.
+
+- **`pacman`**
+
+  - pacman is completely separate, but is necessarily invoked either by makepkg or manually, to install and remove the built packages and for fetching dependencies.
+
+- **AUR**
+
+  - ​
+
+https://wiki.archlinux.org/index.php/Arch_Build_System
 
 
 
