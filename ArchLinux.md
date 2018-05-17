@@ -445,11 +445,11 @@ For more, please see [FAQ#Package management](https://wiki.archlinux.org/index.p
 
 
 
-`pacman`: package manager.
+**`pacman`** : package manager.
 
 - It combines a simple binary package format with ABS(Arch Build System).
 - Pacman is written in the C programming language and uses the `tar` format for packaging.
-- The `pacman` package contains other useful tools:
+- *The `pacman` package contains other useful tools*:
   - such as `makepkg`, `pactree`, `vercmp` and `checkupdates`. 
   - Run `pacman -Qlq pacman | grep bin` to see the full list.
 - ​
