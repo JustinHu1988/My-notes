@@ -445,6 +445,17 @@ For more, please see [FAQ#Package management](https://wiki.archlinux.org/index.p
 
 
 
+`pacman`: package manager.
+
+- It combines a simple binary package format with ABS(Arch Build System).
+- Pacman is written in the C programming language and uses the `tar` format for packaging.
+- The `pacman` package contains other useful tools:
+  - such as `makepkg`, `pactree`, `vercmp` and `checkupdates`. 
+  - Run `pacman -Qlq pacman | grep bin` to see the full list.
+- ​
+
+
+
 ##### **pacman**
 
 [pacman](https://wiki.archlinux.org/index.php/Pacman) is the Arch Linux package manager: all users are required to become familiar with it before reading any other articles.
@@ -489,7 +500,7 @@ The Arch Build System is a *ports-like* system for building and packaging softwa
   - *Ports* is a system used by BSD to *automate the process of building software from source code*. 
   - The system uses a *port* to download, unpack, patch, compile, and install the given software. 
   - A port is merely a small directory on the user's computer, named after the corresponding software to be installed, that contains a few files with the instructions for building and installing the software from source. This makes installing software as simple as typing `make` or `make install clean` within the port's directory.
-- ABS is a similar concept:
+- **ABS** is a similar concept:
   - ABS  is made up of a directory tree that can be checked out using SVN.
   - This tree represents, but does not contain, all official Arch software.
   - Subdirectories do not contain the software package not the source but rather a [PKGBUILD](https://wiki.archlinux.org/index.php/PKGBUILD) file and sometimes other files.
