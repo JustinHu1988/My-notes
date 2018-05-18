@@ -652,13 +652,28 @@ Exact rendering may vary depending on the output device. For instance, man will 
 
 The shell itself stores information that may be useful to the user's shell session in what are called **variables**. 
 
-- *You can see all variables set for your current shell by typing the **`set`** command.*		
+- By convention, linux shell variables will have their names in UPPERCASE.
+
+
+- *You can see all variables set for your current shell by typing the **`set`** command.*
+
+Examples:
+
+- `$SHELL` : the shell you are using
+- `$PS1` : defines your shell prompt
+- `$MAIL` : the location of your mailbox
+
+…….???
+
+## Environment variables
 
 A subset of your local variables are referred to as **environment variables**.
 
 - Environment variables are variables that are exported to any new shells opened from the current shell.
 - *Type **`env`** to see environment variables*.
 
+
+???
 
 
 # Terminology
