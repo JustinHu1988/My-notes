@@ -537,9 +537,11 @@ The Arch Build System is a *ports-like* system for building and packaging softwa
 
   - pacman is completely separate, but is necessarily invoked either by makepkg or manually, to install and remove the built packages and for fetching dependencies.
 
-- **AUR**
+- **AUR** : Arch User Repository
 
-  - ​
+  - A community-driven repository.
+  - It contains package descriptions ([PKGBUILDs](https://wiki.archlinux.org/index.php/PKGBUILD)) that allow you to compile a package from source with [makepkg](https://wiki.archlinux.org/index.php/Makepkg) and then install it via [pacman](https://wiki.archlinux.org/index.php/Pacman#Additional_commands).
+  - The AUR was created to organize and share new packages from the community and to help expedite popular packages' inclusion into the [community](https://wiki.archlinux.org/index.php/Community) repository.
 
 https://wiki.archlinux.org/index.php/Arch_Build_System
 
@@ -548,4 +550,123 @@ https://wiki.archlinux.org/index.php/Arch_Build_System
 
 
 
+
+# `man`
+
+system's manual pager.
+
+## Sections
+
+- The default action is to search in all of the available sections following a pre-defined order, and to show only the first page found.
+
+  > Pre-defined order: `1 8 3 0 2 5 6 9 6 7 ` by default. It can be overridden by the SECTION directive in `/etc/man_db.conf`.
+
+
+
+- **Manual Page Sections:** 
+
+  | Section Number | Section Name                             |
+  | -------------- | ---------------------------------------- |
+  | `1`            | Executable programs or shell commands    |
+  | `2`            | System Calls                             |
+  | `3`            | C Library Functions                      |
+  | `4`            | Devices and Special Files (usually in `/dev`) |
+  | `5`            | File Formats and Conventions(specific configuration files, such as `/etc/passwd`) |
+  | `6`            | Games                                    |
+  | `7`            | Miscellaneous (including macro packages and conventions such as protocols, filesystems, character set standards) |
+  | `8`            | System Administration Tools and Daemons (for root) |
+  | `9`            | Kernel routines [Non standard]           |
+
+  ​
+
+- *Find manual page in certain sections:*
+
+  ```shell
+  # find passwd(1)
+  man passwd.1
+  man 1 passwd
+  # find passwd(5)
+  man passwd.5
+  man 5 passwd
+  ```
+
+
+
+- *Search manual pages:* **`man -k`** or **`apropos`**
+
+  ```shell
+  # search the short descriptions and manual page names for the keyword printf as regular expression
+  man -k printf
+  apropos printf
+  ```
+
+  ​
+
+## Manual Page constitution
+
+A manual page consists of several sections(different from the 'section' above).
+
+Conventional section names include:
+
+- NAME
+- SYNOPSIS
+- CONFIGURATION
+- DESCRIPTION
+- OPTIONS
+- EXIT STATUS
+- RETURN VALUE
+- ERRORS
+- ENVIRONMENT
+- FILES
+- VERSIONS
+- CONFORMING TO
+- NOTES
+- BUGS
+- EXAMPLE
+- AUTHORS
+- SEE ALSO
+
+*Reading manual page*:
+
+<img src='images/arch-linux-manual-page-conventions.png' width='700'>
+
+The following conventions apply to the **SYNOPSIS** section and can be used as a guide in other sections.
+
+| **bold text**      | type exactly as shown.                   |
+| ------------------ | ---------------------------------------- |
+| *italic text*      | replace with appropriate argument.       |
+| [**-abc**]         | any or all arguments within [ ] are optional. |
+| **-a**\|**-b**     | options delimited by \| cannot be used together. |
+| *argument* ...     | *argument* is repeatable.                |
+| [*expression*] ... | entire *expression* within [ ] is repeatable. |
+
+Exact rendering may vary depending on the output device. For instance, man will usually not be able to render italics when running in a terminal, and will typically use underlined or coloured text instead.
+
+
+
+## Overview
+
+
+
+# Variables
+
+The shell itself stores information that may be useful to the user's shell session in what are called **variables**. 
+
+- *You can see all variables set for your current shell by typing the **`set`** command.*		
+
+A subset of your local variables are referred to as **environment variables**.
+
+- Environment variables are variables that are exported to any new shells opened from the current shell.
+- *Type **`env`** to see environment variables*.
+
+
+
+# Terminology
+
+- **IEEE**
+  - Institute of Electrical and Electronics Engineers,  电气电子工程师学会
+- **POSIX**
+  - The Portable Operating System Interface
+  - This is a family of standards specified by the IEEE Computer Society for maintaining compatibility between operating systems.
+  - POSIX defines the application programming interface(API), along with command line shells and utility interfaces, for software compatibility with variants of Unix and other operating systems.
 

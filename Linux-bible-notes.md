@@ -521,13 +521,13 @@ Using **`$BASH`** as an argument to ls -l causes a long listing of the bash comm
 
 ## Using Shell Variables
 
-The shell itself stores information that may be useful to the user’s shell session in what are called **variables**. 
+The shell itself stores information that may be useful to the user's shell session in what are called **variables**. 
 
 - *You can see all variables set for your current shell by typing the **`set`** command.*			
 
 A subset of your local variables are referred to as **environment variables**.
 
-- Environment variables are variables that are ecported to any new shells opened from the current shell.
+- Environment variables are variables that are exported to any new shells opened from the current shell.
 - *Type **`env`** to see environment variables*.
 
 
