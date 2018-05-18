@@ -669,8 +669,15 @@ Examples:
 
 A subset of your local variables are referred to as **environment variables**.
 
+environment variables provide a simple way to share configuration settings between multiple applications and processes in Linux.
+
 - Environment variables are variables that are exported to any new shells opened from the current shell.
-- *Type **`env`** to see environment variables*.
+
+  ​
+
+
+To list the current environmental variables with values: **`env`** or **`printenv`** 
+
 
 
 ???
