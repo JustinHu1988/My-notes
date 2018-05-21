@@ -683,7 +683,7 @@ printenv
 env
 ```
 
-> Note: some environment variables are user-specific. Check by comparing the outputs of `printenv` as an unposted
+> Note: some environment variables are user-specific. Check by comparing the outputs of `printenv` as an unprivileged user and as root.
 
 ???
 
