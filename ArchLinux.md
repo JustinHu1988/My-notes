@@ -678,9 +678,16 @@ environment variables provide a simple way to share configuration settings betwe
 
 To list the current environmental variables with values: **`env`** or **`printenv`** 
 
+```shell
+printenv
+env
+```
 
+> Note: some environment variables are user-specific. Check by comparing the outputs of `printenv` as an unposted
 
 ???
+
+
 
 
 # Terminology
