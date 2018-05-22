@@ -669,23 +669,56 @@ Examples:
 
 A subset of your local variables are referred to as **environment variables**.
 
-environment variables provide a simple way to share configuration settings between multiple applications and processes in Linux.
+- Environment variables provide a simple way to share configuration settings between multiple applications and processes in Linux.
 
-- Environment variables are variables that are exported to any new shells opened from the current shell.
+​
 
-  ​
+To list the current environmental variables with values: **`env`** or **`printenv`** .
+
+- Note: some environment variables are *user-specific*. Check by comparing the outputs of `printenv` as an unprivileged user and as root.
+
+- The `env` utility can be used to run a command under a modified environment. 
+
+  - The following example will launch `xterm` with the environment variable `EDITOR` set to `vim`. This will not affect the global environment variable `EDITOR`.
+
+    ```SHELL
+    env EDITOR=vim xterm
+    ```
 
 
-To list the current environmental variables with values: **`env`** or **`printenv`** 
 
-```shell
-printenv
-env
-```
+Each process stores their environment in the **`/proc/$PID/environ`** file.
 
-> Note: some environment variables are user-specific. Check by comparing the outputs of `printenv` as an unprivileged user and as root.
+- This file contained each key value pair delimited by a nul character(`\x0`).
+- A more human readable format can be obtained with `sed`, e.g. `sed 's:\x0:\n:g' /proc/$PID/environ`.
 
-???
+
+
+#### Defining variables
+
+- Globally:
+  - The following files should be used for defining global environment variables on your system:
+    - `/etc/environment`
+    - `/etc/profile`
+    - Shell specific configuration files.
+  - Each of these files has different limitations, so you should carefully select the appropriate one for your purposes.
+    - `/etc/environment` is used by the pam_env module and is shell agnostic so scripting or glob expansion cannot be used. The file only accept `variable=value` pairs. See [pam_env(8)](https://jlk.fjfi.cvut.cz/arch/manpages/man/pam_env.8) and [pam_env.conf(5)](https://jlk.fjfi.cvut.cz/arch/manpages/man/pam_env.conf.5) for details.
+    - `/etc/profile` initializes variables for login shells only. It does, however, run scripts and can be used by all [Bourne shell](https://en.wikipedia.org/wiki/Bourne_shell) compatible shells.
+    - Global configuration files of your shell, initializes variables and runs scripts. For example:
+      - [Bash#Configuration files](https://wiki.archlinux.org/index.php/Bash#Configuration_files) :
+        - `/etc/profile` : Sources application settings in `/etc/profile.d/*.sh` and `/etc/bash.bashrc`.
+        - `~/.bash_profile` : 
+        - `~/.bash_logout` : 
+        - `/etc/bash.bashrc` : 
+        - `~/.bashrc` : 
+      - [Zsh#Startup/Shutdown files](https://wiki.archlinux.org/index.php/Zsh#Startup.2FShutdown_files) : 
+        - ​
+
+
+
+
+
+> 
 
 
 
