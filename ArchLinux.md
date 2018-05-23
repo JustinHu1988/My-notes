@@ -717,8 +717,124 @@ Each process stores their environment in the **`/proc/$PID/environ`** file.
 
 
 
+# Process Management
 
-> 
+Run a job in the background:
+
+```shell
+command &
+```
+
+Both `&` and `;` can be used to separate commands,  but `&` runs them in the background and `;` runs them in sequence.
+
+```shell
+for i in one two three; do command '$i' & done
+# is equal to 
+command one &
+command tow &
+command three &
+```
+
+
+
+#### How to work with processes
+
+Basic:
+
+- The best way to do process management in Bash is to *start the managed process(es) from your script, remember its PID, and use that PID to do things with your process later on*. 
+- *If at ALL possible, AVOID `ps`, `pgrep`, `killall`, and any other process table parsing tools.* 
+  - These tools have no clue what process YOU WANT to talk to. They only guess at it based on filtering unreliable information. These tools may work fine in your little test environment, they may work fine in production for a while, but *inevitably* they WILL fail, because they ARE a broken approach to process management.
+
+
+
+
+PIDs and parents:
+
+- In UNIX, processes are identified by a number called a *PID* (for Process IDentifier). Each running process has a unique identifier. You cannot reliably determine when or how a process was started purely from the identifier number: for all intents and purposes, it is *random*.
+- Each UNIX process also has a *parent process*.
+  - This parent process is the process that started it, but can change to the `init` process if the parent process ends before the new process does. (That is, `init` will pick up orphaned processes.)
+  - Understanding this parent/child relationship is vital because it is the key to reliable process management in UNIX. 
+  - A process's PID will NEVER be freed up for use after the process dies UNTIL the parent process `wait`s for the PID to see whether it ended and retrieve its exit code. If the parent ends, the process is returned to `init`, which does this for you.
+  - This is important for one major reason: 
+    - if the parent process manages its child process, it can be absolutely certain that, even if the child process dies, no other new process can accidentally recycle the child process's PID until the parent process has `wait`ed for that PID and noticed the child died. 
+    - This gives the parent process the guarantee that the PID it has for the child process will ALWAYS point to that child process, whether it is alive or a "zombie". Nobody else has that guarantee.
+
+
+
+
+Doing it right:
+
+- As mentioned before, the right way to do something with your child process is by using its PID, preferably (if at all possible) from the parent process that created it.
+
+
+
+
+Starting a process and remembering its PID:
+
+- To start a process asynchronously (so the main script can continue while the process runs in the "background"), use the `&` operator. To get the PID that was assigned to it, expand the `!` parameter. You can, for example, save it in a variable:
+
+  ```shell
+  myprocess -o myfile -i &
+  mypid=$!  # save the PID to $mypid
+  ```
+
+
+
+
+Checking up on your process or terminating it : 
+
+- At a later time, you may be interested in whether your process is still running and if it is, you may decide it's time to terminate it. If it's not running anymore, you may be interested in its exit code to see whether it experienced a problem or ended successfully.
+
+- To [send a process a signal](http://mywiki.wooledge.org/SignalTrap), we use the `kill` command. Signals can be used to tell a process to do something, but `kill` can also be used to check if the process is still alive:
+
+  ```shell
+  kill -0 "$mypid" && echo "My process is still alive."
+  kill    "$mypid" ;  echo "I just asked my processe to shut down."
+  ```
+
+  - `kill` sends the `SIGTERM` signal, by default. This tells a program it's time to terminate. 
+  - You can use the `-0` option to kill if you don't want to terminate the process but just check up on whether it's still running. 
+  - In either case, the `kill` command will have a `0` exit code (success) if it managed to send the signal (or found the process to still be alive).
+
+- Unless you intend to send a very specific signal to a process, do not use any other `kill` options; in particular, *avoid using -9 or `SIGKILL` at all cost*. The `KILL` signal is a very dangerous signal to send to a process and using it is almost always a bug. Send the default `SIGTERM`instead and have patience.
+
+- To wait for a child process to finish or to read in the exit code of a process that you know has already finished (because you did a `kill -0` check, for example), use the **`wait`** built-in command:
+
+  ```shell
+  night() { sleep 10; }		# Define 'night' as a function that takes 10 seconds.
+  						   # Adjust seconds according to current season and latitude
+  						   # for a more realistic simulation.
+  						   
+  night & nightpid=$!
+  sheep=0
+  while sheep 1; do
+  	kill -0 "$nightpid" || break	# Break the loop when we see the process has go away.
+  	echo "$((++sheep)) sheep jumped over the fence."
+  done
+
+  wait "$nightpid"; nightexit=$?
+  echo "The night ended with exit code $nightexit, We counted $sheep sheep."
+  ```
+
+  ​
+
+
+Starting a "daemon" and checking whether it started successfully: 
+
+- This is a very common request. The problem is that there *is no answer!* There is no such thing as "the daemon started up successfully", and if your specific daemon were to have a relevant definition to that statement, it would be so completely daemon-specific, that there is no generic way for us to tell you how to check for that condition.
+
+- What people generally resort to in an attempt to provide something "good enough", is: "*Let's start the daemon, wait a few seconds, check whether the daemon process is still running, and if so, let's assume it's doing the right thing.*". Ignoring the fact that this is a totally lousy check which could easily be defeated by a stressed kernel, timing issues, latency or delay in the daemon's operations, and many other conditions, let's just see how we would implement this if we actually wanted to do this:
+
+  ```shell
+  mydaemon & daemonpid=$!
+  sleep 2
+
+  ```
+
+  ​
+
+
+
 
 
 
