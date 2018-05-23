@@ -828,10 +828,46 @@ Starting a "daemon" and checking whether it started successfully:
   ```shell
   mydaemon & daemonpid=$!
   sleep 2
-
+  if kill -0 "$daemonpid"; then
+  	echo "Daemon started successfully. I think."
+  else
+  	wait "$daemonpid"; daemonexit=$?
+  	echo "Daemon process disappeared. I suppose something may have gone wrong. Its exit code was $daemonexit."
+  fi
   ```
 
-  ​
+- To be honest, this problem is much better solved by doing a daemon-specific check.
+
+  - For example, say you're starting a web server called `httpd`. 
+
+  ```shell
+  httpd -h 127.0.0.1 & httpdpid=$!
+  time=0 timeout=60
+  while sleep 1; do
+  	nc -z 127.0.0.1 80 && break		# See if we can establish a TCP connection to port 80.
+  	
+  	# Connection not yet available.
+  	if ! kill -0 "$httpdpid"; then
+  		wait "$httpdpid"; httpdexit=$?
+  		echo "httpd died unexpectedly with exit code: $httpdexit"
+  		exit "$httpdexit"
+      fi
+      if ((++time > timeout)); then
+      	echo "httpd hasn't gotten ready after $time seconds. Something must've gone wrong.."
+      	# kill "$httpdpid"; wait "$httppid"  # You could terminate httpd here, if you like.
+      	exit
+      fi
+  done
+
+  echo "httpd ready for duty."
+  ```
+
+
+
+
+
+#### On processes, environments and inheritance
+
 
 
 
