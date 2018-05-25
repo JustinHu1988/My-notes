@@ -868,9 +868,36 @@ Starting a "daemon" and checking whether it started successfully:
 
 #### On processes, environments and inheritance
 
+Every process on a Unix system (except `init`) has a parent process from which it inherits certain things.
+
+The Unix process creation model revolves around two system calls: `fork()` and `exec()`.
+
+- `fork()` creates a child process which is a duplicate of the parent who called `fork()` (with a few exceptions). The parent receives the child process's PID number as the return value of the `fork()` function, while the child gets a "0" to tell it that it's the child.
+- `exec()` replaces the current process with a different program.
 
 
 
+The usual sequence is:
+
+- A program calls `fork()` and checks the return value of the system call.
+  - If the status is greater than 0, then it's the parent process, so it calls `wait()` on the child process ID (unless we want it to continue running while the child runs in the background).
+- If the status is 0, then it's the child process, so it calls `exec()` to do whatever it's supposed to be doing.
+- But before that, the child might decide to `close()` some file descriptors, `open()` new ones, set environment variables, change resource limits, and so on.
+  - All of these changes will remain in effect after the `exec()` and will affect the task that is exectuted.
+- If the return value of `fork()` is negative, something bad happened (we ran out of memory, or the process table filled up, etc.).
+
+
+
+Let's take an example of a shell command:
+
+```shell
+echo hello world 1>&2
+```
+
+The process executing this is a shell, which reads commands and executes them. For external commands, it uses the standard `fork()`/`exec()` model to do so. Let's show it step by step:
+
+- The parent shell calls `fork()`.
+- The parent gets the child's process ID as the return value of `fork()` and waits for it to terminate.
 
 
 
