@@ -703,11 +703,11 @@ Each process stores their environment in the **`/proc/$PID/environ`** file.
     - Shell specific configuration files.
   - Each of these files has different limitations, so you should carefully select the appropriate one for your purposes.
     - `/etc/environment` is used by the pam_env module and is shell agnostic so scripting or glob expansion cannot be used. The file only accept `variable=value` pairs. See [pam_env(8)](https://jlk.fjfi.cvut.cz/arch/manpages/man/pam_env.8) and [pam_env.conf(5)](https://jlk.fjfi.cvut.cz/arch/manpages/man/pam_env.conf.5) for details.
-    - `/etc/profile` initializes variables for login shells only. It does, however, run scripts and can be used by all [Bourne shell](https://en.wikipedia.org/wiki/Bourne_shell) compatible shells.
+    - `/etc/profile` initializes variables *for login shells only.* It does, however, run scripts and can be used by all [Bourne shell](https://en.wikipedia.org/wiki/Bourne_shell) compatible shells.
     - Global configuration files of your shell, initializes variables and runs scripts. For example:
       - [Bash#Configuration files](https://wiki.archlinux.org/index.php/Bash#Configuration_files) :
         - `/etc/profile` : Sources application settings in `/etc/profile.d/*.sh` and `/etc/bash.bashrc`.
-        - `~/.bash_profile` : 
+        - `~/.bash_profile` :  
         - `~/.bash_logout` : 
         - `/etc/bash.bashrc` : 
         - `~/.bashrc` : 
@@ -870,14 +870,44 @@ Starting a "daemon" and checking whether it started successfully:
 
 Every process on a Unix system (except `init`) has a parent process from which it inherits certain things.
 
-The Unix process creation model revolves around two system calls: `fork()` and `exec()`.
-
-- `fork()` creates a child process which is a duplicate of the parent who called `fork()` (with a few exceptions). The parent receives the child process's PID number as the return value of the `fork()` function, while the child gets a "0" to tell it that it's the child.
-- `exec()` replaces the current process with a different program.
 
 
+**`fork()`/`exec()` model ** :
 
-The usual sequence is:
+*The Unix process creation model revolves around two system calls: `fork()` and `exec()`.*
+
+- **`fork()`** : create a child process.
+
+  - `fork()` creates a new process by duplicating the calling process.  
+
+    - The new process is referred to as the child process.  
+    - The calling process is referred to as the parent process.
+
+  - The child process and the parent process run in separate memory spaces.
+
+    - At the time of `fork()`, both memory spaces have the same content.
+    - Memory writes, file mappings (`mmap(2)`), and unmappings (`munmap(2)`) performed by one of the processes do not affect the other.
+
+  - The child process is an exact duplicate of the parent process except for the following points:
+
+    - … … 
+
+  - *Return value*:
+
+    - On success, the PID of the child process is returned in the parent, and `0` is returned in the child.
+
+    - On failure, `-1` is returned in the parent, no child process is created, and `errno` is set appropriately.
+
+      > `errno`: number of last error.
+
+- **`exec()`** : execute a file.
+
+  - The `exec()` family of functions replaces the current process image with a new process image.
+
+
+
+
+*The usual sequence is:*
 
 - A program calls `fork()` and checks the return value of the system call.
   - If the status is greater than 0, then it's the parent process, so it calls `wait()` on the child process ID (unless we want it to continue running while the child runs in the background).
@@ -885,6 +915,7 @@ The usual sequence is:
 - But before that, the child might decide to `close()` some file descriptors, `open()` new ones, set environment variables, change resource limits, and so on.
   - All of these changes will remain in effect after the `exec()` and will affect the task that is exectuted.
 - If the return value of `fork()` is negative, something bad happened (we ran out of memory, or the process table filled up, etc.).
+
 
 
 
@@ -898,7 +929,155 @@ The process executing this is a shell, which reads commands and executes them. F
 
 - The parent shell calls `fork()`.
 - The parent gets the child's process ID as the return value of `fork()` and waits for it to terminate.
+- The child gets a 0 from `fork()` so it knows it's the child.
+- The child is supposed to redirect standard output to standard error (due to the `1>&2` directive). It does this now: 
+  - Close file descriptor 1. 
+  - Duplicate file descriptor 2, and make sure the duplicate is FD 1.
+- The child calls `exec("echo", "echo", "hello", "world", (char *)NULL)` or something similar to execute the command. (Here, we're assuming `echo` is an external command.)
+- Once the `echo` terminates, the parent's `wait` call also terminates, and the parent resumes normal operation.
 
+
+
+
+*A child process inherits many things from its parent:*
+
+- Open file descriptors. The child gets copies of these, referring to the same files. 
+- Environment variables. The child gets its own copies of these, and [changes made by the child do not affect the parent's copy](http://mywiki.wooledge.org/BashFAQ/060). 
+- *Current working directory*. If the child changes its working directory, [the parent will never know about it](http://mywiki.wooledge.org/BashFAQ/060). 
+- User ID, group ID and supplementary groups. A child process is spawned with the same privileges as its parent. Unless the child process is running with superuser UID (UID 0), it cannot change these privileges. 
+- System resource limits. The child inherits the limits of its parent. A process that runs as superuser UID can raise its resource limits (`setrlimit(2)`). A process running as non-superuser can only lower its resource limits; it can't raise them. 
+- [umask](http://mywiki.wooledge.org/Permissions#umask).
+
+
+
+An active Unix system may be perceived as a *tree* of processes, with parent/child relationships shown as vertical ("branch") connections between nodes. For example:
+
+```shell
+        (init)
+           |
+        (login)
+           |
+         startx
+           |
+         xinit
+           |
+     bash .xinitrc
+     /     |    \
+ rxvt    rxvt   fvwm2
+  |        |        \
+ bash   screen       \____________________
+       /   |  \              |      |     \
+    bash bash  bash        xclock  xload  firefox ...
+           |     |
+         mutt  rtorrent
+```
+
+This is a simplified version of an actual set of processes run by one user on a real system. I have omitted many, to keep things readable. The root of the tree, shown as `(init)`, as well as the first child process `(login)`, are running as root (superuser UID 0). Here is how this scenario came about:
+
+- *The kernel (Linux in this case) is hard-coded to run **`/sbin/init`** as process number 1 when it has finished its startup.*
+  - `init` never dies; it is the ultimate ancestor of every process on the system.
+- *`init` reads `/etc/inittab` which tells it to spawn some `getty` processes on some of the Linux virtual terminal devices* (among other things). 
+- Each `getty` process presents a bit of information plus a login prompt. 
+- After reading a username, `getty` `exec()`s `/bin/login` to read the password.
+  - (Thus, `getty` no longer appears in the tree; it has replaced itself.) 
+- If the password is valid, `login` `fork()`s the user's login shell (in this case bash). 
+  - Presumably, it hangs around (instead of using `exec()`) because it wants to do some clean-up after the user's shell has terminated. 
+- The user types `exec startx` at the bash shell prompt. This causes bash to `exec()` `startx` (and therefore the login shell no longer appears in the tree). 
+- `startx` is a wrapper that launches an X session, which includes an X server process (not shown -- it runs as root), and a whole slew of client programs. On this particular system, `.xinitrc` in the user's home directory is a script that tells which X client programs to run. 
+- Two `rxvt` terminal emulators are launched from the `.xinitrc` file (in the background using `&`), and each of them runs a new copy of the user's shell, bash. 
+  - In one of them, the user has typed `exec screen` (or something similar) to replace bash with screen. Screen, in turn, has three bash child processes of its own, two of which have terminal-based programs running in them (mutt, rtorrent). 
+- The user's window manager, `fvwm2`, is run in the foreground by the `.xinitrc` script. A window manager or desktop environment is usually the last thing run by the `.xinitrc` script; when the WM or DE terminates, the script terminates, and brings down the whole session. 
+- The window manager runs several processes of its own (xclock, xload, firefox, ...). It typically has a menu, or icons, or a control panel, or some other means of launching new programs. We will not cover window manager configurations here. 
+
+Other parts of a Unix system use similar process trees to accomplish their goals, although few of them are quite as deep or complex as an X session. For example, `inetd` runs as a daemon which listens on several UDP and TCP ports, and launches programs (`ftpd`, `telnetd`, etc.) when it receives network connections.  `lpd` runs as a managing daemon for printer jobs, and will launch children to handle individual jobs when a printer is ready.  `sshd` listens for incoming SSH connections, and launches children when it receives them. Some electronic mail systems (particularly [qmail](http://mywiki.wooledge.org/CategoryQmail)) use relatively large numbers of small processes working together. 
+
+Understanding the relationship among a set of processes is vital to administering a system. For example, suppose you would like to change the way your FTP service behaves. You've located a configuration file that it is known to read at startup time, and you've changed it. Now what? You could reboot the entire system to be sure your change takes effect, but most people consider that overkill. Generally, people prefer to restart only the minimal number of processes, thereby causing the least amount of disruption to the other services and the other users of the system. 
+
+So, you need to understand how your FTP service starts up. Is it a standalone daemon? If so, you probably have some system-specific way of restarting it (either by running a [BootScript](http://mywiki.wooledge.org/BootScript), or manually killing and restarting it, or perhaps by issuing some special service management command). More commonly, an FTP service runs under the control of `inetd`. If this is the case, you don't need to restart anything at all.  `inetd` will launch a fresh FTP service daemon every time it receives a connection, and the fresh daemon will read the changed configuration file every time. 
+
+On the other hand, suppose your FTP service doesn't have its own configuration file that lets you make the change you want (for example, changing its umask for the default [Permissions](http://mywiki.wooledge.org/Permissions) of uploaded files). In this case, you know that it inherits its umask from `inetd`, which in turn gets its umask from whatever boot script launched it. If you would like to change FTP's umask in this scenario, you would have to edit `inetd`'s boot script, and then kill and restart `inetd` so that the FTP service daemons (`inetd`'s children) will inherit the new value. And by doing this, you are also changing the default umask of every *other* service that `inetd` manages! Is that acceptable? Only you can answer that. If not, then you may have to change how your FTP service runs, possibly moving it to a standalone daemon. This is a system administrator's job.
+
+
+
+
+
+# Configuring your login sessions with dot files
+
+The way your system behaves with respect to the reading of "dot files" at login time, setting up aliases, setting up environment variables, and so on is all highly dependent on how you actually log in.
+
+### Console logins
+
+The simplest configuration: a local login on the Linux text console, without any graphical environment at all:
+
+-  when you boot the computer, you eventually see a "login:" prompt. This prompt is produced by a program called `getty(8)` which runs on the tty (terminal) device.
+
+- When you type a username, `getty` reads it and passes it to the program called `login(1)` (`/bin/login`).
+
+- `login` reads the password database and decides whether it needs to ask you for a password. Once you've provided your password, login `exec(2)`s your login shell, bash.
+
+  - Many Linux systems also have another layer called *PAM* which is relevant here. Before "execing" bash, login will read the **`/etc/pam.d/login`** file (or its equivalent on your system), which may tell it to read various other files such as **`/etc/environment`**. Other systems such as OpenBSD have an `/etc/login.conf` file which controls resource limits for various classes of user accounts. So you may have some extra enviroment variables, process limits, and so on, before your shell reads `/etc/profile`.
+
+- since bash is being invoked as a login shell, it reads **`/etc/profile`** first.
+
+  - On Linux systems, this will typically also source every file in `/etc/profile.d` as required by the [Linux standard base](http://refspecs.linuxfoundation.org/LSB_3.2.0/LSB-Core-generic/LSB-Core-generic/sh.html). (Generally `/etc/profile` should include code for this.)
+
+- Then it looks in your home directory for **`.bash_profile`**,
+
+  - if it finds it, it reads that.
+  - If it doesn't find `.bash_profile`, it looks for `.bash_login`, and if it doesn't find that, it looks for `.profile` (the standard Bourne/Korn shell configuration file). Otherwise, it stops looking for dot files, and gives you a prompt.
+
+- You may have noted that **`.bashrc`** is not being read in this situation. *You should therefore **always** have `source ~/.bashrc` at the end of your `.bash_profile` in order to force it to be read by a login shell.* 
+
+  - If you use `.profile` instead of `.bash_profile`, you additionally need to test if the shell is bash first:
+
+    ```shell
+    # .profile
+    if [ -n "$BASH" ] && [ -r ~/.bashrc ]; then
+        . ~/.bashrc
+    fi
+    ```
+
+
+
+*Why is `.bashrc` a separate file from `.bash_profile`, then?* There are a couple reasons :
+
+- The first is performance:
+  - when machines were extremely slow compared to today's workstations, processing the commands in `.profile` or `.bash_profile` could take quite a long time, especially on machines where a lot of the work had to be done by external commands (before Korn/Bash shells). So the difficult initial set-up commands, which create environment variables that can be passed down to [child processes](http://mywiki.wooledge.org/ProcessManagement#theory), are put in `.bash_profile`. The transient settings and aliases/functions which are not inherited are put in `.bashrc` so that they can be re-read by every new interactive shell.
+- The second reason is due to work habits:
+  - If you work in an office setting with a terminal on your desk, you probably login one time at the start of each day, and logout at the end of the day. You may put various special commands in your `.bash_profile` that you want to run at the start of each day, when you login -- checking for announcements from management, etc. You wouldn't want those to be done every time you launch a new shell. So, having this separation gives you some flexibility.
+
+
+
+Let's take a moment to review :
+
+- A system administrator has set up a Debian system (which is Linux-based and uses PAM) and has a [locale](http://mywiki.wooledge.org/locale) setting of `LANG=en_US` in `/etc/environment`. 
+- A local user named pierre prefers to use the `fr_CA` locale instead, so he puts `export LANG=fr_CA` in his `.bash_profile`. He also puts `source ~/.bashrc` in that same file, and then puts `set +o histexpand` in his `.bashrc`. 
+- Now he logs in to the Debian system by sitting at the console. 
+- *`login(1)` (via PAM) reads `/etc/environment` and puts `LANG=en_US` in the environment.* 
+- *Then login "execs" bash, which reads `/etc/profile` and `.bash_profile`. The `export`command in `.bash_profile` causes the environment variable `LANG` to be changed from `en_US` to `fr_CA`.* 
+- *Finally, the `source` command causes bash to read `.bashrc`, so that the `set +o histexpand` command is executed for this shell.* 
+- After all this, he gets his prompt and is ready to type commands interactively.
+
+
+
+### Remote shell logins
+
+The second-simplest example: an ssh login.
+
+- This is extremely similar to the text console login, except that instead of using `getty` and `login` to handle the initial greeting and password authentication, **`sshd(8)`** handles it. 
+- *`sshd` in Debian is also linked with PAM, and it will read the `/etc/pam.d/ssh` file* (instead of `/etc/pam.d/login`). Otherwise, the handling is the same. 
+- Once `sshd` has run through the PAM steps (if applicable to your system), it "execs" bash as a login shell, which causes it to read `/etc/profile` and then one of `.bash_profile` or `.bash_login` or `.profile`.
+
+*The major difference* when using a remote shell login instead of a local console login is that:
+
+- there is a client `ssh` process running on your local system (or wherever you `ssh`-ed from) which already has its own environment variables -- and some of those may be sent to the `sshd` on the system you're logging into. 
+- In particular, it is desirable for the `LANG` and `LC_*` variables to be preserved by the remote shell. Unfortunately, the configuration files on the server may override them. Getting this set up to work correctly in all cases is tricky. (Here's an [example procedure for Debian](http://wiki.debian.org/Locale).)
+
+
+
+
+
+…… 
 
 
 
@@ -911,3 +1090,25 @@ The process executing this is a shell, which reads commands and executes them. F
   - This is a family of standards specified by the IEEE Computer Society for maintaining compatibility between operating systems.
   - POSIX defines the application programming interface(API), along with command line shells and utility interfaces, for software compatibility with variants of Unix and other operating systems.
 
+
+
+
+- **`umask`**:
+  - **umask** is a command that determines the settings of a [mask](https://en.wikipedia.org/wiki/Mask_(computing)) that controls how [file permissions](https://en.wikipedia.org/wiki/File_permissions) are set for newly created files.
+- mask:
+  - A mask is data that is used for bitwise operations, particularly in a bit field.
+  - Using a mask, multiple bits in a byte, nibble, word etc. can be set either on, off or inverted from on to off (or vice versa) in a single bitwise operation.
+
+
+
+- Nibble:
+  - a four-bit aggregation, or half an octet. Also known as half-byte or tetrade.
+- Word:
+  - In computing, a word is the natural unit of data used by a particular processor design.
+  -  The number of [bits](https://en.wikipedia.org/wiki/Bit) in a word (the *word size*, *word width*, or *word length*) is an important characteristic of any specific processor design or [computer architecture](https://en.wikipedia.org/wiki/Computer_architecture).
+  - The size of a word is reflected in many aspects of a computer's structure and operation:
+    - the majority of the [registers](https://en.wikipedia.org/wiki/Processor_register) in a processor are usually word sized 
+    - the largest piece of data that can be transferred to and from the [working memory](https://en.wikipedia.org/wiki/Computer_memory) in a single operation is a word in many (not all) architectures. 
+    - The largest possible [address](https://en.wikipedia.org/wiki/Memory_address) size, used to designate a location in memory, is typically a hardware word (here, "hardware word" means the full-sized natural word of the processor, as opposed to any other definition used).
+- **FD** : file descriptor
+  - In [Unix](https://en.wikipedia.org/wiki/Unix) and [related](https://en.wikipedia.org/wiki/Unix-like) computer operating systems, a **file descriptor** (**FD**, less frequently **fildes**) is an abstract indicator ([handle](https://en.wikipedia.org/wiki/Handle_(computing))) used to access a [file](https://en.wikipedia.org/wiki/File_(computing)) or other [input/output](https://en.wikipedia.org/wiki/Input/output) [resource](https://en.wikipedia.org/wiki/System_resource), such as a [pipe](https://en.wikipedia.org/wiki/Pipe_(Unix)) or [network socket](https://en.wikipedia.org/wiki/Network_socket).
