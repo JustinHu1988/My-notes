@@ -1078,7 +1078,7 @@ The second-simplest example: an ssh login.
 
 ### Remote non login no interactive shells
 
-???
+
 
 
 
@@ -1096,6 +1096,16 @@ The second-simplest example: an ssh login.
 
 
 …… 
+
+
+
+
+
+# shell
+
+- a login shell
+- an interactive shell
+- a non-interactive shell
 
 
 
@@ -1123,7 +1133,7 @@ The second-simplest example: an ssh login.
   - a four-bit aggregation, or half an octet. Also known as half-byte or tetrade.
 - Word:
   - In computing, a word is the natural unit of data used by a particular processor design.
-  -  The number of [bits](https://en.wikipedia.org/wiki/Bit) in a word (the *word size*, *word width*, or *word length*) is an important characteristic of any specific processor design or [computer architecture](https://en.wikipedia.org/wiki/Computer_architecture).
+  - The number of [bits](https://en.wikipedia.org/wiki/Bit) in a word (the *word size*, *word width*, or *word length*) is an important characteristic of any specific processor design or [computer architecture](https://en.wikipedia.org/wiki/Computer_architecture).
   - The size of a word is reflected in many aspects of a computer's structure and operation:
     - the majority of the [registers](https://en.wikipedia.org/wiki/Processor_register) in a processor are usually word sized 
     - the largest piece of data that can be transferred to and from the [working memory](https://en.wikipedia.org/wiki/Computer_memory) in a single operation is a word in many (not all) architectures. 
