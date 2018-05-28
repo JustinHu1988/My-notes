@@ -1076,6 +1076,24 @@ The second-simplest example: an ssh login.
 
 
 
+### Remote non login no interactive shells
+
+???
+
+
+
+### X sessions
+
+
+
+
+
+
+
+
+
+
+
 
 …… 
 
