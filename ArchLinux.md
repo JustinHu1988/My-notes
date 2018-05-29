@@ -870,8 +870,6 @@ Starting a "daemon" and checking whether it started successfully:
 
 Every process on a Unix system (except `init`) has a parent process from which it inherits certain things.
 
-
-
 **`fork()`/`exec()` model ** :
 
 *The Unix process creation model revolves around two system calls: `fork()` and `exec()`.*
@@ -989,13 +987,17 @@ This is a simplified version of an actual set of processes run by one user on a 
 - The user's window manager, `fvwm2`, is run in the foreground by the `.xinitrc` script. A window manager or desktop environment is usually the last thing run by the `.xinitrc` script; when the WM or DE terminates, the script terminates, and brings down the whole session. 
 - The window manager runs several processes of its own (xclock, xload, firefox, ...). It typically has a menu, or icons, or a control panel, or some other means of launching new programs. We will not cover window manager configurations here. 
 
-Other parts of a Unix system use similar process trees to accomplish their goals, although few of them are quite as deep or complex as an X session. For example, `inetd` runs as a daemon which listens on several UDP and TCP ports, and launches programs (`ftpd`, `telnetd`, etc.) when it receives network connections.  `lpd` runs as a managing daemon for printer jobs, and will launch children to handle individual jobs when a printer is ready.  `sshd` listens for incoming SSH connections, and launches children when it receives them. Some electronic mail systems (particularly [qmail](http://mywiki.wooledge.org/CategoryQmail)) use relatively large numbers of small processes working together. 
 
-Understanding the relationship among a set of processes is vital to administering a system. For example, suppose you would like to change the way your FTP service behaves. You've located a configuration file that it is known to read at startup time, and you've changed it. Now what? You could reboot the entire system to be sure your change takes effect, but most people consider that overkill. Generally, people prefer to restart only the minimal number of processes, thereby causing the least amount of disruption to the other services and the other users of the system. 
 
-So, you need to understand how your FTP service starts up. Is it a standalone daemon? If so, you probably have some system-specific way of restarting it (either by running a [BootScript](http://mywiki.wooledge.org/BootScript), or manually killing and restarting it, or perhaps by issuing some special service management command). More commonly, an FTP service runs under the control of `inetd`. If this is the case, you don't need to restart anything at all.  `inetd` will launch a fresh FTP service daemon every time it receives a connection, and the fresh daemon will read the changed configuration file every time. 
+Other parts of a Unix system use similar process trees to accomplish their goals, although few of them are quite as deep or complex as an X session. 
 
-On the other hand, suppose your FTP service doesn't have its own configuration file that lets you make the change you want (for example, changing its umask for the default [Permissions](http://mywiki.wooledge.org/Permissions) of uploaded files). In this case, you know that it inherits its umask from `inetd`, which in turn gets its umask from whatever boot script launched it. If you would like to change FTP's umask in this scenario, you would have to edit `inetd`'s boot script, and then kill and restart `inetd` so that the FTP service daemons (`inetd`'s children) will inherit the new value. And by doing this, you are also changing the default umask of every *other* service that `inetd` manages! Is that acceptable? Only you can answer that. If not, then you may have to change how your FTP service runs, possibly moving it to a standalone daemon. This is a system administrator's job.
+- For example, `inetd` runs as a daemon which listens on several UDP and TCP ports, and launches programs (`ftpd`, `telnetd`, etc.) when it receives network connections.  `lpd` runs as a managing daemon for printer jobs, and will launch children to handle individual jobs when a printer is ready.  `sshd` listens for incoming SSH connections, and launches children when it receives them. Some electronic mail systems (particularly [qmail](http://mywiki.wooledge.org/CategoryQmail)) use relatively large numbers of small processes working together. 
+
+*Understanding the relationship among a set of processes is vital to administering a system:*
+
+- For example, suppose you would like to change the way your FTP service behaves. You've located a configuration file that it is known to read at startup time, and you've changed it. Now what? You could reboot the entire system to be sure your change takes effect, but most people consider that overkill. Generally, people prefer to restart only the minimal number of processes, thereby causing the least amount of disruption to the other services and the other users of the system. 
+- So, you need to understand how your FTP service starts up. Is it a standalone daemon? If so, you probably have some system-specific way of restarting it (either by running a [BootScript](http://mywiki.wooledge.org/BootScript), or manually killing and restarting it, or perhaps by issuing some special service management command). More commonly, an FTP service runs under the control of `inetd`. If this is the case, you don't need to restart anything at all.  `inetd` will launch a fresh FTP service daemon every time it receives a connection, and the fresh daemon will read the changed configuration file every time. 
+- On the other hand, suppose your FTP service doesn't have its own configuration file that lets you make the change you want (for example, changing its umask for the default [Permissions](http://mywiki.wooledge.org/Permissions) of uploaded files). In this case, you know that it inherits its umask from `inetd`, which in turn gets its umask from whatever boot script launched it. If you would like to change FTP's umask in this scenario, you would have to edit `inetd`'s boot script, and then kill and restart `inetd` so that the FTP service daemons (`inetd`'s children) will inherit the new value. And by doing this, you are also changing the default umask of every *other* service that `inetd` manages! Is that acceptable? Only you can answer that. If not, then you may have to change how your FTP service runs, possibly moving it to a standalone daemon. This is a system administrator's job.
 
 
 
@@ -1074,28 +1076,121 @@ The second-simplest example: an ssh login.
 - In particular, it is desirable for the `LANG` and `LC_*` variables to be preserved by the remote shell. Unfortunately, the configuration files on the server may override them. Getting this set up to work correctly in all cases is tricky. (Here's an [example procedure for Debian](http://wiki.debian.org/Locale).)
 
 
-
-
 ### Remote non login no interactive shells
 
+Bash has a special compile time option that will cause it to source the `.bashrc` file on non-login, non-interactive ssh sessions.
 
+If this feature is enabled on your system, Bash detects that SSH_CLIENT or SSH_CLIENT2 is in the environment and in this case source `.bashrc`. 
 
+- eg suppose you have `var=foo` in your remote `.bashrc` and you do `ssh remotehost echo \$var` it will print `foo`.
 
+This shell is non-interactive so you can test `$-` or `$PS1`, if you don't want things to be executed this way in your `.bashrc`.
 
 ### X sessions
 
+**Run X session after login:**
+
+Let's suppose pierre (our console user) decides he wants to run X for a while (now, after login):
+
+- He types `startx`, which invokes whichever set of X clients he prefers. 
+- `startx` is a wrapper around `xinit`, which runs the X server ("X"), and then runs through pierre's `.xinitrc` or `.xsession` file (if either one exists), or the system-wide default Xsession otherwise. 
+- Let's suppose pierre has the command `exec fluxbox` (and nothing else) in his `.xsession` file. 
+- When the smoke clears, he'll have an X server process running (as root), and a fluxbox process running (as pierre). 
+- fluxbox was created as a child of xinit, which was a child of startx, which was a child of bash, so it inherited pierre's `LANG` and other environment variables. 
+- When pierre launches something from the window manager's menu, that new command will be a child of fluxbox, so it inherits `LANG`, `PATH`, `MAIL`, etc. as well. 
+- In addition to all of that, fluxbox inherits the `DISPLAY` environment variable which tells it what X server to contact (in this case, probably `:0`).
+
+```
+init -> login -> startx -> xinit -> .xinitrc/.xsession(bash script) -> exec fluxbox
+		init
+		 |
+		login
+		 |
+		startx
+		 |
+		xinit
+		 |  \
+		 |   \_______
+		 |			\
+		fluxbox		X server
+
+```
 
 
 
+So what happens when Pierre runs an xterm? 
+
+- fluxbox "forks" and "execs" an xterm process, which inherits `DISPLAY`, and so on.
+-  xterm contacts the X server, authenticates if necessary, and then draws itself on the display.
+- In addition to `DISPLAY`, it inherited pierre's `SHELL` variable, which probably contains `/bin/bash`, so it sets up a pseudo-terminal, then spawns a `/bin/bash` process to run in it.
+  - Since `/bin/bash` doesn't start with a `-`, this one will not be a login shell. It will be a normal shell, which doesn't read `/etc/profile` or `.bash_profile` or `.profile`. 
+  - Instead, it reads `.bashrc` which in our example contains the line `set +o histexpand`. 
+  - So his new xterm is running a bash shell, with all of his environment variables set (remember, they were inherited from his initial text console login shell), and his shell option of choice has been enabled (from `.bashrc`).
+
+If you want to change something, you know precisely what file to edit to make it happen:
+
+- aliases and transient shell options go in `.bashrc`, 
+- environment variables, process limits, and so on go in `.bash_profile`. 
+- If you want to run various X client commands before your window manager or desktop environment is invoked (for example, `xterm &` or `xmodmap -e 'keysym Super_R = Multi_key'`), you can put them in `.xsession` before the `exec YourWindowManager` line.
 
 
 
+**Run X session before login:**
+
+However, some people like to have a graphical login (display manager), and that changes pretty much everything we've seen so far:
+
+- Instead of getty and login, there's an `xdm` (or `gdm` or `kdm` or `wdm` or ...) process handling the authentication.
+- And the biggest difference of all is that when our `*dm` process finishes authenticating the user, it doesn't "exec" a login shell. Instead, it "execs" an X session directly. 
+- Therefore, none of the "normal" user configuration files are read in at all -- no `/etc/profile`, no `.bash_profile` and no `.profile`. (But `/etc/environment` is still read in by PAM, assuming `/etc/pam.d/*dm` is configured to use pam_limits, as is the case on Debian.)
+
+Let's take xdm as an example:
+
+- Pierre comes back from vacation one day and discovers that his system administrator has installed `xdm` on the Debian system. He logs in just fine, and xdm reads his `.xsession` file and runs fluxbox. Everything seems to be OK until he gets an error message in the wrong locale! Since he overrides the `LANG` variable in his `.bash_profile`, and since xdm never reads `.bash_profile`, his `LANG` variable is now set to `en_US` instead of `fr_CA`.
+
+- Now, the naive solution to this problem is that instead of launching `xterm`, he could configure his window manager to launch `xterm -ls`. 
+
+  - This flag tells `xterm` that instead of launching a normal shell, it should launch a login shell. 
+  - Under this setup, xterm spawns `/bin/bash` but it puts `-/bin/bash` (or maybe `-bash`) in the argument vector, so bash acts like a login shell. 
+  - This means that every time he opens up a new xterm, it will read `/etc/profile` and `.bash_profile` (built-in bash behavior), and then `.bashrc` (because his `.bash_profile` says to do that). 
+  - This may seem to work fine at first -- his dot files aren't heavy, so he doesn't even notice the delay -- but there's a more subtle problem. He also launches a web browser directly from his fluxbox menu, and the web browser inherits the `LANG` variable from fluxbox, which is still set to the wrong locale. So while his xterms may be fine, and anything launched from his xterms may be fine, his web browser is still giving him pages in the wrong locale.
+
+- So, what's the best solution to this problem? There really isn't a universal one. One approach is to modify the `.xsession` file to look something like this:
+
+  ```Shell
+  [ -r /etc/profile ] && source /etc/profile
+  [ -r ~/.bash_profile ] && source ~/.bash_profile
+  xmodmap -e 'keysym Super_R = Multi_key'
+  xterm &
+  exec fluxbox
+  ```
+
+  - This causes the shell that's interpreting the `.xsession` script to read in `/etc/profile` and `.bash_profile` if they exist and are readable, before running xmodmap or xterm or "execing" the window manager. 
+  - However, there's one potential drawback to this approach: under xdm, the shell that reads `.xsession` runs without a controlling terminal. If either `/etc/profile` or `.bash_profile`uses any commands that assume the presence of a terminal (such as `fortune` or `stty`), those commands may fail. This is the primary reason why xdm doesn't read those files by default. 
+  - *If you're going to use this approach, you must make sure that all of the commands in your "dot files" are safe to run when there's no terminal.*
 
 
+  - One way to do that, but still retain those commands for use when you login with `ssh`, is to protect the relevant block of code with an `if` statement. For example:
 
+    ```Shell
+    ## Sample .bash_profile
+    export PATH=$HOME/bin:$PATH
+    export MAIL=$HOME/Maildir/
+    export LESS=-X
+    export EDITOR=vim VISUAL=vim
+    export LANG=fr_CA
+    # Begin protected block
+    if [ -t 0 ]; then       # check for a terminal
+      [ x"$TERM" = x"wy30" ] && stty erase ^h       # sample legacy environment
+      echo "Welcome to Debian, $LOGNAME"
+      /usr/games/fortune
+    fi
+    # End protected block
+    [ -r ~/.bashrc ] && source ~/.bashrc
+    ```
 
+  - Unfortunately, the other display manager programs (kdm, gdm, etc.) do not all use the same configuration files that xdm uses. So this approach may not work for them. 
 
-…… 
+  - You may need to consult the documentation for your display manager program to find out which file(s) you should use for controlling your sessions.
 
 
 
@@ -1103,9 +1198,35 @@ The second-simplest example: an ssh login.
 
 # shell
 
-- a login shell
-- an interactive shell
-- a non-interactive shell
+In [computing](https://en.wikipedia.org/wiki/Computing), a **shell** is a [user interface](https://en.wikipedia.org/wiki/User_interface) for access to an [operating system](https://en.wikipedia.org/wiki/Operating_system)'s services. 
+
+- In general, operating system shells use either a [command-line interface](https://en.wikipedia.org/wiki/Command-line_interface) (CLI) or [graphical user interface](https://en.wikipedia.org/wiki/Graphical_user_interface) (GUI), depending on a computer's role and particular operation. 
+  - CLI shells require the user to be familiar with commands and their calling [syntax](https://en.wikipedia.org/wiki/Syntax), and to understand concepts about the shell-specific scripting language (for example [bash script](https://en.wikipedia.org/wiki/Bash_script)).
+- It is named a shell because it is the outermost layer around the operating system [kernel](https://en.wikipedia.org/wiki/Kernel_(operating_system)).
+
+
+
+A shell is the generic name for any program that gives you a text-interface to interact with the computer. You type a command and the output is shown on screen.
+
+Many shells *have scripting abilities*: 
+
+- Put multiple commands in a script and the shell executes them as if they were typed from the keyboard. Most shells offer additional programming constructs that extend the scripting feature into a programming language.
+
+On most Unix/Linux systems multiple shells are available: **bash**, **csh**, **ksh**, **sh**, **tcsh**, **zsh** just to name a few. 
+
+- They differ in the various options they give the user to manipulate the commands and in the complexity and capabilities of the scripting language.
+
+
+
+*Four mode of shell:*
+
+- **Interactive:** As the term implies: Interactive means that the commands are run with user-interaction from keyboard. E.g. the shell can prompt the user to enter input.
+- **Non-interactive:** the shell is probably run from an automated process so it can't assume if can request input or that someone will see the output. E.g Maybe it is best to write output to a log-file.
+- **Login:** Means that the shell is run as part of the login of the user to the system. Typically used to do any configuration that a user needs/wants to establish his work-environment.
+- **Non-login:** Any other shell run by the user after logging on, or which is run by any automated process which is not coupled to a logged in user.
+
+
+
 
 
 
@@ -1140,3 +1261,15 @@ The second-simplest example: an ssh login.
     - The largest possible [address](https://en.wikipedia.org/wiki/Memory_address) size, used to designate a location in memory, is typically a hardware word (here, "hardware word" means the full-sized natural word of the processor, as opposed to any other definition used).
 - **FD** : file descriptor
   - In [Unix](https://en.wikipedia.org/wiki/Unix) and [related](https://en.wikipedia.org/wiki/Unix-like) computer operating systems, a **file descriptor** (**FD**, less frequently **fildes**) is an abstract indicator ([handle](https://en.wikipedia.org/wiki/Handle_(computing))) used to access a [file](https://en.wikipedia.org/wiki/File_(computing)) or other [input/output](https://en.wikipedia.org/wiki/Input/output) [resource](https://en.wikipedia.org/wiki/System_resource), such as a [pipe](https://en.wikipedia.org/wiki/Pipe_(Unix)) or [network socket](https://en.wikipedia.org/wiki/Network_socket).
+
+
+
+- **Kernel**:
+
+  - The kernel is a computer program that is the core of a computer's operatig system, with complete control over everything in the system.
+
+  - On most systems, it is one of the first programs loaded on start-up (after the [bootloader](https://en.wikipedia.org/wiki/Bootloader)).
+
+  - It handles the rest of start-up as well as input/output requests from software, translating them into data-processing instructions for the CPU. It handles memory and peripherals like keyboards, monitors, printers, and speakers.
+
+    <img src="images/arch-linux-kernel-001.png" width='200'>
