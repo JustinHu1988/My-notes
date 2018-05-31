@@ -646,6 +646,12 @@ Exact rendering may vary depending on the output device. For instance, man will 
 
 ## Overview
 
+???
+
+
+
+
+
 
 
 # Variables
@@ -663,17 +669,22 @@ Examples:
 - `$PS1` : defines your shell prompt
 - `$MAIL` : the location of your mailbox
 
-…….???
+???
 
 ## Environment variables
 
-A subset of your local variables are referred to as **environment variables**.
+An environment variable is a named object that contains data used by one or more applications.
 
-- Environment variables provide a simple way to share configuration settings between multiple applications and processes in Linux.
+- In simple terms, it is a variable with a name and a value. 
+- The value of an environmental variable can for example be:
+  - the location of all executable files in the file system,
+  - the default editor that should be used, 
+  - the system locale settings. 
+- environment variables provide a simple way to share configuration settings between multiple applications and processes in Linux.
 
-​
+#### Utilities
 
-To list the current environmental variables with values: **`env`** or **`printenv`** .
+The [coreutils](https://www.archlinux.org/packages/?name=coreutils) package contains the programs **`printenv`** and **`env`**. To list the current environmental variables with values.
 
 - Note: some environment variables are *user-specific*. Check by comparing the outputs of `printenv` as an unprivileged user and as root.
 
@@ -687,10 +698,15 @@ To list the current environmental variables with values: **`env`** or **`printen
 
 
 
+
+The [Bash](https://wiki.archlinux.org/index.php/Bash) builtin `set` allows you to change the values of shell options and set the positional parameters, or to display the names and values of shell variables. For more information, see [the set builtin documentation](http://www.gnu.org/software/bash/manual/bash.html#The-Set-Builtin).
+
+
+
 Each process stores their environment in the **`/proc/$PID/environ`** file.
 
 - This file contained each key value pair delimited by a nul character(`\x0`).
-- A more human readable format can be obtained with `sed`, e.g. `sed 's:\x0:\n:g' /proc/$PID/environ`.
+- A more human readable format can be obtained with **`sed`**, e.g. `sed 's:\x0:\n:g' /proc/$PID/environ`.
 
 
 
@@ -1021,14 +1037,14 @@ The simplest configuration: a local login on the Linux text console, without any
 
 - since bash is being invoked as a login shell, it reads **`/etc/profile`** first.
 
-  - On Linux systems, this will typically also source every file in `/etc/profile.d` as required by the [Linux standard base](http://refspecs.linuxfoundation.org/LSB_3.2.0/LSB-Core-generic/LSB-Core-generic/sh.html). (Generally `/etc/profile` should include code for this.)
+  - On Linux systems, this will typically also source every file in **`/etc/profile.d`** as required by the [Linux standard base](http://refspecs.linuxfoundation.org/LSB_3.2.0/LSB-Core-generic/LSB-Core-generic/sh.html). (Generally `/etc/profile` should include code for this.)
 
-- Then it looks in your home directory for **`.bash_profile`**,
+- Then it looks in *your home directory* for **`.bash_profile`**,
 
   - if it finds it, it reads that.
   - If it doesn't find `.bash_profile`, it looks for `.bash_login`, and if it doesn't find that, it looks for `.profile` (the standard Bourne/Korn shell configuration file). Otherwise, it stops looking for dot files, and gives you a prompt.
 
-- You may have noted that **`.bashrc`** is not being read in this situation. *You should therefore **always** have `source ~/.bashrc` at the end of your `.bash_profile` in order to force it to be read by a login shell.* 
+- You may have noted that **`~/.bashrc`** is not being read in this situation. *You should therefore **always** have `source ~/.bashrc` at the end of your `.bash_profile` in order to force it to be read by a login shell.* 
 
   - If you use `.profile` instead of `.bash_profile`, you additionally need to test if the shell is bash first:
 
@@ -1111,9 +1127,8 @@ init -> login -> startx -> xinit -> .xinitrc/.xsession(bash script) -> exec flux
 		xinit
 		 |  \
 		 |   \_______
-		 |			\
+		 |           \
 		fluxbox		X server
-
 ```
 
 
@@ -1121,7 +1136,7 @@ init -> login -> startx -> xinit -> .xinitrc/.xsession(bash script) -> exec flux
 So what happens when Pierre runs an xterm? 
 
 - fluxbox "forks" and "execs" an xterm process, which inherits `DISPLAY`, and so on.
--  xterm contacts the X server, authenticates if necessary, and then draws itself on the display.
+- xterm contacts the X server, authenticates if necessary, and then draws itself on the display.
 - In addition to `DISPLAY`, it inherited pierre's `SHELL` variable, which probably contains `/bin/bash`, so it sets up a pseudo-terminal, then spawns a `/bin/bash` process to run in it.
   - Since `/bin/bash` doesn't start with a `-`, this one will not be a login shell. It will be a normal shell, which doesn't read `/etc/profile` or `.bash_profile` or `.profile`. 
   - Instead, it reads `.bashrc` which in our example contains the line `set +o histexpand`. 
@@ -1228,6 +1243,249 @@ On most Unix/Linux systems multiple shells are available: **bash**, **csh**, **k
 
 
 
+## Bash
+
+[Bash](https://www.gnu.org/software/bash/) (Bourne-again Shell) is a [command-line shell](https://wiki.archlinux.org/index.php/Command-line_shell)/programming language by the [GNU Project](https://wiki.archlinux.org/index.php/GNU_Project).
+
+- Its name is a homaging reference to its predecessor, the long-deprecated Bourne shell.
+
+#### Invocation
+
+Bash behaviour can be altered depending on how it is invoked:
+
+- If Bash is spawned by `login` in a TTY, by an [SSH](https://wiki.archlinux.org/index.php/SSH) daemon, or similar means, it is considered a **login shell**.
+  - This mode can also be engaged using the `-l`/`--login` command line option.
+- Bash is considered an **interactive shell** when its standard input and error are connected to a terminal (for example, when run in a terminal emulator), and it is not started with the `-c` option or [non-option](http://unix.stackexchange.com/a/96805) arguments (for example, `bash script`). 
+- *All interactive shells source `/etc/bash.bashrc` and `~/.bashrc`, while interactive login shells also source `/etc/profile`and `~/.bash_profile`.*
+
+> **Note:** In Arch `/bin/sh` (which used to be the Bourne shell executable) is symlinked to `/bin/bash`. If Bash is invoked with the name `sh`, it tries to mimic the startup behavior of historical versions of `sh`, including POSIX compability.
+
+##### Configuration files
+
+See "6.2 Bash Startup Files" in `/usr/share/doc/bash/bashref.html` ([online link](https://www.gnu.org/software/bash/manual/bash.html#Bash-Startup-Files)) and [DotFiles](http://mywiki.wooledge.org/DotFiles) for a complete description.
+
+| File               | Description                              | Login shells (see note) | Interactive, *non-login*shells |
+| ------------------ | ---------------------------------------- | ----------------------- | ------------------------------ |
+| `/etc/profile`     | [Sources](https://wiki.archlinux.org/index.php/Source) application settings in `/etc/profile.d/*.sh` and `/etc/bash.bashrc`. | Yes                     | No                             |
+| `~/.bash_profile`  | *Per-user*, after `/etc/profile`. If this file does not exist, `~/.bash_login` and `~/.profile` are checked in that order. The skeleton file `/etc/skel/.bash_profile` also sources `~/.bashrc`. | Yes                     | No                             |
+| `~/.bash_logout`   | After exit of a login shell.             | Yes                     | No                             |
+| `/etc/bash.bashrc` | Depends on the `-DSYS_BASHRC="/etc/bash.bashrc"` compilation flag. Sources `/usr/share/bash-completion/bash_completion`. | No                      | Yes                            |
+| `~/.bashrc`        | *Per-user*, after `/etc/bash.bashrc`.    | No                      | Yes                            |
+
+> Note:
+>
+> - Login shells can be non-interactive when called with the `--login` argument.
+> - While interactive, *non-login* shells do **not** source `~/.bash_profile`, they still inherit the environment from their parent process (which may be a login shell). See [On processes, environments and inheritance](http://mywiki.wooledge.org/ProcessManagement#On_processes.2C_environments_and_inheritance) for details.
+
+##### Shell and environment variables
+
+The behavior of Bash and programs run by it can be influenced by a number of environment variables.
+
+-  [Environment variables](https://wiki.archlinux.org/index.php/Environment_variables) are used to store useful values such as command search directories, or which browser to use. When a new shell or script is launched it inherits its parent's variables, thus starting with an internal set of shell variables
+
+These shell variables in Bash can be exported in order to become environment variables:
+
+```shell
+VARIABLE=content
+export VARIABLE
+```
+
+Or with a shortcut:
+
+```shell
+export VARIABLE=content
+```
+
+Environment variables are conventionally placed in `~/.profile` or `/etc/profile` so that all bourne-compatible shells can use them.
+
+See [Environment variables](https://wiki.archlinux.org/index.php/Environment_variables) for more general information.
+
+
+
+#### Command line
+
+Bash command line is managed by the separate library called [Readline](https://wiki.archlinux.org/index.php/Readline). 
+
+- Readline provides [emacs](https://wiki.archlinux.org/index.php/Emacs) and [vi](https://wiki.archlinux.org/index.php/Vi) styles of shortcuts for interacting with the command line, i.e. moving back and forth on the word basis, deleting words etc. It is also Readline's responsibility to manage [history](https://wiki.archlinux.org/index.php/Readline#History) of input commands. Last, but not least, it allows you to create [macros](https://wiki.archlinux.org/index.php/Readline#Macros).
+
+1. `Tab` completion
+2. History
+3. Mimic Zsh run-help ability
+
+For using or editing these shortcut key, *see more on [Readline](https://wiki.archlinux.org/index.php/Readline).* 
+
+
+
+#### Aliases
+
+[alias](https://en.wikipedia.org/wiki/Alias_(command)) is a command, which enables a replacement of a word with another string. 
+
+- It is often used for abbreviating a system command, or for adding default arguments to a regularly used command.
+
+*Personal aliases are preferably stored in `~/.bashrc`, and system-wide aliases (which affect all users) belong in `/etc/bash.bashrc`.*
+
+For functions, see [Bash/Functions](https://wiki.archlinux.org/index.php/Bash/Functions).
+
+
+
+#### Tips and tricks
+
+- *Prompt customization*
+
+  - See [Bash/Prompt customization](https://wiki.archlinux.org/index.php/Bash/Prompt_customization).
+
+- *Command not found*
+
+  - [pkgfile](https://wiki.archlinux.org/index.php/Pkgfile) includes a "command not found" hook that will automatically search the official repositories, when entering an unrecognized command.
+
+  - You need to [source](https://wiki.archlinux.org/index.php/Source) the hook to enable it, for example:
+
+    ```shell
+    ~/.bashrc
+    -------------------------
+    source /usr/share/doc/pkgfile/command-not-found.bash
+    ```
+
+    Then attempting to run an unavailable command will show the following info:
+
+    ```shell
+    abiword
+    --------------------------
+    abiword may be found in the following packages:
+      extra/abiword 3.0.1-2	/usr/bin/abiword
+    ```
+
+    > **Note**: *if your shell can't show this, maybe your `~/.bashrc` is not executed when you log in.* Then you should check whether you have `source ~/.bashrc` at the end of your `.bash_profile` in order to force it to be read by a login shell. (See section: *Configuring your login sessions with dot files*)
+
+- Disable Ctrl+z in terminal
+
+  - You can disable the `Ctrl+z` feature (pauses/closes your application) by wrapping your command like this:
+
+    ```shell
+    #!/bin/bash
+    trap "" 20
+    adom#can change
+    ```
+
+    Now when you accidentally press `Ctrl+z` in [adom](https://aur.archlinux.org/packages/adom/)AUR instead of `Shift+z` nothing will happen because `Ctrl+z` will be ignored.
+
+- Clear the screen after logging out
+
+  - To clear the screen after logging out on a virtual terminal:
+
+    ```shell
+    ~/.bash_logout
+    ----------------------------------
+    clear
+    reset
+    ```
+
+- *Auto `cd` when entering just a path*
+
+  - adding one line into `.bashrc` file:
+
+    ```Shell
+    ~/.bashrc
+    ------------------------------------
+    ...
+    shopt -s autocd
+    ...
+    ```
+
+- *Autojump*
+
+  - [autojump](https://www.archlinux.org/packages/?name=autojump) allows navigating the file system by searching for strings in a database with the user's most-visited paths.
+  - After installation, `/etc/profile.d/autojump.bash` must be [sourced](https://wiki.archlinux.org/index.php/Source) in order to start using the application.
+
+- *Prevent overwrite of files*
+
+  - For the current session, to disallow existing regular files to be overwritten by redirection of shell output:
+
+    ```Shell
+    set -o noclobber
+    ```
+
+    This is identical to `set -C`.
+
+  - To make the changes persistent for your user:
+
+    ```Shell
+    ~/.bashrc
+    ------------------------------------
+    ...
+    set -o noclobber
+    ```
+
+  - *To manually overwrite a file while `noclobber` is set:*
+
+    ```Shell
+    echo "output" >| file.txt
+    ```
+
+
+
+#### Troubleshooting
+
+- Line wrap on window resize
+
+  - When resizing a [terminal emulator](https://wiki.archlinux.org/index.php/Terminal_emulator), Bash may not receive the resize signal. This will cause typed text to not wrap correctly and overlap the prompt. The `checkwinsize` shell option checks the window size after each command and, if necessary, updates the values of `LINES` and `COLUMNS`.
+
+    ```shell
+    ~/.bashrc
+    ------------------------------------
+    shopt -s checkwinsize
+    ```
+
+- Shell exits even if `ignoreeof` set
+
+  - If you have set the `ignoreeof` option and you find that repeatedly hitting `ctrl-d` causes the shell to exit, it is because this option only allows 10 consecutive invocations of this keybinding (or 10 consecutive EOF characters, to be precise), before exiting the shell.
+
+    To allow higher values, you have to use the `IGNOREEOF` variable.
+
+    For example:
+
+    ```
+    export IGNOREEOF=100
+    ```
+
+
+
+#### See also
+
+- [Wikipedia:Bash (Unix shell)](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
+- [Bash Reference Manual](https://www.gnu.org/software/bash/manual/bashref.html), or `/usr/share/doc/bash/bashref.html`
+- [Readline Init File Syntax](https://www.gnu.org/software/bash/manual/html_node/Readline-Init-File-Syntax.html)
+- [The Bourne-Again Shell](http://www.aosabook.org/en/bash.html) - The third chapter of *The Architecture of Open Source Applications*
+- [Shellcheck](http://shellcheck.net/) - Check bash scripts for common errors (based on [shellcheck](https://github.com/koalaman/shellcheck))
+- [PS1 generator](http://bashrcgenerator.com/.bashrc) - generate your .bashrc/PS1 bash prompt with a drag and drop interface
+- [Even more useful .bashrc commands](https://serverfault.com/questions/3743/what-useful-things-can-one-add-to-ones-bashrc)
+
+Tutorials:
+
+- [Greg's Wiki](http://mywiki.wooledge.org/)
+- [Greg's Wiki: BashGuide](http://mywiki.wooledge.org/BashGuide)
+- [Greg's Wiki: BashFAQ](http://mywiki.wooledge.org/BashFAQ)
+- [Bash Hackers Wiki](http://wiki.bash-hackers.org/doku.php)
+- [Bash Hackers Wiki: List of Bash online tutorials](http://wiki.bash-hackers.org/scripting/tutoriallist)
+- [Quote Tutorial](http://www.grymoire.com/Unix/Quote.html)
+
+Community:
+
+- [An active and friendly IRC channel for Bash](irc://irc.freenode.net#bash)
+- [Bashscripts.org](http://bashscripts.org/)
+
+Examples:
+
+- [How to change the title of an xterm](http://tldp.org/HOWTO/Xterm-Title-4.html)
+
+
+
+# SSH (Secure Shell)
+
+???
+
+
+
 
 
 # Terminology
@@ -1238,10 +1496,10 @@ On most Unix/Linux systems multiple shells are available: **bash**, **csh**, **k
   - The Portable Operating System Interface
   - This is a family of standards specified by the IEEE Computer Society for maintaining compatibility between operating systems.
   - POSIX defines the application programming interface(API), along with command line shells and utility interfaces, for software compatibility with variants of Unix and other operating systems.
-
-
-
-
+- **GNU Project**
+  - The aim of the GNU Project is to produce a totally free operating system. 
+  - While the GNU kernel has not reached a stable version, the project has resulted in the creation of many tools that power most Unix-like operating system distributions. 
+  - [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) is such a distribution, using GNU software like the [GRUB](https://wiki.archlinux.org/index.php/GRUB) bootloader, [Bash](https://wiki.archlinux.org/index.php/Bash) shell, and numerous other utilities and libraries.
 - **`umask`**:
   - **umask** is a command that determines the settings of a [mask](https://en.wikipedia.org/wiki/Mask_(computing)) that controls how [file permissions](https://en.wikipedia.org/wiki/File_permissions) are set for newly created files.
 - mask:
@@ -1263,8 +1521,7 @@ On most Unix/Linux systems multiple shells are available: **bash**, **csh**, **k
   - In [Unix](https://en.wikipedia.org/wiki/Unix) and [related](https://en.wikipedia.org/wiki/Unix-like) computer operating systems, a **file descriptor** (**FD**, less frequently **fildes**) is an abstract indicator ([handle](https://en.wikipedia.org/wiki/Handle_(computing))) used to access a [file](https://en.wikipedia.org/wiki/File_(computing)) or other [input/output](https://en.wikipedia.org/wiki/Input/output) [resource](https://en.wikipedia.org/wiki/System_resource), such as a [pipe](https://en.wikipedia.org/wiki/Pipe_(Unix)) or [network socket](https://en.wikipedia.org/wiki/Network_socket).
 
 
-
-- **Kernel**:
+- **Kernel** :
 
   - The kernel is a computer program that is the core of a computer's operatig system, with complete control over everything in the system.
 
@@ -1273,3 +1530,25 @@ On most Unix/Linux systems multiple shells are available: **bash**, **csh**, **k
   - It handles the rest of start-up as well as input/output requests from software, translating them into data-processing instructions for the CPU. It handles memory and peripherals like keyboards, monitors, printers, and speakers.
 
     <img src="images/arch-linux-kernel-001.png" width='200'>
+
+- `getty`: 
+
+  - short for 'get tty', is a Unix program running on a [host computer](https://en.wikipedia.org/wiki/Host_computer) that manages physical or virtual [terminals](https://en.wikipedia.org/wiki/Computer_terminal) (TTYs).
+  - When it detects a connection, it prompts for a username and runs `login` program to authenticate the user.
+  - Originally, on traditional Unix systems, getty handled connections to serial terminals (often Teletype machines) connected to a host computer. The *tty* part of the name stands for *Teletype*, but has come to mean any type of [text terminal](https://en.wikipedia.org/wiki/Text_terminal). 
+  - One *getty* process serves one terminal. In some systems.
+
+- Host computer: (network host)
+
+  - A network host is a computer or other device connected to a computer network.
+  - A network host may offer information resources, services, and applications to users or other nodes on the network.
+  - A network host is a network node that is assigned a network address.
+
+
+
+
+- **xterm**:
+  - xterm is the standard terminal emulator for the X Window System.
+  - A user can have many different invocations of xterm running at once on the same display, each of which provides independent input/output for the process running in it (normally the process is a Unix shell).
+
+ 
