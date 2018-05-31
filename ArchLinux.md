@@ -1509,6 +1509,7 @@ Examples:
 
 
 - Nibble:
+
   - a four-bit aggregation, or half an octet. Also known as half-byte or tetrade.
 - Word:
   - In computing, a word is the natural unit of data used by a particular processor design.
