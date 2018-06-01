@@ -1482,6 +1482,29 @@ Examples:
 
 # SSH (Secure Shell)
 
+Secure Shell is a network protocol that allows data to be exchanged over a secure channel between two computers.
+
+- Encryption provides confidentiality and integrity of data. SSH uses public-key cryptography to authenticate the remote computer and allow the remote computer to authenticate the user, if necessary.
+- SSH is typically used to log into a remote machine and execute commands, but it also supports tunneling, forwarding arbitrary TCP ports and X11 connections; file transfer can be accomplished using the associated SFTP or SCP protocols.
+
+
+
+An SSH server, by default, listens on the standard TCP port `22`.
+
+An SSH client program is typically used for establishing connections to an `sshd` daemon accepting remote connections.
+
+Both are commonly present on most modern operating systems.
+
+## OpenSSH
+
+
+
+
+
+
+
+
+
 ???
 
 
@@ -1553,4 +1576,87 @@ Examples:
 - **xterm**:
   - xterm is the standard terminal emulator for the X Window System.
   - A user can have many different invocations of xterm running at once on the same display, each of which provides independent input/output for the process running in it (normally the process is a Unix shell).
+
+
+
+
+# TCP/IP
+
+## TCP
+
+The Transmission Control Protocol (TCP) is one of the main protocols of the internet protocol suite. 
+
+- It originated in the initial network implementation in which it complemented the Internet Protocol.
+
+
+
+
+
+
+
+## IP
+
+The Internet Protocol is responsible for addressing hosts, encapsulating data into datagrams (including fragmentation and reassembly) and routing datagrams from a source host to a destination host across one or more IP networks.
+
+For these purposes, the Internet Protocol defines the format of packets and provides an addressing system.
+
+- *encapsulation (封装)*:
+  - Each datagram has two components:
+    - a header
+      - IP header includes source IP address, destination IP address, and other metadata needed to route and deliver th datagram.
+    - a payload
+      - the data that is transported.
+  - This method of nesting the data payload in a packet with a header is called encapsulation.
+- *addressing system:*
+  - IP addressing entails the assignment of IP addresses and associated parameters to host interfaces. 
+    - The address space is divided into subnetworks, involving the designation of network prefixes.
+  - IP routing is performed by all hosts, as well as routers, whose main function is to transport packets across network boundaries.
+    - Routers communicate with one another via specially designed [routing protocols](https://en.wikipedia.org/wiki/Routing_protocol), either [interior gateway protocols](https://en.wikipedia.org/wiki/Interior_gateway_protocol) or [exterior gateway protocols](https://en.wikipedia.org/wiki/Exterior_gateway_protocol), as needed for the topology of the network.
+
+
+
+#### Reliability
+
+The design of the Internet protocol suite adheres to the [end-to-end principle](https://en.wikipedia.org/wiki/End-to-end_principle), a concept adapted from the [CYCLADES](https://en.wikipedia.org/wiki/CYCLADES) project. 
+
+- Under the end-to-end principle, the network infrastructure is considered inherently *unreliable at any single network element or transmission medium* and is *dynamic in terms of availability of links and nodes*. 
+- No central monitoring or performance measurement facility exists that tracks or maintains the state of the network. For the benefit of reducing [network complexity](https://en.wikipedia.org/wiki/Network_complexity), the intelligence in the network is purposely located in the [end nodes](https://en.wikipedia.org/wiki/End_node).
+
+As a consequence of this design, the Internet Protocol only provides [best-effort delivery](https://en.wikipedia.org/wiki/Best-effort_delivery) and its service is characterized as [unreliable](https://en.wikipedia.org/wiki/Reliability_(computer_networking)). In network architectural language, it is a [connectionless protocol](https://en.wikipedia.org/wiki/Connectionless_protocol), in contrast to [connection-oriented communication](https://en.wikipedia.org/wiki/Connection-oriented_communication). 
+
+- Various error conditions may occur, such as [data corruption](https://en.wikipedia.org/wiki/Data_corruption), [packet loss](https://en.wikipedia.org/wiki/Packet_loss) and duplication. 
+- Because routing is dynamic, meaning every packet is treated independently, and because the network maintains no state based on the path of prior packets, different packets may be routed to the same destination via different paths, resulting in [out-of-order delivery](https://en.wikipedia.org/wiki/Out-of-order_delivery) to the receiver.
+
+All error conditions in the network must be detected and compensated by the participating end nodes.
+
+- The [upper layer protocols](https://en.wikipedia.org/wiki/Upper_layer_protocol) of the Internet protocol suite are responsible for resolving reliability issues. 
+- For example, a host may [buffer](https://en.wikipedia.org/wiki/Data_buffer) network data to ensure correct ordering before the data is delivered to an application.
+
+IPv4 provides safeguards to ensure that the IP packet header is error-free. A routing node calculates a [checksum](https://en.wikipedia.org/wiki/Checksum) for a packet. If the checksum is bad, the routing node discards the packet. Although the [Internet Control Message Protocol](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol) (ICMP) allows such notification, the routing node is not required to notify either end node of these errors. By contrast, in order to increase performance, and since current [link layer](https://en.wikipedia.org/wiki/Link_layer) technology is assumed to provide sufficient error detection,[[8\]](https://en.wikipedia.org/wiki/#cite_note-8) the IPv6 header has no [checksum](https://en.wikipedia.org/wiki/Checksum) to protect it.[[9\]](https://en.wikipedia.org/wiki/#cite_note-9)
+
+
+
+#### Link capacity and capability
+
+???
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
