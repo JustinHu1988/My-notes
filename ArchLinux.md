@@ -1588,14 +1588,192 @@ Both are commonly present on most modern operating systems.
 
 
 
+- **ARPANET**: (Advanced Research Projects Agency Network)
+  - an early [packet switching](https://en.wikipedia.org/wiki/Packet_switching) network and the first network to implement the protocol suite [TCP/IP](https://en.wikipedia.org/wiki/TCP/IP). Both technologies became the technical foundation of the [Internet](https://en.wikipedia.org/wiki/Internet).
+  - ???
+
+
+- **CYCLADES** ([siklad])
+
+  - The CYCLADES computer network was a French research network created in the early 1970s.
+  - It was one of the pioneering networks experimenting with the concept of [packet switching](https://en.wikipedia.org/wiki/Packet_switching), and was developed to explore alternatives to the [ARPANET](https://en.wikipedia.org/wiki/ARPANET) design. The network supported general local network research.
+  - *The CYCLADES network was the first to make the [hosts](https://en.wikipedia.org/wiki/Host_(network)) responsible for the reliable delivery of data*, rather than this being a centralized service of the network itself.
+  - [Datagrams](https://en.wikipedia.org/wiki/Datagrams) were exchanged on the network using transport protocols that do not guarantee reliable delivery, but only attempt best-effort. 
+  - To empower the network leaves, the hosts, to perform error-correction, the network ensured end-to-end protocol transparency, a concept later to be known as the [end-to-end principle](https://en.wikipedia.org/wiki/End-to-end_principle). This simplified network design, reduced network latency, and reduced the opportunities for single point failures.
+  - The experience with these concepts led to the design of key features of the [Internet protocol](https://en.wikipedia.org/wiki/Internet_protocol) in the ARPANET project.
+
+- **Datagram**: (数据报)
+
+  - A datagram is a basic transfer unit associated with a [packet-switched network](https://en.wikipedia.org/wiki/Packet-switched_network). 
+  - Datagrams are typically structured in [header](https://en.wikipedia.org/wiki/Header_(computing))and [payload](https://en.wikipedia.org/wiki/Payload_(computing)) sections. The header contains all the information sufficient for routing from the originating equipment to the destination without relying on prior exchanges between the equipment and the network. Headers may include source and destination addresses as well as a type field. The payload is the data to be transported. This process of nesting data payloads in a tagged header is called [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking)).
+  - Datagrams provide a [connectionless communication](https://en.wikipedia.org/wiki/Connectionless_communication) service across a packet-switched network. The delivery, arrival time, and order of arrival of datagrams need not be guaranteed by the network.
+
+- **End-to-end Principle**
+
+  - The end-to-end principle is a design framework in [computer networking](https://en.wikipedia.org/wiki/Computer_network). In [networks designed](https://en.wikipedia.org/wiki/Network_planning_and_design) according to this principle, application-specific features reside in the communicating [end nodes](https://en.wikipedia.org/wiki/End_node) of the network, rather than in intermediary nodes, such as [gateways](https://en.wikipedia.org/wiki/Gateway_(telecommunications)) and [routers](https://en.wikipedia.org/wiki/Router_(computing)), that exist to establish the network.
+
+- **Packet switching** (分组交换)
+
+  - Packet switching is a method of grouping data which is transmitted over a digital network into *packets* which are made of a [header](https://en.wikipedia.org/wiki/Header_(computing)) and a [payload](https://en.wikipedia.org/wiki/Payload_(computing)).
+  - Data in the header is used by networking hardware to direct the packet to its destination where the payload is extracted and used by [application software](https://en.wikipedia.org/wiki/Application_software). 
+  - Packet switching is the primary basis for data communications in [computer networks](https://en.wikipedia.org/wiki/Computer_networks) worldwide.
+
+- **Reliability** (computer networking)
+
+  - In computer networking, a *reliable* protocol provides notifications to the sender as to the delivery of transmitted data, as opposed to an *unreliable* protocol, which does not provide assurance of the delivery of [data](https://en.wikipedia.org/wiki/Data) to the intended recipient(s). 
+  - Reliable protocols typically incur more overhead than unreliable protocols, and as a result, function more slowly and with less scalability. This often is not an issue for [unicast](https://en.wikipedia.org/wiki/Unicast) protocols, but it may become a problem for [reliable multicast](https://en.wikipedia.org/wiki/Reliable_multicast) protocols.
+  - Example:
+    - [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol), the main protocol used on the [Internet](https://en.wikipedia.org/wiki/Internet), is a reliable unicast protocol. 
+    - [UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol), often used in [computer games](https://en.wikipedia.org/wiki/Computer_games) or in other situations where speed is an issue and the loss of a little data is not as important because of the transitory nature of the data, is an unreliable protocol.
+  - Often, a reliable unicast protocol is also [connection-oriented](https://en.wikipedia.org/wiki/Connection-oriented). For example, TCP is connection-oriented, with the [virtual-circuit](https://en.wikipedia.org/wiki/Virtual_circuit)ID consisting of source and destination [IP addresses](https://en.wikipedia.org/wiki/IP_address) and port numbers.
+
+- **unicast**
+
+  - unicast refers to a one-to-one transmission from one point in the network to another point; that is, one sender and one receiver, each identified by a [network address](https://en.wikipedia.org/wiki/Network_address).
+
+- **Addressing methods**
+
+  The [Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol) and other network addressing systems recognize five main addressing methods:
+
+  - **Unicast** addressing uses a *one-to-one* association between a sender and destination: each destination address uniquely identifies a single receiver endpoint.
+  - [Broadcast](https://en.wikipedia.org/wiki/Broadcast_(networking)) uses a *one-to-all* association; a single datagram from one sender is routed to all of the possibly multiple endpoints associated with the broadcast address. The network automatically replicates datagrams as needed to reach all the recipients within the scope of the broadcast, which is generally an entire network subnet.
+  - [Multicast](https://en.wikipedia.org/wiki/Multicast) addressing uses a *one-to-many-of-many* or *many-to-many-of-many* association; datagrams are routed simultaneously in a single transmission to many recipients. It differs from broadcast in that the destination address designates a subset, not necessarily all, of the accessible nodes.
+  - [Anycast](https://en.wikipedia.org/wiki/Anycast) addressing is a *one-to-one-of-many* association where datagrams are routed to any single member of a group of potential receivers that are all identified by the same destination address. The routing algorithm selects the single receiver from the group based on which is the nearest according to some distance measure.
+  - [Geocast](https://en.wikipedia.org/wiki/Geocast) refers to the delivery of information to a group of destinations in a network identified by their geographical locations. It is a specialized form of multicast addressing used by some routing protocols for mobile ad hoc networks.
+
+  ​
+
+- **Connection-oriented communication**
+
+  - a network communication mode in telecommunications and computer networking, where a *communication session*(会话) or a semi-permanent connection is established before any useful data can be transferred, and where a stream of data is delivered in the same order as it was sent.
+  - The alternative to connection-oriented transmission is [connectionless communication](https://en.wikipedia.org/wiki/Connectionless_communication), for example the [datagram](https://en.wikipedia.org/wiki/Datagram) mode communication used by the IP and UDP protocols, where data may be delivered out of order, since different packets are routed independently, and may be delivered over different paths.
+  - Connection-oriented communication may be a [circuit switched](https://en.wikipedia.org/wiki/Circuit_switched) connection, or a packet-mode [virtual circuit](https://en.wikipedia.org/wiki/Virtual_circuit) connection.
+    - In the latter case, it may use either a transport layer [virtual circuit](https://en.wikipedia.org/wiki/Virtual_circuit) protocol such as the [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) protocol, allowing data to be delivered in order although the lower layer switching is connectionless, or it may be a [data link layer](https://en.wikipedia.org/wiki/Data_link_layer) or [network layer](https://en.wikipedia.org/wiki/Network_layer) switching mode, where all data packets belonging to the same traffic stream are delivered over the same path, and traffic flows are identified by some *connection identifier* rather than by complete routing information, allowing fast hardware based switching
+  - Connection-oriented protocol services are often, but not always, *reliable* network services, that provide acknowledgment after successful delivery, and [automatic repeat request](https://en.wikipedia.org/wiki/Automatic_repeat_request) functions in case of missing data or detected bit-errors.
+    -  [ATM](https://en.wikipedia.org/wiki/Asynchronous_Transfer_Mode), [Frame Relay](https://en.wikipedia.org/wiki/Frame_Relay)and [MPLS](https://en.wikipedia.org/wiki/Multiprotocol_Label_Switching) are examples of a connection-oriented, [unreliable](https://en.wikipedia.org/wiki/Reliability_(computer_networking)) protocol.
+
+- **Communication session**
+
+  - In computer science, in particular networking, a session is a semi-permanent interactive information interchange between two or more communicating devices, or between a computer and user  (see [login session](https://en.wikipedia.org/wiki/Login_session)). 
+  - An established communication session may involve more than one message in each direction. A session is typically [stateful](https://en.wikipedia.org/wiki/Stateful), meaning that at least one of the communicating parts needs to save information about the session history in order to be able to communicate, as opposed to [stateless](https://en.wikipedia.org/wiki/Stateless_server) communication, where the communication consists of independent requests with responses.
+
+- **Connectionless communication**
+
+  - often referred to as **CL-mode** communication, is a data [transmission](https://en.wikipedia.org/wiki/Transmission_(telecommunications)) method used in [packet switching](https://en.wikipedia.org/wiki/Packet_switching) networks in which each data unit is individually addressed and routed based on information carried in each unit, rather than in the setup information of a prearranged, fixed data channel as in [connection-oriented communication](https://en.wikipedia.org/wiki/Connection-oriented_communication).
+  - Under connectionless communication between two network end points, a message can be sent from one end point to another without prior arrangement. The device at one end of the communication transmits data addressed to the other, without first ensuring that the recipient is available and ready to receive the data. Some protocols allow for error correction by requested retransmission.
+  -  *[Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol) (IP) and [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP) are connectionless protocols.*
+  - A packet transmitted in a connectionless mode is frequently called a [datagram](https://en.wikipedia.org/wiki/Datagram).
+  - Connectionless protocols are usually described as [stateless protocols](https://en.wikipedia.org/wiki/Stateless_protocol) because the end points have no protocol-defined way to remember where they are in a "conversation" of message exchanges.
+  - A connectionless communication has an advantage over a [connection-oriented communication](https://en.wikipedia.org/wiki/Connection-oriented_communication), in that it has low [overhead](https://en.wikipedia.org/wiki/Overhead_information). It also allows for [multicast](https://en.wikipedia.org/wiki/Multicast) and [broadcast](https://en.wikipedia.org/wiki/Broadcasting_(computing)) operations in which the same data are transmitted to several recipients in a single transmission.
+  - In connectionless transmissions the service provider usually cannot guarantee that there will be no loss, [error](https://en.wikipedia.org/wiki/Error) insertion, misdelivery, duplication, or out-of-[sequence](https://en.wikipedia.org/wiki/Sequence) delivery of the packet. However, *the effect of errors may be reduced by implementing error correction within an application protocol*.
+
+- **OSI model**
+
+  - The Open Systems Interconnection model (OSI model) is a conceptual model that characterizes and standardizes the communication functions of a telecommunication or computing system without regard to its underlying internal structure and technology.
+
+    - Its goal is the interoperability of diverse communication systems with standard protocols.
+    - The model partitions a communication system into [abstraction layers](https://en.wikipedia.org/wiki/Abstraction_layer). The original version of the model defined seven layers.
+    - A layer serves the layer above it and is served by the layer below it.
+    - The model is a product of the [Open Systems Interconnection](https://en.wikipedia.org/wiki/Open_Systems_Interconnection) project at the [International Organization for Standardization](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)(ISO), maintained by the identification ISO/IEC 7498-1.
+
+  - Description of OSI layers
+
+    <img src="images/ OSI-table-001.png" width='700'>
+
+  - ???
+
+
+
+
+
+- *Separation of concerns(SoC)*
+  -  a design principle for separating a [computer program](https://en.wikipedia.org/wiki/Computer_program) into distinct sections, such that each section addresses a separate [concern](https://en.wikipedia.org/wiki/Concern_(computer_science)).
+  - A program that embodies SoC well is called a [modular](https://en.wikipedia.org/wiki/Modularity_(programming))[[1\]](https://en.wikipedia.org/wiki/Separation_of_concerns#cite_note-laplante-1) program. Modularity, and hence separation of concerns, is achieved by [encapsulating](https://en.wikipedia.org/wiki/Encapsulation_(computer_science)) information inside a section of code that has a well-defined interface.
+
+
+
+
+
+
+
 # TCP/IP
 
 ## TCP
 
 The Transmission Control Protocol (TCP) is one of the main protocols of the internet protocol suite. 
 
-- It originated in the initial network implementation in which it complemented the Internet Protocol.
+- It originated in the initial network implementation in which it complemented the Internet Protocol(IP).
+  - Therefore, the entire suite is commonly referred to as [TCP/IP](https://en.wikipedia.org/wiki/TCP/IP).
 
+
+*TCP provides [reliable](https://en.wikipedia.org/wiki/Reliability_(computer_networking)), ordered, and [error-checked](https://en.wikipedia.org/wiki/Error_detection_and_correction) delivery of a stream of [octets](https://en.wikipedia.org/wiki/Octet_(computing)) (bytes) between applications running on hosts communicating via an IP network*.
+
+- Major internet applications such as the [World Wide Web](https://en.wikipedia.org/wiki/World_Wide_Web), [email](https://en.wikipedia.org/wiki/Email), [remote administration](https://en.wikipedia.org/wiki/Remote_administration), and [file transfer](https://en.wikipedia.org/wiki/File_transfer) rely on TCP.
+- Applications that do not require reliable data stream service may use the [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP), which provides a [connectionless](https://en.wikipedia.org/wiki/Connectionless_communication) [datagram](https://en.wikipedia.org/wiki/Datagram) service that emphasizes reduced [latency](https://en.wikipedia.org/wiki/Latency_(engineering)) over reliability.
+
+#### function
+
+The Transmission Control Protocol provides a communication service at an intermediate level between an application program and the Internet Protocol. 
+
+- It provides host-to-host connectivity at the [Transport Layer](https://en.wikipedia.org/wiki/Transport_Layer) of the Internet model. 
+- An application does not need to know the particular mechanisms for sending data via a link to another host, such as the required packet fragmentation on the transmission medium. 
+- At the transport layer, the protocol handles all handshaking and transmission details and presents an abstraction of the network connection to the application.
+
+At the lower levels of the protocol stack, due to network congestion, traffic load balancing, or other unpredictable network behaviour, IP packets may be [lost](https://en.wikipedia.org/wiki/Packet_loss), duplicated, or [delivered out of order](https://en.wikipedia.org/wiki/Out-of-order_delivery). TCP detects these problems, requests [re-transmission](https://en.wikipedia.org/wiki/Retransmission_(data_networks)) of lost data, rearranges out-of-order data and even helps minimize network congestion to reduce the occurrence of the other problems. If the data still remains undelivered, the source is notified of this failure.
+
+Once the TCP receiver has reassembled the sequence of octets originally transmitted, it passes them to the receiving application.
+
+Thus, TCP abstracts the application's communication from the underlying networking details.
+
+
+
+Applications:
+
+- TCP is used extensively by many applications available by internet, including the [World Wide Web](https://en.wikipedia.org/wiki/World_Wide_Web) (WWW), [E-mail](https://en.wikipedia.org/wiki/E-mail), [File Transfer Protocol](https://en.wikipedia.org/wiki/File_Transfer_Protocol), [Secure Shell](https://en.wikipedia.org/wiki/Secure_Shell), [peer-to-peer](https://en.wikipedia.org/wiki/Peer-to-peer) [file sharing](https://en.wikipedia.org/wiki/File_sharing), and [streaming media](https://en.wikipedia.org/wiki/Streaming_media) applications.
+
+Delays:
+
+- TCP is optimized for accurate delivery rather than timely delivery and can incur relatively long delays (on the order of seconds) while waiting for out-of-order messages or re-transmissions of lost messages.
+- Therefore, it is not particularly suitable for real-time applications such as [Voice over IP](https://en.wikipedia.org/wiki/Voice_over_IP).
+- For such applications, protocols like the [Real-time Transport Protocol](https://en.wikipedia.org/wiki/Real-time_Transport_Protocol) (RTP) operating over the [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP) are usually recommended instead.
+
+
+
+Positive acknowledgement with re-transmission:
+
+- TCP is a reliable stream delivery service which guarantees that all bytes received will be identical with bytes sent and in the correct order. Since packet transfer by many networks is not reliable, a technique known as *positive acknowledgement with re-transmission* is used to guarantee reliability. 
+- This fundamental technique requires the receiver to respond with an acknowledgement message as it receives the data. The sender keeps a record of each packet it sends and maintains a timer from when the packet was sent. The sender re-transmits a packet if the timer expires before receiving the message acknowledgement. The timer is needed in case a packet gets lost or corrupted.
+
+
+
+*Segments:*
+
+- While IP handles actual delivery of the data, TCP keeps track of 'segments' - the individual units of data transmission that a message is divided into for efficient routing through the network. 
+- For example, when an HTML file is sent from a web server, the TCP software layer of that server divides the sequence of file octets into segments and forwards them individually to the IP software layer ([Internet Layer](https://en.wikipedia.org/wiki/Internet_Layer)). 
+- The Internet Layer encapsulates each TCP segment into an IP packet by adding a header that includes (among other data) the destination [IP address](https://en.wikipedia.org/wiki/IP_address). 
+- When the client program on the destination computer receives them, the TCP layer ([Transport Layer](https://en.wikipedia.org/wiki/Transport_Layer)) re-assembles the individual segments and ensures they are correctly ordered and error-free as it streams them to an application.
+
+
+
+#### TCP segment structure
+
+*Transmission Control Protocol accepts data from a data stream, divides it into chunks, and adds a TCP header creating a TCP segment.* The TCP segment is then [encapsulated](https://en.wikipedia.org/wiki/Encapsulation_(networking)) into an Internet Protocol (IP) datagram, and exchanged with peers.
+
+The term *TCP packet* appears in both informal and formal usage, whereas in more precise terminology *segment* refers to the TCP [protocol data unit](https://en.wikipedia.org/wiki/Protocol_data_unit) (PDU), *datagram*[[5\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-5) to the IP PDU, and *frame* to the data link layer PDU:
+
+- Processes transmit data by calling on the TCP and passing buffers of data as arguments. The TCP packages the data from these buffers into segments and calls on the internet module [e.g. IP] to transmit each segment to the destination TCP.
+
+
+
+A TCP segment consists of a segment *header* and a *data* section.
+
+- The TCP header contains 10 mandatory fields, and an optional extension field (*Options*, pink background in table).
+- The data section follows the header. Its contents are the payload data carried for the application. 
+- The length of the data section is not specified in the TCP segment header. It can be calculated by subtracting the combined length of the TCP header and the encapsulating IP header from the total IP datagram length (specified in the IP header).
+
+<img src="images/TCP-header.png" width="800">
+
+???
 
 
 
@@ -1604,7 +1782,7 @@ The Transmission Control Protocol (TCP) is one of the main protocols of the inte
 
 ## IP
 
-The Internet Protocol is responsible for addressing hosts, encapsulating data into datagrams (including fragmentation and reassembly) and routing datagrams from a source host to a destination host across one or more IP networks.
+*The Internet Protocol is responsible for addressing hosts, encapsulating data into datagrams (including fragmentation and reassembly) and routing datagrams from a source host to a destination host across one or more IP networks.*
 
 For these purposes, the Internet Protocol defines the format of packets and provides an addressing system.
 
@@ -1660,9 +1838,11 @@ During the design phase of the ARPANET and the early Internet, the security aspe
 
 
 
+## See also
 
-
-
+- [List of IP protocol numbers](https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers)
+- [Next-generation network](https://en.wikipedia.org/wiki/Next-generation_network)
+- [IP forwarding algorithm](https://en.wikipedia.org/wiki/IP_forwarding_algorithm)
 
 ???
 
