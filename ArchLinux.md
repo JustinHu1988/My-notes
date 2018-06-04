@@ -1576,6 +1576,14 @@ Both are commonly present on most modern operating systems.
 - **xterm**:
   - xterm is the standard terminal emulator for the X Window System.
   - A user can have many different invocations of xterm running at once on the same display, each of which provides independent input/output for the process running in it (normally the process is a Unix shell).
+- **checksum**:
+  - A checksum is a small-sized [datum](https://en.wikipedia.org/wiki/Datum) derived from a block of [digital data](https://en.wikipedia.org/wiki/Digital_data) for the purpose of [detecting errors](https://en.wikipedia.org/wiki/Error_detection) which may have been introduced during its [transmission](https://en.wikipedia.org/wiki/Telecommunication) or [storage](https://en.wikipedia.org/wiki/Computer_storage). 
+  - The actual [procedure](https://en.wikipedia.org/wiki/Algorithm) which yields the checksum from a data input is called a **checksum function** or **checksum algorithm**. 
+    - Depending on its design goals, a good checksum algorithm will usually output a significantly different value, even for small changes made to the input. 
+    - This is especially true of [cryptographic hash functions](https://en.wikipedia.org/wiki/Cryptographic_hash_function), which may be used to detect many data corruption errors and verify overall [data integrity](https://en.wikipedia.org/wiki/Data_integrity); if the computed checksum for the current data input matches the stored value of a previously computed checksum, there is a very high probability the data has not been accidentally altered or corrupted.
+  - For more, see wikipedia
+- Cryptographic hash function
+  - ???
 
 
 
@@ -1637,6 +1645,24 @@ IPv4 provides safeguards to ensure that the IP packet header is error-free. A ro
 
 
 #### Link capacity and capability
+
+The dynamic nature of the Internet and the diversity of its components provide no guarantee that any particular path is actually capable of, or suitable for, performing the data transmission requested. 
+
+- One of the technical constraints is the size of data packets allowed on a given link.  Facilities exist to examine the [maximum transmission unit](https://en.wikipedia.org/wiki/Maximum_transmission_unit) (MTU) size of the local link and [Path MTU Discovery](https://en.wikipedia.org/wiki/Path_MTU_Discovery) can be used for the entire intended path to the destination.
+- The IPv4 internetworking layer has the ability to automatically [fragment](https://en.wikipedia.org/wiki/IP_fragmentation) the original datagram into smaller units for transmission. In this case, IP provides re-ordering of fragments delivered out of order.[[10\]](https://en.wikipedia.org/wiki/#cite_note-10) 
+- An IPv6 network does not perform fragmentation or reassembly, and as per the [end-to-end principle](https://en.wikipedia.org/wiki/End-to-end_principle), requires end stations and higher-layer protocols to avoid exceeding the network's MTU.
+- The *TCP* is an example of a protocol that adjusts its segment size to be smaller than the MTU.
+- The *UDP* and *ICMP* disregard MTU size, thereby forcing IP to fragment oversized datagrams.
+
+#### Security
+
+During the design phase of the ARPANET and the early Internet, the security aspects and needs of a public, international network could not be adequately anticipated. Consequently, many Internet protocols exhibited vulnerabilities highlighted by network attacks and later security assessments. In 2008, a thorough security assessment and proposed mitigation of problems was published.[[13\]](https://en.wikipedia.org/wiki/#cite_note-13) The IETF has been pursuing further studies.[[14\]](https://en.wikipedia.org/wiki/#cite_note-RFC_6274-14)
+
+
+
+
+
+
 
 ???
 
