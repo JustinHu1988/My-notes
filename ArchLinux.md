@@ -1661,7 +1661,7 @@ Both are commonly present on most modern operating systems.
 
   - often referred to as **CL-mode** communication, is a data [transmission](https://en.wikipedia.org/wiki/Transmission_(telecommunications)) method used in [packet switching](https://en.wikipedia.org/wiki/Packet_switching) networks in which each data unit is individually addressed and routed based on information carried in each unit, rather than in the setup information of a prearranged, fixed data channel as in [connection-oriented communication](https://en.wikipedia.org/wiki/Connection-oriented_communication).
   - Under connectionless communication between two network end points, a message can be sent from one end point to another without prior arrangement. The device at one end of the communication transmits data addressed to the other, without first ensuring that the recipient is available and ready to receive the data. Some protocols allow for error correction by requested retransmission.
-  -  *[Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol) (IP) and [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP) are connectionless protocols.*
+  - *[Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol) (IP) and [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP) are connectionless protocols.*
   - A packet transmitted in a connectionless mode is frequently called a [datagram](https://en.wikipedia.org/wiki/Datagram).
   - Connectionless protocols are usually described as [stateless protocols](https://en.wikipedia.org/wiki/Stateless_protocol) because the end points have no protocol-defined way to remember where they are in a "conversation" of message exchanges.
   - A connectionless communication has an advantage over a [connection-oriented communication](https://en.wikipedia.org/wiki/Connection-oriented_communication), in that it has low [overhead](https://en.wikipedia.org/wiki/Overhead_information). It also allows for [multicast](https://en.wikipedia.org/wiki/Multicast) and [broadcast](https://en.wikipedia.org/wiki/Broadcasting_(computing)) operations in which the same data are transmitted to several recipients in a single transmission.
@@ -1688,9 +1688,101 @@ Both are commonly present on most modern operating systems.
 
 - *Separation of concerns(SoC)*
   -  a design principle for separating a [computer program](https://en.wikipedia.org/wiki/Computer_program) into distinct sections, such that each section addresses a separate [concern](https://en.wikipedia.org/wiki/Concern_(computer_science)).
-  - A program that embodies SoC well is called a [modular](https://en.wikipedia.org/wiki/Modularity_(programming))[[1\]](https://en.wikipedia.org/wiki/Separation_of_concerns#cite_note-laplante-1) program. Modularity, and hence separation of concerns, is achieved by [encapsulating](https://en.wikipedia.org/wiki/Encapsulation_(computer_science)) information inside a section of code that has a well-defined interface.
+  -  A program that embodies SoC well is called a [modular](https://en.wikipedia.org/wiki/Modularity_(programming))[[1\]](https://en.wikipedia.org/wiki/Separation_of_concerns#cite_note-laplante-1) program. Modularity, and hence separation of concerns, is achieved by [encapsulating](https://en.wikipedia.org/wiki/Encapsulation_(computer_science)) information inside a section of code that has a well-defined interface.
+
+- **ECN** : Explicit Congestion Notification
+
+  - an extension to the [Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol) and to the [Transmission Control Protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) and is defined in [RFC 3168](https://tools.ietf.org/html/rfc3168) (2001). 
+  - ECN allows end-to-end notification of [network congestion](https://en.wikipedia.org/wiki/Network_congestion) without dropping packets. 
+  - ECN is an optional feature that may be used between two ECN-enabled endpoints when the underlying network infrastructure also supports it.
+
+- **PDU (Protocol data unit)**
 
 
+  - Physical layer PDU is the bit/symbol/stream.
+
+  - Data link layer PDU is the *frame*.
+
+  - Network layer PDU is the *packet*.
+
+  - Transport layer PDU is the *segment* for TCP or the *datagram* for UDP.
+
+    ​
+
+- **Port**:
+
+
+  - Port is an endpoint of communication in an operating system, which identifies a specific process or a type of network service running on that system.
+  - A port is always associated with an IP address of a host and the protocol type of the communication.
+
+    -  to transfer a file to a remote computer, one must specify the computer itself by an [IP address](https://en.wikipedia.org/wiki/IP_address), the information type by the [correct protocol](https://en.wikipedia.org/wiki/File_transfer_protocol), and the software or service on that computer by the correct *port*.
+  - Ports are defined by 16-bit unsigned numbers, commonly known as the **port number**. 
+
+    - Specific port numbers are commonly reserved to identify specific services - in the example above, the file transfer software will usually be "listening" for connections coming through the port number traditionally reserved for such services. 
+    - The lowest numbered 1024 port numbers are called the [well-known port numbers](https://en.wikipedia.org/wiki/Well-known_port_numbers), and identify the historically most commonly used services.
+  - In modern networks, ports provide a [multiplexing](https://en.wikipedia.org/wiki/Multiplexing) service, so that multiple simultaneous communication sessions may be initiated through each port. After an initial service request connects to the well-known port number, the port is freed by switching the servicing of the request to a dedicated, connection-specific port number. The protocols that primarily use ports are the [transport layer](https://en.wikipedia.org/wiki/Transport_layer) protocols, such as the [Transmission Control Protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) (TCP) and the [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP).
+  - [Transport layer](https://en.wikipedia.org/wiki/Transport_layer) protocols, such as the [Transmission Control Protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) (TCP) and the [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP), transfer data using [protocol data units](https://en.wikipedia.org/wiki/Protocol_data_unit) (PDUs). For TCP, the PDU is a [segment](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#TCP_segment_structure), and a [datagram](https://en.wikipedia.org/wiki/Datagram) for UDP. Both protocols use a [header](https://en.wikipedia.org/wiki/Header_(computing)) field for recording the source and destination port number.
+
+    - A port number is a 16-bit unsigned integer, thus ranging from 0 to 65535.
+
+      - For TCP, port number 0 is reserved and cannot be used, while for UDP, the source port is optional and a value of zero means no port.
+    - A [process](https://en.wikipedia.org/wiki/Process_(computing)) associates its input or output channels via an [Internet socket](https://en.wikipedia.org/wiki/Internet_socket), which is a type of [file descriptor](https://en.wikipedia.org/wiki/File_descriptor), with a [transport protocol](https://en.wikipedia.org/wiki/Transport_protocol), an [IP address](https://en.wikipedia.org/wiki/IP_address), and a port number.
+
+      - This is known as *binding*, and enables the process to send and receive data via the network.
+    - The operating system's networking software has the task of transmitting outgoing data from all application ports onto the network, and forwarding arriving [network packets](https://en.wikipedia.org/wiki/Network_packet) to processes by matching the packet's IP address and port number.
+
+      -  For TCP, only one process may bind to a specific IP address and port combination. 
+      - Common application failures, sometimes called *port conflicts*, occur when multiple programs attempt to use to the same port numbers on the same IP address with the same protocol.
+    - Applications implementing common services often use specifically reserved [well-known port numbers](https://en.wikipedia.org/wiki/Well-known_port_numbers) for receiving service requests from clients. 
+
+      - This process is known as *listening*, and involves the receipt of a request on the well-known port and establishing a one-to-one server-client dialog, using the same local port number.
+      - Other clients may continue to connect to the listening port; this works because a TCP connection is identified by a tuple consisting of the local address, the local port, the remote address, and the remote port.
+    - The well-known ports are defined by convention overseen by the [Internet Assigned Numbers Authority](https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority) (IANA). 
+
+      - The core network services, such as the [World-Wide Web](https://en.wikipedia.org/wiki/World-Wide_Web), typically use well-known port numbers. 
+      - In many operating systems special privileges are required for applications to bind to these ports, because these are often deemed critical to the operation of IP networks. 
+      - Conversely, the client end of a connection typically uses a high port number allocated for short term use, therefore called an [ephemeral port](https://en.wikipedia.org/wiki/Ephemeral_port).
+    - The port numbers are encoded in the transport protocol [packet header](https://en.wikipedia.org/wiki/Packet_header), and they can be readily interpreted not only by the sending and receiving computers, but also by other components of the networking infrastructure.
+
+      -  In particular, [firewalls](https://en.wikipedia.org/wiki/Firewall_(networking)) are commonly configured to differentiate between packets based on their source or destination port numbers. [Port forwarding](https://en.wikipedia.org/wiki/Port_forwarding) is an example application of this.
+    - The practice of attempting to connect to a range of ports in sequence on a single computer is commonly known as [port scanning](https://en.wikipedia.org/wiki/Port_scanning).
+
+      - This is usually associated either with malicious [cracking](https://en.wikipedia.org/wiki/Security_cracking) attempts or with network administrators looking for possible vulnerabilities to help prevent such attacks.
+      - Port connection attempts are frequently monitored and logged by computers. 
+      - The technique of [port knocking](https://en.wikipedia.org/wiki/Port_knocking) uses a series of port connections (knocks) from a client computer to enable a server connection.
+  - *Example*: An example for the use of ports is the [Internet mail system](https://en.wikipedia.org/wiki/E-mail). 
+
+    - A server used for sending and receiving email generally needs two services. 
+
+      - The first service is used to transport email to and from other servers. This is accomplished with the [Simple Mail Transfer Protocol](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) (SMTP). The SMTP service application usually listens on TCP port 25 for incoming requests.
+      - The second service is usually either the [Post Office Protocol](https://en.wikipedia.org/wiki/Post_Office_Protocol)(POP) or the [Internet Message Access Protocol](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) (IMAP) which is used by [e-mail client](https://en.wikipedia.org/wiki/E-mail_client) applications on users' personal computers to fetch email messages from the server.  The POP service listens on TCP port number 110.
+    - Both services may be running on the same host computer, in which case the port number distinguishes the service that was requested by a remote computer, be it a user's computer or another mail server.
+    - While the listening port number of a server is well defined ([IANA](https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority) calls these the well-known ports), the client's port number is often chosen from the dynamic port range (see below). 
+    - In some applications, the clients and the server each use specific port numbers assigned by the IANA. A good example of this is [DHCP](https://en.wikipedia.org/wiki/DHCP) in which the client always uses UDP port 68 and the server always uses UDP port 67.
+  - *Use in URLs*
+
+    - Port numbers are sometimes seen in web or other [uniform resource locators](https://en.wikipedia.org/wiki/Uniform_resource_locator) (URLs). 
+    - By default, HTTP uses port 80 and HTTPS uses port 443, but a URL like `http://www.example.com:8080/path/` specifies that the [web browser](https://en.wikipedia.org/wiki/Web_browser) connects instead to port 8080 of the HTTP server.
+  - *Common port numbers*
+
+    - The [Internet Assigned Numbers Authority](https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority) (IANA) is responsible for the global coordination of the DNS Root, IP addressing, and other Internet protocol resources. This includes the registration of commonly used port numbers for well-known Internet services.
+    - ???
+
+- **Port forwarding** (端口映射)
+
+
+  - ???
+
+- **Network socket** :
+
+  - ???
+
+- **DHCP** (Dynamic Host Configuration Protocol)
+
+
+  - a [network management protocol](https://en.wikipedia.org/wiki/Network_protocol)
+  - A DHCP server enables computers to request IP addresses and networking parameters automatically from the [Internet service provider](https://en.wikipedia.org/wiki/Internet_service_provider) (ISP), reducing the need for a [network administrator](https://en.wikipedia.org/wiki/Network_administrator) or a user to manually assign IP addresses to all network devices.
+  - In the absence of a DHCP server, a computer or other device on the network needs to be manually assigned an IP address, or to assign itself an APIPA address, which will not enable it to communicate outside its local subnet.
 
 
 
@@ -1773,8 +1865,113 @@ A TCP segment consists of a segment *header* and a *data* section.
 
 <img src="images/TCP-header.png" width="800">
 
+TCP Header:
+
+- Source port (16 bits)
+
+- Destination port (16 bits)
+
+- *Sequence number* (32 bits)
+
+  Has a dual role:
+
+  - If the `SYN` flag is set (1), then this is the initial sequence number. 
+    - The sequence number of the actual first data byte and the acknowledged number in the corresponding ACK are then this sequence number plus 1.
+  - If the `SYN` flag is clear (0), then this is the accumulated sequence number of the first data byte of this segment for the current session.
+
+- *Acknowledgment number* (32 bits)
+
+  - If the ACK flag is set then the value of this field is the next sequence number that the sender of the ACK is expecting. This acknowledges receipt of all prior bytes (if any). The first ACK sent by each end acknowledges the other end's initial sequence number itself, but no data.
+
+- *Data offset* (4 bits)
+
+  - Specifies the size of the TCP header in 32-bit words. 
+  - The minimum size header is 5 words and the maximum is 15 words thus giving the minimum size of 20 bytes and maximum of 60 bytes, allowing for up to 40 bytes of options in the header. 
+  - This field gets its name from the fact that it is also the offset from the start of the TCP segment to the actual data.
+
+- *Reserved* (3 bits)
+
+  - For future use and should be set to zero.
+
+- *Flags* (9 bits) (aka Control bits)
+
+  Contains 9 1-bit flags
+
+  - `NS` (1 bit): ECN-nonce - concealment protection (experimental: see [RFC 3540](https://tools.ietf.org/html/rfc3540)).
+  - `CWR` (1 bit): Congestion Window Reduced (CWR) flag is set by the sending host to indicate that it received a TCP segment with the `ECE` flag set and had responded in congestion control mechanism (added to header by [RFC 3168](https://tools.ietf.org/html/rfc3168)).
+  - `ECE` (1 bit): ECN-Echo has a dual role, depending on the value of the SYN flag. It indicates:
+    - If the `SYN` flag is set (1), that the TCP peer is [ECN](https://en.wikipedia.org/wiki/Explicit_Congestion_Notification) capable.
+    - If the `SYN` flag is clear (0), that a packet with Congestion Experienced flag set (ECN=11) in the IP header was received during normal transmission (added to header by [RFC 3168](https://tools.ietf.org/html/rfc3168)). This serves as an indication of network congestion (or impending congestion) to the TCP sender.
+  - `URG` (1 bit): indicates that the Urgent pointer field is significant
+  - **`ACK`** (1 bit): *indicates that the Acknowledgment field is significant*. All packets after the initial `SYN` packet sent by the client should have this flag set.
+  - `PSH` (1 bit): Push function. Asks to push the buffered data to the receiving application.
+  - `RST` (1 bit): Reset the connection
+  - **`SYN`** (1 bit): *Synchronize sequence numbers.* Only the first packet sent from each end should have this flag set. 
+    - Some other flags and fields change meaning based on this flag, and some are only valid when it is set, and others when it is clear.
+  - **`FIN`** (1 bit): *Last packet* from sender.
+
+- *Window size* (16 bits)
+
+  - The size of the *receive window*, which specifies the number of window size units (by default, bytes) (beyond the segment identified by the sequence number in the acknowledgment field) that the sender of this segment is currently willing to receive (see Flow control and Window Scaling).
+
+- *Checksum* (16 bits)
+
+  - The 16-bit [checksum](https://en.wikipedia.org/wiki/Checksum) field is used for *error-checking of the header, the Payload and a Pseudo-Header.* 
+  - The Pseudo-Header consists of the [Source IP Address](https://en.wikipedia.org/wiki/IPv4#Source_address), the [Destination IP Address](https://en.wikipedia.org/wiki/IPv4#Destination_address), the [protocol number](https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers) for the TCP-Protocol (0x0006) and the length of the TCP-Headers including Payload (in Bytes).
+
+- *Urgent pointer* (16 bits)
+
+  - if the `URG` flag is set, then this 16-bit field is an offset from the sequence number indicating the last urgent data byte.
+
+- *Options* (Variable 0-320 bits, divisible by 32)
+
+  - ???
+
+- *Padding* 
+
+  - The TCP header padding is used to ensure that the TCP header ends, and data begins, on a 32 bit boundary. The padding is composed of zeros.
+
+
+
+
+#### The Three-Way Handshake
+
+TCP utilizes a number of flags, or 1-bit boolean fields, in its header to control the state of a connection. The three we're most interested in here are:
+
+- **SYN** - (Synchronize) Initiates a connection
+- **FIN** - (Final) Cleanly terminates a connection
+- **ACK** - Acknowledges received data
+
 ???
 
+
+
+#### Sequence and Acknowledgment Numbers
+
+The client on either side of a TCP session maintains a 32-bit *sequence number* it uses to keep track of how much data it has sent.
+
+- This sequence number is included on each transmitted packet, and acknowledged by the opposite host as an *acknowledgment number* to inform the sending host that the transmitted data was received successfully.
+
+When a host initiates a TCP session, its initial sequence number is effectively random; it may be any value between 0 and 4,294,967,295, inclusive. 
+
+- However, protocol analyzers like Wireshark will typically display *relative*sequence and acknowledgement numbers in place of the actual values. 
+- These numbers are relative to the initial sequence number of that stream. This is handy, as it is much easier to keep track of relatively small, predictable numbers rather than the actual numbers sent on the wire.
+
+<img src="images/understanding-tcp-sequence-acknowledgment-numbers.png" width="450">
+
+For more, see http://packetlife.net/blog/2010/jun/7/understanding-tcp-sequence-acknowledgment-numbers/
+
+
+
+
+
+
+
+#### TCP ports
+
+
+
+???
 
 
 
