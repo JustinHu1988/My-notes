@@ -1703,20 +1703,24 @@ Both are commonly present on most modern operating systems.
 
 
 
-  
+
 
 - **Port**:
 
 
   - Port is an endpoint of communication in an operating system, which identifies a specific process or a type of network service running on that system.
+
   - A port is always associated with an IP address of a host and the protocol type of the communication.
 
     - to transfer a file to a remote computer, one must specify the computer itself by an [IP address](https://en.wikipedia.org/wiki/IP_address), the information type by the [correct protocol](https://en.wikipedia.org/wiki/File_transfer_protocol), and the software or service on that computer by the correct *port*.
+
   - Ports are defined by 16-bit unsigned numbers, commonly known as the **port number**. 
 
     - Specific port numbers are commonly reserved to identify specific services - in the example above, the file 	transfer software will usually be "listening" for connections coming through the port number traditionally reserved for such services. 
     - The lowest numbered 1024 port numbers are called the [well-known port numbers](https://en.wikipedia.org/wiki/Well-known_port_numbers), and identify the historically most commonly used services.
+
   - In modern networks, ports provide a [multiplexing](https://en.wikipedia.org/wiki/Multiplexing) service, so that multiple simultaneous communication sessions may be initiated through each port. After an initial service request connects to the well-known port number, the port is freed by switching the servicing of the request to a dedicated, connection-specific port number. The protocols that primarily use ports are the [transport layer](https://en.wikipedia.org/wiki/Transport_layer) protocols, such as the [Transmission Control Protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) (TCP) and the [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP).
+
   - [Transport layer](https://en.wikipedia.org/wiki/Transport_layer) protocols, such as the [Transmission Control Protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) (TCP) and the [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) (UDP), transfer data using [protocol data units](https://en.wikipedia.org/wiki/Protocol_data_unit) (PDUs). For TCP, the PDU is a [segment](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#TCP_segment_structure), and a [datagram](https://en.wikipedia.org/wiki/Datagram) for UDP. Both protocols use a [header](https://en.wikipedia.org/wiki/Header_(computing)) field for recording the source and destination port number.
 
     - A port number is a 16-bit unsigned integer, thus ranging from 0 to 65535.
@@ -1746,6 +1750,7 @@ Both are commonly present on most modern operating systems.
       - This is usually associated either with malicious [cracking](https://en.wikipedia.org/wiki/Security_cracking) attempts or with network administrators looking for possible vulnerabilities to help prevent such attacks.
       - Port connection attempts are frequently monitored and logged by computers. 
       - The technique of [port knocking](https://en.wikipedia.org/wiki/Port_knocking) uses a series of port connections (knocks) from a client computer to enable a server connection.
+
   - *Example*: An example for the use of ports is the [Internet mail system](https://en.wikipedia.org/wiki/E-mail). 
 
     - A server used for sending and receiving email generally needs two services. 
@@ -1755,6 +1760,7 @@ Both are commonly present on most modern operating systems.
     - Both services may be running on the same host computer, in which case the port number distinguishes the service that was requested by a remote computer, be it a user's computer or another mail server.
     - While the listening port number of a server is well defined ([IANA](https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority) calls these the well-known ports), the client's port number is often chosen from the dynamic port range (see below). 
     - In some applications, the clients and the server each use specific port numbers assigned by the IANA. A good example of this is [DHCP](https://en.wikipedia.org/wiki/DHCP) in which the client always uses UDP port 68 and the server always uses UDP port 67.
+
   - *Use in URLs*
 
     - Port numbers are sometimes seen in web or other [uniform resource locators](https://en.wikipedia.org/wiki/Uniform_resource_locator) (URLs). 
@@ -1803,6 +1809,15 @@ Both are commonly present on most modern operating systems.
     - a [network management protocol](https://en.wikipedia.org/wiki/Network_protocol)
     - A DHCP server enables computers to request IP addresses and networking parameters automatically from the [Internet service provider](https://en.wikipedia.org/wiki/Internet_service_provider) (ISP), reducing the need for a [network administrator](https://en.wikipedia.org/wiki/Network_administrator) or a user to manually assign IP addresses to all network devices.
     - In the absence of a DHCP server, a computer or other device on the network needs to be manually assigned an IP address, or to assign itself an APIPA address, which will not enable it to communicate outside its local subnet.
+
+- **Proxy server**:
+
+    - In [computer networks](https://en.wikipedia.org/wiki/Computer_network), a **proxy server** is a [server](https://en.wikipedia.org/wiki/Server_(computing)) (a computer system or an application) that acts as an [intermediary](https://en.wikipedia.org/wiki/Intermediary) for requests from [clients](https://en.wikipedia.org/wiki/Client_(computing)) seeking resources from other servers.
+    - Today, most proxies are **web proxies**, facilitating access to content on the [World Wide Web](https://en.wikipedia.org/wiki/World_Wide_Web), providing anonymity and may be used to bypass [IP address blocking](https://en.wikipedia.org/wiki/IP_address_blocking).
+
+
+
+
 
 
 
@@ -2121,7 +2136,7 @@ The [maximum segment size](https://en.wikipedia.org/wiki/Maximum_segment_size) (
 *For best performance, the MSS should be set small enough to avoid [IP fragmentation](https://en.wikipedia.org/wiki/IP_fragmentation), which can lead to packet loss and excessive retransmissions*.
 
 -  To try to accomplish this, typically the MSS is announced by each side using the MSS option when the TCP connection is established, in which case it is derived from the [maximum transmission unit](https://en.wikipedia.org/wiki/MTU_(networking)) (MTU) size of the [data link layer](https://en.wikipedia.org/wiki/Data_link_layer) of the networks to which the sender and receiver are directly attached.
-- Furthermore, TCP senders can use [path MTU discovery](https://en.wikipedia.org/wiki/Path_MTU_discovery) to infer the minimum MTU along the network path between the sender and receiver, and use this to dynamically adjust the MSS to avoid IP fragmentation within the network.
+-  Furthermore, TCP senders can use [path MTU discovery](https://en.wikipedia.org/wiki/Path_MTU_discovery) to infer the minimum MTU along the network path between the sender and receiver, and use this to dynamically adjust the MSS to avoid IP fragmentation within the network.
 
 MSS announcement is also often called "MSS negotiation". 
 
@@ -2166,11 +2181,61 @@ Some routers and packet firewalls rewrite the window scaling factor during a tra
 
 ###### TCP timestamps
 
-
-
-
+TCP timestamps, defined in [RFC 1323](https://tools.ietf.org/html/rfc1323), can help TCP determine in which order packets were sent.
 
 ???
+
+###### Out-of-band data
+
+It is possible to interrupt or abort the queued stream instead of waiting for the stream to finish. 
+
+- This is done by specifying the data as *urgent*. This tells the receiving program to process it immediately, along with the rest of the urgent data. 
+- When finished, TCP informs the application and resumes back to the stream queue.
+- An example is when TCP is used for a remote login session, the user can send a keyboard sequence that interrupts or aborts the program at the other end. These signals are most often needed when a program on the remote machine fails to operate correctly. The signals must be sent without waiting for the program to finish its current transfer.
+
+TCP OOB data was not designed for the modern Internet. The *urgent* pointer only alters the processing on the remote host and doesn't expedite any processing on the network itself. 
+
+- When it gets to the remote host there are two slightly different interpretations of the protocol, which means only single bytes of OOB data are reliable. This is assuming it is reliable at all as it is one of the least commonly used protocol elements and tends to be poorly implemented. 
+
+###### Forcing data delivery
+
+*Normally, TCP waits for 200 ms for a full packet of data to send* ([Nagle's Algorithm](https://en.wikipedia.org/wiki/Nagle%27s_Algorithm) tries to group small messages into a single packet). 
+
+- This wait creates small, but potentially serious delays if repeated constantly during a file transfer.
+- For example, a typical send block would be 4 KB, a typical MSS is 1460, so 2 packets go out on a 10 Mbit/s ethernet taking ~1.2 ms each followed by a third carrying the remaining 1176 after a 197 ms pause because TCP is waiting for a full buffer.???
+- In the case of telnet, each user keystroke is echoed back by the server before the user can see it on the screen. This delay would become very annoying.
+- Setting the [socket](https://en.wikipedia.org/wiki/Network_socket) option `TCP_NODELAY` overrides the default 200 ms send delay. Application programs use this socket option to force output to be sent after writing a character or line of characters.
+- The RFC defines the `PSH` push bit as "a message to the receiving TCP stack to send this data immediately up to the receiving application".[[3\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-comer-3) There is no way to indicate or control it in [user space](https://en.wikipedia.org/wiki/User_space) using [Berkeley sockets](https://en.wikipedia.org/wiki/Berkeley_sockets) and it is controlled by [protocol stack](https://en.wikipedia.org/wiki/Protocol_stack) only.[[24\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-Stevens2006-24)
+
+
+
+#### Vulnerabilities
+
+TCP may be attacked in a variety of ways. The results of a thorough security assessment of TCP, along with possible mitigations for the identified issues, were published in 2009,[[25\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-25) and is currently being pursued within the [IETF](https://en.wikipedia.org/wiki/IETF).[[26\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-26)
+
+1. *Denial of service*:
+
+   - By using a [spoofed IP](https://en.wikipedia.org/wiki/IP_address_spoofing) address and repeatedly sending [purposely assembled](https://en.wikipedia.org/wiki/Mangled_packet) SYN packets, followed by many ACK packets, attackers can cause the server to consume large amounts of resources keeping track of the bogus connections. 
+
+     - This is known as a [SYN flood](https://en.wikipedia.org/wiki/SYN_flood) attack.
+     - Proposed solutions to this problem include [SYN cookies](https://en.wikipedia.org/wiki/SYN_cookies) and cryptographic puzzles, though SYN cookies come with their own set of vulnerabilities.
+
+   - [Sockstress](https://en.wikipedia.org/wiki/Sockstress) is a similar attack, that might be mitigated with system resource management.[[28\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-28) An advanced DoS attack involving the exploitation of the TCP Persist Timer was analyzed in [Phrack](https://en.wikipedia.org/wiki/Phrack) #66.[[29\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-29) [PUSH and ACK floods](https://en.wikipedia.org/wiki/PUSH_and_ACK_floods) are other variants.[[30\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-30)
+
+     ​
+
+2. *Connection hijacking*:
+
+   - An attacker who is able to eavesdrop a TCP session and redirect packets can hijack a TCP connection.
+   - To do so, the attacker learns the sequence number from the ongoing communication and forges a false segment that looks like the next segment in the stream. Such a simple hijack can result in one packet being erroneously accepted at one end. 
+   - When the receiving host acknowledges the extra segment to the other side of the connection, synchronization is lost. 
+   - Hijacking might be combined with Address Resolution Protocol ([ARP](https://en.wikipedia.org/wiki/Address_Resolution_Protocol)) or routing attacks that allow taking control of the packet flow, so as to get permanent control of the hijacked TCP connection.
+   - Impersonating a different IP address was not difficult prior to [RFC 1948](https://tools.ietf.org/html/rfc1948), when the initial *sequence number* was easily guessable. That allowed an attacker to blindly send a sequence of packets that the receiver would believe to come from a different IP address, without the need to deploy ARP or routing attacks: it is enough to ensure that the legitimate host of the impersonated IP address is down, or bring it to that condition using [denial-of-service attacks](https://en.wikipedia.org/wiki/Denial-of-service_attack). This is why the initial sequence number is now chosen at random.
+
+3. *TCP veto*:
+
+   - An attacker who can eavesdrop and predict the size of the next packet to be sent can cause the receiver to accept a malicious payload without disrupting the existing connection. The attacker injects a malicious packet with the sequence number and a payload size of the next expected packet. When the legitimate packet is ultimately received, it is found to have the same sequence number and length as a packet already received and is silently dropped as a normal duplicate packet—the legitimate packet is "vetoed" by the malicious packet. Unlike in connection hijacking, the connection is never desynchronized and communication continues as normal after the malicious payload is accepted. TCP veto gives the attacker less control over the communication, but makes the attack particularly resistant to detection. The large increase in network traffic from the ACK storm is avoided. The only evidence to the receiver that something is amiss is a single duplicate packet, a normal occurrence in an IP network. The sender of the vetoed packet never sees any evidence of an attack.[[32\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-32)
+   - Another vulnerability is [TCP reset attack](https://en.wikipedia.org/wiki/TCP_reset_attack).
 
 
 
@@ -2191,6 +2256,12 @@ Port numbers are categorized into three basic categories: well-known, registered
 [Network Address Translation](https://en.wikipedia.org/wiki/Network_Address_Translation) (NAT), typically uses dynamic port numbers, on the ("Internet-facing") public side, to [disambiguate](https://en.wikipedia.org/wiki/Disambiguation) the flow of traffic that is passing between a public network and a private [subnetwork](https://en.wikipedia.org/wiki/Subnetwork), thereby allowing many IP addresses (and their ports) on the subnet to be serviced by a single public-facing address.
 
 
+
+#### TCP over wireless networks
+
+TCP was originally designed for wired networks. Packet loss is considered to be the result of [network congestion](https://en.wikipedia.org/wiki/Network_congestion) and the congestion window size is reduced dramatically as a precaution. However, wireless links are known to experience sporadic and usually temporary losses due to fading, shadowing, hand off, [interference](https://en.wikipedia.org/wiki/Interference_(communication)), and other radio effects, that are not strictly congestion. After the (erroneous) back-off of the congestion window size, due to wireless packet loss, there may be a congestion avoidance phase with a conservative decrease in window size. This causes the radio link to be underutilized. Extensive research on combating these harmful effects has been conducted. Suggested solutions can be categorized as end-to-end solutions, which require modifications at the client or server,[[44\]](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#cite_note-Microsoft_Academic_Research-44) link layer solutions, such as Radio Link Protocol ([RLP](https://en.wikipedia.org/wiki/Radio_Link_Protocol)) in cellular networks, or proxy-based solutions which require some changes in the network without modifying end nodes.
+
+A number of alternative congestion control algorithms, such as [Vegas](https://en.wikipedia.org/wiki/TCP_Vegas), [Westwood](https://en.wikipedia.org/wiki/TCP_Westwood), Veno, and Santa Cruz, have been proposed to help solve the wireless problem.
 
 ???
 
@@ -2262,13 +2333,123 @@ During the design phase of the ARPANET and the early Internet, the security aspe
 - [Next-generation network](https://en.wikipedia.org/wiki/Next-generation_network)
 - [IP forwarding algorithm](https://en.wikipedia.org/wiki/IP_forwarding_algorithm)
 
-???
-
-
-
 
 
 # HTTP
+
+The **Hypertext Transfer Protocol** (**HTTP**) is an [application protocol](https://en.wikipedia.org/wiki/Application_protocol) for distributed, collaborative, and [hypermedia](https://en.wikipedia.org/wiki/Hypermedia) information systems.[[1\]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#cite_note-ietf2616-1) HTTP is the foundation of data communication for the [World Wide Web](https://en.wikipedia.org/wiki/World_Wide_Web).
+
+- [Hypertext](https://en.wikipedia.org/wiki/Hypertext) is structured text that uses logical links ([hyperlinks](https://en.wikipedia.org/wiki/Hyperlinks)) between [nodes](https://en.wikipedia.org/wiki/Node_(networking)) containing text. 
+- *HTTP is the protocol to exchange or transfer hypertext.*
+
+HTTP functions as a [request–response](https://en.wikipedia.org/wiki/Request%E2%80%93response) protocol in the client–server computing model.
+
+- A [web browser](https://en.wikipedia.org/wiki/Web_browser), for example, may be the *client* and an application running on a computer [hosting](https://en.wikipedia.org/wiki/Host_(network)) a [website](https://en.wikipedia.org/wiki/Website) may be the *server*. 
+- The client submits an HTTP *request* message to the server. The server, which provides *resources* such as [HTML](https://en.wikipedia.org/wiki/HTML) files and other content, or performs other functions on behalf of the client, returns a *response* message to the client. 
+- The response contains completion status information about the request and may also contain requested content in its message body.
+
+
+
+A web browser is an example of a *user agent* (UA). Other types of user agent include the indexing software used by search providers ([web crawlers](https://en.wikipedia.org/wiki/Web_crawler)), [voice browsers](https://en.wikipedia.org/wiki/Voice_browser), [mobile app](https://en.wikipedia.org/wiki/Mobile_app)s, and other [software](https://en.wikipedia.org/wiki/Software) that accesses, consumes, or displays web content.
+
+
+
+HTTP is designed to permit intermediate network elements to improve or enable communications between clients and servers. 
+
+- High-traffic websites often benefit from [web cache](https://en.wikipedia.org/wiki/Web_cache) servers that deliver content on behalf of [upstream servers](https://en.wikipedia.org/wiki/Upstream_server) to improve response time. Web browsers cache previously accessed web resources and reuse them when possible to reduce network traffic. 
+- HTTP [proxy servers](https://en.wikipedia.org/wiki/Proxy_server) at [private network](https://en.wikipedia.org/wiki/Private_network) boundaries can facilitate communication for clients without a globally routable address, by relaying messages with external servers.
+
+
+
+HTTP is an [application layer](https://en.wikipedia.org/wiki/Application_layer) protocol designed within the framework of the [Internet protocol suite](https://en.wikipedia.org/wiki/Internet_protocol_suite). Its definition presumes an underlying and reliable [transport layer](https://en.wikipedia.org/wiki/Transport_layer) protocol,[[4\]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#cite_note-4) and [Transmission Control Protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) (TCP) is commonly used. However HTTP can be adapted to use unreliable protocols such as the [User Datagram Protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol)(UDP), for example in [HTTPU](https://en.wikipedia.org/wiki/Universal_Plug_and_Play#Protocol) and [Simple Service Discovery Protocol](https://en.wikipedia.org/wiki/Simple_Service_Discovery_Protocol) (SSDP).
+
+
+
+[HTTP resources](https://en.wikipedia.org/wiki/Web_resource) are identified and located on the network by [Uniform Resource Locators](https://en.wikipedia.org/wiki/Uniform_Resource_Locator) (URLs), using the [Uniform Resource Identifiers](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) (URI's) schemes *http* and *https*. URIs and [hyperlinks](https://en.wikipedia.org/wiki/Hyperlink) in [HTML](https://en.wikipedia.org/wiki/HTML) documents form inter-linked [hypertext](https://en.wikipedia.org/wiki/Hypertext) documents.
+
+
+
+HTTP/1.1 is a revision of the original HTTP (HTTP/1.0). 
+
+- *In HTTP/1.0 a separate [connection](https://en.wikipedia.org/wiki/Connection-oriented_communication) to the same server is made for every resource request. **HTTP/1.1** can reuse a connection multiple times to download images, [scripts](https://en.wikipedia.org/wiki/Client-side_scripting), [stylesheets](https://en.wikipedia.org/wiki/Cascading_Style_Sheets), etc after the page has been delivered.* 
+- HTTP/1.1 communications therefore experience less [latency](https://en.wikipedia.org/wiki/Latency_(engineering)) as the establishment of TCP connections presents considerable overhead.
+
+
+
+## HTTP session
+
+An HTTP session is a sequence of network request-response transactions.
+
+- An HTTP client initiates a request by establishing a [Transmission Control Protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) (TCP) connection to a particular [port](https://en.wikipedia.org/wiki/TCP_and_UDP_port) on a server (typically port 80, occasionally port 8080; see [List of TCP and UDP port numbers](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)). 
+- An HTTP server listening on that port waits for a client's request message.
+- Upon receiving the request, the server sends back a status line, such as "HTTP/1.1 200 OK", and a message of its own. The body of this message is typically the requested resource, although an error message or other information may also be returned.
+
+
+
+## HTTP authentication
+
+HTTP provides multiple authentication schemes such as [basic access authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) and [digest access authentication](https://en.wikipedia.org/wiki/Digest_access_authentication) which operate via a challenge-response mechanism whereby the server identifies and issues a challenge before serving the requested content.
+
+> **Basic access authentication**: 
+>
+> - a method for an [HTTP user agent](https://en.wikipedia.org/wiki/User_agent) (e.g. a web browser) to provide a [user name](https://en.wikipedia.org/wiki/User_name) and [password](https://en.wikipedia.org/wiki/Password) when making a request.
+>
+>
+> - HTTP Basic authentication (BA) implementation is the simplest technique for enforcing [access controls](https://en.wikipedia.org/wiki/Access_controls) to web resources because it does not require [cookies](https://en.wikipedia.org/wiki/HTTP_cookie), session identifiers, or login pages; rather, HTTP Basic authentication uses standard fields in the [HTTP header](https://en.wikipedia.org/wiki/HTTP_header), removing the need for [handshakes](https://en.wikipedia.org/wiki/Handshake_(computing)).
+>
+> **Digest access authentication**: 
+>
+> - one of the agreed-upon methods a [web server](https://en.wikipedia.org/wiki/Web_server) can use to negotiate credentials, such as username or password, with a user's [web browser](https://en.wikipedia.org/wiki/Web_browser). 
+>
+>
+> - This can be used to confirm the identity of a user before sending sensitive information, such as online banking transaction history. 
+> - It applies a [hash function](https://en.wikipedia.org/wiki/Hash_function) to the username and [password](https://en.wikipedia.org/wiki/Password) before sending them over the network. 
+> - In contrast, [basic access authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) uses the easily reversible [Base64](https://en.wikipedia.org/wiki/Base64) encoding instead of encryption, making it non-secure unless used in conjunction with [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security).
+> - Technically, digest authentication is an application of [MD5](https://en.wikipedia.org/wiki/MD5) [cryptographic hashing](https://en.wikipedia.org/wiki/Cryptographic_hash) with usage of [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce) values to prevent [replay attacks](https://en.wikipedia.org/wiki/Replay_attack). It uses the [HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) protocol.
+>
+> **hash function** : 
+>
+> - *a hash function is any function that can be used to map data of arbitrary size to data of a fixed size*.
+> - The values returned by a hash function are called **hash values**, **hash codes**, **digests**, or simply **hashes**. 
+> - Hash functions are often used in combination with a [hash table](https://en.wikipedia.org/wiki/Hash_table), a common data structure used in computer software for rapid data lookup. 
+> - Hash functions accelerate table or database lookup by detecting duplicated records in a large file.
+>   - One such application is finding similar stretches in DNA sequences.
+>   - They are also useful in [cryptography](https://en.wikipedia.org/wiki/Cryptography). A [cryptographic hash function](https://en.wikipedia.org/wiki/Cryptographic_hash_function) allows one to easily verify that some input data maps to a given hash value, but if the input data is unknown, it is deliberately difficult to reconstruct it (or any equivalent alternatives) by knowing the stored hash value.
+>   -  This is used for assuring [integrity](https://en.wikipedia.org/wiki/Data_integrity) of transmitted data, and is the building block for [HMACs](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code), which provide [message authentication](https://en.wikipedia.org/wiki/Message_authentication).
+>
+> **cryptographic hashing** :
+>
+> - a special class of [hash function](https://en.wikipedia.org/wiki/Hash_function) that has certain properties which make it suitable for use in [cryptography](https://en.wikipedia.org/wiki/Cryptography).
+> - It is a mathematical [algorithm](https://en.wikipedia.org/wiki/Algorithm) that [maps](https://en.wikipedia.org/wiki/Map_(mathematics)) data of arbitrary size to a [bit string](https://en.wikipedia.org/wiki/Bit_string) of a fixed size (a hash) and is designed to be a [one-way function](https://en.wikipedia.org/wiki/One-way_function), that is, a function which is [infeasible](https://en.wikipedia.org/wiki/Computational_complexity_theory#Intractability) to invert.
+> - The only way to recreate the input data from an ideal cryptographic hash function's output is to attempt a [brute-force search](https://en.wikipedia.org/wiki/Brute-force_search) of possible inputs to see if they produce a match, or use a [rainbow table](https://en.wikipedia.org/wiki/Rainbow_table) of matched hashes.
+>
+> **Rainbow table**:
+>
+> - A **rainbow table** is a [precomputed](https://en.wikipedia.org/wiki/Precomputed) [table](https://en.wikipedia.org/wiki/Lookup_table) for reversing [cryptographic hash functions](https://en.wikipedia.org/wiki/Cryptographic_hash_function), usually for cracking password hashes. Tables are usually used in recovering a [password](https://en.wikipedia.org/wiki/Password) (or credit card numbers, etc.) up to a certain length consisting of a limited set of characters. It is a practical example of a [space–time tradeoff](https://en.wikipedia.org/wiki/Space%E2%80%93time_tradeoff), using less computer processing time and more storage than a [brute-force attack](https://en.wikipedia.org/wiki/Brute-force_attack) which calculates a hash on every attempt, but more processing time and less storage than a simple [lookup table](https://en.wikipedia.org/wiki/Lookup_table) with one entry per hash. 
+> - Use of a [key derivation function](https://en.wikipedia.org/wiki/Key_derivation_function)that employs a [salt](https://en.wikipedia.org/wiki/Salt_(cryptography)) makes this attack infeasible.
+>
+> **Hash table** :
+>
+> - a **hash table** (**hash map**) is a [data structure](https://en.wikipedia.org/wiki/Data_structure) which implements an [associative array](https://en.wikipedia.org/wiki/Associative_array) [abstract data type](https://en.wikipedia.org/wiki/Abstract_data_type), a structure that can map [keys](https://en.wikipedia.org/wiki/Unique_key) to [values](https://en.wikipedia.org/wiki/Value_(computer_science)). A hash table uses a [hash function](https://en.wikipedia.org/wiki/Hash_function) to compute an *index* into an array of *buckets* or *slots*, from which the desired value can be found.
+>
+> **HMACs**:  
+>
+> - a specific type of [message authentication code](https://en.wikipedia.org/wiki/Message_authentication_code) (MAC) involving a [cryptographic hash function](https://en.wikipedia.org/wiki/Cryptographic_hash_function) and a secret [cryptographic key](https://en.wikipedia.org/wiki/Cryptographic_key).  It may be used to simultaneously verify both the *data integrity* and the *authentication* of a [message](https://en.wikipedia.org/wiki/Cleartext), as with any MAC. 
+> - Any cryptographic hash function, such as [MD5](https://en.wikipedia.org/wiki/MD5) or [SHA-1](https://en.wikipedia.org/wiki/SHA-1), may be used in the calculation of an HMAC;
+>
+> **TLS** :
+>
+> **MD5**:
+>
+> **SHA-1** :
+>
+> **nonce**:
+>
+> **replay attacks**:
+
+HTTP provides a general framework for access control and authentication, via an extensible set of challenge-response authentication schemes, which can be used by a server to challenge a client request and by a client to provide authentication information.
+
+
 
 ???
 
