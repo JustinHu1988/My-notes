@@ -2415,7 +2415,7 @@ HTTP provides multiple authentication schemes such as [basic access authenticati
 > - Hash functions accelerate table or database lookup by detecting duplicated records in a large file.
 >   - One such application is finding similar stretches in DNA sequences.
 >   - They are also useful in [cryptography](https://en.wikipedia.org/wiki/Cryptography). A [cryptographic hash function](https://en.wikipedia.org/wiki/Cryptographic_hash_function) allows one to easily verify that some input data maps to a given hash value, but if the input data is unknown, it is deliberately difficult to reconstruct it (or any equivalent alternatives) by knowing the stored hash value.
->   -  This is used for assuring [integrity](https://en.wikipedia.org/wiki/Data_integrity) of transmitted data, and is the building block for [HMACs](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code), which provide [message authentication](https://en.wikipedia.org/wiki/Message_authentication).
+>   - This is used for assuring [integrity](https://en.wikipedia.org/wiki/Data_integrity) of transmitted data, and is the building block for [HMACs](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code), which provide [message authentication](https://en.wikipedia.org/wiki/Message_authentication).
 >
 > **cryptographic hashing** :
 >
@@ -2439,15 +2439,32 @@ HTTP provides multiple authentication schemes such as [basic access authenticati
 >
 > **TLS** :
 >
+> - **Transport Layer Security** (**TLS**) – and its predecessor, **Secure Sockets Layer** (**SSL**), which is now deprecated by the [Internet Engineering Task Force](https://en.wikipedia.org/wiki/Internet_Engineering_Task_Force) [[1\]](https://en.wikipedia.org/wiki/Transport_Layer_Security#cite_note-1) (IETF) – are [cryptographic protocols](https://en.wikipedia.org/wiki/Cryptographic_protocol) that provide [communications security](https://en.wikipedia.org/wiki/Communications_security) over a [computer network](https://en.wikipedia.org/wiki/Computer_network).[[2\]](https://en.wikipedia.org/wiki/Transport_Layer_Security#cite_note-RFC5246-2) 
+> - Several versions of the protocols find widespread use in applications such as [web browsing](https://en.wikipedia.org/wiki/Web_navigation), [email](https://en.wikipedia.org/wiki/Email), [instant messaging](https://en.wikipedia.org/wiki/Instant_messaging), and [voice over IP](https://en.wikipedia.org/wiki/Voice_over_IP) (VoIP). [Websites](https://en.wikipedia.org/wiki/Website)are able to use TLS to secure all communications between their [servers](https://en.wikipedia.org/wiki/Server_(computing)) and [web browsers](https://en.wikipedia.org/wiki/Web_browser).
+>
 > **MD5**:
+>
+> - The **MD5 algorithm** is a widely used [hash function](https://en.wikipedia.org/wiki/Hash_function) producing a 128-[bit](https://en.wikipedia.org/wiki/Bit) hash value. Although MD5 was initially designed to be used as a [cryptographic hash function](https://en.wikipedia.org/wiki/Cryptographic_hash_function), it has been found to suffer from extensive vulnerabilities. It can still be used as a [checksum](https://en.wikipedia.org/wiki/Checksum) to verify [data integrity](https://en.wikipedia.org/wiki/Data_integrity), but only against unintentional corruption.
 >
 > **SHA-1** :
 >
+> -  **SHA-1** (**Secure Hash Algorithm 1**) is a [cryptographic hash function](https://en.wikipedia.org/wiki/Cryptographic_hash_function) which takes an input and produces a 160-[bit](https://en.wikipedia.org/wiki/Bit) (20-[byte](https://en.wikipedia.org/wiki/Byte)) hash value known as a [message digest](https://en.wikipedia.org/wiki/Message_digest) - typically rendered as a [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal) number, 40 digits long. 
+> - Since 2005 SHA-1 has not been considered secure against well-funded opponents,[[4\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-4) and since 2010 many organizations have recommended its replacement by [SHA-2](https://en.wikipedia.org/wiki/SHA-2) or [SHA-3](https://en.wikipedia.org/wiki/SHA-3).[[5\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-5)[[6\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-shappening-6)[[7\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-7) [Microsoft](https://en.wikipedia.org/wiki/Microsoft), [Google](https://en.wikipedia.org/wiki/Google), [Apple](https://en.wikipedia.org/wiki/Apple_Inc.)and [Mozilla](https://en.wikipedia.org/wiki/Mozilla) have all announced that their respective browsers will stop accepting SHA-1 [SSL certificates](https://en.wikipedia.org/wiki/SSL_certificate) by 2017.
+>
 > **nonce**:
 >
-> **replay attacks**:
+> - In [cryptography](https://en.wikipedia.org/wiki/Cryptography), a **nonce** is an arbitrary number that can be used just once.
+> - It is similar in spirit to a [nonce word](https://en.wikipedia.org/wiki/Nonce_word), hence the name. It is often a [random](https://en.wikipedia.org/wiki/Randomness) or [pseudo-random](https://en.wikipedia.org/wiki/Pseudo-random) number issued in an [authentication protocol](https://en.wikipedia.org/wiki/Authentication_protocol) to ensure that old communications cannot be reused in [replay attacks](https://en.wikipedia.org/wiki/Replay_attack). They can also be useful as [initialization vectors](https://en.wikipedia.org/wiki/Initialization_vector) and in [cryptographic hash functions](https://en.wikipedia.org/wiki/Cryptographic_hash_functions).
+>
+> **replay attacks**: a form of [network](https://en.wikipedia.org/wiki/Computer_network) attack in which a valid data transmission is maliciously or fraudulently repeated or delayed. 
 
 HTTP provides a general framework for access control and authentication, via an extensible set of challenge-response authentication schemes, which can be used by a server to challenge a client request and by a client to provide authentication information.
+
+???
+
+## Request methods
+
+
 
 
 
