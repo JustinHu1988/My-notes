@@ -1815,7 +1815,9 @@ Both are commonly present on most modern operating systems.
     - In [computer networks](https://en.wikipedia.org/wiki/Computer_network), a **proxy server** is a [server](https://en.wikipedia.org/wiki/Server_(computing)) (a computer system or an application) that acts as an [intermediary](https://en.wikipedia.org/wiki/Intermediary) for requests from [clients](https://en.wikipedia.org/wiki/Client_(computing)) seeking resources from other servers.
     - Today, most proxies are **web proxies**, facilitating access to content on the [World Wide Web](https://en.wikipedia.org/wiki/World_Wide_Web), providing anonymity and may be used to bypass [IP address blocking](https://en.wikipedia.org/wiki/IP_address_blocking).
 
+- **RFC** (Request for Comments)
 
+    - a **Request for Comments** (**RFC**) is a type of publication from the technology community. RFCs may come from many bodies including from the [Internet Engineering Task Force](https://en.wikipedia.org/wiki/Internet_Engineering_Task_Force)(IETF), the [Internet Research Task Force](https://en.wikipedia.org/wiki/Internet_Research_Task_Force) (IRTF), the [Internet Architecture Board](https://en.wikipedia.org/wiki/Internet_Architecture_Board) (IAB) or from independent authors.[*citation needed*] The RFC system is supported by the [Internet Society](https://en.wikipedia.org/wiki/Internet_Society) (ISOC).
 
 
 
@@ -2449,7 +2451,7 @@ HTTP provides multiple authentication schemes such as [basic access authenticati
 > **SHA-1** :
 >
 > -  **SHA-1** (**Secure Hash Algorithm 1**) is a [cryptographic hash function](https://en.wikipedia.org/wiki/Cryptographic_hash_function) which takes an input and produces a 160-[bit](https://en.wikipedia.org/wiki/Bit) (20-[byte](https://en.wikipedia.org/wiki/Byte)) hash value known as a [message digest](https://en.wikipedia.org/wiki/Message_digest) - typically rendered as a [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal) number, 40 digits long. 
-> - Since 2005 SHA-1 has not been considered secure against well-funded opponents,[[4\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-4) and since 2010 many organizations have recommended its replacement by [SHA-2](https://en.wikipedia.org/wiki/SHA-2) or [SHA-3](https://en.wikipedia.org/wiki/SHA-3).[[5\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-5)[[6\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-shappening-6)[[7\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-7) [Microsoft](https://en.wikipedia.org/wiki/Microsoft), [Google](https://en.wikipedia.org/wiki/Google), [Apple](https://en.wikipedia.org/wiki/Apple_Inc.)and [Mozilla](https://en.wikipedia.org/wiki/Mozilla) have all announced that their respective browsers will stop accepting SHA-1 [SSL certificates](https://en.wikipedia.org/wiki/SSL_certificate) by 2017.
+> -  Since 2005 SHA-1 has not been considered secure against well-funded opponents,[[4\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-4) and since 2010 many organizations have recommended its replacement by [SHA-2](https://en.wikipedia.org/wiki/SHA-2) or [SHA-3](https://en.wikipedia.org/wiki/SHA-3).[[5\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-5)[[6\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-shappening-6)[[7\]](https://en.wikipedia.org/wiki/SHA-1#cite_note-7) [Microsoft](https://en.wikipedia.org/wiki/Microsoft), [Google](https://en.wikipedia.org/wiki/Google), [Apple](https://en.wikipedia.org/wiki/Apple_Inc.)and [Mozilla](https://en.wikipedia.org/wiki/Mozilla) have all announced that their respective browsers will stop accepting SHA-1 [SSL certificates](https://en.wikipedia.org/wiki/SSL_certificate) by 2017.
 >
 > **nonce**:
 >
@@ -2464,7 +2466,178 @@ HTTP provides a general framework for access control and authentication, via an 
 
 ## Request methods
 
+HTTP defines methods (sometimes referred to as *verbs*) to indicate the desired action to be performed on the identified resource.
 
+- What this resource represents, whether pre-existing data or data that is generated dynamically, depends on the implementation of the server.
+- Often, the resource corresponds to a file or the output of an executable residing on the server. 
+
+The HTTP/1.0 specification[[13\]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#cite_note-13) defined the `GET`, `POST` and `HEAD` methods and the HTTP/1.1 specification[[14\]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#cite_note-14) added 5 new methods: `OPTIONS`, `PUT`, `DELETE`, `TRACE` and `CONNECT`.
+
+- `GET`
+
+  - The GET method requests a representation of the specified resource. 
+  - Requests using GET should only [retrieve data](https://en.wikipedia.org/wiki/Data_retrieval) and should have no other effect.
+  - As part of a GET request, some data can be passed within the URL's [query string](https://en.wikipedia.org/wiki/Query_string), specifying (for example) search terms, date ranges, or other information that defines the query.
+
+- `HEAD`
+
+  - The HEAD method asks for a response identical to that of a GET request, but without the response body. 
+  - This is useful for *retrieving meta-information* written in response headers, without having to transport the entire content.
+
+- `POST`
+
+  - the POST request method requests that a [web server](https://en.wikipedia.org/wiki/Web_server) accepts the data enclosed in the body of the request message, most likely for storing it.[[1\]](https://en.wikipedia.org/wiki/POST_(HTTP)#cite_note-RFC_def-1) 
+
+  - It is often used when uploading a file or when submitting a completed [web form](https://en.wikipedia.org/wiki/Form_(HTML)).
+
+  - As part of a POST request, an arbitrary amount of data of any type can be sent to the server in the body of the request message. A [header field](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields) in the POST request usually indicates the message body's [Internet media type](https://en.wikipedia.org/wiki/Internet_media_type).
+
+    > **Media type** (MIME type):  a two-part identifier for file formats and format contents transmitted on the [Internet](https://en.wikipedia.org/wiki/Internet).
+    >
+    > - A media type consists of a *type* and a *subtype*, which is further structured into a *tree*. A media type can optionally define a *suffix* and *parameters*:
+    >
+    >
+    >   The currently registered types are: `application`, `audio`, `example`, `font`, `image`, `message`, `model`, `multipart`, `text` and `video`.
+    >
+    >   As an example, an [HTML](https://en.wikipedia.org/wiki/HTML) file might be designated `text/html; charset=UTF-8`. In this example, `text` is the type, `html` is the subtype, and `charset=UTF-8` is an optional parameter indicating the [character encoding](https://en.wikipedia.org/wiki/Character_encoding).
+
+- `PUT`
+
+  - The PUT method requests that the enclosed entity be stored under the supplied [URI](https://en.wikipedia.org/wiki/URI). If the URI refers to an already existing resource, it is modified; if the URI does not point to an existing resource, then the server can create the resource with that URI.
+
+- `DELETE`
+
+  - The DELETE method deletes the specified resource.
+
+- `TRACE`
+
+  - The TRACE method echoes the received request so that a client can see what (if any) changes or additions have been made by intermediate servers.
+
+- `OPTIONS`
+
+  - The OPTIONS method returns the HTTP methods that the server supports for the specified URL. This can be used to check the functionality of a web server by requesting '*' instead of a specific resource.
+
+- `CONNECT`
+
+  - The CONNECT method converts the request connection to a transparent [TCP/IP tunnel](https://en.wikipedia.org/wiki/Tunneling_protocol), usually to facilitate [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security)-encrypted communication ([HTTPS](https://en.wikipedia.org/wiki/HTTP_Secure)) through an unencrypted [HTTP proxy](https://en.wikipedia.org/wiki/HTTP_proxy).[[19\]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#cite_note-19)[[20\]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#cite_note-20) See [HTTP CONNECT tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel#HTTP_CONNECT_tunneling).
+
+- `PATCH`
+
+  - The PATCH method applies partial modifications to a resource.
+
+All general-purpose HTTP servers are required to implement at least the GET and HEAD methods, and all other methods are considered optional by the specification.
+
+######  Safe methods
+
+Some of the methods (for example, HEAD, GET, OPTIONS and TRACE) are, by convention, defined as *safe*, which means they are intended only for information retrieval and should not change the state of the server.
+
+- In other words, they should not have [side effects](https://en.wikipedia.org/wiki/Side_effect_(computer_science)), beyond relatively harmless effects such as [logging](https://en.wikipedia.org/wiki/Server_log), [caching](https://en.wikipedia.org/wiki/Web_cache), the serving of [banner advertisements](https://en.wikipedia.org/wiki/Web_banner) or incrementing a [web counter](https://en.wikipedia.org/wiki/Web_counter). 
+- However, this is not mandated by the standard, and it is explicitly acknowledged that it cannot be guaranteed.
+
+
+
+By contrast, methods such as POST, PUT, DELETE and PATCH are intended for actions that may cause side effects either on the server, or external side effects such as [financial transactions](https://en.wikipedia.org/wiki/ECommerce) or transmission of [email](https://en.wikipedia.org/wiki/Email). Such methods are therefore not usually used by conforming [web robots](https://en.wikipedia.org/wiki/Internet_bot) or [web crawlers](https://en.wikipedia.org/wiki/Web_crawler); some that do not conform tend to make requests without regard to context or consequences.
+
+
+
+Despite the prescribed safety of *GET* requests, in practice their handling by the server is not technically limited in any way. Therefore, careless or deliberate programming can cause non-trivial changes on the server. 
+
+- This is discouraged, because it can cause problems for [web caching](https://en.wikipedia.org/wiki/Web_caching), [search engines](https://en.wikipedia.org/wiki/Search_engines) and other automated agents, which can make unintended changes on the server. For example, a website might allow deletion of a resource through a URL such as *http://example.com/article/1234/delete*, which, if arbitrarily fetched, even using *GET*, would simply delete the article.
+- One example of this occurring in practice was during the short-lived [Google Web Accelerator](https://en.wikipedia.org/wiki/Google_Web_Accelerator) beta, which prefetched arbitrary URLs on the page a user was viewing, causing records to be automatically altered or deleted en masse. The beta was suspended only weeks after its first release, following widespread criticism.
+
+###### *Idempotent methods* and web applications
+
+Methods PUT and DELETE are defined to be [idempotent](https://en.wikipedia.org/wiki/Idempotent#Computer_science_meaning), meaning that *multiple identical requests should have the same effect as a single request*.
+
+Methods GET, HEAD, OPTIONS and TRACE, being prescribed as safe, should also be idempotent, as HTTP is a [stateless protocol](https://en.wikipedia.org/wiki/Stateless_protocol).
+
+In contrast, the POST method is not necessarily idempotent, and therefore sending an identical POST request multiple times may further affect state or cause further side effects (such as [financial transactions](https://en.wikipedia.org/wiki/Ecommerce)). In some cases this may be desirable, but in other cases this could be due to an accident, such as when a user does not realize that their action will result in sending another request, or they did not receive adequate feedback that their first request was successful. While [web browsers](https://en.wikipedia.org/wiki/Web_browser) may show [alert dialog boxes](https://en.wikipedia.org/wiki/Alert_dialog_box) to warn users in some cases where reloading a page may re-submit a POST request, it is generally up to the web application to handle cases where a POST request should not be submitted more than once.
+
+Note that whether a method is idempotent is not enforced by the protocol or web server. It is perfectly possible to write a web application in which (for example) a database insert or other non-idempotent action is triggered by a GET or other request. Ignoring this recommendation, however, may result in undesirable consequences, if a [user agent](https://en.wikipedia.org/wiki/User_agent)assumes that repeating the same request is safe when it isn't.
+
+
+
+###### Security
+
+The TRACE method can be used as part of a class of attacks known as [cross-site tracing](https://en.wikipedia.org/wiki/Cross-site_tracing); for that reason, common security advice is for it to be disabled in the server configuration.[[25\]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#cite_note-OWASP-XST-25) 
+
+- >  **cross-site tracing**:a [network security](https://en.wikipedia.org/wiki/Network_security) vulnerability exploiting the [HTTP](https://en.wikipedia.org/wiki/HTTP)TRACE method.
+  >
+  > - XST scripts exploit [ActiveX](https://en.wikipedia.org/wiki/ActiveX), [Flash](https://en.wikipedia.org/wiki/Adobe_Flash), or any other controls that allow executing an HTTP TRACE request. The HTTP TRACE response includes all the HTTP [headers](https://en.wikipedia.org/wiki/Header_(computing)) including [authentication data](https://en.wikipedia.org/wiki/Authentication) and [HTTP cookie](https://en.wikipedia.org/wiki/HTTP_cookie) contents, which are then available to the script. 
+  > - In combination with cross domain access flaws in [web browsers](https://en.wikipedia.org/wiki/Web_browser), the exploit is able to collect the cached [credentials](https://en.wikipedia.org/wiki/Credentials) of any web site, including those utilizing [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security). ???
+
+
+- Microsoft [IIS](https://en.wikipedia.org/wiki/Internet_Information_Services) supports a proprietary "TRACK" method, which behaves similarly, and which is likewise recommended to be disabled.
+
+
+
+###### Summary table
+
+| HTTP Method | RFC                                      | Request Has Body | Response Has Body | Safe | Idempotent | Cacheable |
+| ----------- | ---------------------------------------- | ---------------- | ----------------- | ---- | ---------- | --------- |
+| `GET`       | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | Optional         | Yes               | Yes  | Yes        | Yes       |
+| `HEAD`      | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | No               | No                | Yes  | Yes        | Yes       |
+| `POST`      | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | Yes              | Yes               | No   | No         | Yes       |
+| `PUT`       | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | Yes              | Yes               | No   | Yes        | No        |
+| `DELETE`    | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | No               | Yes               | No   | Yes        | No        |
+| `CONNECT`   | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | Yes              | Yes               | No   | No         | No        |
+| `OPTIONS`   | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | Optional         | Yes               | Yes  | Yes        | No        |
+| `TRACE`     | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [7231](https://tools.ietf.org/html/rfc7231) | No               | Yes               | Yes  | Yes        | No        |
+| `PATCH`     | [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [5789](https://tools.ietf.org/html/rfc5789) | Yes              | Yes               | No   | No         | No        |
+
+
+
+#### Status codes
+
+In HTTP/1.0 and since, the first line of the HTTP response is called the *status line* and includes a numeric *status code*(such as "[404](https://en.wikipedia.org/wiki/HTTP_404)") and a textual *reason phrase* (such as "Not Found"). 
+
+- The way the [user agent](https://en.wikipedia.org/wiki/User_agent) handles the response primarily depends on the code and secondarily on the other [response header fields](https://en.wikipedia.org/wiki/HTTP_response_header_field).
+- Custom status codes can be used since, if the user agent encounters a code it does not recognize, it can use the first digit of the code to determine the general class of the response.
+
+The standard *reason phrases* are only recommendations and can be replaced with "local equivalents" at the [web developer](https://en.wikipedia.org/wiki/Web_developer)'s discretion. If the status code indicated a problem, the user agent might display the *reason phrase* to the user to provide further information about the nature of the problem. 
+
+HTTP status code is primarily divided into five groups for better explanation of request and responses between client and server as named:
+
+- Informational `1XX`
+- Successful `2XX`
+- Redirection `3XX`
+- Client Error `4XX`
+- Server Error `5XX`
+
+#### Persistent connections
+
+In HTTP/0.9 and 1.0, the connection is closed after a single request/response pair.
+
+In HTTP/1.1 a keep-alive-mechanism was introduced, where a connection could be reused for more than one request.
+
+- Such *persistent connections* reduce request [latency](https://en.wikipedia.org/wiki/Latency_(engineering)) perceptibly, because the client does not need to re-negotiate the TCP 3-Way-Handshake connection after the first request has been sent.
+- Another positive side effect is that in general the connection becomes faster with time due to TCP's [slow-start](https://en.wikipedia.org/wiki/Slow-start)-mechanism.
+
+Version 1.1 of the protocol also made bandwidth optimization improvements to HTTP/1.0. 
+
+- For example, HTTP/1.1 introduced [chunked transfer encoding](https://en.wikipedia.org/wiki/Chunked_transfer_encoding) to allow content on persistent connections to be streamed rather than buffered. [HTTP pipelining](https://en.wikipedia.org/wiki/HTTP_pipelining) further reduces lag time, allowing clients to send multiple requests before waiting for each response. 
+- Another addition to the protocol was [byte serving](https://en.wikipedia.org/wiki/Byte_serving)???, where a server transmits just the portion of a resource explicitly requested by a client.
+
+#### HTTP session state
+
+HTTP is a [stateless protocol](https://en.wikipedia.org/wiki/Stateless_protocol). A stateless protocol does not require the [HTTP server](https://en.wikipedia.org/wiki/HTTP_server) to retain information or status about each user for the duration of multiple requests. 
+
+However, some [web applications](https://en.wikipedia.org/wiki/Web_application) implement states or [server side sessions](https://en.wikipedia.org/wiki/Session_(computer_science)) using for instance [HTTP cookies](https://en.wikipedia.org/wiki/HTTP_cookie) or hidden [variables](https://en.wikipedia.org/wiki/Variable_(computer_science)) within [web forms](https://en.wikipedia.org/wiki/Form_(web)).
+
+> **session**:
+>
+> - a **session** is a semi-permanent interactive information interchange between two or more communicating devices, or between a computer and user (see [login session](https://en.wikipedia.org/wiki/Login_session)). A session is established at a certain point in time, and then torn down at some later point. An established communication session may involve more than one message in each direction. A session is typically [stateful](https://en.wikipedia.org/wiki/Stateful), meaning that at least one of the communicating parts needs to save information about the session history in order to be able to communicate, as opposed to [stateless](https://en.wikipedia.org/wiki/Stateless_server) communication, where the communication consists of independent requests with responses.
+>
+> **HTTP cookies**:
+>
+> - a small piece of data sent from a website and stored on the user's computer by the user's [web browser](https://en.wikipedia.org/wiki/Web_browser) while the user is browsing. 
+> - Cookies were designed to be a reliable mechanism for websites to remember [stateful](https://en.wikipedia.org/wiki/Program_state) information (such as items added in the shopping cart in an online store) or to record the user's browsing activity (including clicking particular buttons, [logging in](https://en.wikipedia.org/wiki/Access_control), or recording which pages were visited in the past).
+> - They can also be used to remember arbitrary pieces of information that the user previously entered into form fields such as names, addresses, passwords, and credit card numbers.
+> - Other kinds of cookies perform essential functions in the modern web. 
+>   - Perhaps most importantly, **authentication cookies** are the most common method used by web servers to know whether the user is logged in or not, and which account they are logged in with.
+>   - Without such a mechanism, the site would not know whether to send a page containing sensitive information, or require the user to authenticate themselves by logging in.
+>   - The security of an authentication cookie generally depends on the security of the issuing website and the user's [web browser](https://en.wikipedia.org/wiki/Comparison_of_web_browsers#Vulnerabilities), and on whether the cookie data is encrypted.
+>   - ???
 
 
 
