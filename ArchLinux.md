@@ -2587,7 +2587,7 @@ The TRACE method can be used as part of a class of attacks known as [cross-site 
 
 
 
-#### Status codes
+## Status codes
 
 In HTTP/1.0 and since, the first line of the HTTP response is called the *status line* and includes a numeric *status code*(such as "[404](https://en.wikipedia.org/wiki/HTTP_404)") and a textual *reason phrase* (such as "Not Found"). 
 
@@ -2604,7 +2604,7 @@ HTTP status code is primarily divided into five groups for better explanation of
 - Client Error `4XX`
 - Server Error `5XX`
 
-#### Persistent connections
+## Persistent connections
 
 In HTTP/0.9 and 1.0, the connection is closed after a single request/response pair.
 
@@ -2618,7 +2618,7 @@ Version 1.1 of the protocol also made bandwidth optimization improvements to HTT
 - For example, HTTP/1.1 introduced [chunked transfer encoding](https://en.wikipedia.org/wiki/Chunked_transfer_encoding) to allow content on persistent connections to be streamed rather than buffered. [HTTP pipelining](https://en.wikipedia.org/wiki/HTTP_pipelining) further reduces lag time, allowing clients to send multiple requests before waiting for each response. 
 - Another addition to the protocol was [byte serving](https://en.wikipedia.org/wiki/Byte_serving)???, where a server transmits just the portion of a resource explicitly requested by a client.
 
-#### HTTP session state
+## HTTP session state
 
 HTTP is a [stateless protocol](https://en.wikipedia.org/wiki/Stateless_protocol). A stateless protocol does not require the [HTTP server](https://en.wikipedia.org/wiki/HTTP_server) to retain information or status about each user for the duration of multiple requests. 
 
@@ -2637,13 +2637,119 @@ However, some [web applications](https://en.wikipedia.org/wiki/Web_application) 
 >   - Perhaps most importantly, **authentication cookies** are the most common method used by web servers to know whether the user is logged in or not, and which account they are logged in with.
 >   - Without such a mechanism, the site would not know whether to send a page containing sensitive information, or require the user to authenticate themselves by logging in.
 >   - The security of an authentication cookie generally depends on the security of the issuing website and the user's [web browser](https://en.wikipedia.org/wiki/Comparison_of_web_browsers#Vulnerabilities), and on whether the cookie data is encrypted.
->   - ???
+>   - *Security vulnerabilities may allow a cookie's data to be read by a [hacker](https://en.wikipedia.org/wiki/Hacker_(computer_security)), used to gain access to user data, or used to gain access (with the user's credentials) to the website to which the cookie belongs* (see [cross-site scripting](https://en.wikipedia.org/wiki/Cross-site_scripting) and [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) for examples).[[1\]](https://en.wikipedia.org/wiki/#cite_note-1) 
+> - The tracking cookies, and especially [third-party tracking cookies](https://en.wikipedia.org/wiki/#Third-party_cookie), are commonly used as ways to compile long-term records of individuals' browsing histories – a potential [privacy concern](https://en.wikipedia.org/wiki/Internet_privacy#HTTP_cookies) that prompted European[[2\]](https://en.wikipedia.org/wiki/#cite_note-2) and U.S. lawmakers to take action in 2011.
+>   - European law requires that all websites targeting [European Union](https://en.wikipedia.org/wiki/European_Union) member states gain "informed consent" from users before storing non-essential cookies on their device.
+> - Google [Project Zero](https://en.wikipedia.org/wiki/Project_Zero_(Google)) researcher Jann Horn describes ways cookies can be read by [intermediaries](https://en.wikipedia.org/wiki/Man-in-the-middle_attack), like [Wi-Fi](https://en.wikipedia.org/wiki/Wi-Fi) hostspot providers. He recommends to use the browser in incognito mode in such circumstances.
+>
+>
+> - ​
+>
+> **cross-site request forgery** :
 
 
+
+**cross-site scripting** : 
+
+- a type of computer security vulnerability typically found in web applications.
+
+
+- *XSS enables attackers to [inject](https://en.wikipedia.org/wiki/Code_injection) [client-side scripts](https://en.wikipedia.org/wiki/Client-side_script) into [web pages](https://en.wikipedia.org/wiki/Web_page) viewed by other users.*
+
+- A cross-site scripting vulnerability may be used by attackers to bypass [access controls](https://en.wikipedia.org/wiki/Access_control) such as the [same-origin policy](https://en.wikipedia.org/wiki/Same-origin_policy).
+
+  - **same-origin policy** : 
+    - an important concept in the [web application](https://en.wikipedia.org/wiki/Web_application) [security model](https://en.wikipedia.org/wiki/Computer_security_model). 
+    - Under the policy, a [web browser](https://en.wikipedia.org/wiki/Web_browser_engine) permits scripts contained in a first web page to access data in a second web page, but only if both web pages have the same *origin*.
+    - *An origin is defined as a combination of [URI scheme](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier), [host name](https://en.wikipedia.org/wiki/Hostname), and [port number](https://en.wikipedia.org/wiki/Port_(computer_networking)).* 
+    - This policy prevents a malicious script on one page from obtaining access to sensitive data on another web page through that page's [Document Object Model](https://en.wikipedia.org/wiki/Document_Object_Model).
+
+- Cross-site scripting carried out on websites accounted for roughly 84% of all security vulnerabilities documented by [Symantec](https://en.wikipedia.org/wiki/Symantec) as of 2007. Bug bounty company [HackerOne](https://en.wikipedia.org/wiki/HackerOne) in 2017 reported that XSS is still a major threat vector.
+
+- *Types*
+
+  There is no single, standardized classification of cross-site scripting flaws, but most experts distinguish between at least two primary flavors of XSS flaws: *non-persistent* and *persistent*. Some sources further divide these two groups into *traditional* (caused by server-side code flaws) and *DOM-based* (in client-side code).
+
+  - *Reflected (non-persistent)*
+    - The *non-persistent* (or *reflected*) cross-site scripting vulnerability is by far the most basic type of web vulnerability.
+    - These holes show up when the data provided by a web client, most commonly in HTTP query parameters (e.g. HTML form submission), is used immediately by server-side scripts to parse and display a page of results for and to that user, without properly [sanitizing](https://en.wikipedia.org/wiki/HTML_sanitization) the request.
+  - *Persistent (or stored)*
+    - The *persistent* (or *stored*) XSS vulnerability is a more devastating variant of a cross-site scripting flaw: it occurs when the data provided by the attacker is saved by the server, and then permanently displayed on "normal" pages returned to other users in the course of regular browsing, without proper HTML escaping.
+    - A classic example of this is with online message boards where users are allowed to post HTML formatted messages for other users to read.
+  - *Server-side versus DOM-based vulnerabilities*
+    - Historically XSS vulnerabilities were first found in applications that performed all data processing on the server side.
+    - User input (including an XSS vector) would be sent to the server, and then sent back to the user as a web page. The need for an improved user experience resulted in popularity of applications that had a majority of the presentation logic (maybe written in [JavaScript](https://en.wikipedia.org/wiki/JavaScript)) working on the client-side that pulled data, on-demand, from the server using [AJAX](https://en.wikipedia.org/wiki/AJAX).
+  - *Self-XSS*
+    - [Self-XSS](https://en.wikipedia.org/wiki/Self-XSS) is a form of XSS vulnerability which relies on Social Engineering in order to trick the victim into executing malicious JavaScript code into their browser. 
+    - Although it is technically not a true XSS vulnerability due to the fact it relies on socially engineering a user into executing code rather than a flaw in the affected website allowing an attacker to do so, it still poses the same risks as a regular XSS vulnerability if properly executed.
+  - *Mutated XSS (mXSS)*
+    - Mutated XSS happens, when the attacker injects something that is seemingly safe, but rewritten and modified by the browser, while parsing the markup.
+    - This makes it extremely hard to detect or sanitize within the websites application logic. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters on parameters to CSS font-family.
+
+
+
+## Encrypted connections
+
+The most popular way of establishing an encrypted HTTP connection  is [HTTPS](https://en.wikipedia.org/wiki/HTTPS). 
+
+Two other methods for establishing an encrypted HTTP connection also exist:  [Secure Hypertext Transfer Protocol](https://en.wikipedia.org/wiki/Secure_Hypertext_Transfer_Protocol), and using the [HTTP/1.1 Upgrade header](https://en.wikipedia.org/wiki/HTTP/1.1_Upgrade_header) to specify an upgrade to TLS. Browser support for these two is, however, nearly non-existent.
+
+
+
+## Message format
+
+*The client and server communicate by sending plain-text ([ASCII](https://en.wikipedia.org/wiki/ASCII)) messages.* 
+
+- The client sends **requests** to the server and the server sends **responses**.
+
+#### Request message
+
+The request message consists of the following:
+
+- A request line (e.g., *GET /images/logo.png HTTP/1.1*, which requests a resource called `/images/logo.png` from the server).
+- [Request header fields](https://en.wikipedia.org/wiki/HTTP_request_header_field) (e.g., *Accept-Language: en*).
+- An empty line.
+- An optional [message body](https://en.wikipedia.org/wiki/HTTP_message_body).
+
+The request line and other header fields must each end with <CR><LF> (that is, a [carriage return](https://en.wikipedia.org/wiki/Carriage_return) character followed by a [line feed](https://en.wikipedia.org/wiki/Line_feed) character). The empty line must consist of only <CR><LF> and no other [whitespace](https://en.wikipedia.org/wiki/Whitespace_(computer_science)).[[31\]](https://en.wikipedia.org/wiki/#cite_note-ietf2616sec4-31) In the HTTP/1.1 protocol, all header fields except *Host* are optional.
+
+A request line containing only the path name is accepted by servers to maintain compatibility with HTTP clients before the HTTP/1.0 specification in [RFC](https://en.wikipedia.org/wiki/Request_for_Comments_(identifier)) [1945](https://tools.ietf.org/html/rfc1945)
+
+#### Response message
+
+The response message consists of the following:
+
+- A status line which includes the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) and reason message (e.g., *HTTP/1.1 200 OK*, which indicates that the client's request succeeded).
+- [Response header fields](https://en.wikipedia.org/wiki/HTTP_response_header_field) (e.g., *Content-Type: text/html*).
+- An empty line.
+- An optional [message body](https://en.wikipedia.org/wiki/HTTP_message_body).
+
+The status line and other header fields must all end with <CR><LF>. The empty line must consist of only <CR><LF> and no other [whitespace](https://en.wikipedia.org/wiki/Whitespace_(computer_science)).[[31\]](https://en.wikipedia.org/wiki/#cite_note-ietf2616sec4-31) This strict requirement for <CR><LF> is relaxed somewhat within message bodies for consistent use of other system linebreaks such as <CR> or <LF> alone.[[33\]](https://en.wikipedia.org/wiki/#cite_note-33)
+
+#### Example session
+
+Below is a sample conversation between an HTTP client and an HTTP server running on [www.example.com](https://en.wikipedia.org/wiki/Example.com), port 80. As mentioned in the previous sections, all the data is sent in a plain-text ([ASCII](https://en.wikipedia.org/wiki/ASCII)) encoding, using a [two-byte CR LF](https://en.wikipedia.org/wiki/Newline) ('\r\n') line ending at the end of each line.
+
+###### Client request
+
+```http
+GET /index.html HTTP/1.1
+Host: www.example.com 
+```
+
+A client request (consisting in this case of the request line and only one header field) is followed by a blank line, so that the request ends with a double newline, each in the form of a [carriage return](https://en.wikipedia.org/wiki/Carriage_return) followed by a [line feed](https://en.wikipedia.org/wiki/Line_feed). 
+
+The "Host" field distinguishes between various [DNS](https://en.wikipedia.org/wiki/Domain_Name_System) names sharing a single [IP address](https://en.wikipedia.org/wiki/IP_address), allowing name-based [virtual hosting](https://en.wikipedia.org/wiki/Virtual_hosting). While optional in HTTP/1.0, it is mandatory in HTTP/1.1.
 
 ???
 
+> **DNS**
+>
+> **virtual hosting**
 
+???
+
+# HTTPS
 
 
 
