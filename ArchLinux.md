@@ -2704,7 +2704,7 @@ Two other methods for establishing an encrypted HTTP connection also exist:  [Se
 
 #### Request message
 
-The request message consists of the following:
+*The request message consists of the following:*
 
 - A request line (e.g., *GET /images/logo.png HTTP/1.1*, which requests a resource called `/images/logo.png` from the server).
 - [Request header fields](https://en.wikipedia.org/wiki/HTTP_request_header_field) (e.g., *Accept-Language: en*).
@@ -2717,7 +2717,7 @@ A request line containing only the path name is accepted by servers to maintain 
 
 #### Response message
 
-The response message consists of the following:
+*The response message consists of the following:*
 
 - A status line which includes the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) and reason message (e.g., *HTTP/1.1 200 OK*, which indicates that the client's request succeeded).
 - [Response header fields](https://en.wikipedia.org/wiki/HTTP_response_header_field) (e.g., *Content-Type: text/html*).
@@ -2743,9 +2743,34 @@ The "Host" field distinguishes between various [DNS](https://en.wikipedia.org/wi
 
 ???
 
-> **DNS**
+> **DNS**: ???
 >
-> **virtual hosting**
+> **virtual hosting** : ???
+
+###### Server response
+
+```http
+HTTP/1.1 200 OK
+Date: Mon, 23 May 2005 22:38:34 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 138
+Last-Modified: Wed, 08 Jan 2003 23:11:55 GMT
+Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
+ETag: "3f80f-1b6-3e1cb03b"
+Accept-Ranges: bytes
+Connection: close
+
+<html>
+<head>
+  <title>An Example Page</title>
+</head>
+<body>
+  Hello World, this is a very simple HTML document.
+</body>
+</html>
+```
+
+
 
 ???
 
