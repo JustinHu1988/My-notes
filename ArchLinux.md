@@ -2770,7 +2770,17 @@ Connection: close
 </html>
 ```
 
+- The [ETag](https://en.wikipedia.org/wiki/HTTP_ETag) (entity tag) header field is used to determine if a cached version of the requested resource is identical to the current version of the resource on the server. 
+- *Content-Type* specifies the [Internet media type](https://en.wikipedia.org/wiki/Internet_media_type) of the data conveyed by the HTTP message
+- *Content-Length*indicates its length in bytes.
+- `Accept-Ranges` 
+  - response HTTP header is a marker used by the server to advertise its support of partial requests. The value of this field indicates the unit that can be used to define a range.
+  - In presence of an `Accept-Ranges` header, the browser may try to *resume*an interrupted download, rather than to start it from the start again.
+- When *Connection: close* is sent, it means that the [web server](https://en.wikipedia.org/wiki/Web_server) will close the [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) connection immediately after the transfer of this response.
 
+Most of the header lines are optional. When *Content-Length* is missing the length is determined in other ways. Chunked transfer encoding uses a chunk size of 0 to mark the end of the content. *Identity* encoding without *Content-Length* reads content until the socket is closed.
+
+A *Content-Encoding* like *gzip* can be used to compress the transmitted data.
 
 ???
 
