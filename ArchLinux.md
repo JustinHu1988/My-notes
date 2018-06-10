@@ -2749,9 +2749,40 @@ The "Host" field distinguishes between various *DNS* names sharing a single IP a
 >
 > **Domain Name**: 
 >
-> **Hostname**: a label
+> - domain name is an identification string that defines a realm of administrative autonomy, authority or control within the Internet.
+>   - Domain names are formed by the rules and procedures of the DNS.
+>   - Any name registered in the DNS is a domain name.
+>   - Domain names are used in various networking contexts and for application-specific naming and addressing purposes.
+>   - In general, a domain name represents an IP resource, such as a personal computer used to access the Internet, a server computer hosting a web site, or the web site itself or any other service communicated via the Internet.
+> - Domain names are organized in subordinate levels (subdomains) of the *DNS root* domain, which is nameless.
+> - The first-level set of domain names are the *Top-level domains (TLDs)*, including:
+>   - the generic top-level domains (gTLDs), such as the prominent domains `com`, `info`, `net`, `edu`, and `org`;
+>   - the cointry code top-level domains (ccTLDs).
+> - Below these top-level domains in the DNS hierarchy are the second-level and third-level domain names that are typically open for reservation by end-users who wish to connect local area networks to the Internet, create other publicly accessible Internet resources or run web sites.
+> - The registration of these domain names is usually administered by *domain name registrars* who sell their services to the public.
+> - A *fully qualified domain name (FQDN)* is a domain name that is completely specified with all labels in the hierarchy of the DNS, having no parts omitted.
+> - Labels in the Domain Name System are *case-insensitive*.
+> - ???
 >
-> **virtual hosting** : ???
+> **Hostname**: 
+>
+> - a label that is assigned to a device connected to a computer network and that is used to identify the device in various forms of electornic communication, such as the World Wide Web.
+> - On the Internet, hostnames may have appended the name of a DNS domain, separated from the host-specific label by a period("dot").
+> - In the latter form, a hostname is also called a domain name.
+> - If the domain name is completely specified, including a top-level domain of the Internet, then the hostname is said to be *fully qualified domain name (FQDN)*.
+> - Hostnames that include DNS domains are often stored in the Domain Name System together with the IP addresses of the host they represent for the purpose of mapping the hostname to an address, or the reverse process.
+> - Example: see wiki.
+>
+> **virtual hosting** : 
+>
+> - a method for hosting multiple domain names (with separate handling of each name) on a single server (or pool of servers).
+>
+> **server**:
+>
+> - a *computer program* or a *device* that provides functionality for other programs or devices, called "clients". This architecture is called the client-server model, and a single overall computation is distributed across multiple processes or devices.
+> - A client process may run on the same device or may connect over a network to a server on a different device.
+> - Typical servers are [database servers](https://en.wikipedia.org/wiki/Database_server), [file servers](https://en.wikipedia.org/wiki/File_server), [mail servers](https://en.wikipedia.org/wiki/Mail_server), [print servers](https://en.wikipedia.org/wiki/Print_server), [web servers](https://en.wikipedia.org/wiki/Web_server), [game servers](https://en.wikipedia.org/wiki/Game_server), and [application servers](https://en.wikipedia.org/wiki/Application_server).
+> - see wiki.
 
 ###### Server response
 
@@ -2791,6 +2822,14 @@ A *Content-Encoding* like *gzip* can be used to compress the transmitted data.
 ???
 
 # HTTPS
+
+**HTTP Secure** (**HTTPS**) is an extension of the [Hypertext Transfer Protocol](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) (HTTP) for [secure communication](https://en.wikipedia.org/wiki/Secure_communications) over a [computer network](https://en.wikipedia.org/wiki/Network_operating_system), and is widely used on the [Internet](https://en.wikipedia.org/wiki/Internet).
+
+In HTTPS, the [communication protocol](https://en.wikipedia.org/wiki/Communication_protocol) is [encrypted](https://en.wikipedia.org/wiki/Encrypted) using [Transport Layer Security](https://en.wikipedia.org/wiki/Transport_Layer_Security)(TLS), or formerly, its predecessor, Secure Sockets Layer (SSL). The protocol is therefore also often referred to as **HTTP over TLS**,[[3\]](https://en.wikipedia.org/wiki/#cite_note-HTTP_Over_TLS-3) or **HTTP over SSL**.
+
+The principal motivation for HTTPS is authentication of the accessed website and protection of the privacy and integrity of the exchanged data while in transit.
+
+???
 
 
 
