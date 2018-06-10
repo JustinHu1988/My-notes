@@ -1,8 +1,6 @@
+[CODE]-notes
+
 # Chapter 18 From Abaci to Chips
-
-
-
-
 
 ### Mid-1970s
 
@@ -2784,8 +2782,6 @@ See the *Code* book.
 
 
 
-
-
 # Chapter 25. The Graphical Revolution
 
 When the cathode-ray tube first appear on computer, they were just treated as a "glass teletypewriter" — displaying output line by line going down the screen and scrolling the contents of the screen up when the text reached the bottom.
@@ -2849,12 +2845,7 @@ VisiCalc *doesn't fit larger computers*:
 - The interface between a large time-shared computer and a dumb terminal is simply not fast enough to make a spreadsheet program usable.
 
 
-
 *The faster a computer can respond to the keyboard and alter the video display, the tighter the potential interaction between user and computer.* 
-
-
-
-
 
 
 

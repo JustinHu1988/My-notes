@@ -2563,8 +2563,8 @@ The TRACE method can be used as part of a class of attacks known as [cross-site 
 
 - >  **cross-site tracing**:a [network security](https://en.wikipedia.org/wiki/Network_security) vulnerability exploiting the [HTTP](https://en.wikipedia.org/wiki/HTTP)TRACE method.
   >
-  > - XST scripts exploit [ActiveX](https://en.wikipedia.org/wiki/ActiveX), [Flash](https://en.wikipedia.org/wiki/Adobe_Flash), or any other controls that allow executing an HTTP TRACE request. The HTTP TRACE response includes all the HTTP [headers](https://en.wikipedia.org/wiki/Header_(computing)) including [authentication data](https://en.wikipedia.org/wiki/Authentication) and [HTTP cookie](https://en.wikipedia.org/wiki/HTTP_cookie) contents, which are then available to the script. 
-  > - In combination with cross domain access flaws in [web browsers](https://en.wikipedia.org/wiki/Web_browser), the exploit is able to collect the cached [credentials](https://en.wikipedia.org/wiki/Credentials) of any web site, including those utilizing [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security). ???
+  >  - XST scripts exploit [ActiveX](https://en.wikipedia.org/wiki/ActiveX), [Flash](https://en.wikipedia.org/wiki/Adobe_Flash), or any other controls that allow executing an HTTP TRACE request. The HTTP TRACE response includes all the HTTP [headers](https://en.wikipedia.org/wiki/Header_(computing)) including [authentication data](https://en.wikipedia.org/wiki/Authentication) and [HTTP cookie](https://en.wikipedia.org/wiki/HTTP_cookie) contents, which are then available to the script. 
+  >  - In combination with cross domain access flaws in [web browsers](https://en.wikipedia.org/wiki/Web_browser), the exploit is able to collect the cached [credentials](https://en.wikipedia.org/wiki/Credentials) of any web site, including those utilizing [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security). ???
 
 
 - Microsoft [IIS](https://en.wikipedia.org/wiki/Internet_Information_Services) supports a proprietary "TRACK" method, which behaves similarly, and which is likewise recommended to be disabled.
@@ -2739,11 +2739,17 @@ Host: www.example.com
 
 A client request (consisting in this case of the request line and only one header field) is followed by a blank line, so that the request ends with a double newline, each in the form of a [carriage return](https://en.wikipedia.org/wiki/Carriage_return) followed by a [line feed](https://en.wikipedia.org/wiki/Line_feed). 
 
-The "Host" field distinguishes between various [DNS](https://en.wikipedia.org/wiki/Domain_Name_System) names sharing a single [IP address](https://en.wikipedia.org/wiki/IP_address), allowing name-based [virtual hosting](https://en.wikipedia.org/wiki/Virtual_hosting). While optional in HTTP/1.0, it is mandatory in HTTP/1.1.
+The "Host" field distinguishes between various *DNS* names sharing a single IP address, allowing name-based *virtual hosting*. While optional in HTTP/1.0, it is mandatory in HTTP/1.1.
 
-???
-
-> **DNS**: ???
+> **DNS**: Domain Name System
+>
+> - a hierarchical decentralized naming system for computers, services, or other resources connected to the Internet or a private network.
+> - An often-used analogy to explain the Domain Name System is that it serves as the phone book for the Internet by translating human-friendly computer hostnames into IP addresses. For example, the domain name www.example.com translates to the addresses 93.184.216.119 (IPv4) and 2606:2800:220:6d:26bf:1447:1097:aa7 (IPv6). 
+> - Unlike a phone book, DNS can be quickly updated, allowing a service's location on the network to change without affecting the end users, who continue to use the same hostname. Users take advantage of this when they use meaningful Uniform Resource Locators (URLs), and e-mail addresses) without having to know how the computer actually locates the services.
+>
+> **Domain Name**: 
+>
+> **Hostname**: a label
 >
 > **virtual hosting** : ???
 
