@@ -2354,6 +2354,10 @@ HTTP functions as a [request–response](https://en.wikipedia.org/wiki/Request%E
 
 A web browser is an example of a *user agent* (UA). Other types of user agent include the indexing software used by search providers ([web crawlers](https://en.wikipedia.org/wiki/Web_crawler)), [voice browsers](https://en.wikipedia.org/wiki/Voice_browser), [mobile app](https://en.wikipedia.org/wiki/Mobile_app)s, and other [software](https://en.wikipedia.org/wiki/Software) that accesses, consumes, or displays web content.
 
+In reality, there are more computers between a browser and the server handling the request: there are routers, modems, and more. 
+
+- Thanks to the layered design of the Web, these are hidden in the network and transport layers. HTTP is on top at the application layer. Although important to diagnose network problems, the underlying layers are mostly irrelevant to the description of HTTP.
+
 
 
 HTTP is designed to permit intermediate network elements to improve or enable communications between clients and servers. 
@@ -2819,6 +2823,188 @@ Most of the header lines are optional. When *Content-Length* is missing the leng
 
 A *Content-Encoding* like *gzip* can be used to compress the transmitted data.
 
+
+
+#### Client: the user-agent
+
+The *user-agent* is any tool that acts on the behalf of the user. This role is primarily performed by the Web browser; a few exceptions being programs used by engineers, and Web developers to debug their applications.
+
+The browser is **always** the entity initiating the request. It is never the server (though some mechanisms have been added over the years to simulate server-initiated messages).
+
+To present a Web page, the browser sends an original request to fetch the HTML document from the page. It then parses this file, fetching additional requests corresponding to execution scripts, layout information (CSS) to display, and sub-resources contained within the page (usually images and videos). The Web browser then mixes these resources to present to the user a complete document, the Web page. Scripts executed by the browser can fetch more resources in later phases and the browser updates the Web page accordingly.
+
+A Web page is a hypertext document. This means some parts of displayed text are links which can be activated (usually by a click of the mouse) to fetch a new Web page, allowing the user to direct their user-agent and navigate through the Web. The browser translates these directions in HTTP requests, and further interprets the HTTP responses to present the user with a clear response.
+
+#### The Web server
+
+On the opposite side of the communication channel, is the server which *serves* the document as requested by the client. A server presents only as a single machine virtually: this is because it may actually be a collection of servers, sharing the load (load balancing) or a complex piece of software interrogating other computers (like cache, a DB server, e-commerce servers, …), totally or partially generating the document on demand.
+
+A server is not necessarily a single machine, but several servers can be hosted on the same machine. With HTTP/1.1 and the [`Host`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host) header, they may even share the same IP address.
+
+#### Proxies
+
+Between the Web browser and the server, numerous computers and machines relay the HTTP messages. Due to the layered structure of the Web stack, most of these operate at either the transport, network or physical levels, becoming transparent at the HTTP layer and potentially making a significant impact on performance. Those operating at the application layers are generally called **proxies**. These can be transparent, or not (changing requests not going through them), and may perform numerous functions:
+
+- caching (the cache can be public or private, like the browser cache)
+- filtering (like an antivirus scan, parental controls, …)
+- load balancing (to allow multiple servers to serve the different requests)
+- authentication (to control access to different resources)
+- logging (allowing the storage of historical information)
+
+## Basic aspects of HTTP
+
+#### HTTP is simple
+
+Even with more complexity, introduced in HTTP/2 by encapsulating HTTP messages into frames, HTTP is generally designed to be simple and human readable. HTTP messages can be read and understood by humans, providing easier developer testing, and reduced complexity for new-comers.
+
+#### HTTP is extensible
+
+Introduced in HTTP/1.0, [HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) made this protocol easy to extend and experiment with. New functionality can even be introduced by a simple agreement between a client and a server about a new header's semantics.
+
+#### HTTP is stateless, but not sessionless
+
+HTTP is stateless: there is no link between two requests being successively carried out on the same connection. This immediately has the prospect of being problematic for users attempting to interact with certain pages coherently, for example, using e-commerce shopping baskets. 
+
+But while the core of HTTP itself is stateless, HTTP cookies allow the use of stateful sessions. Using header extensibility, HTTP Cookies are added to the workflow, allowing session creation on each HTTP request to share the same context, or the same state.
+
+####  HTTP and connections
+
+A connection is controlled at the transport layer, and therefore fundamentally out of scope for HTTP. Though HTTP doesn't require the underlying transport protocol to be connection-based; only requiring it to be *reliable*, or not lose messages (so at minimum presenting an error). Among the two most common transport protocols on the Internet, TCP is reliable and UDP isn't. HTTP subsequently relies on the TCP standard, which is connection-based, even though a connection is not always required.
+
+HTTP/1.0 opened a TCP connection for each request/response exchange, introducing two major flaws: 
+
+- opening a connection needs several round-trips of messages and therefore slow, but becomes more efficient when several messages are sent, and regularly sent: *warm* connections are more efficient than *cold* ones.
+
+In order to mitigate these flaws, HTTP/1.1 introduced pipelining (which proved difficult to implement) and persistent connections: the underlying TCP connection can be partially controlled using the [`Connection`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection) header. *HTTP/2 went a step further by multiplexing messages over a single connection, helping keep the connection warm, and more efficient*.
+
+Experiments are in progress to design a better transport protocol more suited to HTTP. For example, Google is experimenting with [QUIC](https://en.wikipedia.org/wiki/QUIC) which builds on UDP to provide a more reliable and efficient transport protocol.
+
+## What can be controlled by HTTP
+
+This extensible nature of HTTP has, over time, allowed for more control and functionality of the Web. 
+
+- Cache or authentication methods were functions handled early in HTTP history. 
+- The ability to relax the *origin constraint*, by contrast, has only been added in the 2010s.
+
+
+
+Here is a list of common features controllable with HTTP.
+
+- *Cache*
+  How documents are cached can be controlled by HTTP. The server can instruct proxies, and clients, what to cache and for how long. The client can instruct intermediate cache proxies to ignore the stored document.
+- *Relaxing the origin constraint*
+  To prevent snooping and other privacy invasions, Web browsers enforce strict separation between Web sites. Only pages from the **same origin** can access all the information of a Web page. Though such constraint is a burden to the server, HTTP headers can relax this strict separation server-side, allowing a document to become a patchwork of information sourced from different domains (there could even be security-related reasons to do so).
+- *Authentication*
+  Some pages may be protected so only specific users can access it. Basic authentication may be provided by HTTP, either using the [`WWW-Authenticate`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate)and similar headers, or by setting a specific session using [HTTP cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies).
+- *Proxy and tunneling*
+  Servers and/or clients are often located on intranets and hide their true IP address to others. HTTP requests then go through proxies to cross this network barrier. Not all proxies are HTTP proxies. The SOCKS protocol, for example, operates at a lower level. Others, like ftp, can be handled by these proxies.
+- *Sessions*
+  Using HTTP cookies allows you to link requests with the state of the server. This creates sessions, despite basic HTTP being a state-less protocol. This is useful not only for e-commerce shopping baskets, but also for any site allowing user configuration of the output.
+
+## HTTP flow
+
+When the client wants to communicate with a server, either being the final server or an intermediate proxy, it performs the following steps:
+
+1. Open a TCP connection: The TCP connection will be used to send a request, or several, and receive an answer. The client may open a new connection, reuse an existing connection, or open several TCP connections to the servers.
+
+2. Send an HTTP message: HTTP messages (before HTTP/2) are human-readable. With HTTP/2, these simple messages are encapsulated in frames, making them impossible to read directly, but the principle remains the same.
+
+   ```http
+   GET / HTTP/1.1
+   Host: developer.mozilla.org
+   Accept-Language: fr
+   ```
+
+3. Read the response sent by the server:
+
+   ```http
+   HTTP/1.1 200 OK
+   Date: Sat, 09 Oct 2010 14:28:02 GMT
+   Server: Apache
+   Last-Modified: Tue, 01 Dec 2009 20:18:22 GMT
+   ETag: "51142bc1-7449-479b075b2891b"
+   Accept-Ranges: bytes
+   Content-Length: 29769
+   Content-Type: text/html
+
+   <!DOCTYPE html... (here comes the 29769 bytes of the requested web page)
+   ```
+
+4. Close or reuse the connection for further requests.
+
+If HTTP pipelining is activated, several requests can be sent without waiting for the first response to be fully received. HTTP pipelining has proven difficult to implement in existing networks, where old pieces of software coexist with modern versions. H*TTP pipelining has been superseded in HTTP/2 with more robust multiplexing requests within a frame.*
+
+## HTTP Messages
+
+HTTP/1.1 and earlier HTTP messages are human-readable. In HTTP/2, these messages are embedded into a new binary structure, a frame, allowing optimizations like compression of headers and multiplexing. Even if only part of the original HTTP message is sent in this version of HTTP, the semantics of each message is unchanged and the client reconstitutes (virtually) the original HTTP/1.1 request. It is therefore useful to comprehend HTTP/2 messages in the HTTP/1.1 format.
+
+There are two types of HTTP messages, requests and responses, each with its own format.
+
+#### Requests
+
+An example HTTP request:
+
+<img src="images/HTTP_Request.png" width="400">
+
+Requests consists of the following elements:
+
+- An HTTP [method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods), usually a verb like [`GET`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET), [`POST`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST) or a noun like [`OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS) or [`HEAD`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD)that defines the operation the client wants to perform. Typically, a client wants to fetch a resource (using `GET`) or post the value of an [HTML form](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms) (using `POST`), though more operations may be needed in other cases.
+- The path of the resource to fetch; the URL of the resource stripped from elements that are obvious from the context, for example without the [protocol](https://developer.mozilla.org/en-US/docs/Glossary/protocol)(`http://`), the [domain](https://developer.mozilla.org/en-US/docs/Glossary/domain) (here `developer.mozilla.org`), or the TCP [port](https://developer.mozilla.org/en-US/docs/Glossary/port) (here `80`).
+- The version of the HTTP protocol.
+- Optional [headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) that convey additional information for the servers.
+- Or a body, for some methods like `POST`, similar to those in responses, which contain the resource sent.
+
+###### Host
+
+The `Host` request header specifies the domain name of the server (for virtual hosting), and (optionally) the TCP port number on which the server is listening.
+
+If no port is given, the default port for the service requested (e.g., "80" for an HTTP URL) is implied.
+
+*A `Host` header field must be sent in all HTTP/1.1 request messages. A [`400`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400) (Bad Request) status code will be sent to any HTTP/1.1 request message that lacks a `Host`header field or contains more than one.*
+
+Syntax: `Host: <host>:<port>`
+
+- `<host>`: the domain name of the server (for virtual hosting).
+- `<port>` (optional): TCP port number on which the server is listening.
+
+Example: `Host: developer.cdn.mozilla.net`
+
+
+
+#### Responses
+
+An example responses:
+
+<img src="images/HTTP_Response.png" width="400">
+
+Responses consist of the following elements:
+
+- The version of the HTTP protocol they follow.
+- A [status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status), indicating if the request has been successful, or not, and why.
+- A status message, a non-authoritative short description of the status code.
+- HTTP [headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers), like those for requests.
+- Optionally, a body containing the fetched resource.
+
+## APIs based on HTTP
+
+The most commonly used API based on top of HTTP is the **[`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)** API, which can be used to exchange data between a [user agent](https://developer.mozilla.org/en-US/docs/Glossary/user_agent) and a server.
+
+Another API, [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events), is a one-way service that allows a server to send events to the client, using HTTP as a transport mechanism. Using the [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)interface, the client opens a connection and establishes event handlers. The client browser automatically converts the messages that arrive on the HTTP stream into appropriate [`Event`](https://developer.mozilla.org/en-US/docs/Web/API/Event) objects, delivering them to the event handlers that have been registered for the events' [`type`](https://developer.mozilla.org/en-US/docs/Web/API/Event/type) if known, or to the [`onmessage`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/onmessage) event handler if no type-specific event handler was established.???
+
+## Conclusion
+
+HTTP is an extensible protocol that is easy to use. The client-server structure, combined with the ability to simply add headers, allows HTTP to advance along with the extended capabilities of the Web.
+
+Though HTTP/2 adds some complexity, by embedding HTTP messages in frames to improve performance, the basic structure of messages has stayed the same since HTTP/1.0. Session flow remains simple, allowing it to be investigated, and debugged with a simple [HTTP message monitor](https://developer.mozilla.org/en-US/docs/Tools/Network_Monitor).
+
+## HTTP headers
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+
+???
+
+## HTTP caching
+
 ???
 
 # HTTPS
@@ -2827,11 +3013,61 @@ A *Content-Encoding* like *gzip* can be used to compress the transmitted data.
 
 In HTTPS, the [communication protocol](https://en.wikipedia.org/wiki/Communication_protocol) is [encrypted](https://en.wikipedia.org/wiki/Encrypted) using [Transport Layer Security](https://en.wikipedia.org/wiki/Transport_Layer_Security)(TLS), or formerly, its predecessor, Secure Sockets Layer (SSL). The protocol is therefore also often referred to as **HTTP over TLS**,[[3\]](https://en.wikipedia.org/wiki/#cite_note-HTTP_Over_TLS-3) or **HTTP over SSL**.
 
-The principal motivation for HTTPS is authentication of the accessed website and protection of the privacy and integrity of the exchanged data while in transit.
+The principal motivation for HTTPS is *authentication of the accessed website and protection of the privacy and integrity of the exchanged data while in transit*.
 
-???
+- It protects against *man-in-the middle attacks*. The bidirectional encryption of communications between a client and server protects against eavesdropping and tampering of the communication.
+- In practice, this provides a reasonable assurance that one is communicating without interference by attackers with the website that one intended to communicate with, as opposed to an impostor.
+
+Historically, HTTPS connections were primarily used for payment transactions on the [World Wide Web](https://en.wikipedia.org/wiki/World_Wide_Web), e-mail and for sensitive transactions in corporate information systems.
+
+- Since 2018, HTTPS is used more often by webusers than the original non-secure HTTP, primarily to protect page authenticity on all types of websites; secure accounts; and keep user communications, identity, and web browsing private.
 
 
+
+> **Transport Layer Security (TLS)** : are [cryptographic protocols](https://en.wikipedia.org/wiki/Cryptographic_protocol) that provide [communications security](https://en.wikipedia.org/wiki/Communications_security) over a [computer network](https://en.wikipedia.org/wiki/Computer_network).
+>
+> - Several versions of the protocols find widespread use in applications such as [web browsing](https://en.wikipedia.org/wiki/Web_navigation), [email](https://en.wikipedia.org/wiki/Email), [instant messaging](https://en.wikipedia.org/wiki/Instant_messaging), and [voice over IP](https://en.wikipedia.org/wiki/Voice_over_IP) (VoIP). [Websites](https://en.wikipedia.org/wiki/Website) are able to use TLS to secure all communications between their [servers](https://en.wikipedia.org/wiki/Server_(computing)) and [web browsers](https://en.wikipedia.org/wiki/Web_browser).
+> - The TLS protocol aims primarily to provide [privacy](https://en.wikipedia.org/wiki/Privacy) and [data integrity](https://en.wikipedia.org/wiki/Data_integrity) between two or more communicating computer applications.
+> - When secured by TLS, connections between a client (e.g., a web browser) and a server (e.g., wikipedia.org) have one or more of the following properties:
+>   - The identity of the communicating parties can be *authenticated* using [public-key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography). This authentication can be made optional, but is generally required for at least one of the parties (typically the server).
+>   - The connection is *private* (or *secure*) because [symmetric cryptography](https://en.wikipedia.org/wiki/Symmetric-key_algorithm) is used to [encrypt](https://en.wikipedia.org/wiki/Encryption) the data transmitted.
+>   - The connection is *reliable* because each message transmitted includes a message integrity check using a [message authentication code](https://en.wikipedia.org/wiki/Message_authentication_code) to prevent undetected loss or alteration of the data during [transmission](https://en.wikipedia.org/wiki/Data_transmission).
+>   - In addition to the properties above, careful [configuration](https://en.wikipedia.org/wiki/Computer_configuration) of TLS can provide additional privacy-related properties such as [forward secrecy](https://en.wikipedia.org/wiki/Forward_secrecy), ensuring that any future disclosure of encryption keys cannot be used to decrypt any TLS communications recorded in the past.
+>
+> **MAC (message authentication code)**:
+>
+> - In [cryptography](https://en.wikipedia.org/wiki/Cryptography), a **message authentication code** (**MAC**), sometimes known as a *tag*, is a short piece of information used to [authenticate a message](https://en.wikipedia.org/wiki/Message_authentication)—in other words, to confirm that the message came from the stated sender (its authenticity) and has not been changed. 
+> - The MAC value protects both a message's [data integrity](https://en.wikipedia.org/wiki/Data_integrity) as well as its [authenticity](https://en.wikipedia.org/wiki/Message_authentication), by allowing verifiers (who also possess the secret key) to detect any changes to the message content.
+
+
+
+# HTTP/2
+
+HTTP/2 is a major revision of the HTTP network protocol used by the World Wide Web.
+
+- It was derived from the earlier experimental [SPDY](https://en.wikipedia.org/wiki/SPDY) protocol, originally developed by [Google](https://en.wikipedia.org/wiki/Google).
+- HTTP/2 was developed by the Hypertext Transfer Protocol working group httpbis of the *Internet Engineering Task Force*.
+
+## Goals
+
+- Create a negotiation mechanism that allows clients and servers to elect to use HTTP 1.1, 2.0, or potentially other non-HTTP protocols.
+- Maintain high-level compatibility with HTTP 1.1 (for example with [methods](https://en.wikipedia.org/wiki/HTTP_method), [status codes](https://en.wikipedia.org/wiki/HTTP_status_code), [URIs](https://en.wikipedia.org/wiki/URI), and most [header fields](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields)).
+- Decrease latency to improve page load speed in web browsers by considering:
+  - [Data compression](https://en.wikipedia.org/wiki/Data_compression) of [HTTP headers](https://en.wikipedia.org/wiki/HTTP_header)
+  - [HTTP/2 Server Push](https://en.wikipedia.org/wiki/HTTP/2_Server_Push)
+  - [Pipelining](https://en.wikipedia.org/wiki/HTTP_pipelining) of requests
+  - Fixing the [head-of-line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking) problem in HTTP 1.x
+  - [Multiplexing](https://en.wikipedia.org/wiki/Multiplexing) multiple requests over a single [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) connection
+- Support common existing use cases of HTTP, such as desktop web browsers, mobile web browsers, web APIs, [web servers](https://en.wikipedia.org/wiki/Web_server) at various scales, [proxy servers](https://en.wikipedia.org/wiki/Proxy_server), [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) servers, [firewalls](https://en.wikipedia.org/wiki/Firewall_(computing)), and [content delivery networks](https://en.wikipedia.org/wiki/Content_delivery_network). 
+
+## Differences from HTTP 1.1
+
+The proposed changes do not require any changes to how existing web applications work, but new applications can take advantage of new features for increased speed.
+
+HTTP/2 leaves most of HTTP 1.1's high-level syntax, such as [methods](https://en.wikipedia.org/wiki/HTTP_method), [status codes](https://en.wikipedia.org/wiki/HTTP_status_code), [header fields](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields), and [URIs](https://en.wikipedia.org/wiki/URI), the same. What is new is *how the data is framed and transported between the client and the server*.
+
+- Websites that are efficient minimize the number of requests required to render an entire page by [minifying](https://en.wikipedia.org/wiki/Minify) (reducing the amount of code and packing smaller pieces of code into bundles, without reducing its ability to function) resources such as images and scripts. However, minification is not necessarily convenient nor efficient and may still require separate HTTP connections to get the page and the minified resources. *HTTP/2 allows the server to "push" content*, that is, to respond with data for more queries than the client requested. This allows the server to supply data it knows a web browser will need to render a web page, without waiting for the browser to examine the first response, and without the overhead of an additional request cycle.
+- Additional performance improvements in the first draft of HTTP/2 (which was a copy of SPDY) come from *[multiplexing](https://en.wikipedia.org/wiki/Multiplexing) of requests and responses to avoid the [head-of-line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking) problem in HTTP 1* (even when [HTTP pipelining](https://en.wikipedia.org/wiki/HTTP_pipelining) is used), header [compression](https://en.wikipedia.org/wiki/Data_compression), and prioritization of requests.[[15\]](https://en.wikipedia.org/wiki/HTTP/2#cite_note-15) HTTP/2 no longer supports HTTP 1.1's [chunked transfer encoding](https://en.wikipedia.org/wiki/Chunked_transfer_encoding) mechanism, as it provides its own, more efficient, mechanisms for data streaming.
 
 # Checksum
 
