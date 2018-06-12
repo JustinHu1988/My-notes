@@ -3188,6 +3188,63 @@ Vary: User-Agent
 
 ## HTTP cookies
 
+An HTTP cookie (web cookie, browser cookie) is *a small piece of data that a server sends to the user's web browser*.
+
+- The browser may store it and send it back with the next request to the same server.
+- Typically, it's used to tell if two requests came from the same browser — keeping a user logged-in, for example. 
+- *It remembers stateful information for the [stateless](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview#HTTP_is_stateless_but_not_sessionless) HTTP protocol.*
+
+Cookies are mainly *used for three purposes:*
+
+- Session management
+  - Logins, shopping carts, game scores, or anything else the server should remember
+- Personalization
+  - User preferences, themes, and other settings
+- Tracking
+  - Recording and analyzing user behavior
+
+Cookies were once used for general client-side storage. While this was legitimate when they were the only way to store data on the client, it is recommended nowadays to prefer *modern storage APIs*. 
+
+- *Cookies are sent with every request, so they can worsen performance (especially for mobile data connections).* 
+- *Modern APIs for client storage are the [Web storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) (`localStorage` and `sessionStorage`) and [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API).*
+
+More about cookies : see https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies ???
+
+
+
+## Web Storage API
+
+The **Web Storage API** provides mechanisms by which browsers can *store key/value pairs*, in a much more intuitive fashion than using cookies.
+
+#### Concepts and useage
+
+The two mechanisms within Web Storage are as follows:
+
+- **`sessionStorage`** maintains a separate storage area for each given origin that's available for the duration of the page session (as long as the browser is open, including page reloads and restores)
+- **`localStorage`** does the same thing, but persists even when the browser is closed and reopened.
+
+These mechanisms are available via the [`Window.sessionStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) and [`Window.localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) properties (to be more precise, in supporting browsers the `Window` object implements the `WindowLocalStorage` and `WindowSessionStorage`objects, which the `localStorage` and `sessionStorage` properties hang off) — invoking one of these will create an instance of the [`Storage`](https://developer.mozilla.org/en-US/docs/Web/API/Storage) object, through which data items can be set, retrieved and removed. A different Storage object is used for the `sessionStorage` and `localStorage` for each origin — they function and are controlled separately.
+
+#### *Using the Web Storage API*
+
+Storage objects are simple key-value stores, similar to objects, but they stay intact through page loads. The keys and the values are always strings (note that integer keys will be automatically converted to strings, just like what objects do). You can access these values like an object, or with the [`Storage.getItem()`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem) and [`Storage.setItem()`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem) methods. These three lines all set the colorSetting entry in the same way:
+
+```javascript
+localStorage.colorSetting = '#a4509b';
+localStorage['colorSetting'] = '#a4509b';
+localStorage.setItem('colorSetting', '#a4509b');
+```
+
+> **Note**: It's recommended to use the Web Storage API (`setItem`, `getItem`, `removeItem`, `key`, `length`) to prevent the [pitfalls](http://www.2ality.com/2012/01/objects-as-maps.html) associated with using plain objects as key-value stores.
+
+###### Feature-detecting localStorage
+
+
+
+https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+
+**Need learn more, and write an example???**
+
 
 
 ## Proxy servers and tunneling
