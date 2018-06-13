@@ -1487,6 +1487,55 @@ HTTP/2 leaves most of HTTP 1.1's high-level syntax, such as [methods](https://en
 - Websites that are efficient minimize the number of requests required to render an entire page by [minifying](https://en.wikipedia.org/wiki/Minify) (reducing the amount of code and packing smaller pieces of code into bundles, without reducing its ability to function) resources such as images and scripts. However, minification is not necessarily convenient nor efficient and may still require separate HTTP connections to get the page and the minified resources. *HTTP/2 allows the server to "push" content*, that is, to respond with data for more queries than the client requested. This allows the server to supply data it knows a web browser will need to render a web page, without waiting for the browser to examine the first response, and without the overhead of an additional request cycle.
 - Additional performance improvements in the first draft of HTTP/2 (which was a copy of SPDY) come from *[multiplexing](https://en.wikipedia.org/wiki/Multiplexing) of requests and responses to avoid the [head-of-line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking) problem in HTTP 1* (even when [HTTP pipelining](https://en.wikipedia.org/wiki/HTTP_pipelining) is used), header [compression](https://en.wikipedia.org/wiki/Data_compression), and prioritization of requests.[[15\]](https://en.wikipedia.org/wiki/HTTP/2#cite_note-15) HTTP/2 no longer supports HTTP 1.1's [chunked transfer encoding](https://en.wikipedia.org/wiki/Chunked_transfer_encoding) mechanism, as it provides its own, more efficient, mechanisms for data streaming.
 
+
+
+
+
+# WebSockets
+
+WebSocket is a computer communications protocol, providing full-duplex communication channels over a single TCP connection.
+
+**WebSockets** are an advanced technology that makes it possible to open an interactive communication session between the user's browser and a server. 
+
+With this API, you can send messages to a server and receive event-driven responses without having to poll the server for a reply.
+
+
+
+WebSocket is a different TCP protocol from HTTP. 
+
+- Both protocols are located at layer 7 in the [OSI model](https://en.wikipedia.org/wiki/OSI_model) and, as such, depend on TCP at layer 4. 
+- Although they are different, [RFC 6455](https://tools.ietf.org/html/rfc6455) states that *WebSocket "is designed to work over HTTP ports 80 and 443 as well as to support HTTP proxies and intermediaries" thus making it compatible with the HTTP protocol.* 
+- *To achieve compatibility, the WebSocket handshake uses the [HTTP Upgrade header](https://en.wikipedia.org/wiki/HTTP/1.1_Upgrade_header) to change from the HTTP protocol to the WebSocket protocol.*
+
+
+
+???
+
+
+
+
+
+## Interfaces
+
+- `WebSocket`
+  - The primary interface for connecting to a WebSocket server and then sending and receiving data on the connection.
+- `CloseEvent`
+  - The event sent by the WebSocket object when the connection closes.
+- `MessageEvent`
+  - The event sent by the WebSocket object when a message is received from the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Checksum
 
 ???
