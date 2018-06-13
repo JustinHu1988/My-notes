@@ -1746,4 +1746,3 @@ HTTP/2 leaves most of HTTP 1.1's high-level syntax, such as [methods](https://en
 
 
 
- 
