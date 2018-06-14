@@ -1509,11 +1509,74 @@ WebSocket is a different TCP protocol from HTTP.
 
 
 
+
+The WebSocket protocol enables interaction between a web client (such as a browser) and a web server with lower overheads, facilitating real-time data transfer from and to the server. 
+
+- This is made possible by providing a standardized way for the server to send content to the client without being first requested by the client, and allowing messages to be passed back and forth while keeping the connection open. 
+- In this way, a two-way ongoing conversation can take place between the client and the server. 
+- *The communications are done over TCP [port](https://en.wikipedia.org/wiki/Port_(computer_networking)) number `80` (or `443` in the case of [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security)-encrypted connections),* which is of benefit for those environments which block non-web Internet connections using a [firewall](https://en.wikipedia.org/wiki/Firewall_(computing)). 
+- Similar two-way browser-server communications have been achieved in non-standardized ways using stopgap technologies such as [Comet](https://en.wikipedia.org/wiki/Comet_(programming)).
+
+
+
+**Comet**:
+
 ???
 
+## Protocol handshake
+
+To establish a WebSocket connection, the client sends a WebSocket handshake request, for which the server returns a WebSocket handshake response, as shown in the example below.
+
+- Client request (just like in HTTP, each line ends with `\r\n` and there must be an extra blank line at the end):
+
+  ```http
+  GET /chat HTTP/1.1
+  Host: server.example.com
+  Upgrade: websocket
+  Connection: Upgrade
+  Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
+  Sec-WebSocket-Protocol: chat, superchat
+  Sec-WebSocket-Version: 13
+  Origin: http://example.com
+  ```
+
+- Server response:
+
+  ```http
+  HTTP/1.1 101 Switching Protocols
+  Upgrade: websocket
+  Connection: Upgrade
+  Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk=
+  Sec-WebSocket-Protocol: chat
+  ```
+
+The handshake resembles HTTP in allowing servers to handle HTTP connections as well as WebSocket connections on the same port. Once the connection is established, communication switches to a bidirectional binary protocol which doesn't conform to the HTTP protocol.
+
+In addition to `Upgrade` headers, the client sends a `Sec-WebSocket-Key` header containing [base64](https://en.wikipedia.org/wiki/Base64)-encoded random bytes, and the server replies with a [hash](https://en.wikipedia.org/wiki/Hash_function) of the key in the `Sec-WebSocket-Accept` header. 
+
+- This is intended to prevent a [caching](https://en.wikipedia.org/wiki/Cache_(computing)) [proxy](https://en.wikipedia.org/wiki/HTTP_proxy) from re-sending a previous WebSocket conversation,[[31\]](https://en.wikipedia.org/wiki/WebSocket#cite_note-32) and does not provide any authentication, privacy or integrity.
+- The hashing function appends the fixed string `258EAFA5-E914-47DA-95CA-C5AB0DC85B11` (a [GUID](https://en.wikipedia.org/wiki/GUID)) to the value from `Sec-WebSocket-Key` header (which is not decoded from base64), applies the [SHA-1](https://en.wikipedia.org/wiki/SHA-1) hashing function, and encodes the result using base64.
+
+Once the connection is established, the client and server can send WebSocket data or text frames back and forth in [full-duplex](https://en.wikipedia.org/wiki/Duplex_(telecommunications)) mode. 
+
+- The data is minimally framed, with a small header followed by [payload](https://en.wikipedia.org/wiki/Payload_(computing)). 
+- WebSocket transmissions are described as "messages", where a single message can optionally be split across several data frames. This can allow for sending of messages where initial data is available but the complete length of the message is unknown (it sends one data frame after another until the end is reached and marked with the FIN bit). 
+- With extensions to the protocol, this can also be used for multiplexing several streams simultaneously (for instance to avoid monopolizing use of a socket for a single large payload).
+
+It is important (from a security perspective) to *validate the "Origin" header* during the connection establishment process on the server side (against the expected origins) to avoid Cross-Site WebSocket Hijacking attacks, which might be possible when the connection is authenticated with Cookies or HTTP authentication. 
+
+- *It is better to use tokens or similar protection mechanisms to authenticate the WebSocket connection when sensitive (private) data is being transferred over the WebSocket.*
 
 
 
+## Proxy traversal
+
+WebSocket protocol client implementations try to detect if the [user agent](https://en.wikipedia.org/wiki/User_agent) is configured to use a proxy when connecting to destination host and port and, if it is, uses [HTTP CONNECT](https://en.wikipedia.org/wiki/HTTP_tunnel#HTTP_CONNECT_tunneling) method to set up a persistent tunnel.
+
+While the WebSocket protocol itself is unaware of proxy servers and firewalls, it features an HTTP-compatible handshake thus allowing HTTP servers to share their default HTTP and HTTPS ports (80 and 443) with a WebSocket gateway or server. The WebSocket protocol defines a ws:// and wss:// prefix to indicate a WebSocket and a WebSocket Secure connection, respectively. Both schemes use an [HTTP upgrade mechanism](https://en.wikipedia.org/wiki/HTTP/1.1_Upgrade_header) to upgrade to the WebSocket protocol. Some proxy servers are transparent and work fine with WebSocket; others will prevent WebSocket from working correctly, causing the connection to fail. In some cases, additional proxy server configuration may be required, and certain proxy servers may need to be upgraded to support WebSocket.
+
+- If unencrypted WebSocket traffic flows through an explicit or a transparent proxy server without WebSockets support, the connection will likely fail.[[34\]](https://en.wikipedia.org/wiki/WebSocket#cite_note-35)
+- If an encrypted WebSocket connection is used, then the use of [Transport Layer Security](https://en.wikipedia.org/wiki/Transport_Layer_Security) (TLS) in the WebSocket Secure connection ensures that an HTTP CONNECT command is issued when the browser is configured to use an explicit proxy server. This sets up a tunnel, which provides low-level end-to-end TCP communication through the HTTP proxy, between the WebSocket Secure client and the WebSocket server. In the case of transparent proxy servers, the browser is unaware of the proxy server, so no HTTP CONNECT is sent. However, since the wire traffic is encrypted, intermediate transparent proxy servers may simply allow the encrypted traffic through, so there is a much better chance that the WebSocket connection will succeed if WebSocket Secure is used. Using encryption is not free of resource cost, but often provides the highest success rate since it would be travelling through a secure tunnel.
 
 ## Interfaces
 
