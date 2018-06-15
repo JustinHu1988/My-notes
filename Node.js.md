@@ -1,6 +1,6 @@
 Node.js 是js的一个执行环境。
 
-> （与浏览器的console运行环境类似，但全局变量不同。例如，浏览器里有window、document等全局对象；*Node.js 这个执行环境有着自己的全局变量， 例如：`process`*
+> （与浏览器的console运行环境类似，但全局变量不同。例如，浏览器里有window、document等全局对象；*Node.js 这个执行环境有着自己的全局变量， 例如：`global`, `process`*
 
 
 
