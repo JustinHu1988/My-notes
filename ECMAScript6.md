@@ -152,3 +152,201 @@ Whether you use class declarations or class expressions is mostly *a matter of s
 
 #### Named Class Expressions
 
+you can also name class expressions:
+
+```javascript
+let PersonClass = class PersonClass2 {
+  	// equivalent of the PersonType constructor
+    constructor(name) {
+        this.name = name
+    }
+    // equivalent of PersonType.prototype.sayName
+    sayName() {
+        console.log(this.name)
+    }
+}
+console.log(typeof PersonClass) 	// "function"
+console.log(typeof PersonClass2)	// "undefined"
+```
+
+In this example, the class expression is named `PersonClass2`. The `PersonClass2`identifier exists only within the class definition so that it can be used inside the class methods (such as the `sayName()` method in this example). Outside the class, `typeof PersonClass2` is `"undefined"` because no `PersonClass2` binding exists there. To understand why this is, look at an equivalent declaration that doesn't use classes:
+
+```javascript
+// direct equivalent of PersonClass named class expression
+let PersonClass = (function() {
+
+    "use strict"
+
+    const PersonClass2 = function(name) {
+
+        // make sure the function was called with new
+        if (typeof new.target === "undefined") {
+            throw new Error("Constructor must be called with new.")
+        }
+
+        this.name = name
+    }
+
+    Object.defineProperty(PersonClass2.prototype, "sayName", {
+        value: function() {
+
+            // make sure the method wasn't called with new
+            if (typeof new.target !== "undefined") {
+                throw new Error("Method cannot be called with new.")
+            }
+
+            console.log(this.name)
+        },
+        enumerable: false,
+        writable: true,
+        configurable: true
+    });
+
+    return PersonClass2
+}());
+```
+
+Creating a named class expression slightly changes what’s happening in the JavaScript engine. For class declarations, the outer binding (defined with `let`) has the same name as the inner binding (defined with `const`). A named class expression uses its name in the `const` definition, so `PersonClass2` is defined for use only inside the class.
+
+
+
+## Classes as First-Class Citizens
+
+#### Definition 
+
+In programming, something is said to be a *first-class citizen* when it can be used as a value, meaning it can be passed into a function, returned from a function, and assigned to a variable.
+
+-  JavaScript functions are first-class citizens (sometimes they're just called first class functions), and that’s part of what makes JavaScript unique.
+- ECMAScript 6 continues this tradition by making classes first-class citizens as well. That allows classes to be used in a lot of different ways.
+
+#### Usage
+
+- passed into functions as arguments:
+
+  ```javascript
+  function createObject(classDef){
+    return new classDef()
+  }
+
+  let obj = createObject(class {
+      sayHi(){
+          console.log("Hi")
+      }
+  })
+  obj.sayHi()		// "Hi"
+  ```
+
+  ​
+
+- creating singletons by immediately invoking the class constructor: (you must use `new` with a class expression and include parentheses at the end)
+
+  ```javascript
+  let person = new class {
+    constructor(name){
+        this.name = name
+    }
+    sayName(){
+        console.log(this.name)
+    }
+  }('Nicholas')
+  person.sayName();	// "Nicholas"
+  ```
+
+  ​
+
+## Accessor Properties
+
+classes allow you to define accessor properties on the prototype.
+
+```javascript
+class CustomHTMLElement {
+    
+  constructor(element){
+      this.element = element
+  }
+  get html(){
+      return this.element.innerHTML
+  }
+  set html(value){
+      this.element.innerHTML = value;
+  }
+  
+}
+```
+
+This accessor property is created on the CustomHTMLElement.prototype and, just like any other method would be, is created as non-enumerable. The equivalent non-class representation is:
+
+```javascript
+// direct equivalent to previous example
+let CustomHTMLElement = (function() {
+
+    "use strict";
+
+    const CustomHTMLElement = function(element) {
+
+        // make sure the function was called with new
+        if (typeof new.target === "undefined") {
+            throw new Error("Constructor must be called with new.");
+        }
+
+        this.element = element;
+    }
+
+    Object.defineProperty(CustomHTMLElement.prototype, "html", {
+        enumerable: false,
+        configurable: true,
+        get: function() {
+            return this.element.innerHTML;
+        },
+        set: function(value) {
+            this.element.innerHTML = value;
+        }
+    });
+
+    return CustomHTMLElement;
+}());
+```
+
+
+
+## Computed Member Names
+
+The similarities between object literals and classes aren't quite over yet. Class methods and accessor properties can also have computed names. 
+
+Instead of using an identifier, use square brackets around an expression, which is the same syntax used for object literal computed names.
+
+```Javascript
+let methodName = "sayName";
+class PersonClass {
+    constructor(name){
+        this.name = name
+    }
+  [methodName](){
+      console.log(this.name)
+  }
+}
+let me = new PersonClass("Nicholas")
+me.sayName()	// 'Nicholas'
+```
+
+Accessor properties can use computed names in the same way, like this:
+
+```javascript
+let propertyName = "html";
+
+class CustomHTMLElement {
+
+    constructor(element) {
+        this.element = element;
+    }
+
+    get [propertyName]() {
+        return this.element.innerHTML;
+    }
+
+    set [propertyName](value) {
+        this.element.innerHTML = value;
+    }
+}
+```
+

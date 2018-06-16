@@ -63,3 +63,25 @@ Enumerable properties are those properties whose internal [[Enumerable]] flag is
 
 
 
+#### *Getter / setter (access property)*
+
+```javascript
+var obj = {
+  log: ['a', 'b', 'c'],
+  get latest() {
+    if (this.log.length == 0) {
+      return undefined;
+    }
+    return this.log[this.log.length - 2];
+  },
+  set latest(value){
+  	this.log.push(value)
+  }
+}
+console.log(obj.latest); // "b"
+obj.latest = "d";
+console.log(obj.latest); // "c"
+```
+
+
+
