@@ -385,7 +385,24 @@ node
 
 #### HTTP module
 
+First, let's look at an example:
 
+```javascript
+var http = require('http')
 
+http
+	.createServer(function(req, res){
+		res.writeHead(200, {'Content-Type': 'text/plain'})
+		res.write('Hello Nodejs')
+		res.end()
+	})
+	.listen(2015)
+```
 
+- `http.createServer([requestListener])`
+  - `requestListener`<Function>
+    - The `requestListener` is a function which is automatically added to the [`'request'`](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_event_request) event.
+  - Returns: <http.Server>
+    - *Returns a new instance of [`http.Server`](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_class_http_server).*
+- ​
 
