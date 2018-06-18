@@ -122,3 +122,18 @@ StaticMethodCall.anotherStaticMethod();
 
 
 #### Symbol
+
+
+
+#### Generator
+
+
+
+#### Promise
+
+
+
+#### 原生dom操作
+
+- `Element.querySelector()`
+  - Returns the first element that is a descendant of the element on which it is invoked that matches the specified group of selectors.
