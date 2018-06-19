@@ -5,17 +5,16 @@
 			class="add-input"
 			autofocus="autofocus"
 			placeholder="接下来要做什么呢？"
-
 			@keyup.enter="addTodo"
-			
-		>
-		<Item 
-		 	:todo="todo">
-		 	v-for="todo in todos"
+		/>
+		<Item
+			v-for="todo in todos" 
+		 	:todo="todo"
 		 	:key="todo.id"
+		 	@del="deleteTodo"
 		></Item>
 
-		<tabs :filter="filter"></tabs>
+		<tabs :filter="filter" :todos="todos"></tabs>
 	</section>
 </template>
 
@@ -43,6 +42,10 @@
 					content: e.target.value.trim(),
 					completed: false,
 				})
+				e.target.value = ''
+			},
+			deleteTodo(id){
+				this.todos.splice(this.todos.findIndex(todo => todo.id === id), 1)
 			}
 		}
 	}
