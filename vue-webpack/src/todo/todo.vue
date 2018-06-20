@@ -8,13 +8,19 @@
 			@keyup.enter="addTodo"
 		/>
 		<Item
-			v-for="todo in todos" 
+			v-for="todo in filteredTodos" 
 		 	:todo="todo"
 		 	:key="todo.id"
 		 	@del="deleteTodo"
 		></Item>
 
-		<tabs :filter="filter" :todos="todos"></tabs>
+		<tabs 
+			:filter="filter" 
+			:todos="todos"
+			@toggle="toggleFilter"
+			@clearAllCompleted='clearAllCompleted'
+		>
+		</tabs>
 	</section>
 </template>
 
@@ -35,6 +41,17 @@
 			Item,
 			Tabs,
 		},
+		computed:{
+			filteredTodos(){
+				if(this.filter === 'all'){
+					return this.todos
+				}else if(this.filter ==='completed'){
+					return this.todos.filter(todo => todo.completed);
+				}else{
+					return this.todos.filter(todo => !todo.completed);
+				}
+			}
+		},
 		methods: {
 			addTodo(e){
 				this.todos.unshift({
@@ -46,7 +63,14 @@
 			},
 			deleteTodo(id){
 				this.todos.splice(this.todos.findIndex(todo => todo.id === id), 1)
+			},
+			toggleFilter(state){
+				this.filter = state
+			},
+			clearAllCompleted(){
+				this.todos = this.todos.filter(todo => !todo.completed);
 			}
+
 		}
 	}
 </script>

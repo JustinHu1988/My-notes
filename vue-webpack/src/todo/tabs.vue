@@ -38,8 +38,12 @@
 			}
 		},
 		methods:{
-			clearAllCompleted(){},
-			toggleFilter(){}
+			clearAllCompleted(){
+				this.$emit('clearAllCompleted')
+			},
+			toggleFilter(state){
+				this.$emit('toggle', state)
+			}
 		}
 	}
 </script>
