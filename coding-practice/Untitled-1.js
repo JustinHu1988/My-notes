@@ -319,6 +319,53 @@ var mincostToHireWorkers = function(quality, wage, K) {
     }
     return min
 };
+
+
+
+var mincostToHireWorkers = function(quality, wage, K) {
+    let arr = [];
+    for(let i=0; i<quality.length; i++){
+        arr.push({ratio:wage[i]/quality[i], wage: wage[i], quality: quality[i]});
+    }
+    arr.sort(function(a,b){
+        return a.ratio - b.ratio
+    })
+
+    let min = 9999999999;
+    let arrQ = arr.slice(0);
+    arrQ.sort(function(a,b){
+        return a.quality - b.quality
+    })
+    for(let i=0; i<arrQ.length; i++){
+        arrQ[i].index = i;
+    }
+
+    for(let i=K-1; i<arr.length; i++){
+        let tempArr = arr.slice(0,i);
+        let objQ = {}
+        for(let k=0; k<tempArr.length; k++){
+            objQ[tempArr[k].index] = tempArr[k];
+        }
+        let count = 0;
+        let temp = 0;
+        let kArr = [];
+        for(let z=0; z<arr.length; z++){
+            if(objQ[z]!==undefined && count<K-1){
+                count++;
+                temp+=objQ[z].wage*arr[i].ratio/objQ[z].ratio
+            }
+            if(count===K-1){
+                break;
+            }
+        }
+
+        temp+=arr[i].wage
+        if(temp<min){
+            min=temp
+        }
+    }
+    return min
+};
 mincostToHireWorkers([25,68,35,62,52,57,35,83,40,51],
     [147,97,251,129,438,443,120,366,362,343]
     ,6);
