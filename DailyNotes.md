@@ -250,3 +250,107 @@ The `Object.create()` method creates a new object, using an existing object to p
 
 
 
+
+
+
+
+## Regular Expressions
+
+Regular expressions are patterns used to match character combinations in strings.
+
+In JavaScript, regular expressions are also objects.
+
+- These patterns are used with the `exec` and `test` methods of `RegExp`, and with the `match`, `replace`, `search`, and `split` methods of `String`.
+
+#### Creating a regular expression
+
+You construct a regular expression in one of two ways:
+
+1. *regular expression literal* (consists of a pattern enclosed between slashes): 
+
+   ```javascript
+   var re = /ab+c/;
+   ```
+
+   - Regular expression literals provide compilation of the regular expression *when the script is loaded*. If the regular expression remains constant, using this can improve performance.
+
+2. *calling the constructor function of the `RegExp` object*:
+
+   ```javascript
+   var re = new RegExp('ab+c');
+   ```
+
+   - Using the constructor function provides *runtime compilation* of the regular expression.
+   - Use the constructor function when you know the regular expression pattern will be changing, or you don't know the pattern and are getting it from another source, such as user input.
+
+#### Writing a regular expression pattern
+
+A regular expression pattern is composed of 
+
+- simple characters, such as `/abc/`, 
+- or a combination of simple and special characters, such as `/ab*c/` or `/Chapter(\d+)\.\d*/`. The last example includes parentheses which are used as a memory device. The match made with this part of the pattern is remembered for later use, as described in [Using parenthesized substring matches](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Using_parenthesized_substring_matches).
+
+###### Using simple patterns
+
+Simple patterns are constructed of characters for which you want to find a direct match. 
+
+###### Using special characters
+
+The following table provides a complete list and description of the special characters that can be used in regular expressions.
+
+- **`\`**
+
+  Matches according to the following rules:
+
+  - A backslash that precedes a non-special character indicates that the next character is special and is not to be interpreted literally. 
+    - For example, a '`b`' without a preceding '\' generally matches lowercase 'b's wherever they occur. But a '`\b`' by itself doesn't match any character; it forms the special [word boundary character](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#special-word-boundary).
+  - A backslash that precedes a special character indicates that the next character is not special and should be interpreted literally. 
+    - For example, the pattern `/a*/` relies on the special character '`*`' to match 0 or more a's. By contrast, the pattern `/a\*/` denotes the '`*`'  as not special, enabling matches with strings like 'a*'.
+  - Do not forget to escape `\` itself while using the RegExp("pattern") notation because `\` is also an escape character in strings.
+
+- **`^`**
+
+  Matches beginning of input. 
+
+  - If the multiline flag is set to true, also matches immediately after a line break character.
+
+- **`$`**
+
+  Matches end of input.
+
+  - If the multiline flag is set to true, also matches immediately before a line break character.
+
+- **`*`**
+
+  Matches the preceding expression 0 or more times.
+
+  - Equivalent to `{0,}`.
+
+- **`+`**
+
+  Matches the preceding expression 1 or more times.
+
+  - Equivalent to `{1,}`
+
+- **`?`**
+
+  Matches the preceding expression 0 or 1 time.
+
+  - Equivalent to `{0,1}`
+  - If used immediately after any of the quantifiers *, +, ?, or {}, makes the quantifier non-greedy (matching the fewest possible characters), as opposed to the default, which is greedy (matching as many characters as possible). For example, applying `/\d+/` to "123abc" matches "123". But applying `/\d+?/` to that same string matches only the "1". ???
+  - Also used in lookahead assertions, as described in the `x(?=y)` and `x(?!y)` entries of this table.
+
+- **`.`**
+
+  Matches any single character except the newline character.
+
+- **`(x)`**
+
+  Matches 'x' and remembers the match, as the following example shows. The parentheses are called *capturing parentheses*.
+
+  - The '`(foo)`' and '`(bar)`' in the pattern `/(foo) (bar) \1 \2/` match and remember the first two words in the string "foo bar foo bar". The `\1` and `\2` in the pattern match the string's last two words. Note that `\1`, `\2`, ..., `\n` are used in the matching part of the regex. In the replacement part of a regex the syntax `$1`, `$2`, ..., `$n` must be used, e.g.: `'bar foo'.replace(/(...) (...)/, '$2 $1')`.  `$&` means the whole matched string. ???
+
+
+
+
+
