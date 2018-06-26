@@ -559,5 +559,110 @@ The `g` after the regular expression is an option or flag that performs a global
 
 ###### Using parentheses
 
-Parentheses around any part of the regular expression pattern causes that part of the matched substring to be remembered. Once remembered, the substring can be recalled for other use, as described in [Using Parenthesized Substring Matches](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Using_parenthesized_substring_matches).
+Parentheses around any part of the regular expression pattern causes that part of the matched substring to be remembered. *Once remembered, the substring can be recalled for other use*, as described in [Using Parenthesized Substring Matches](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Using_parenthesized_substring_matches).
+
+- For example, the pattern `/Chapter (\d+)\.\d*/` :
+  - This pattern is found in "Open Chapter 4.3, paragraph 6" and '4' is remembered.
+
+To match a substring without causing the matched part to be remembered, within the parentheses preface the pattern with `?:`. 
+
+-  For example, `(?:\d+)` matches one or more numeric characters but does not remember the matched characters.
+
+
+
+#### Working with regular expressions
+
+Regular expressions are used with the `RegExp` methods `test` and `exec` and with the `String` methods `match`, `replace`, `search`, and `split`. These methods are explained in detail in the [JavaScript reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference).
+
+*Methods that use regular expressions:*
+
+- **`exec`** - `RegExp.prototype.exec()`
+
+  - The `exec()` method executes a search for a match in a specified string. 
+
+  - *Return*: a result array, or `null`.
+
+  - Example:
+
+    ```javascript
+    const regex1 = RegExp('foo*', 'g')
+    const str1 = 'table football, foosball'
+    let array1;
+
+    while((array1=regex1.exec(str1)) !== null){
+      console.log(`Found ${array1[0]}. Next starts at ${regex1.lastIndex}`)
+    }
+    // expected output: "Found foo. Next starts at 9."
+    // expected output: "Found foo. Next starts at 19."
+    ```
+
+    ​
+
+- **`test`** - `RegExp.prototype.test()`
+
+  - The `test()` method executes a search for a match between a regular expression and a specified string.
+
+  - *Return*: `true` or `false`
+
+  - Example:
+
+    ```javascript
+    const regex1 = RegExp('foo*')
+    const regex2 = RegExp('foo*', 'g')
+    const str1 = 'table football'
+    const str2 = 'table football'
+
+    console.log(regex1.test(str1))  // true
+    console.log(regex1.test(str1))  // true
+    console.log(regex2.test(str1))  // true
+    console.log(regex2.test(str2))  // false
+    ```
+
+- **`match`** - `String.prototype.match(regexp)`
+
+  - The `match()` method retrieves the matches when matching a *string* against a *regular expression*. 
+
+- **`search`**
+
+- **`replace`**
+
+- **`split`**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
