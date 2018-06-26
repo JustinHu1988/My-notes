@@ -350,7 +350,214 @@ The following table provides a complete list and description of the special char
 
   - The '`(foo)`' and '`(bar)`' in the pattern `/(foo) (bar) \1 \2/` match and remember the first two words in the string "foo bar foo bar". The `\1` and `\2` in the pattern match the string's last two words. Note that `\1`, `\2`, ..., `\n` are used in the matching part of the regex. In the replacement part of a regex the syntax `$1`, `$2`, ..., `$n` must be used, e.g.: `'bar foo'.replace(/(...) (...)/, '$2 $1')`.  `$&` means the whole matched string. ???
 
+- **`(?:x)`**
+
+  Match 'x' but does not remember the match. The parentheses are called *non-capturing parentheses*, and let you define subexpressions for regular expression operators to work with.
+
+  - Consider the sample expression `/(?:foo){1,2}/`. 
+    - If the expression was `/foo{1,2}/`, the `{1,2}` characters would apply only to the last 'o' in 'foo'.
+    - With the non-capturing parentheses, the `{1,2}` applies to the entire word 'foo'.
+    - For more information, see [Using parentheses](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Using_parentheses) below.
+
+- **`x(?=y)`**
+
+  Matches 'x' only if 'x' is followed by 'y'. This is called a *lookahead*.
+
+  - For example: 
+    - `/Jack(?=Sprat)/` matches 'Jack' only if it is followed by 'Sprat'.
+    - `/Jack(?=Spart|Frost)/` matches 'Jack' only if it is followed by 'Sprat' or 'Frost'. However, neither 'Sprat' nor 'Frost' is part of the match results.
+
+- **`x(?!y)`**
+
+  Matches 'x' only if 'x' is not followed by 'y'. This is called a *negated lookahead*.
+
+  - For example: 
+    - `/\d+(?!\.)/` matches a number only if it is not followed by a decimal point.
+    - The regular expression `/\d+(?!\.)/.exec("3.141")` matches '141' but not '3.141'.
+
+- **`x|y`**
+
+  Matches 'x', or 'y' (if there is no match for 'x').
+
+  - For example: `/green|red/` matches 'green' in 'green apple' and 'red' in 'red apple'.
+  - The order of 'x' and 'y' matters. 
+    - For example, `a*|b` matches the empty string in 'b', but `b|a*` matches 'b' in the same string.
+
+- **`{n}`**
+
+  Matches exactly `n` occurrences of the preceding expression. `n` must be a positive integer.
+
+  - For example, `/a{2}/`
+
+- **`{n,}`**
+
+  Matches at least `n` occurrences of the preceding expression. `n` must be a positive integer.
+
+  For example, `/a{2,}/`
+
+- **`{n,m}`**
+
+  Where `n` and `m` are positive integers and `n <= m`. Matches at least `n` and at most `m` occurrences of the preceding expression. When `m` is omitted, it's treated as ∞.
+
+- **`[xyz]`**
+
+  *Character set*. This pattern type matches any one of the characters in the brackets, including [escape sequences](https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Values,_variables,_and_literals#Unicode_escape_sequences).
+
+  - Special characters like the dot(`.`) and asterisk (`*`) are not special inside a character set, so they don't need to be escaped. You can specify a range of characters by using a hyphen `-`, as the following examples illustrate.
+  - The pattern `[a-d]`, which performs the same match as `[abcd]`, matches the 'b' in "brisket" and the 'c' in "city".
+  - The patterns `/[a-z.]+/` and `/[\w.]+/` match the entire string "test.i.ng".
+
+- **`[^xyz]`**
+
+  *A negated or complemented character set.* That is, it matches anything that is not enclosed in the brackets.
+
+  - You can specify a range of characters by using a hyphen. Everything that works in the normal character set also works here.
+  - For example, `[^abc]` is the same as `[^a-c]`. They initially match 'r' in "brisket" and 'h' in "chop".
+
+- **`[\b]`**
+
+  Matches a *backspace* (U+0008). You need to use square brackets if you want to match a literal backspace character. (Not to be confused with `\b`).
+
+- **`\b`**
+
+  Matches a *word bounary*. 
+
+  - A word boundary matches the position where a word character is not followed or preceded by another word-character.
+
+  - Note that *a matched word boundary is not include in the match*. In other words, the length of a matched word boundary is zero.
+
+  - Examples:
+
+    - `/\bm/` matches the 'm' in "moon";
+
+    - `/oo\b/` does not match the 'oo' in "moon";
+
+    - `/oon\b/` matches the 'oon' in "moon".
+
+    - *`/\w\b\w/` will never match anything*, because a word character can never be followed by both a non-word and a word character.
+
+      > **Note:** JavaScript's regular expression engine defines a [specific set of characters](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6) to be **"word" characters**. Any character not in that set is considered a word break. This set of characters is fairly limited: it consists solely of the Roman alphabet in both upper- and lower-case, decimal digits, and the underscore character. Accented characters, such as "é" or "ü" are, unfortunately, treated as word breaks.
+
+- **`\B`**
+
+  Matches a *non-word boundary*. This matches the following cases:
+
+  - Before the first character of the string, if the first character is not a word character.
+  - After the last character of the string, if hte last character is not a word character.
+  - Between two word characters.
+  - Between two non-word characters.
+  - The empty string.
+
+  *The beginning and end of a string are considered non-words.*
+
+  - For example, `/\B../` matches 'oo' in "noonday", and `/y\B./` matches 'ye' in "possibly yesterday".
+
+- **`\cX`**
+
+  Where `X` is a character ranging from `A` to `Z`. Matches a control character in a string.
+
+  - For example, `/\cM/` matches control-M (U+000D) in a string.
+
+- **`\d`**
+
+  Matches a digit character. Equivalent to `[0-9]`.
+
+  - For example, `/\d/`  or `/[0-9]/` matches '2' in "B2 is the suite number".
+
+- **`\D`**
+
+  Matches a non-digit character. Equivalent to `[^0-9]`.
+
+  - For example, `/\D/` or `/[^0-9]/` matches 'B' in "B2 is the suite number".
+
+- **`\f`**
+
+  Matches a form feed (U+000C).
+
+- **`\n`**
+
+  Matches a line feed (U+000A).
+
+- **`\r`**
+
+  Matches a carriage return (U+000D).
+
+- **`\s`**
+
+  Matches a single white space character, including space, tab, form feed, line feed.
+
+  - Equivalent to `[\f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]`.
+  - For example, `/\s\w*/` matches 'bar' in "foo bar".
+
+- **`\S`**
+
+  Matches a single character other than white space.
+
+  - Equivalent to `[^ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]`.
+  - For example, `/\S*/` matches 'foo' in "foo bar".
+
+- **`\t`**
+
+  Matches a tab (U+0009).
+
+- **`\v`**
+
+  Matches a vertical tab (U+000B).
+
+- **`\w`**
+
+  Matches any alphanumeric character including the underscore.
+
+  - *Equivalent to `[A-Za-z0-9_]`.*
+  - For example, `/\w/` matches 'a' in "apple", '5' in "$5.28", and '3' in "3D".
+
+- **`\W`**
+
+  Matches any non-word character. 
+
+  - *Equivalent to `[^A-Za-z0-9_]`.*
+  - For example, `/\W/` or `/[^A-Za-z0-9_]/` matches '%' in "50%".
+
+- ***`\n`***
+
+  Where `n`  is a positive integer, a back reference to the last substring matching the `n` parenthetical in the regular expression (counting left parentheses).
+
+  - For example, `/apple(,)\sorange\1/` matches 'apple, orange,' in "apple, orange, cherry, peach".
+
+- **`\0`**
+
+  Matches a `NULL`(U+0000) character.
+
+  - *Do not follow this with another digit, because `\0<digits>` is an octal  [escape sequence](https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Values,_variables,_and_literals#Unicode_escape_sequences). Instead use `\x00`.*
+
+- **`\xhh`**
+
+  Matches the character with the code `hh`(two hexadecimal digits).
+
+- **`\uhhhh`**
+
+  Matches the character with the code `hhhh`(four hexadecimal digits).
+
+- **`\u{hhhh}`**
+
+  (Only when u flag is set) Matches the character with the Unicode value `hhhh`(hexadecimal digits).
 
 
 
+
+*Escaping user input that is to be treated as a literal string within a regular expression — that would otherwise be mistaken for a special character — can be accomplished by simple replacement: ???*
+
+```Javascript
+function escapeRegExp(string){
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); //  $& means the whole matched string
+}
+```
+
+The `g` after the regular expression is an option or flag that performs a global search, looking in the whole string and returning all matches.
+
+
+
+###### Using parentheses
+
+Parentheses around any part of the regular expression pattern causes that part of the matched substring to be remembered. Once remembered, the substring can be recalled for other use, as described in [Using Parenthesized Substring Matches](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Using_parenthesized_substring_matches).
 
