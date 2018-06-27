@@ -403,7 +403,7 @@ The following table provides a complete list and description of the special char
 
   *Character set*. This pattern type matches any one of the characters in the brackets, including [escape sequences](https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Values,_variables,_and_literals#Unicode_escape_sequences).
 
-  - Special characters like the dot(`.`) and asterisk (`*`) are not special inside a character set, so they don't need to be escaped. You can specify a range of characters by using a hyphen `-`, as the following examples illustrate.
+  - *Special characters like the dot(`.`) and asterisk (` *`) are not special inside a character set*, so they don't need to be escaped. You can specify a range of characters by using a hyphen `-`, as the following examples illustrate.
   - The pattern `[a-d]`, which performs the same match as `[abcd]`, matches the 'b' in "brisket" and the 'c' in "city".
   - The patterns `/[a-z.]+/` and `/[\w.]+/` match the entire string "test.i.ng".
 
@@ -622,11 +622,355 @@ Regular expressions are used with the `RegExp` methods `test` and `exec` and wit
 
   - The `match()` method retrieves the matches when matching a *string* against a *regular expression*. 
 
-- **`search`**
+  - Parameters: `regexp`
 
-- **`replace`**
+    - A regular expression object. 
+    - If a non-RegExp object `obj` is passed, it is implicitly converted to a `RegExp` by using `new RegExp(obj)`.
+    - If you don't give any parameter and use the match() method directly, you will get an `Array` with an empty string: `[""]`.
 
-- **`split`**
+  - Return value: 
+
+    - If the string matches the expression, it will return an `Array` containing the entire matched string as the first element, followed by any results captured in parentheses.
+    - If there were no matches, `null` is returned.
+
+  - Example:
+
+    ```javascript
+    const str = 'For more information, see Chapter 3.4.5.1'
+    const re = /see (chapter \d+(\.\d)*)/i
+    let found = str.match(re)
+    console.log(found)
+    // logs [ 'see Chapter 3.4.5.1',
+    //        'Chapter 3.4.5.1',
+    //        '.1',
+    //        index: 22,
+    //        input: 'For more information, see Chapter 3.4.5.1' ]
+    // 'see Chapter 3.4.5.1' is the whole match.
+    // 'Chapter 3.4.5.1' was captured by '(chapter \d+(\.\d)*)'.
+    // '.1' was the last value captured by '(\.\d)'.
+    // The 'index' property (22) is the zero-based index of the whole match.
+    // The 'input' property is the original string that was parsed.
+
+    /** Using global and ignore case flags with match() **/
+    const str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    const regexp = /[A-E]/gi
+    const matches_array = str.match(regexp)
+    console.log(matches_array)
+    // ['A', 'B', 'C', 'D', 'E', 'a', 'b', 'c', 'd', 'e']
+
+    /** Using match() with no parameter **/
+    const str = "Nothing will come of nothing."
+    str.match() // returns [""]
+
+    /** A non-RegExp object as the parameter **/
+    const str1 = "NaN means not a number. Infinity contains -Infinity and +Infinity in JavaScript.",
+        str2 = "My grandfather is 65 years old and My grandmother is 63 years old.",
+        str3 = "The contract was declared null and void."
+    str1.match("number")	// "number" is a string, returns ["number"]
+    str1.match(NaN)			// the type of NaN is the number, returns ["NaN"]
+    str1.match(Infinity)	// the type of Infinity is the number, returns ["Infinity"]
+    str1.match(+Infinity)	// returns ["Infinity"]
+    str1.match(-Infinity)	// returns ["-Infinity"]
+    str2.match(65)			// returns ["65"]
+    str2.match(+65)			// A number with a positive sign. return ["65"]
+    str3.match(null)		// return ["null"]
+    ```
+
+- **`search`** - `String.prototype.search(regexp)`
+
+  The `search()` method executes a search for a match between a regular expression and this `String` object.
+
+  - Return: The index of the first match between the regular expression and the given string; if not found, return `-1`.
+
+  - Example:
+
+    ```javascript
+    const str = "hey JudE"
+    const re = /[A-Z]/g
+    const re2 = /[.]/g
+    console.log(str.search(re))  // returns 4, which is the index of the first capital letter "J"
+    console.log(str.search(re2)) // returns -1 cannot find '.' dot punctuation
+    ```
+
+    ​
+
+- **`replace`** - `String.prototype.replace(regexp|substr, newSubstr|function)`
+
+  The `replace()` method returns a new string with some or all matches of a `pattern` replaced by a `replacement`. The `pattern` can be a string or a `RegExp`, and the `replacement` can be a string or a function to be called for each match.
+
+  - Parameters: 
+
+    - `regexp`(pattern)
+      - A `RegExp` object or literal. The match or matches are replaced with `newSubStr` or the value returned by the specified `function`.
+    - `substr`(pattern)
+      - A `String` that is to be replaced by `newSubstr`. It is treated as a verbatim string and is not interpreted as a regular expression. Only the first occurrence will be replaced.
+    - `newSubStr` (replacement)
+      - The `String` that replaces the substring specified by the specified `regexp` or `substr` parameter. A number of special replacement patterns are supported; see the "[Specifying a string as a parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter)" section below.
+    - `function` (replacement)
+      - A function to be invoked to create the new substring to be used to replace the matches to the given `regexp` or `substr`. The arguments supplied to this function are described in the "[Specifying a function as a parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter)" section below.
+
+  - Return value:
+
+    - This method does not change the `String` object it is called on. It simply returns a new string.
+    - A new string with some or all matches of a pattern replaced by a replacement.
+
+  - Specifying a string as a parameter :
+
+    - The replacement string can include the following special replacement patterns:
+
+      | Pattern | Inserts                                  |
+      | ------- | ---------------------------------------- |
+      | `$$`    | Inserts a "$".                           |
+      | `$&`    | Inserts the matched substring.           |
+      | ``$` `` | Inserts the portion of the string that precedes the matched substring. |
+      | `$'`    | Inserts the portion of the string that follows the matched substring. |
+      | *`$n`*  | Where *`n`* is a positive integer less than 100, inserts the *n*th parenthesized submatch string, provided the first argument was a [`RegExp`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) object. Note that this is 1-indexed. |
+
+  - Specifying a function as a parameter :
+
+    - You can specify a function as the second parameter.
+
+    - In this case, the function will be invoked after the match has been performed. The function's result (return value) will be used as the replacement string. (Note: The above-mentioned special replacement patterns do *not* apply in this case.)
+
+    - Note that the function will be invoked multiple times for each full match to be replaced if the regular expression in the first parameter is global.
+
+    - *The arguments to the function are as follows*:
+
+      | Possible name | Supplied value                           |
+      | ------------- | ---------------------------------------- |
+      | `match`       | The matched substring. (Corresponds to `$&` above.) |
+      | `p1, p2, ...` | The *n*th parenthesized submatch string, provided the first argument to `replace()` was a [`RegExp`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) object. (Corresponds to `$1`, `$2`, etc. above.) For example, if `/(\a+)(\b+)/`, was given, `p1` is the match for `\a+`, and `p2` for `\b+`. |
+      | `offset`      | The offset of the matched substring within the whole string being examined. (For example, if the whole string was `'abcd'`, and the matched substring was `'bc'`, then this argument will be 1.) |
+      | `string`      | The whole string being examined.         |
+
+      (The exact number of arguments will depend on whether the first argument was a `RegExp` object and, if so, how many parenthesized sub matches it specifies.)
+
+    - The following example will set `newString` to `'abc - 12345 - #$*%'`:
+
+      ```javascript
+      function replacer(match, p1, p2, p3, offset, string){
+        // p1 is nondigits, p2 digits, and p3 non-alphanumerics
+        console.log(match) // 'abc12345#$*%'
+        return [p1,p2,p3].join(' - ')
+      }
+      const newString = 'abc12345#$*%'.replace(/([^\d]*)(\d*)([^\w]*)/, replacer)
+      console.log(newString) // abc - 12345 - #$*%
+      ```
+
+  - Examples:
+
+    - Defining the regular expression in `replace()`
+
+      ```javascript
+      const str = 'Twas the night before Xmas...'
+      const newstr = str.replace(/xmas/i, 'Christmas')
+      console.log(newstr)  // Twas the night before Christmas...
+      ```
+
+    - Using `global` and `ignore` with `replace()`
+
+      ```javascript
+      const re = /apples/gi
+      const str = 'Apples are round, and apples are juicy.'
+      const newstr = str.replace(re, 'oranges')
+      console.log(newstr)  // oranges are round, and oranges are juicy.
+      ```
+
+    - *Switching words in a string:*
+
+      ```javascript
+      const re = /(\w+)\s(\w+)/
+      const str = 'John Smith'
+      const newstr = str.replace(re, '$2, $1')
+      console.log(newstr)  // 'Smith John'
+      ```
+
+    - *Using an inline function that modifies the matched characters*
+
+      - In this example, all occurrences of capital letters in the string are converted to lower case, and a hyphen is inserted just before the match location.
+      - The important thing here is that additional operations are needed on the matched item before it is given back as a replacement.
+      - The replacement function accepts the matched snippet as its parameter, and uses it to transform the case and concatenate the hyphen before returning.
+
+      ```javascript
+      function styleHyphenFormat(propertyName){
+        function upperToHyphenLower(match, offset, string){
+          return (offset > 0 ? '-' : '') + match.toLowerCase()
+        }
+        return propertyName.replace(/[A-Z]/g, upperToHyphenLower)
+      }
+      styleHyphenFormat('borderTop') // "border-top"
+      ```
+
+      - Because we want to further transform the *result* of the match before the final substitution is made, we must use a function.
+
+    - *Replacing a Fahrenheit degree with its Celsius equivalent ???*
+
+      ```javascript
+      function f2c(x){
+        function convert(str, p1, offset, s){
+          return ((p1 - 32) * 5/9) + 'C'
+        }
+        const s = String(x)
+        const test = /(-?\d+(?:\.\d*)?)F\b/g
+        return s.replace(test, convert)
+      }
+      f2c('212F')  // "100C"
+      f2c('0F')  // "-17.77777777777778C"
+      ```
+
+    - *Use an inline function with a regular expression to avoid `for` loops*
+
+      The following example takes a string pattern and converts it into an array of objects.
+
+      - Input: A string made out of the characters `x`, `-` and `_`.
+
+      ```
+      x-x_
+      x---x---x---x---
+      x-xxx-xx-x-
+      x_x_x___x___x___
+      ```
+
+      - Output: An array of objects. An `'x'` denotes an `'on'` state, a `'_'`(hyphen) denotes an `'off'` state and an `'_'`(underscore) denotes the length of an `'on'` state.
+
+      ```javascript
+      [
+        {on: true, length: 1},
+        {on: false, length: 1},
+        {on: true, length: 2},
+        ...
+      ]
+      ```
+
+      - Snippet:
+
+      ```javascript
+      const str = 'x-x_'
+      const retArr = []
+      str.replace(/(x_*)|(-)/g, function(match, p1, p2){
+        if(p1){ retArr.push({ on:true, length: p1.length}) }
+        if(p2){ retArr.push({ on:false, length: 1}) }
+      })
+      console.log(retArr)
+      ```
+
+      ​
+
+- **`split`** - `String.prototype.split([separator[, limit]])`
+
+  The `split()` method splits a `String` object into an array of strings by separating the string into substrings, using a specified separator string to determine where to make each split.
+
+  > If an empty string("") is used as the separator, the string is split between each character.
+
+  - Parameters: 
+
+    - `separator`
+      - Specifies the string which denotes the points at which each split should occur.
+      - The `separator` is treated as a string or as a regular expression.
+      - If `separator` is omitted or does not occur in `str`, the array returned contains one element consisting of the entire string.
+      - If `separator` is an empty string, `str` is converted to an array of characters.
+    - `limit`
+      - Integer specifying a limit on the number of splits to be found.
+
+  - Return value: An `Array` of strings split at each point where the separator occurs in the given string.
+
+  - Example:
+
+    - Using `split()`
+
+      ```javascript
+      function splitString(stringToSplit, separator){
+        const arrayOfStrings = stringToSplit.split(separator)
+        
+        console.log('The original string is: "' + stringToSplit + '"')
+        console.log('The separator is: "' + separator + '"')
+        console.log('The array has ' + arrayOfStrings.length + ' elements: ' + arrayOfStrings.join(' / '))
+      }
+      const tempestString = 'Oh brave new world that has such people in it.'
+      const monthString = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'
+
+      const space = ' '
+      const comma = ','
+
+      splitString(tempestString, space)
+      splitString(tempestString)
+      splitString(monthString, comma)
+
+      /**Output:
+      The original string is: "Oh brave new world that has such people in it."
+      The separator is: " "
+      The array has 10 elements: Oh / brave / new / world / that / has / such / people / in / it.
+
+      The original string is: "Oh brave new world that has such people in it."
+      The separator is: "undefined"
+      The array has 1 elements: Oh brave new world that has such people in it.
+
+      The original string is: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec"
+      The separator is: ","
+      The array has 12 elements: Jan / Feb / Mar / Apr / May / Jun / Jul / Aug / Sep / Oct / Nov / Dec
+      **/
+      ```
+
+    - Removing spaces from a string:
+
+      ```javascript
+      const names = 'Harry Trump ;Fred Barney; Helen Rigby ; Bill Abel ;Chris Hand '
+      const re = /\s*;\s*/
+      const nameList = names.split(re)
+
+      console.log(nameList) // [ "Harry Trump", "Fred Barney", "Helen Rigby", "Bill Abel", "Chris Hand " ]
+      ```
+
+    - Returning a limited number of splits
+
+      ```javascript
+      const myString = 'Hello World. How are you doing?'
+      const splits = myString.split(' ', 3)
+      console.log(splits);  // ["Hello", "World.", "How"]
+      ```
+
+    - Splitting with a `RegExp` to include parts of the separator in the result:
+
+      *If `separator` is a regular expression that contains capturing parentheses `()`, matched results are included in the array:*
+
+      ```javascript
+      const myString = 'Hello 1 word. Sentence number 2.'
+      const splits = myString.split(/(\d)/)
+      console.log(splits)  // [ "Hello ", "1", " word. Sentence number ", "2", "." ]
+      ```
+
+    - Splitting with an array as separator:
+
+      ```javascript
+      let myString = 'this|is|a|Test'
+      let splits = myString.split(['|'])
+      console.log(splits)  //["this", "is", "a", "Test"]
+
+      myString = 'ca,bc,a,bca,bca,bc'
+      splits = myString.split(['a','b'])
+      console.log(splits)  //["c", "c,", "c", "c", "c"]
+      ```
+
+    - Reversing a String using `split()`
+
+      ```javascript
+      const str = 'asdfghjkl';
+      const strReverse = str.split('').reverse().join('') // 'lkjhgfdsa'
+      // split() returns an array on which reverse() and join() can be applied
+      ```
+
+      *This doesn't work if the string contains grapheme clusters, even when using a unicode aware split (use [esrever](https://github.com/mathiasbynens/esrever) instead).*
+
+      ```javascript
+      var str = 'résumé';
+      var strReverse = str.split(/(?:)/u).reverse().join('');
+      // => "́emuśer"
+      ```
+
+      > **Bonus:** *use [`===`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Identity_strict_equality_(===)) operator to test if the original string was palindrome.*
+
+???
+
 
 
 
