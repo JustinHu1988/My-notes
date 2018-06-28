@@ -977,9 +977,11 @@ Regular expressions are used with the `RegExp` methods `test` and `exec` and wit
 
 
 
+## JSONP
 
+JSONP(JSON with Padding or JSON-P) is *used to request data from a server residing in a different domain than the client.*
 
-
+- JSONP enables sharing of data bypassing same-origin policy.
 
 
 
