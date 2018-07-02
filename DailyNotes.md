@@ -167,10 +167,6 @@ The Example 2 throw an error, because `new.target` is still `undefined` inside o
 
 
 
-
-
-
-
 #### Symbol
 
 
@@ -187,6 +183,8 @@ The Example 2 throw an error, because `new.target` is still `undefined` inside o
 
 - `Element.querySelector()`
   - Returns the first element that is a descendant of the element on which it is invoked that matches the specified group of selectors.
+
+
 
 
 
