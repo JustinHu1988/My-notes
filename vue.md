@@ -66,16 +66,12 @@ Vue.component('todo-item', {
 
 Now you can compose it in another component's template:
 
-```vue
+```Vue
 <ol>
   <!-- Create an instance of the todo-item component -->
   <todo-item></todo-item>
 </ol>
 ```
-
-
-
-
 
 
 
