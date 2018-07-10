@@ -27,6 +27,8 @@ var app5 = new Vue({
 
 Note that in this method we update the state of our app without touching the DOM - all DOM manipulations are handled by Vue, and the code you write is focused on the underlying logic.
 
+
+
 ###### `v-model`
 
 Vue also provides the `v-model` directive that makes two-way binding between form input and app state a breeze:
