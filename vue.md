@@ -420,26 +420,141 @@ You'll see other examples of modifiers later, [for `v-on`](https://vuejs.org/v2/
 
 #### Shorthands
 
+Vue.js provides special shorthands for two of the most often used directives, `v-bind` and `v-on`:
+
+- `v-bind` Shorthand
+
+  ```vue
+  <!-- full syntax -->
+  <a v-bind:href="url"></a>
+  <!-- shorthand -->
+  <a :href="url"></a>
+  ```
+
+- `v-on` Shorthand
+
+  ```vue
+  <!-- full syntax -->
+  <a v-on:click="doSomething"></a>
+  <!-- shorthand -->
+  <a @click="doSomething"></a>
+  ```
+
+  ​
+
+
+
+#### **SPA**
+
+A *single-page application* is a web application or web site that interacts with the user by dynamically rewriting the current page rather than loading entire new pages from a server.
+
+- This approach avoids interruption of the user experience between successive pages, making the application behave more like a desktop application.
+- The page does not reload at any point in the process, nor does controls transfer to another page, although the *location hash* or the *HTML5 History API*(`window.history`) can be used to provide the perception and navigability of separate logical pages in the application.
+- Interaction with the single page application often involves dynamic communication with the web server behind the scenes.
+
+> **location hash** (fragment identifier) : The fragment identifier introduced by a hash mark **#** is the optional last part of a [URL](https://en.wikipedia.org/wiki/Uniform_Resource_Locator) for a document. It is typically used to identify a portion of that document. The [hash mark](https://en.wikipedia.org/wiki/Number_sign) separator in URIs does not belong to the fragment identifier. 
+
+
+
+###### *Technical approaches*???
+
+There are various techniques available that enable the browser to retain a single page even when the application requires server communication.
+
+Mature open-source libraries are available that support the building of an SPA, reducing the amount of JavaScript code the developer has to write.
+
+- *JavaScript frameworks*
+
+  - AngularJS
+  - Ember.js
+  - Knockout.js
+  - Meteor.js
+  - ExtJS
+  - React
+  - Vue
+
+- Ajax
+
+- Websockets
+
+  - WebSockets are a bidirectional stateful real-time client-server communication technology part of the HTML5 specification, superior to Ajax in terms of performance and simplicity.
+
+- Sever-sent events
+
+- Browser plugins
+
+- Data transport (XML, JSON and Ajax)
+
+- Server architecture
+
+  - *Thin server architecture*
+
+    - An SPA moves logic from the server to the client.
+    - This results in the role of the web server evolving into a pure data API or web service.
+
+  - *Thick stateful server architecture*
+
+    - The server keeps the necessary *state* in memory of the client state of the page. 
+
+    - In this way, when any request hits the server (usually user actions), the server sends the appropriate HTML and/or JavaScript with the concrete changes to bring the client to the new desired state (usually adding/deleting/updating a part of the client DOM). At the same time, the state in server is updated. 
+
+    - Most of the logic is executed on the server, and HTML is usually also rendered on the server. In some ways, the server simulates a web browser, receiving events and performing delta changes in server state which are automatically propagated to client.
+
+    - This approach needs more server memory and server processing, but the advantage is a simplified development model because:
+
+      - the application is usually fully coded in the server
+
+
+      - data and UI state in the server are shared in the same memory space with no need for custom client/server communication bridges.
+
+  - *Thick stateless server architecture*
+
+    - This is a variant of the stateful server approach. The client page sends data representing its current state to the server, usually through Ajax requests. Using this data, the server is able to reconstruct the client state of the part of the page which needs to be modified and can generate the necessary data or code (for instance, as JSON or JavaScript), which is returned to the client to bring it to a new state, usually modifying the page DOM tree according to the client action which motivated the request.
+    - This approach requires that more data be sent to the server and may require more computational resources per request to partially or fully reconstruct the client page state in the server. At the same time, this approach is more easily scalable because there is no per-client page data kept in the server and, therefore, Ajax requests can be dispatched to different server nodes with no need for session data sharing or server affinity.
 
 
 
 
 
+## Computed Properties and Watchers
 
+#### Computed Properties
 
+for any complex logic, you should use a **computed property**.
 
+- Basic Example
 
+  ```vue
+  <div id="example">
+    <p>Original message: "{{message}}"</p>
+    <p>Computed reversed message: "{{reversedMessage}}"</p>
+  </div>
+  ```
 
+  ```javascript
+  var vm = new Vue(
+    el:'#example',
+    data:{
+      message: 'Hello'
+    },
+    computed: {
+      // a computed getter
+      reversedMessage: function(){
+        // `this` points to the vm instance
+        return this.message.split('').reverse().join('')
+  	}
+    }
+  )
+  ```
 
+  Here we have declared a computed property `reversedMessage`. The function we provided will be used as the getter function for the property `vm.reversedMessage`:
 
+  ```javascript
+  console.log(vm.reversedMessage) // 'olleH'
+  vm.message = 'Goodbye'
+  console.log(vm.reversedMessage) // 'eybdooG'
+  ```
 
-
-
-
-
-
-
-
+  The value of `vm.reversedMessage` is always dependent on the value of `vm.message`.
 
 
 
