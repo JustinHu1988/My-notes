@@ -753,20 +753,472 @@ A common need for data binding is manipulating an element's class list and its i
 
 - Since they are both attributes, we can use `v-bind` to handle them: we only need to calculate a final string with our expressions. 
 - However, meddling with string concatenation is annoying and error-prone.
--  For this reason, *Vue provides special enhancements when `v-bind` is used with `class` and `style`.* 
+- For this reason, *Vue provides special enhancements when `v-bind` is used with `class` and `style`.* 
 - In addition to strings, the expressions can also evaluate to objects or arrays.
 
 
 
- 
+
+#### Binding HTML Classes
+
+###### Object Syntax
+
+We can pass an object to `v-bind:class` to dynamically toggle classes:
+
+```vue
+<div :class="{ active: isActive }"></div>
+```
+
+The above syntax means the presence of the `active` class will be determined by the [truthiness](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) of the data property `isActive`.
+
+You can have multiple classes toggled by having more fields in the object. In addition, the `v-bind:class` directive can also co-exist with the plain `class` attribute. So given the following template:
+
+```vue
+<div class="static"
+     v-bind:class="{ active: isActive, 'text-danger': hasError }">
+</div>
+```
+
+And the following data:
+
+```javascript
+data: {
+    isActive:true,
+    hasError:false
+}
+```
+
+It will render:
+
+```vue
+<div class="static active"></div>
+```
+
+When `isActive` or `hasError` changes, the class list will be updated accordingly.
+
+The bound object doesn't have to be inline:
+
+```vue
+<div v-bind:class="classObject"></div>
+```
+
+```javascript
+data: {
+  classObject: {
+    active: true,
+    'text-danger': false
+  }
+}
+```
+
+This will render the same result. We can also bind to a [computed property](https://vuejs.org/v2/guide/computed.html) that returns an object. This is a common and powerful pattern:
+
+```vue
+<div v-bind:class="classObject"></div>
+```
+
+```javascript
+data: {
+  isActive: true,
+  error: null
+},
+computed: {
+  classObject: function () {
+    return {
+      active: this.isActive && !this.error,
+      'text-danger': this.error && this.error.type === 'fatal'
+    }
+  }
+}
+```
+
+
+
+###### Array Syntax
+
+We can pass an array to `v-bind:class` to apply a list of classes:
+
+```Vue
+<div v-bind:class="[activeClass, errorClass]"></div>
+```
+
+```javascript
+data: {
+  activeClass: 'active',
+  errorClass: 'text-danger'
+}
+```
+
+Which will render:
+
+```vue
+<div class="active text-danger"></div>
+```
+
+If you would like to also toggle a class in the list conditionally, you can do it with a ternary expression:
+
+```Vue
+<div v-bind:class="[isActive ? activeClass : '', errorClass]"></div>
+```
+
+This will always apply `errorClass`, but will only apply `activeClass` when `isActive` is truthy.
+
+However, this can be a bit verbose if you have multiple conditional classes. That’s why it’s also possible to use the object syntax inside array syntax:
+
+```vue
+<div v-bind:class="[{ active: isActive }, errorClass]"></div>
+```
+
+
+
+###### With Components
+
+…???
 
 
 
 
 
+#### Binding Inline Styles
+
+###### Object Syntax
+
+- The object syntax for `v-bind:style` is pretty straightforward - it looks almost like CSS, except it’s a JavaScript object. You can use either camelCase or kebab-case (use quotes with kebab-case) for the CSS property names:
+
+  ```vue
+  <div v-bind:sytle="{ color: activeColor, fontSize: fontSize + 'px' }">
+  </div>
+  ```
+
+  ```javascript
+  data: {
+    activeColor: 'red',
+    fontSize: 30
+  }
+  ```
+
+- It is often a good idea to bind to a style object directly so that the template is cleaner:
+
+  ```vue
+  <div v-bind:style="styleObject">
+  </div>
+  ```
+
+  ```javascript
+  data: {
+    styleObject:{
+      color: 'red',
+      fontSize: '13px'
+    }
+  }
+  ```
+
+  Again, the object syntax is often used in conjunction *with computed properties* that return objects.
+
+###### Array Syntax
+
+- The array syntax for `v-bind:style` allows you to apply multiple style objects to the same element:
+
+  ```vue
+  <div v-bind:style="[baseStyles, overridingStyles]">
+  </div>
+  ```
+
+###### Auto-prefixing
+
+When you use a CSS property that requires [vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor_Prefix) in `v-bind:style`, for example `transform`, Vue will automatically detect and add appropriate prefixes to the applied styles.
+
+###### Multiple Values
+
+> 2.3.0+
+
+- Starting in 2.3.0+ you can provide an array of multiple (prefixed) values to a style property, for example:
+
+  ```vue
+  <div v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }"></div>
+  ```
+
+  This will only render the last value in the array which the browser supports. In this example, it will render `display: flex` for browsers that support the unprefixed version of flexbox.
 
 
 
+
+
+## Conditional Rendering
+
+#### `v-if`
+
+```Vue
+<h1 v-if="ok">Yes</h1>
+```
+
+It is also possible to add an “else block” with `v-else`:
+
+```vue
+<h1 v-if="ok">Yes</h1>
+<h1 v-else>No</h1>
+```
+
+###### Conditional Groups with `v-if` on `<template>`
+
+- Because `v-if` is a directive, it has to be attached to a single element. 
+
+- But what if we want to toggle more than one element? In this case we can use `v-if` on a `<template>` element, which serves as an invisible wrapper. The final rendered result will not include the `<template>` element.
+
+  ```vue
+  <template v-if="ok">
+    <h1>Title</h1>
+    <p>Paragraph 1</p>
+    <p>Paragraph 2</p>
+  </template>
+  ```
+
+###### `v-else`
+
+- You can use the `v-else` directive to indicate an “else block” for `v-if`:
+
+  ```vue
+  <div v-if="Math.random() > 0.5">
+    Now you see me
+  </div>
+  <div v-else>
+    Now you don't
+  </div>
+  ```
+
+  A `v-else` element must immediately follow a `v-if` or a `v-else-if` element - otherwise it will not be recognized.
+
+###### `v-else-if`
+
+> New in 2.1.0+
+
+- The `v-else-if`, as the name suggests, serves as an “else if block” for `v-if`. It can also be chained multiple times:
+
+  ```vue
+  <div v-if="type === 'A'">
+    A
+  </div>
+  <div v-else-if="type === 'B'">
+    B
+  </div>
+  <div v-else-if="type === 'C'">
+    C
+  </div>
+  <div v-else>
+    Not A/B/C
+  </div>
+  ```
+
+  Similar to `v-else`, a `v-else-if` element must immediately follow a `v-if` or a `v-else-if` element.
+
+###### Controlling Reusable elements with `key`
+
+- Vue tries to render elements as efficiently as possible, often re-using them instead of rendering from scratch. Beyond helping make Vue very fast, this can have some useful advantages. 
+
+  For example, if you allow users to toggle between multiple login types:
+
+  ```vue
+  <template v-if="loginType === 'username'">
+    <label>Username</label>
+    <input placeholder="Enter your username">
+  </template>
+  <template v-else>
+    <label>Email</label>
+    <input placeholder="Enter your email address">
+  </template>
+  ```
+
+  Then switching the `loginType` in the code above will not erase what the user has already entered. Since both templates use the same elements, the `<input>` is not replaced - just its `placeholder`.
+
+- This isn’t always desirable though, so Vue offers a way for you to say, “These two elements are completely separate - don’t re-use them.” Add a `key` attribute with unique values:
+
+  ```vue
+  <template v-if="loginType === 'username'">
+    <label>Username</label>
+    <input placeholder="Enter your username" key="username-input">
+  </template>
+  <template>
+    <label>Email</label>
+    <input placeholder="Enter your email address" key="email-input">
+  </template>
+  ```
+
+  Now those inputs will be rendered from scratch each time you toggle.
+
+  Note that the `<label>` elements are still efficiently re-used, because they don't have `key`attributes.
+
+#### `v-show`
+
+- Another option for conditionally displaying an element is the `v-show` directive. The usage is largely the same:
+
+  ```vue
+  <h1 v-show="ok">Hello!</h1>
+  ```
+
+  The difference is that an element with `v-show` will always be rendered and remain in the DOM; `v-show` only toggles the `display` CSS property of the element.
+
+- Note that `v-show` doesn’t support the `<template>` element, nor does it work with `v-else`.
+
+
+
+#### `v-if` vs `v-show`
+
+- `v-if` is “real” conditional rendering because it ensures that event listeners and child components inside the conditional block are properly destroyed and re-created during toggles.
+  - `v-if` is also **lazy**: if the condition is false on initial render, it will not do anything - the conditional block won’t be rendered until the condition becomes true for the first time.
+- In comparison, `v-show` is much simpler - the element is always rendered regardless of initial condition, with CSS-based toggling.
+- Generally speaking:
+  - `v-if` has higher toggle costs while `v-show` has higher initial render costs. 
+  - So prefer `v-show` if you need to toggle something very often, and prefer `v-if` if the condition is unlikely to change at runtime.
+
+
+
+#### `v-if` with `v-for`
+
+When used together with `v-if`, *`v-for` has a higher priority than `v-if`.* See the [list rendering guide](https://vuejs.org/v2/guide/list.html#V-for-and-v-if) for details.
+
+
+
+# List Rendering
+
+#### Mapping an Array to Elements with `v-for`
+
+- We can use the `v-for` directive to render a list of items based on an array. 
+
+- The `v-for`directive requires a special syntax in the form of `item in items`, where `items` is the source data array and `item` is an **alias** for the array element being iterated on:
+
+  ```vue
+  <ul id="example-1">
+    <li v-for="item in items">
+    	{{ item.message }}
+    </li>
+  </ul>
+  ```
+
+  ```javascript
+  var example1 = new Vue({
+    el: '#example-1',
+    data: {
+      items:[
+        { message: 'Foo' },
+        { message: 'Bar' }
+      ]
+    }
+  })
+  ```
+
+- *Inside `v-for` blocks we have full access to parent scope properties.*
+
+  - `v-for` also supports an optional second argument for the index of the current item.
+
+    ```vue
+    <ul id="example2">
+      <li v-for="(item, index) in items">
+        {{ parentMessage }} - {{ index }} - {{ item.message }}
+      </li>
+    </ul>
+    ```
+
+    ```javascript
+    var example2 = new Vue({
+      el: 'example2',
+      data: {
+        parentMessage: 'Parent',
+        items: [
+          { message: 'Foo' },
+          { message: 'Bar' }
+        ]
+      }
+    })
+    ```
+
+- You can also use `of` as the delimiter instead of `in`, so that it is closer to JavaScript’s syntax for iterators:
+
+  ```vue
+  <div v-for="item of items"></div>
+  ```
+
+
+
+#### `v-for` with an Object
+
+- *You can also use `v-for` to iterate through the properties of an object.*
+
+  ```vue
+  <ul id="v-for-object" class="demo">
+    <li v-for="value in object">
+      {{ value }}
+    </li>
+  </ul>
+  ```
+
+  ```javascript
+  new Vue({
+    el:'#v-for-object',
+    data:{
+      object:{
+        firstName: 'John',
+        lastName: 'Doe',
+        age: 30
+      }
+    }
+  })
+  ```
+
+- You can also provide a second argument for the key:
+
+  ```vue
+  <div v-for="(value, key) in object">
+    {{key}}: {{value}}
+  </div>
+  ```
+
+- And another for the index:
+
+  ```vue
+  <div v-for="(value, key, index) in object">
+    {{index}}. {{key}}: {{value}}
+  </div>
+  ```
+
+> When iterating over an object, the order is based on the key enumeration order of `Object.keys()`, which is **not** guaranteed to be consistent across JavaScript engine implementations.
+
+
+
+#### `key`
+
+- When Vue is updating a list of elements rendered with `v-for`, by default it uses an “in-place patch” strategy. If the order of the data items has changed, instead of moving the DOM elements to match the order of the items, Vue will patch each element in-place and make sure it reflects what should be rendered at that particular index. 
+
+- This default mode is efficient, but only suitable **when your list render output does not rely on child component state or temporary DOM state (e.g. form input values)**.
+
+- To give Vue a hint so that it can track each node’s identity, and thus reuse and reorder existing elements, you need to provide a unique `key` attribute for each item. An ideal value for `key`would be the unique id of each item. This special attribute is a rough equivalent to `track-by`in 1.x, but it works like an attribute, so you need to use `v-bind` to bind it to dynamic values (using shorthand here):
+
+  ```vue
+  <div v-for="item in items" :key="item.id">
+    <!--content-->
+  </div>
+  ```
+
+- It is recommended to provide a `key` with `v-for` whenever possible, unless the iterated DOM content is simple, or you are intentionally relying on the default behavior for performance gains.
+
+- Since it’s a generic mechanism for Vue to identify nodes, the `key` also has other uses that are not specifically tied to `v-for`.
+
+
+
+#### Array Change Detection
+
+###### Mutation Methods
+
+- Vue wraps an observed array’s mutation methods so they will also trigger view updates. The wrapped methods are:
+  - `push()`
+  - `pop()`
+  - `shift()`
+  - `unshift()`
+  - `splice()`
+  - `sort()`
+  - `reverse()`
+- You can open the console and play with the previous examples' `items` array by calling their mutation methods. For example: `example1.items.push({ message: 'Baz' })`.
+
+###### Replacing an Array
 
 
 
