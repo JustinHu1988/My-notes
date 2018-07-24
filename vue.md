@@ -1464,12 +1464,106 @@ We can use the `v-on` directive to listen to DOM events and run some JavaScript 
 For example:
 
 ```vue
+<div id="example-1">
+  <button v-on:click="counter += 1">Add 1</button>
+  <p>The button above has been clicked {{ counter }} times.</p>
+</div>
+```
 
+```javascript
+const example1 = new Vue({
+  el: '#example-1',
+  data:{
+    counter:0
+  }
+})
 ```
 
 
 
+#### Method Event Handlers
 
+The logic for many event handlers will be more complex though, so keeping your JavaScript in the value of the `v-on` attribute isn't feasible. That's why `v-on` can also accept the name of a method you'd like to call.
+
+For example:
+
+```vue
+<div id="example-2">
+  <!-- `greet` is the name of a method defined below -->
+  <button v-on:click="greet">Greet</button>
+</div>
+```
+
+```javascript
+const example2 = new Vue({
+  el:'#example-2',
+  data:{
+    name: 'Vue.js'  
+  },
+  method:{
+    greet:function(event){
+      // `this` inside methods poiints to the Vue instance
+      alert('Hello ' + this.name + '!')
+      // `event` is the native DOM event
+      if(event){
+        alert(event.target.tagName)
+      }
+    }
+  }
+})
+
+// you can invoke methods in JavaScript too
+example2.greet() // => 'Hello Vue.js!'
+```
+
+
+
+#### Methods in Inline Handlers
+
+Instead of binding directly to a method name, we can also use methods in an inline JavaScript statement:
+
+```vue
+<div id="example-3">
+  <button v-on:click="say('hi')">Say hi</button>
+  <button v-on:click="say('what')">Say what</button>
+</div>
+```
+
+```javascript
+new Vue({
+  el: '#example-3',
+  methods: {
+    say: function(message){
+      alert(message)
+    }
+  }
+})
+```
+
+Sometimes we also need to access the original DOM event in an inline statement handler.
+
+- You can pass it into a method using the special **`$event`** variable:
+
+  ```vue
+  <button v-on:click="warn('Form cannot be submitted yet.', $event)">
+    Submit
+  </button>
+  ```
+
+  ```javascript
+  // ...
+  methods: {
+    warn: function(message, event){
+      // now we have access to the native event
+      if(event) event.preventDefault()
+      alert(message)
+    }
+  }
+  ```
+
+
+
+#### Event Modifiers
 
 
 
