@@ -1255,11 +1255,217 @@ vm.items[1] = 'x' // is NOT reactive
 vm.items.length = 2 // is NOT reactive
 ```
 
+- To overcome caveat 1,  use `Vue.set()`(same as `vueObject.$set()`) or `Array.items.splice()` method:
+
+  - ```javascript
+    // Vue.set
+    Vue.set(vm.items, indexOfItem, newValue)
+    ```
+
+
+  - ```javascript
+    // vueObject.$set
+    vm.$set(vm.items, indexOfItem, newValue)
+    ```
+
+  - ```javascript
+    // Array.prototype.splice
+    vm.items.splice(indexOfItem, 1, newValue)
+    ```
+
+- To deal with caveat 2, you can use `Array.prototype.splice()`:
+
+  - ```javascript
+    vm.items.splice(newLength)
+    ```
+
+
+
+#### Object Change Detection Caveats
+
+ **Vue cannot detect property addition or deletion**. For example:
+
+```javascript
+var vm = new Vue({
+  data: {
+    a: 1
+  }
+})
+// `vm.a` is now reactive
+
+vm.b = 2
+// `vm.b` is NOT reactive
+```
+
+Vue does not allow dynamically adding new root-level reactive properties to an already created instance. 
+
+*It's possible to add reactive properties to a nested object using the `Vue.set(object, key, value)` method.* For example, given:
+
+- ```javascript
+  var vm = new Vue({
+    data: {
+      userProfile: {
+        name: 'Anika'
+      }
+    }
+  })
+  ```
+
+- You could add a new `age` property to the nested `userProfile` object with:
+
+  ```javascript
+  Vue.set(vm.userProfile, 'age', 27)
+  ```
+
+- You can also use the `vm.$set` instance method, which is an alias for the global `Vue.set`:
+
+  ```javascript
+  vm.$set(vm.userProfile, 'age', 27)
+  ```
+
+- Sometimes you may want to assign a number of new properties to an existing object, for example using `Object.assign()` or `_.extend()`. In such cases, you should create a fresh object with properties from both objects. So instead of:
+
+  ```javascript
+  Object.assign(vm.userProfile, {
+    age: 27,
+    favoriteColor: 'Vue Green'
+  })
+  ```
+
+  You would add new, reactive properties with:
+
+  ```javascript
+  vm.userProfile = Object.assign({}, vm.userProfile, {
+    age: 27,
+    favoriteColor: 'Vue Green'
+  })
+  ```
+
+
+
+#### Displaying Filtered/Sorted Results
+
+Sometimes we want to display a filtered or sorted version of an array without actually mutating or resetting the original data. In this case, you can *create a computed property that returns the filtered or sorted array*.
+
+For example:
+
+- ```vue
+  <li v-for="n in eventNumbers">{{ n }}</li>
+  ```
+
+- ```javascript
+  data:{
+    numbers: [1,2,3,4,5]
+  },
+  computed: {
+    eventNumbers: function(){
+      return this.numbers.filter(function(){
+        return number%2 === 0
+      })
+    }
+  }
+  ```
+
+
+
+In situations where computed properties are not feasible (e.g. inside nested `v-for` loops), you can use a method:
+
+- ```vue
+  <li v-for="n in even(numbers)">{{ n }}</li>
+  ```
+
+- ```javascript
+  data: {
+    numbers: [1,2,3,4,5]
+  },
+  methods: {
+    even: function(numbers){
+      return numbers.filter(function(number){
+        return number%2 === 0
+      })
+    }
+  }
+  ```
+
+
+
+#### `v-for` with a Range
+
+`v-for` can also take an integer. In this case it will repeat the template that many times.
+
+```vue
+<div>
+  <span v-for="n in 10">{{ n }}</span>
+</div>
+```
+
+
+
+#### `v-for` on a `<template>`
+
+Similar to template `v-if`, you can also use a `<template>` tag with `v-for` to render a block of multiple elements. For example:
+
+```vue
+<ul>
+  <template>
+    <li>{{ item.msg }}</li>
+	<li class="divider" role="presentation"></li>
+  </template>
+</ul>
+```
+
+
+
+#### `v-for` with `v-if`
+
+When they exist on the same node, *`v-for` has a higher priority than `v-if`*.
+
+- That means *the `v-if` will be run on each iteration of the loop separately*. This can be useful when you want to render nodes for only some items, like below:
+
+  ```vue
+  <li v-for="todo in todos" v-if="!todo.isComplete">
+    {{ todo }}
+  </li>
+  ```
+
+  The above only renders the todos that are not complete.
+
+- If instead, your intent is to conditionally skip execution of the loop, *you can place the `v-if`on a wrapper element (or `<template>`).* For example:
+
+  ```vue
+  <ul v-if="todos.length">
+    <li v-for="todo in todos">
+    	{{ todo }}
+    </li>
+  </ul>
+  <p v-else>
+    No todos left!
+  </p>
+  ```
+
+
+
+#### `v-for` with a Component
+
+???
 
 
 
 
 
+
+
+# Event Handling
+
+#### Listening to Events
+
+We can use the `v-on` directive to listen to DOM events and run some JavaScript when they’re triggered.
+
+For example:
+
+```vue
+
+```
 
 
 
