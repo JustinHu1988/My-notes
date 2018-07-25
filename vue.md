@@ -1627,11 +1627,279 @@ Vue also offers the `.passive` modifier, corresponding to [`addEventListener`‘
 
 The `.passive` modifier is especially useful for improving performance on mobile devices.
 
-Don’t use `.passive` and `.prevent` together, because `.prevent` will be ignored and your browser will probably show you a warning. Remember, `.passive`communicates to the browser that you *don’t* want to prevent the event’s default behavior.
+Don't use `.passive` and `.prevent` together, because `.prevent` will be ignored and your browser will probably show you a warning. Remember, `.passive`communicates to the browser that you *don’t* want to prevent the event’s default behavior.
+
+
+
+#### Key Modifiers
+
+When listening for keyboard events, we often need to check for common key codes: **`v-on:keyup`**
+
+Vue also allows adding key modifiers for `v-on` when listening for key events:
+
+```vue
+<!-- only call `vm.submit()` when the `keyCode` is 13 -->
+<input v-on:keyup.13="submit">
+```
+
+Remembering all the `keyCode`s is a hassle, so Vue *provides aliases for the most commonly used keys*:
+
+```vue
+<!-- same as above -->
+<input v-on:keyup.enter="submit">
+
+<!-- also works for shorthand -->
+<input @keyup.enter="submit">
+```
+
+Here’s the full list of key modifier aliases:
+
+- `.enter`
+- `.tab`
+- `.delete` (captures both “Delete” and “Backspace” keys)
+- `.esc`
+- `.space`
+- `.up`
+- `.down`
+- `.left`
+- `.right`
+
+You can also [define custom key modifier aliases](https://vuejs.org/v2/api/#keyCodes) via the global `config.keyCodes` object:
+
+```js
+// enable `v-on:keyup.f1`
+Vue.config.keyCodes.f1 = 112
+```
+
+
+
+###### Automatic Key Modifiers
+
+> New in 2.5.0+
+
+You can also directly use any valid key names exposed via [`KeyboardEvent.key`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) as modifiers by converting them to kebab-case:
+
+```vue
+<input @keyup.page-down="onPageDown">
+```
+
+In the above example, the handler will only be called if `$event.key === 'PageDown'`.
+
+A few keys (`.esc` and all arrow keys) have inconsistent `key` values in IE9, their built-in aliases should be preferred if you need to support IE9.
+
+
+
+#### System Modifier Keys
+
+> New in 2.1.0+
+
+You can use the following modifiers to trigger mouse or keyboard event listeners only when the corresponding modifier key is pressed:
+
+- `.ctrl`
+- `.alt`
+- `.shift`
+- `.meta`
+
+> Note: On Macintosh keyboards, meta is the command key (⌘). On Windows keyboards, meta is the windows key (⊞). On Sun Microsystems keyboards, meta is marked as a solid diamond (◆). On certain keyboards, specifically MIT and Lisp machine keyboards and successors, such as the Knight keyboard, space-cadet keyboard, meta is labeled “META”. On Symbolics keyboards, meta is labeled “META” or “Meta”.
+
+For example:
+
+```vue
+<!-- Alt + C -->
+<input @keyup.alt.67="clear">
+
+<!-- Ctrl + Click -->
+<div @click.ctrl="doSomething">Do something</div>
+```
+
+> Note that modifier keys are different from regular keys and when used with `keyup`events, they have to be pressed when the event is emitted. In other words, `keyup.ctrl` will only trigger if you release a key while holding down `ctrl`. It won’t trigger if you release the `ctrl` key alone. If you do want such behaviour, use the `keyCode` for `ctrl` instead: `keyup.17`.
+
+
+
+###### `.exact` Modifier
+
+> New in 2.5.0+
+
+The `.exact` modifier allows control of the exact combination of system modifiers needed to trigger an event.
+
+```vue
+<!-- this will fire even if Alt or Shift is also pressed -->
+<button @click.ctrl="onClick">A</button>
+
+<!-- this will fire when only Ctrl is pressed  -->
+<button @click.ctrl.exact="onCtrlClick">A</button>
+
+<!-- this will fire when no system modifiers are pressed -->
+<button @click.exact="onClick">A</button>
+```
+
+
+
+###### Mouse Button Modifiers
+
+> New in 2.2.0+
+
+- `.left`
+- `.right`
+- `.middle`
+
+These modifiers restrict the handler to events triggered by a specific mouse button.
+
+
+
+#### Why Listeners in HTML?
+
+You might be concerned that this whole event listening approach violates the good old rules about “separation of concerns”. Rest assured - since all Vue handler functions and expressions are strictly bound to the ViewModel that’s handling the current view, it won’t cause any maintenance difficulty. In fact, there are several benefits in using `v-on`:
+
+1. It's easier to locate the handler function implementations within your JS code by skimming the HTML template.
+2. Since you don't have to manually attach event listeners in JS, your *ViewModel code can be pure logic and DOM-free.* This makes it easier to test.
+3. *When a ViewModel is destroyed, all event listeners are automatically removed.* You don't need to worry about cleaning it up yourself.
 
 
 
 
 
+## Form Input Bindings
 
+#### Basic Usage
+
+You can use the `v-model` directive to create two-way data bindings on form input and textarea elements.
+
+- It automatically picks the correct way to update the element based on the input type.
+- Although a bit magical, `v-model` is essentially syntax sugar for *updating data on user input events, plus special care for some edge cases*.
+
+> `v-model` will ignore the initial `value`, `checked` or `selected` attributes found on any form elements. It will always treat the Vue instance data as the source of truth. You should declare the initial value on the JavaScript side, inside the `data` option of your component.
+>
+> For languages that require an [IME](https://en.wikipedia.org/wiki/Input_method) (Chinese, Japanese, Korean etc.), you’ll notice that `v-model` doesn’t get updated during IME composition. If you want to cater for these updates as well, use `input` event instead.
+
+###### Text
+
+```vue
+<input v-model="message" placeholder="edit me">
+<p>Message is: {{message}}</p>
+```
+
+###### Multiline text
+
+```vue
+<span>Multiline message is:</span>
+<p style="white-space: preline;">{{message}}</p>
+<br>
+<textarea v-model="message" placeholder="add multiple lines"></textarea>
+```
+
+> Interpolation on textareas (`<textarea>{{text}}</textarea>`) won't work. Use `v-model` instead.
+
+###### Checkbox
+
+Single checkbox, boolean value:
+
+```vue
+<input type="checkbox" id="checkbox" v-model="checked">
+<label for="checkbox">{{checked}}</label>
+```
+
+Multiple checkboxes, bound to the same Array:
+
+```vue
+<div id='example-3'>
+  <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+  <label for="jack">Jack</label>
+  <input type="checkbox" id="john" value="John" v-model="checkedNames">
+  <label for="john">John</label>
+  <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+  <label for="mike">Mike</label>
+  <br>
+  <span>Checked names: {{ checkedNames }}</span>
+</div>
+```
+
+```javascript
+new Vue({
+  el: '#example-3',
+  data: {
+    checkedNames: []
+  }
+})
+```
+
+###### Radio
+
+```vue
+<input type="radio" id="one" value="One" v-model="picked">
+<label for="one">One</label>
+<br>
+<input type="radio" id="two" value="Two" v-model="picked">
+<label for="two">Two</label>
+<br>
+<span>Picked: {{picked}}</span>
+```
+
+###### Select
+
+Single select:
+
+- ```vue
+  <select v-model="selected">
+    <option disabled value="">Please select one</option>
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <span>Selected: {{selected}}</span>
+  ```
+
+- ```js
+  new Vue({
+    el: '...',
+    data: {
+      selected: ''
+    }
+  })
+  ```
+
+- If the initial value of your `v-model` expression does not match any of the options, the `<select>` element will render in an “unselected” state. On iOS this will cause the user not being able to select the first item because iOS does not fire a change event in this case. It is therefore recommended to provide a disabled option with an empty value, as demonstrated in the example above.
+
+Multiple select (bound to Array):
+
+- ```vue
+  <select v-model="selected" multiple>
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <br>
+  <span>Selected: {{selected}}</span>
+  ```
+
+Dynamic options rendered with `v-for`:
+
+- ```vue
+  <select v-model="selected">
+    <option v-for="option in options" v-bind:value="option.value">
+      {{ option.text }}
+    </option>
+  </select>
+  <span>Selected: {{ selected }}</span>
+  ```
+
+- ```js
+  new Vue({
+    el: '...',
+    data: {
+      selected: 'A',
+      options: [
+        {text:'One', value:'A'},
+        {text:'Two', value:'B'},
+        {text:'Three', value:'C'}
+      ]
+    }
+  })
+  ```
+
+
+
+#### Value Bindings
+
+For radio, checkbox and select options, the `v-model` binding values are usually static strings (or booleans for checkbox):
 
