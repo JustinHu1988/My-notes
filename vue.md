@@ -1563,13 +1563,71 @@ Sometimes we also need to access the original DOM event in an inline statement h
 
 
 
+
 #### Event Modifiers
 
+It is a very common need to call `event.preventDefault()` or `event.stopPropagation()` inside event handlers.
 
+- Although we can do this inside methods, it would be better if the methods can be purely about data logic rather than having to deal with DOM event details.
 
+To address this problem, Due provides **event modifiers** for `v-on`. Recall that modifiers are directive postfixes denoted by a dot.
 
+- `.stop`
+- `.prevent`
+- `.capture`
+- `.self`
+- `.once`
+- `.passive`
 
+```vue
+<!-- the click event's propagation will be stopped -->
+<a v-on:click.stop="doThis"></a>
 
+<!-- the submit event will no longer reload the page -->
+<form @submit.prevent="onSubmit"></form>
+
+<!-- modifiers can be chained -->
+<a @click.stop.prevent="doThat"></a>
+
+<!-- just the modifier -->
+<form @submit.prevent></form>
+
+<!-- use capture mode when adding the event listener -->
+<!-- i.e. an event targeting an inner element is handled here before being handled by that element -->
+<div @click.capture="doThis">...</div>
+
+<!-- only trigger handler if event.target is the element itself -->
+<!-- i.e. not from a child element -->
+<div @click.self="doThat">...</div>
+```
+
+>Order matters when using modifiers because the relevant code is generated in the same order.
+>
+>*Therefore using `@click.prevent.self` will prevent all clicks while `@click.self.prevent` will only prevent clicks on the element itself.*
+
+> New in 2.1.4+
+
+```Vue
+<!-- the click event will be triggered at most once -->
+<a v-on:click.once="doThis"></a>
+```
+
+Unlike the other modifiers, which are exclusive to native DOM events, the `.once` modifier can also be used on [component events](https://vuejs.org/v2/guide/components-custom-events.html). If you haven’t read about components yet, don’t worry about this for now.
+
+> New in 2.3.0+
+
+Vue also offers the `.passive` modifier, corresponding to [`addEventListener`‘s `passive`option](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Parameters).
+
+```vue
+<!-- the scroll event's default behavior (scrolling) will happen -->
+<!-- immediately, instead of waiting for `onScroll` to complete  -->
+<!-- in case it contains `event.preventDefault()`                -->
+<div v-on:scroll.passive="onScroll">...</div>
+```
+
+The `.passive` modifier is especially useful for improving performance on mobile devices.
+
+Don’t use `.passive` and `.prevent` together, because `.prevent` will be ignored and your browser will probably show you a warning. Remember, `.passive`communicates to the browser that you *don’t* want to prevent the event’s default behavior.
 
 
 
