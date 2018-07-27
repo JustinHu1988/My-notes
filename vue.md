@@ -1903,3 +1903,33 @@ Dynamic options rendered with `v-for`:
 
 For radio, checkbox and select options, the `v-model` binding values are usually static strings (or booleans for checkbox):
 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
