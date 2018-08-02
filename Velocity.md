@@ -256,3 +256,96 @@ $bar.retnull.bogus	## cannot call a property on null, Exception</pre>
 
   
 
+## Case Substitution
+
+Velocity references take advantage of some Java principles that template designers will find easy to use. For example:
+
+```velocity
+$foo
+
+$foo.getBar()
+## is the same as
+$foo.Bar
+
+$data.setUser("jon")
+## is the same as
+#set( $data.User = "jon")
+
+$data.getRequest().getServerName()
+## is the same as
+$data.Request.ServerName
+## is the same as
+${data.Request.ServerName}
+```
+
+... ???
+
+
+
+## Directives
+
+- Directives always begin with a `#`.
+
+- Like references, the name of the directive may be bracketed by a `{` and a `}` symbol. This is useful with directives that are immediately followed by text.
+
+  - For example, the following produces an error:
+
+    ```velocity
+    #if ($a==1)true enough#elseno way!#end
+    ```
+
+  - In such a case, use the brackets to separate `#else` from the rest of the line.
+
+    ```velocity
+    #if($a==1)true enough#{else}no way!#end
+    ```
+
+    
+
+#### Set
+
+The `#set` directive is used for setting the value of a reference.
+
+- For example:
+
+  ```velocity
+  #set( $primate = "monkey")
+  #set( $customer.Behavior = $primate )
+  ```
+
+- The left hand side (LHS) of the assignment must be a variable reference or a property reference. 
+
+- The right hand side (RHS) can be one of the following types: 
+
+  - Variable reference
+  - String literal
+  - Property reference
+  - Method reference
+  - Number literal
+  - ArrayList
+  - Map
+
+- These examples demonstrate each of the aforementioned types:
+
+  ```velocity
+  
+  ```
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
