@@ -328,12 +328,785 @@ The `#set` directive is used for setting the value of a reference.
 - These examples demonstrate each of the aforementioned types:
 
   ```velocity
-  
+  #set( $monkey = $bill )  	## varible reference
+  #set( $monkey.Firend = "monica" )  ## string literal
+  #set( $monkey.Blame = $whitehouse.Leak )  ## property reference
+  #set( $monkey.Plan = $spindoctor.weave($web) ) ## method reference
+  #set( $monkey.Number = 123 )  ##number literal
+  #set( $monkey.Say = ["Not", $my, "fault"] )  ##ArrayList
+  #set( $monkey.Map = {"banana" : "good", "roast beef" : "bad"})  ## Map
+  ```
+
+  > NOTE: For the ArrayList example the elements defined with the [..] operator are accessible using the methods defined in the ArrayList class. So, for example, you could access the first element above using `$monkey.Say.get(0)`. 
+  >
+  > Similarly, for the Map example, the elements defined within the `{}` operator are accessible using the methods defined in the Map class. For example, you could access the first element above using $monkey.Map.get("banana") to return a String 'good', or even `$monkey.Map.banana` to return the same value.
+
+- The RHS can also be a simple arithmetic expression:
+
+  ```velocity
+  #set( $value = $foo + 1)
+  #set( $value = $bar - 1)
+  #set( $value = $foo * $bar)
+  #set( $value = $foo / $bar)
+  ```
+
+- *If the RHS is a property or method reference that evaluates to null, it will **not** be assigned to the LHS.*
+
+  - Depending on how Velocity is configured, it is usually not possible to remove an existing reference from the context via this mechanism. 
+
+    For example:
+
+    ```velocity
+    #set( $result = $query.criteria("name") )
+    The result of the first query is $result
+    
+    #set( $result = $query.criteria("address"))
+    The result of the second query is $result
+    ```
+
+    If `$query.criteria("name")` returns the string `"bill"`, and `$query.criteria("address")` returns `null`,  the above VTL will render as the following:
+
+    ```velocity
+    The result of the first query is bill
+    The result of the second query is bill
+    ```
+
+  - This tends to confuse newcomers who construct `#foreach` loops that attempt to `#set` a reference via a property or method reference, then immediately test that reference with an `#if` directive. For example: 
+
+    ```velocity
+    #set( $criteria = ["name", "address"])
+    #foreach( $criterion in $criteria)
+    	#set( $result = $query.criteria($criterion))
+    	#if($result)
+    		Query was successful
+    	#end
+    #end
+    ```
+
+    In the above example, it would not be wise to rely on the evaluation of `$result` to determine if a query was successful. After `$result` has been `#set` (added to the context), it cannot be set back to `null` (removed from the context).
+
+  - *One solution to this would be to pre-set `$result` to `false`. Then if the `$query.criteria()` call fails, you can check.*
+
+    ```velocity
+    #set( $criteria = ["name", "address"])
+    #foreach( $criterion in $criteria)
+    	#set($result = false)
+    	#set($result = $query.criteria($criterion))
+    	
+    	#if($result)
+    		Query was successful
+        #end
+    #end
+    ```
+
+- `#set` directive does not have an `#end` statement.
+
+- **Literals**: 
+
+  - When using the `#set` directive, *string literals that are enclosed in double quote characters will be parsed and rendered*,  as shown:
+
+    ```velocity
+    #set( $directoryRoot = "www")
+    #set( $templateName = "index.vm")
+    #set( $template = "$directoryRoot/$templateName")
+    $template
+    ```
+
+    The output will be:
+
+    ```html
+    www/index.vm
+    ```
+
+  - However, when the string literal is enclosed in single quote characters, it will not be parsed:
+
+    ```velocity
+    #set( $foo = "bar")
+    $foo
+    #set($blargh = '$foo')
+    $blargh
+    ```
+
+    This renders as:
+
+    ```html
+    bar
+    $foo
+    ```
+
+  - *By default, this feature of using single quotes to render unparsed text is available in Velocity.* This default can be changed by editing `velocity.properties` such that `stringliterals.interpolate=false`. 
+
+- Alternately, *the **`#[[don't parse me!]]#`** syntax allows the template designer to easily use large chunks of uninterpreted and unparsed content in VTL code.*
+
+  -   This can be especially useful in place of [escaping](http://velocity.apache.org/engine/1.7/user-guide.html#EscapingVTLDirectives) multiple directives or escaping sections which have content that would otherwise be invalid (and thus unparseable) VTL.
+
+    ```velocity
+    #[[
+    #foreach ($woogie in $boogie)
+      nothing will happen to $woogie
+    #end
+    ]]#
+    ```
+
+    Render as:
+
+    ```html
+    #foreach ($woogie in $boogie)
+      nothing will happen to $woogie
+    #end
+    ```
+
+
+
+#### Conditionals
+
+- **If / ElseIf / Else**
+
+  -  **`#if`** : allows for text to be included when the web page is generated, on the conditional that the if statement is true. For example:
+
+    ```velocity
+    #if( $foo )
+      <strong>Velocity!</strong>
+    #end
+    ```
+
+    - *`true` for:  not `true` and not `null`* 
+
+      > Remember that the Velocity context only contains Objects, so when we say 'boolean', it will be represented as a Boolean (the class). This is true even for methods that return `boolean` - the introspection infrastructure will return a `Boolean` of the same logical value. 
+
+    - The content between the *`#if`* and the *`#end`* statements become the output if the evaluation is true. 
+
+  - An **`#elseif`** or **`#else`** element can be used with an `#if` element. 
+
+    >  Note that the Velocity Templating Engine will stop at the first expression that is found to be true. 
+
+    - For example:
+
+      ```velocity
+      ## suppose $foo=15 and $bar=6
+      #if($foo<10)
+      	**Go North**
+      #elseif($foo == 10)
+      	**Go East**
+      #elseif($bar == 6)
+      	**Go South**
+      #else
+      	**Go West**
+      #end
+      ## output: Go South
+      ```
+
+  - Relational and Logical Operators
+
+  - Velocity uses the equivalent operator to determine the relationships between variables. Here is a simple example to illustrate how the equivalent operator is used. 
+
+    ```velocity
+    #set ($foo = "deoxyribonucleic acid")
+    #set ($bar = "ribonucleic acid")
+    
+    #if ($foo == $bar)
+      In this case it's clear they aren't equivalent. So...
+    #else
+      They are not equivalent and this will be the output.
+    #end
+    ```
+
+    > *Note that the semantics of `==` are slightly different than Java where `==` can only be used to test object equality.* 
+    >
+    > In Velocity the equivalent operator can be used to directly compare numbers, strings, or objects. When the objects are of different classes, the string representations are obtained by calling `toString()` for each object and then compared. 
+
+- **Relational and logical Operators**
+
+  - logical **`&&`**, **`||`** and **`!`** operators.
+
+    ```velocity
+    ## logical AND
+    #if( $foo && $bar)
+      ** This AND that **
+    #end
+    
+    ## logical OR
+    #if( $foo || $bar)
+      **This OR that**
+    #end
+    
+    ## logical NOT
+    #if(!$foo)
+      **NOT that**
+    #end
+    ```
+
+  - There are text versions of all logical operators, including *eq*, *ne*, *and*, *or*, *not*, *gt*, *ge*, *lt*, and *le*. ???
+
+  - One more useful note. When you wish to include text immediately following a *#else* directive you will need to use curly brackets immediately surrounding the directive to differentiate it from the following text. (Any directive can be delimited by curly brackets, although this is most useful for *#else*). 
+
+    ```velocity
+    #if($foo == $bar) it's true!#{else}it's not!#end
+    ```
+
+    
+
+#### Loops
+
+- **Foreach Loop**
+
+  - The **`#foreach`** element allows for looping. For example:
+
+    ```velocity
+    <ul>
+    #foreach($product in $allProducts)
+    	<li>$product</li>
+    #end
+    </ul>
+    ```
+
+    - The contents of the `$allProducts` variable is a *Vector*, a *Hashtable* or an *Array*. 
+
+    - The value assigned to the `$product` variable is a Java Object and can be referenced from a variable as such. For example, if `$product` was really a Product class in Java, its name could be retrieved by referencing the `$product.Name` method (ie: `$Product.getName()`).
+
+      Lets say that `$allProducts` is a Hashtable. If you wanted to retrieve the key values for the Hashtable as well as the objects within the Hashtable, you can use code like this:
+
+      ```velocity
+      <ul>
+      #foreach( $key in $allProducts.keySet() )
+      	<li>Key: $key -> Value: $allProducts.get($key)</li>
+      #end
+      </ul>
+      ```
+
+    - *Velocity provides an easy way to get the loop counter*(**`$foreach.count`**) so that you can do something like the following: 
+
+      ```velocity
+      <table>
+      #foreach( $customer in $customerList )
+          <tr><td>$foreach.count</td><td>$customer.Name</td></tr>
+      #end
+      </table>
+      ```
+
+    - Velocity also now provides an easy way to tell if you are *on the last iteration of a loop* **`$foreach.hasNext`**: 
+
+      ```velocity
+      #foreach( $customer in $customerList )
+          $customer.Name#if( $foreach.hasNext ),#end
+      #end
+      ```
+
+    - *If you want a zero-based index of the `#foreach` loop, you can just use **`$foreach.index`** instead of `$foreach.count`.*
+
+    - Likewise, **`$foreach.first`** and **`$foreach.last`** are provided to compliment `$foreach.hasNext`. If you want to access these properties for an outer `#foreach` loop, you can reference them directly through the **`$foreach.parent`** or **`$foreach.topmost`** properties (e.g. `$foreach.parent.index` or `$foreach.topmost.hasNext`). 
+
+    - *It's possible to set a maximum allowed number of times that a loop may be executed*. 
+
+      - By default there is no max (indicated by a value of 0 or less), but this can be set to an arbitrary number in the `velocity.properties` file. This is useful as a fail-safe. 
+
+        ```
+        # The maximum allowed number of loops.
+        directive.foreach.maxloops = -1
+        ```
+
+    - If you want to stop looping in a foreach from within your template, you can now use the **`#break`** directive to stop looping at any time: 
+
+      ```velocity
+      ## list first 5 customers only
+      #foreach( $customer in $cusromerList)
+        #if($foreach.count > 5)
+          #break
+        #end
+        $customer.Name
+      #end
+      ```
+
+      
+
+#### Include
+
+The **`#include`** script element allows the template designer to *import a local file*, which is then inserted into the location where the `#include` directive is defined. 
+
+- The contents of the file are *not rendered through the template engine*.  
+- For security reasons, the file to be included may only be under *TEMPLATE_ROOT*. ??? 
+
+```velocity
+## The file to which the #include directive refers is enclosed in quotes
+#include("one.txt")
+
+## If more than one file will be included, they should be separated by commas.
+#include("one.gif", "two.txt", "three.htm")
+```
+
+- The file being included need not be referenced by name; in fact, it is often preferable to use a variable instead of a filename. This could be useful for targeting output according to criteria determined when the page request is submitted. Here is an example showing both a filename and a variable. 
+
+  ```velocity
+  #include("greetings.txt", $seasonalstock)
   ```
 
   
 
+#### Parse
+
+The **`#parse`** script element allows the template designer to import a local file that contains VTL. Velocity will parse the VTL and render the template specified. 
+
+```velocity
+#parse("me.vm")
+```
+
+- Like the `include` directive, `#parse` can take a variable rather than a template. 
+- Any templates to which `#parse` refers must be included under TEMPLATE_ROOT. 
+- *Unlike the `#include` directive, `#parse` will only take a single argument.* 
+
+VTL templates can have `#parse` statements referring to templates that in turn have `#parse` statements.  
+
+- By default set to 10, the **`directive.parse.max.depth`** line of the `velocity.properties` allows users to customize maximum number of `#parse` referrals that can occur from a single template. 
+
+- Note: If the `directive.parse.max.depth` property is absent from the `velocity.properties` file, Velocity will set this default to 10.
+
+- Recursion is permitted, for example, if the template `dofoo.vm` contains the following lines: 
+
+  ```velocity
+  Count down.
+  #set($count = 8)
+  #parse("parsefoo.vm")
+  All done with dofoo.vm!
+  ```
+
+  It would reference the template `parsefoo.vm`, which might contain the following VTL:
+
+  ```velocity
+  $count
+  #set($count = $count - 1)
+  #if($count > 0)
+    #parse("parsefoo.vm")
+  #else
+    All done with parsefoo.vm
+  #end
+  ```
+
+  After "Count down." is displayed, Velocity passes through `parsefoo.vm`, counting down from 8. When the count reaches 0, it will display the "All done with parsefoo.vm!" message. At this point, Velocity will return to `dofoo.vm` and output the "All done with dofoo.vm!" message. 
+
+#### Break
+
+The `#break` directive stops any further rendering of the current execution scope.  
+
+ An "*execution scope*" is essentially any directive with content (i.e. `#foreach`, `#parse`, `#evaluate`, `#define`, `#macro`, or `#@somebodymacro`) or any "root" scope (i.e. `template.merge(...)`, `Velocity.evaluate(...)` or `velocityEngine.evaluate(...)`). Unlike `#stop`, `#break` will only stop the innermost, immediate scope, not all of them. 
+
+If you wish to break out of a specific execution scope that is not necessarily the most immediate one, then you can pass the scope control reference (i.e. `$foreach`, `$template`, `$evaluate`, `$define`, `$macro`, or `$somebodymacro`) as an argument to #break. (e.g. `#break($macro)`). *This will stop rendering of all scopes up to the specified one.* 
+
+- When within nested scopes of the same type, remember that you can always access the parent(s) via `$.parent` or `$.topmost` and pass those to #break instead (e.g. `#break($foreach.parent`) or `#break($macro.topmost)`). 
+
+#### Stop
+
+The **`#stop`** directive stops any further rendering and execution of the template. 
+
+-  This is true even when the directive is nested within another template accessed through `#parse` or located in a velocity macro. 
+-  The resulting merged output will contain all the content up to the point the #stop directive was encountered. *This is handy as an early exit from a template*. 
+- For debugging purposes, you may provide a message argument (e.g. `#stop('$foo was not in context')` ) that will be written to the logs (DEBUG level, of course) upon completion of the stop command. 
+
+#### Evaluate
+
+The **`#evaluate`** directive can be used to dynamically evaluate VTL.
+
+- *This allows the template to evaluate a string that is created at render time.*
+
+- Such a string might be used to internationalize the template or to include parts of a template from a database. 
+
+- The example below will display `abc`:
+
+  ```velocity
+  #set($source1 = "abc")
+  #set($select = "1")
+  #set($dynamicsource = "$source$select")
+  ## $dynamicsource is now the string '$source1'
+  #evaluate($dynamicsource)
+  ```
+
   
+
+#### Define
+
+The **`#define`** directive lets one assign a block of VTL to a reference.
+
+The example below will display `Hello World!`
+
+```velocity
+#define($block)Hello $who#end
+#set($who = 'world!')
+$block
+```
+
+
+
+#### Velocimacros
+
+*The **`#macro`** script element allows template designers to define a repeated segment of a VTL template.*
+
+- Velocimacro is created for the sole purpose of *saving keystrokes* and *minimizing typographic errors*.
+
+For example:
+
+```velocity
+## define
+#macro(d)
+<tr><td></td></tr>
+#end
+
+## call
+#d()
+```
+
+When this template is called, Velocity would replace #d() with a row containing a single, empty data cell.
+
+*If we want to put something in that cell, we can alter the macro to allow for a body:*
+
+```velocity
+#macro(d)
+<tr><td>$!bodyContent</td></tr>
+#end
+
+## call (a bit differently)
+#@d() Hello!#end
+```
+
+Using **`#@`** before the name and providing a body and `#end` to the call, then Velocity will render the body when it gets to the **`$!bodyContent`**.
+
+> You can still call the macro as you did before, and since we used the silent reference notation for the body reference (`$!bodyContent` instead of `$bodyContent`), it will still render a row with a single, empty data cell. 
+
+###### Arguments
+
+A Velocimacro can also take any number of arguments -- even zero arguments, as demonstrated in the first example, is an option -- but when the Velocimacro is invoked, it must be called with the same number of arguments with which it was defined. 
+
+For example:
+
+```velocity
+#macro( tablerows $color $somelist )
+#foreach( $something in $somelist )
+	<tr><td bgcolor=$color>$something</td></tr>
+#end
+#end
+```
+
+The Velocimacro being defined in this example, `tablerows`, takes two arguments. The first argument takes the place of `$color`, and the second argument takes the place of `$somelist`. 
+
+*Anything that can be put into a VTL template can go into the body of a Velocimacro.*  
+
+```velocity
+#set( $greatlakes = ["Superior", "Michigan", "Huron", "Erie", "Ontario"])
+#set( $color = "blue" )
+<table>
+	#tablerows( $color $greatlakes )
+```
+
+When the `#tablerows` Velocimacro is called in this situation, the following output is generated:
+
+```html
+<table>
+    <tr><td bgcolor="blue">Superior</td></tr>
+    <tr><td bgcolor="blue">Michigan</td></tr>
+    <tr><td bgcolor="blue">Huron</td></tr>
+    <tr><td bgcolor="blue">Erie</td></tr>
+    <tr><td bgcolor="blue">Ontario</td></tr>
+</table>
+```
+
+> Velocimacros can be defined *inline* in a Velocity template, meaning that it is unavailable to other Velocity templates on the same web site. Defining a Velocimacro such that it can be shared by all templates has obvious advantages: it reduces the need to redefine the Velocimacro on numerous templates, saving work and reducing the chance of error, and ensures that a single change to a macro available to more than one template. 
+
+
+
+*Velocimacros can take as arguments any of the following VTL elements*:
+
+- Reference : anything that starts with `$`
+- String literal: something like `"$foo"` or `"hello"`
+- Number literal : `1`, `2` etc
+- IntegerRange: `[1..2]` or `[$foo .. $bar]`
+- ObjectArray: `["a", "b", "c"]`
+- boolean value `true`
+- boolean value `false`
+
+When passing references as arguments to Velocimacros, please note that *references are passed 'by name'.* 
+
+- This means that their value is *'generated' at each use* inside the Velocimacro.
+
+  For example:
+
+  ```velocity
+  #macro( callme $a)
+  	$a $a $a
+  #end
+  
+  #callme( $foo.bar() )
+  ```
+
+  results in the method `bar()` of the reference `$foo` being called 3 times.
+
+- If you need to circumvent this feature, you can always just get the value from the method as a new reference and pass that:
+
+  ```velocity
+  #set( $myval = $foo.bar() )
+  #callme( $myval )
+  ```
+
+###### Velocimacro Properties:
+
+Several lines in the `velocity.properties` file allow for flexible implementation of Velocimacros.
+
+> Note that these are also documented in the [Developer Guide](http://velocity.apache.org/engine/1.7/developer-guide.html). 
+
+- **`velocimacro.library`**:  A comma-separated list of all Velocimacro template libraries. 
+  - By default, Velocity looks for a single library: `VM_global_library.vm`. The configured template path is used to find the Velocimacro libraries. 
+- **`velocimacro.permissions.allow.inline`** : `true` or `false`, determines whether Velocimacros can be defined in regular templates.
+  -  The default, `true`, allows template designers to define Velocimacros in the templates themselves. 
+- `velocimacro.permissions.allow.inline.to.replace.global` :  With possible values of true or false, this property allows the user to specify if a Velocimacro defined inline in a template can replace a globally defined template, one that was loaded on startup via the `velocimacro.library` property. The default, `false`, prevents Velocimacros defined inline in a template from replacing those defined in the template libraries loaded at startup. 
+- `velocimacro.permissions.allow.inline.local.scope` - This property, with possible values of true or false, defaulting to false, controls if Velocimacros defined inline are 'visible' only to the defining template.  
+- `velocimacro.library.autoreload` - This property controls Velocimacro library autoloading. The default value is `false`. When set to `true` the source Velocimacro library for an invoked Velocimacro will be checked for changes, and reloaded if necessary. This allows you to change and test Velocimacro libraries without having to restart your application or servlet container, just like you can with regular templates. This mode only works when caching is *off*in the resource loaders (e.g. `file.resource.loader.cache = false` ). This feature is intended for development, not for production. 
+
+
+
+
+
+## Getting Literal
+
+VTL uses special characters, such as *$* and *#*, to do its work, so some added care should be taken where using these characters in your templates. This section deals with escaping these characters. 
+
+#### Currency
+
+a VTL identifier always begins with an upper- or lowercase letter, so `$2.50` would not be mistaken for a reference. 
+
+#### Escaping Valid VTL References
+
+*Escaping* special characters , you can use backslash(`\`). for example:
+
+```velocity
+## The following line defines $email in this template:
+#set( $email = "foo" )
+$email
+\$email
+```
+
+will renders as:
+
+```html
+foo
+$email
+```
+
+If, for some reason, you need a backslash before either line above, you can do the following: 
+
+```velocity
+## The following line defines $email in this template:
+#set( $email = "foo" )
+\\$email
+\\\$email
+```
+
+will renders as
+
+```html
+\foo
+\$email
+```
+
+*The bind-from-left rule causes `\\$email` to render as`\$email`.*  
+
+*Compare these examples to those in which `$email` is not defined.*
+
+```
+$email
+\$email
+\\$email
+\\\$email
+```
+
+renders as
+
+```
+$email
+\$email
+\\$email
+\\\$email
+```
+
+Notice Velocity handles references that are defined differently from those that have not been defined. Here is a set directive that gives *$foo* the value *gibbous*.
+
+```
+#set( $foo = "gibbous" )
+$moon = $foo
+```
+
+The output will be: *$moon = gibbous* -- where *$moon* is output as a literal because it is undefined and *gibbous* is output in place of *$foo*.
+
+???
+
+#### Escaping Invalid VTL References
+
+Sometimes Velocity has trouble parsing your template when it encounters an "invalid reference" that you never intended to be a reference at all.
+
+ *Escaping* special characters is, again, the best way to handle these situations, but in these situations, the backslash will likely fail you. Instead of simply trying to escape the problematic `$` or `#`, you should probably just replace this:
+
+```
+${my:invalid:non:reference}
+```
+
+with something like this
+
+```velocity
+#set( $D = '$' )
+${D}{my:invalid:non:reference}
+```
+
+You can, of course, put your `$` or `#` string directly into the context from your java code (e.g. `context.put("D","$");`) to avoid the extra #set() directive in your template(s). Or, if you are using [VelocityTools](http://velocity.apache.org/tools/devel), you can just use the EscapeTool like this:
+
+```velocity
+${esc.d}{my:invalid:non:reference}
+```
+
+Escaping of both valid and invalid VTL directives is handled in much the same manner; this is described in more detail in the Directives section.
+
+???
+
+#### *Escaping VTL Directives*
+
+VTL directives can be escaped with the backslash character ("\") in a manner similar to valid VTL references.
+
+```velocity
+## #include( "a.txt" ) renders as <contents of a.txt>
+#include( "a.txt" )
+
+## \#include( "a.txt" ) renders as #include( "a.txt" )
+\#include( "a.txt" )
+
+## \\#include ( "a.txt" ) renders as \<contents of a.txt>
+\\#include ( "a.txt" )
+```
+
+Extra care should be taken when escaping VTL directives that contain multiple script elements in a single directive (such as in an if-else-end statements). Here is a typical VTL if-statement:
+
+```velocity
+#if( $jazz )
+    Vyacheslav Ganelin
+#end
+```
+
+If *$jazz* is true, the output is
+
+```html
+Vyacheslav Ganelin
+```
+
+If *$jazz* is false, there is no output. Escaping script elements alters the output. Consider the following case:
+
+```velocity
+\#if( $jazz )
+    Vyacheslav Ganelin
+\#end
+```
+
+This causes the directives to be escaped, but the rendering of *$jazz* proceeds as normal. So, if *$jazz* is true, the output is
+
+```html
+#if( true )
+     Vyacheslav Ganelin
+ #end
+```
+
+Suppose backslashes precede script elements that are legitimately escaped:
+
+```velocity
+\\#if( $jazz )
+   Vyacheslav Ganelin
+\\#end
+```
+
+In this case, if *$jazz* is true, the output is
+
+```html
+\ Vyacheslav Ganelin
+\
+```
+
+To understand this, note that the `#if( arg )` when ended by a newline (return) will omit the newline from the output. Therefore, the body of the `#if()` block follows the first '\', rendered from the '\' preceding the `#if()`. The last \ is on a different line than the text because there is a newline after 'Ganelin', so the final \, preceding the `#end` is part of the body of the block.
+
+If *$jazz* is false, the output is
+
+```html
+\
+```
+
+Note that things start to break if script elements are not properly escaped.
+
+```velocity
+\\\#if( $jazz )
+    Vyacheslave Ganelin
+\\#end
+```
+
+Here the *#if* is escaped, but there is an *#end* remaining; having too many endings will cause a parsing error.
+
+
+
+## VTL: Formatting Issues
+
+Although VTL in this user guide is often displayed with newlines and whitespaces, the VTL shown below
+
+```velocity
+#set( $imperial = ["Munetaka","Koreyasu","Hisakira","Morikune"] )
+#foreach( $shogun in $imperial )
+    $shogun
+#end
+```
+
+is equally valid as the following snippet that Geir Magnusson Jr. posted to the Velocity user mailing list to illustrate a completely unrelated point:
+
+```velocity
+Send me #set($foo=["$10 and ","a pie"])#foreach($a in $foo)$a#end please.
+```
+
+Velocity's behaviour is to gobble up excess whitespace. The preceding directive can be written as:
+
+```velocity
+Send me
+#set( $foo = ["$10 and ","a pie"] )
+#foreach( $a in $foo )
+$a
+#end
+please.
+```
+
+or as
+
+```velocity
+Send me
+#set($foo       = ["$10 and ","a pie"])
+                 #foreach           ($a in $foo )$a
+         #end please.
+```
+
+In each case the output will be the same.
+
+
+
+## Other Features and Miscellany
+
+#### Math
+
+Velocity has a handful of built-in mathematical functions that can be used in templates with the *set* directive. The following equations are examples of addition, subtraction, multiplication and division, respectively: 
+
+```velocity
+#set( $foo = $bar + 3 )
+#set( $foo = $bar - 4 )
+#set( $foo = $bar * 6 )
+#set( $foo = $bar / 2 )
+```
+
+*When a division operation is performed between two integers, the result will be an integer, as the fractional portion is discarded.* Any remainder can be obtained by using the modulus (`%`) operator. 
+
+```velocity
+#set( $foo = $bar % 5 )
+```
+
+#### Range Operator
+
+
+
+
 
 
 

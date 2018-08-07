@@ -1903,11 +1903,173 @@ Dynamic options rendered with `v-for`:
 
 For radio, checkbox and select options, the `v-model` binding values are usually static strings (or booleans for checkbox):
 
- 
+ ```vue
+<!-- `picked` is a string "a" when checked -->
+<input type="radio" v-model="picked" value="a">
+
+<!-- `toggle` is either true or false -->
+<input type="checkbox" v-model="toggle">
+
+<!-- `selected` is a string "abc" when the first option is selected -->
+<select v-model="selected">
+  <option value="abc">ABC</option>
+</select>
+ ```
 
 
 
+But sometimes we may want to *bind the value to a dynamic property on the Vue instance.* We can use `v-bind` to achieve that. In addition, using `v-bind` allows us to bind the input value to non-string values. 
 
+- Checkbox
+
+  ```vue
+  <input
+    type="checkbox"
+    v-model="toggle"
+    true-value="yes"
+    false-value="no"
+  >
+  ```
+
+  ```js
+  // when checked:
+  vm.toggle === 'yes'
+  // when unchecked:
+  vm.toggle === 'no'
+  ```
+
+- *Radio*
+
+  ```vue
+  <input type="radio" v-model="pick" v-bind:value="a">
+  ```
+
+  ```js
+  // when checked:
+  vm.pick === vm.a
+  ```
+
+- Select Options
+
+  ```vue
+  <select v-model="selected">
+    <!-- inline object literal -->
+    <option v-bind:value="{ number: 123 }">123</option>
+  </select>
+  ```
+
+  ```js
+  // when selected:
+  typeof vm.selected // => 'object'
+  vm.selected.number // => 123
+  ```
+
+
+
+#### Modifiers
+
+- **`.lazy`**
+
+  By default, `v-model` syncs the input with the data after each `input` event (with the exception of IME composition as [stated above](https://vuejs.org/v2/guide/forms.html#vmodel-ime-tip)). *You can add the `lazy` modifier to instead sync after `change` events:* 
+
+  ```vue
+  <!-- synced after "change" instead of "input" -->
+  <input v-model.lazy="msg" >
+  ```
+
+- **`.number`**
+
+  If you want user input to be automatically typecast as a number, you can add the `number`modifier to your `v-model` managed inputs: 
+
+  ```vue
+  <input v-model.number="age" type="number">
+  ```
+
+  This is often useful, because even with `type="number"`, the value of HTML input elements always returns a string. 
+
+- **`.trim`**
+
+  If you want user input to be trimmed automatically, you can add the `trim` modifier to your `v-model` managed inputs: 
+
+  ```vue
+  <input v-model.trim="msg">
+  ```
+
+
+
+#### `v-model` with Components
+
+... ???
+
+
+
+# Components
+
+To use components in templates, they must be *registered* (so that Vue knows about them).
+
+Two types of component registration: *global* and *local*.
+
+- Global register, using **`Vue.component`**: 
+
+  ```js
+  Vue.component('my-component-name', {
+    // ... options
+  })
+  ```
+
+  
+
+#### Passing Data to Child Components with `props`
+
+**`props`** are custom attributes you can register on a component. 
+
+- When a value is passed to a prop attribute, it becomes a property on that component instance.
+
+  For example:
+
+  ```js
+  Vue.component('blog-post', {
+    props:['title'],  //  we can access this value on the component instance, just like with data.
+    template: '<h3>{{title}}</h3>'
+  })
+  ```
+
+  Once a prop is registered, you can pass data to it as a custom attribute, like this: 
+
+  ```vue
+  <blog-post title="My journey with Vue"></blog-post>
+  <blog-post title="Blogging with Vue"></blog-post>
+  <blog-post title="Why Vue is so fun"></blog-post>
+  ```
+
+- In a typical app, however, you'll likely have an array of posts in `data`: 
+
+  ```js
+  new Vue({
+    el: '#blog-post-demo',
+    data: {
+      posts: [
+        { id: 1, title: 'My journey with Vue' },
+        { id: 2, title: 'Blogging with Vue' },
+        { id: 3, title: 'Why Vue is so fun' }
+      ]
+    }
+  })
+  ```
+
+  Then want to render a component for each one: 
+
+  ```vue
+  <blog-post
+    v-for="post in posts"
+    v-bind:key="post.id"
+    v-bind:title="post.title"
+  ></blog-post>
+  ```
+
+  Above, you’ll see that we can use `v-bind` to dynamically pass props. This is especially useful when you don’t know the exact content you’re going to render ahead of time, like when [fetching posts from an API](https://jsfiddle.net/chrisvfritz/sbLgr0ad). 
+
+#### A Single Root Element
 
 
 
