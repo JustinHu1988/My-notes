@@ -1104,9 +1104,234 @@ Velocity has a handful of built-in mathematical functions that can be used in te
 
 #### Range Operator
 
+The range operator can be used in conjunction with `#set` and `#foreach` statements. Useful for its ability to produce an object array containing integers:
+
+```velocity
+[n..m]
+```
+
+- *Both `n` and `m` must either be or produce integers.*
+
+- Whether *m* is greater than or less than *n* will not matter; in this case the range will simply count down. 
+
+```velocity
+First example:
+#foreach( $foo in [1..5])
+$foo
+#end
+
+Second example:
+#foreach( $bar in [2..-2])
+$bar
+#end
+
+Third example:
+#set( $arr = [0..1])
+#foreach( $i in $arr )
+$i
+#end
+
+Fourth example:
+[1..3]
+```
+
+Produces the following output:
+
+```html
+First example:
+1 2 3 4 5
+
+Second example:
+2 1 0 -1 -2
+
+Third example:
+0 1
+
+Fourth example:
+[1..3]
+```
+
+*Note that the range operator only produces the array when used in conjunction with `#set` and `#foreach` directives, as demonstrated in the fourth example.* 
 
 
 
+#### Advanced Issues: Escaping and `!`
+
+When a reference is silenced with the `!` character and the `!` character preceded by an `\` escape character, the reference is handled in a special way. 
+
+Note the differences between regular escaping, and the special case where `\` precedes `!` follows it:  
+
+```velocity
+#set( $foo = "bar" )
+$\!foo
+$\!{foo}
+$\\!foo
+$\\\!foo
+```
+
+This renders as:
+
+```html
+$!foo
+$!{foo}
+$\!foo
+$\\!foo
+```
+
+Contrast this with regular escaping, where `\` precedes `$`: 
+
+```velocity
+\$foo
+\$!foo
+\$!{foo}
+\\$!{foo}
+```
+
+This renders as:
+
+```html
+$foo
+$!foo
+$!{foo}
+\bar
+```
+
+
+
+#### Velocimacro Miscellany
+
+This section is a mini-FAQ on topics relating to Velocimacros.
+
+- Can I use a directive or another VM as an argument to a VM? Example: `#center(#bold("hello"))`
+
+  - No.  A directive isn't a valid argument to a directive, and for most practical purposes, a VM is a directive. 
+
+  - However, there are things you can do.  One easy solution is to take advantage of the fact that 'doublequote' (`"`) renders its contents. So you could do something like :
+
+    ```velocity
+    #set($stuff = "#bold('hello')" )
+    #center( $stuff )
+    ```
+
+    you can save a step:
+
+    ```velocity
+    #center("#bold('hello')")
+    ```
+
+  - Please note that in the latter example the arg is evaluated *inside* the VM, not at the calling level. In other words, the argument to the VM is passed in in its entirety and evaluated within the VM it was passed into. This allows you to do things like : 
+
+    ```velocity
+    #macro( inner $foo )
+    	inner : $foo
+    #end
+    
+    #macro( outer $foo )
+    	#set($bar = "outerlala")
+    	outer : $foo
+    #end
+    
+    #set($bar = 'calltimelala')
+    #outer("#inner($bar)")
+    ```
+
+    *the output is:*
+
+    ```html
+    outer : inner : outerlala
+    ```
+
+    *because the evaluation of the `"#inner($bar)"` happens inside `#outer()`, so the `$bar` value set inside `#outer()` is the one that's used.* 
+
+  - This is an intentional and jealously guarded feature - args are passed 'by name' into VMs, so you can hand VMs things like stateful references such as
+
+    ```velocity
+    #macro( foo $color )
+      <tr bgcolor=$color><td>Hi</td></tr>
+      <tr bgcolor=$color><td>There</td></tr>
+    #end
+    
+    #foo( $bar.rowColor() )
+    ```
+
+    And have rowColor() called repeatedly, rather than just once. To avoid that, invoke the method outside of the VM, and pass the value into the VM.
+
+    ```velocity
+    #set($color = $bar.rowColor())
+    #foo( $color )
+    ```
+
+- Can I register Velocimacros via `#parse()`?
+
+  - *Yes! This became possible in Velocity 1.6.*
+  - If you are using an earlier version, your Velocimacros must be defined before they are first used in a template. This means that your `#macro()` declarations should come before using the Velocimacros. 
+  - This is important to remember if you try to `#parse()` a template containing inline `#macro()` directives. Because the `#parse()` happens at runtime, and the parser decides if a VM-looking element in the template is a VM at parsetime, `#parse()`-ing a set of VM declarations won't work as expected. To get around this, simply use the `velocimacro.library` facility to have Velocity load your VMs at startup. ???
+
+- What is Velocimacro Autoreloading?
+
+  - There is a property, meant to be used in *development*, not production :
+
+    ```
+    `velocimacro.library.autoreload`
+    ```
+
+    which defaults to false. When set to true *along with*
+
+    ```
+    `<type>.resource.loader.cache = false`
+    ```
+
+    (where is the name of the resource loader that you are using, such as 'file') then the Velocity engine will automatically reload changes to your Velocimacro library files when you make them, so you do not have to dump the servlet engine (or application) or do other tricks to have your Velocimacros reloaded.
+
+    Here is what a simple set of configuration properties would look like.
+
+    ```
+    file.resource.loader.path = templates
+    file.resource.loader.cache = false
+    velocimacro.library.autoreload = true
+    ```
+
+    Don't keep this on in production.
+
+#### String Concatenation
+
+A common question that developers ask is *How do I do String concatenation? Is there any analogue to the '+' operator in Java?*.
+
+To do concatenation of references in VTL, you just have to 'put them together'. The context of where you want to put them together does matter, so we will illustrate with some examples.
+
+- In the regular 'schmoo' of a template (when you are mixing it in with regular content): 
+
+  ```velocity
+  #set($size = "Big")
+  #set($name = "Ben")
+  
+  The clock is $size$name.
+  ```
+
+  and the output will render as 'The clock is BigBen'.
+
+- For more interesting cases, such as when you want to concatenate strings to pass to a method, or to set a new reference, just do
+
+  ```velocity
+  #set( $size = "Big" )
+  #set( $name = "Ben" )
+  
+  #set($clock = "$size$name" )
+  
+  The clock is $clock.
+  ```
+
+- Which will result in the same output. As a final example, when you want to mix in 'static' string with your references, you may need to use 'formal references':
+
+  ```velocity
+  #set( $size = "Big" )
+  #set( $name = "Ben" )
+  #set($clock = "${size}Tall$name")
+  
+  The clock is $clock.
+  ```
+
+  Now the output is 'The clock is BigTallBen'. The formal notation is needed so the parser knows you mean to use the reference '$size' versus '$sizeTall' which it would if the '{}' weren't there. 
 
 
 
