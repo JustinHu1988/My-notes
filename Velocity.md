@@ -254,7 +254,6 @@ $bar.retnull.bogus	## cannot call a property on null, Exception</pre>
   this is $!bogus	## bogus is not in the context so throws an exception
   ```
 
-  
 
 ## Case Substitution
 
@@ -300,7 +299,6 @@ ${data.Request.ServerName}
     #if($a==1)true enough#{else}no way!#end
     ```
 
-    
 
 #### Set
 
@@ -544,7 +542,6 @@ The `#set` directive is used for setting the value of a reference.
     #if($foo == $bar) it's true!#{else}it's not!#end
     ```
 
-    
 
 #### Loops
 
@@ -617,7 +614,6 @@ The `#set` directive is used for setting the value of a reference.
       #end
       ```
 
-      
 
 #### Include
 
@@ -640,7 +636,6 @@ The **`#include`** script element allows the template designer to *import a loca
   #include("greetings.txt", $seasonalstock)
   ```
 
-  
 
 #### Parse
 
@@ -719,7 +714,6 @@ The **`#evaluate`** directive can be used to dynamically evaluate VTL.
   #evaluate($dynamicsource)
   ```
 
-  
 
 #### Define
 

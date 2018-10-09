@@ -1,0 +1,109 @@
+// for more:  https://docs.npmjs.com/getting-started/using-a-package.json
+
+/* why need package.json?
+  package.json file is the best way to manage locally installed npm packages.
+  A package.json file:
+    - lists the packages that your porject depends on
+    - allows you to specify the versions of a package that your project can use using semantic version rules (https://docs.npmjs.com/getting-started/semantic-versioning).
+    - makes your build reproducible, and therefore much easier to share with other developers.
+  */
+
+{
+  // The name and version together form an identifier
+  "name": "mvvm-framework",
+  "version": "1.0.0",
+
+  // a string. This helps people discover your package.
+  "description": "A mvvm framework for sdk.",
+
+  // node run "commmand"
+  "scripts": {
+    // is this irrelevant?
+    "format": "prettier --write './**/*.{js,json,md}'",
+    // do webpack (according to webpack.config.js)
+    "webpack": "node_modules/.bin/webpack --config webpack.config.js",
+    // webpack-dev-server: can be used to quickly develop an application
+    "dev": "node_modules/.bin/webpack-dev-server --hot --inline --open",
+    // add git hooks (by husky)
+    "precommit": "lint-staged",
+    // start karma with karma.conf.js
+    "test:unit": "./node_modules/.bin/karma start test/karma.conf.js"
+  },
+
+  // Specify the place where your code lives. (The URL should be a publicly available (perhaps read-only) url that can be handed directly to a VCS program without any modification. It should not be a url to an html project page that you put in your browser. It's for computers. )
+  "repository": {
+    "type": "git",
+    "url": "http://wangyunfei@gitlab.qiyi.domain/wangyunfei/mvvm-framework.git"
+  },
+
+  //author
+  "author": "",
+
+  //license, check the full list of SPDX license IDs : https://spdx.org/licenses/.
+  "license": "ISC",
+
+  // package map for development, use `npm install` to install both "devDependencies" and "dependencies" packages.
+  "devDependencies": {
+    // babel preset
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+
+    // Run scripts that set and use environment variables across platforms
+    "cross-env": "^5.1.3",
+
+    // karma and karma plugins
+    "karma": "^2.0.2",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-jasmine": "^1.1.2",
+    "karma-sourcemap-loader": "^0.3.7",
+    // use webpack to preprocess files in karma
+    "karma-webpack": "^3.0.0",
+    // is this necessary?
+    "jasmine-core": "^2.9.0",
+
+    // husky
+    "husky": "^0.14.3",
+    // lint-staged
+    "lint-staged": "^6.1.0",
+    // prettier
+    "prettier": "^1.10.2",
+
+    // webpack
+    "webpack": "^4.0.1",
+    // Webpack CLI encapsulates all code related to CLI handling. It captures options and sends them to webpack compiler.
+    "webpack-cli": "^2.0.10",
+    // Use webpack with a development server that provides live reloading. This should be used for development only.
+    "webpack-dev-server": "^3.1.0",
+    // A webpack plugin to remove/clean your build folder(s) before building
+    "clean-webpack-plugin": "^0.1.18",
+    // a file loader module for webpack
+    "file-loader": "^1.1.11",
+    // Exports HTML as string. HTML is minimized when the compiler demands.
+    "html-loader": "^0.5.5",
+    // Plugin that simplifies creation of HTML files to serve your bundles
+    "html-webpack-plugin": "^3.0.6"
+  },
+
+  // lint files that will be committed
+  "lint-staged": {
+    "*.{js,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+
+  // package map for production
+  "dependencies": {
+    // a javascript code generator
+    "escodegen": "^1.9.1",
+    // a javascript parser written in javascript
+    "esprima": "^4.0.0",
+    // JS AST traversal functions
+    "estraverse": "^4.2.0",
+    // Provides polyfills necessary for a full ES2015+ environment
+    "babel-polyfill": "^6.26.0",
+    // to es3ify your code for old versions of ie
+    "es3ify-webpack-plugin": "0.0.1"
+  }
+}

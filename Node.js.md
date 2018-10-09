@@ -409,6 +409,343 @@ http
 
 
 
+????
+
+
+
+## Global Objects
+
+
+
+## Modules
+
+In the Node.js module system, *each file is treated as a separate module*.
+
+Variables local to the module will be private, because the module is wrapped in a function by Node.js (see [module wrapper](https://nodejs.org/dist/latest-v8.x/docs/api/modules.html#modules_the_module_wrapper)). 
+
+#### Accessing the main module[#]
+
+When a file is run directly from Node.js, `require.main` is set to its `module`. That means that it is possible to determine whether a file has been run directly by testing `require.main === module`.
+
+For a file `foo.js`, this will be `true` if run via `node foo.js`, but `false` if run by `require('./foo')`.
+
+Because `module` provides a `filename` property (normally equivalent to `__filename`), the entry point of the current application can be obtained by checking `require.main.filename`.
+
+
+
+...???
+
+
+
+#### The module wrapper
+
+Before a module's code is executed, Node.js will wrap it with a function wrapper that looks like the following:
+
+```js
+(function(exports, require, module, __filename, __dirname){
+    //Module code actually lives in here
+})
+```
+
+*By doing this, Node.js achieves a few things:* 
+
+- It keeps top-level variables (defined with `var`, `const` or `let`) scoped to the module rather than the global object. 
+- It helps to provide some global-looking variables that are actually specific to the module, such as: 
+  - The `module` and `exports` objects that the implementor can use to export values from the module. 
+  - The convenience variables `__filename` and `__dirname`, containing the module's absolute filename and directory path.
+
+#### The module scope
+
+- **`__dirname`** : The directory name of the current module.
+
+  - the same as the `path.dirname(__filename)`.
+
+- **`__filename`** : The file name of the current module.
+
+  ```js
+  console.log(__filename);
+  // Prints: /Users/mjr/example.js
+  console.log(__dirname);
+  // Print: /Users/mjr
+  ```
+
+- `module.exports`
+
+- `module`
+
+- `require()`
+
+- `require.cache`
+
+
+
+## path
+
+The `path` module provides utilities for working with file and directory paths. It can be accessed using:
+
+```js
+const path = require('path')
+```
+
+
+
+
+
+
+
+## HTTP
+
+To use the HTTP server and client one must `require('http')`. 
+
+In order to support the full spectrum of possible HTTP applications, Node.js's HTTP API is very low-level.
+
+- It deals with stream handling and message parsing only. 
+-  It parses a message into headers and body but it does not parse the actual headers or the body. 
+
+
+
+```js
+// Include http module
+let http = require('http')
+
+// Create the server. 
+// Function passed as parameter is called on every request made.
+// request variable holds all request parameters
+// response variable allows you to do anything with response sent to the client.
+http.createServer(function(request, response){
+    // Attach listener on end event.
+    // This event is called when client sent all data and is waiting for response.
+    request.on('end', function(){
+        // Write headers to the response.
+        // 200 is HTTP status code (this one means success)
+        // Second parameter holds header fields in object
+        // We are sending plain text, so Content-Type should be text/plain
+        responce.writeHead(200, {
+            'Content-Type': 'text/plain'
+        })
+        // Send data and end response
+        response.end('Hello HTTP!')
+    })
+// Listen on the 8080 port
+}).listen(8080)
+```
+
+You can send more data to the client by using the `response.write()` method, but you have to call it before calling `response.end()`
+
+
+
+#### Handling URL Parameters
+
+We have to do everything ourselves in Node, including parsing request arguments.
+
+```js
+// Include http module
+let http = require('http')
+
+// And url module, which is very helpful in parsing request parameters.
+let url = require('url')
+
+// Create the server
+http.createServer(function(req, res){
+    // Attach listener on end event
+    request.on('end', function(){
+        // Parse the request for arguments and store them in _get variable
+        // This function parses the url from request and returns object representation
+        let _get = url.parse(req.url, true).query
+        // Write headers to the response
+        response.writeHead(200, {
+            'Content-Type': 'text/plain'
+        })
+        // Send data and end response
+        response.end('Here is your data: ' + _get['data'])
+    })
+// Listen on the 8080 port
+}).listen(8080)
+```
+
+This code uses the `parse()` method of the `url` module, to convert the request's URL to an object.
+
+- The returned object has a `query` property, which retrieves the URL's parameters.
+
+Save this file as `get.js` and execute it with the following command:
+
+```js
+node get.js
+```
+
+Then, navigate to `http://localhost:8080/?data=put_some_text_here` in your browser. Naturally, changing the value of the `data` parameter will not break the script.
+
+
+
+#### Reading and Writing Files
+
+To manage files in Node, we use the *fs* module.
+
+- We read and write files using the `fs.readFile()` and `fs.writeFile()` methods, respectively.
+
+```js
+// Include http module
+let http = require('http')
+// and fs module
+let fs = require('fs')
+
+// Create the http server
+http.createServer(function(req, res){
+    // Attach listener on end event
+    req.on('end', function(){
+        // Read the file
+        fs.readFile("text.txt", "utf-8", function(error, data){
+            // write headers
+            res.writeHead(200,{
+                'Content-Type': 'text/plain'
+            })
+            // Increment the number obtained from file
+            data = parseInt(data)+1
+            // Write incremented number to file
+            fs.writeFile('test.txt', data)
+            // End response with some nice message
+            res.end("This page was refreshed " + data + ' times!')
+        })
+    })
+// Listen on the 8080 port
+}).listen(8080)
+```
+
+Save this as *files.js*. Before you run this script, create a file named *test.txt* in the same directory as *files.js*.
+
+This code demonstrates the `fs.readFile()` and `fs.writeFile()` methods. Every time the server receives a request, the script reads a number from the file, increments the number, and writes the new number to the file. The `fs.readFile()` method accepts three arguments: the name of file to read, the expected encoding, and the callback function.
+
+Writing to the file, at least in this case, s much more simple.
+
+- We don't need to wait for any results, although you would check for errors in a real application.
+-  The `fs.writeFile()` method accepts the file name and data as arguments. It also accepts third and fourth arguments (both are optional) to specify the encoding and callback function, respectively. 
+
+Now, let's run this script with the following command:
+
+```
+node files.js
+```
+
+Open it in browser (`http://localhost:8080`) and refresh it a few times. Now, you may think that there is an error in the code because it seems to increment by two. This isn't an error. Every time you request this URL, *two requests are sent to the server.* The first request is automatically made by the browser, which requests *favicon.ico*, and of course, the second request is for the URL (`http://localhost:8080`).
+
+- Even though this behavior is technically not an error, it is behavior that we do not want. We can fix this easily by checking the request URL.:
+
+  ```js
+  // Include http module
+  let http = require('http')
+  // and fs module
+  let fs = require('fs')
+  
+  // Create the http server
+  http.createServer(function(req, res){
+      // Attach listener on end event
+      req.on('end', function(){
+          // Check if user requests /
+          if(req.url === '/'){
+              // Read the file
+              fs.readFile('test.txt', 'utf-8', function(error, data){
+                  // Write headers
+                  res.writeHead(200, {
+                      'Content-Type': 'text/plain'
+                  })
+                  // Increment the number obtained from file
+                  data = parseInt(data)+1
+                  // Write incremented number to file
+                  fs.writeFile('test.txt', data)
+                  // End response with some nice message
+                  response.end('This page was refreshed ' + data + ' times!')
+              })
+          }else{
+              // Indicate that requested file was not found
+              response.writeHead(404)
+              // And end request without sending any data
+              response.end()
+          }
+      })
+  // Listen on the 8080 port
+  }).listen(8080)
+  ```
+
+
+
+#### Accessing MySQL Databases
+
+Most traditional server-side technologies have a built-in means o connecting to and querying a database.
+
+With Node.js, you have to install a library. 
+
+- For example, navigate to the directory where you've stored your scripts, and execute the following command:
+
+  ```shell
+  npm install mysql@2.0.0-alpha2
+  ```
+
+   This downloads and installs the module, and it also creates the `node_modules` folder in the current directory.
+
+Now let's use it:
+
+```js
+// Include http module
+let http = require('http')
+// And mysql module you've just installed
+let mysql = require('mysql')
+
+// Create the connection  installation and should be changed according to your configuration. 
+let connection = mysql.createConnection({
+    user: 'root',
+    password: '',
+    database: 'db_name'
+})
+
+// Create the http server
+http.createServer(function(req, res){
+    // Attach listener on end event
+    request.on('end', function(){
+        // Query the database
+        connection.query('SELECT * FROM your_table;', function(error, rows, fields){
+            response.writeHead(200,{
+                'Content-Type': 'x-application/json'
+            })
+            // Send data as JSON string
+            // Rows variabble holds the result of the query
+            response.end(JSON.stringify(rows))
+        })
+    })
+// Listen on the 8080 port
+}).listen(8080)
+```
+
+Querying the database with this library is easy; simply enter the query string and callback function.
+
+- In a real application, you should check if there were errors (the `error` parameter will not be `undefined` if errors occurred) and send response codes dependent upon the success or failure of the query.
+- Also note that we have set the `Content-type` to `x-application/json`, which is the valid MIME type for JSON.
+- The `rows` parameter contains the result of the query, and we simply convert the data in `rows` to a JSON structure using the `JSON.stringify()` method. 
+
+Save this file as *mysql.js*, and execute it (if you have MySQL installed, that is):
+
+```
+node mysql.js
+```
+
+Navigate to `http://localhost:8080` in your browser, and you should be prompted to download the JSON-formatted file.
+
+#### Conclusion
+
+Every function in Node.js is asynchronous.
+
+Node.js requires extra work, but the payoff of a fast and robust application is worth it. If you don't want to do everything on the lowest level, you can always pick some framework, such as *Express*, to make it easier to develop applications.
+
+
+
+
+
+
+
+## Util
+
+Provide many useful APIs that nodejs can use.
+
+
 
 
 

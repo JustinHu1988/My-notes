@@ -991,6 +991,340 @@ JSONP(JSON with Padding or JSON-P) is *used to request data from a server residi
 
 
 
+## AJAX
+
+AJAX stands for *Asynchronous JavaScript And XML*.
+
+- In a nutshell, it is the use of the `XMLHttpRequest` object to communicate with servers.
+- It can send and receive information in various formats, including JSON, XML, HTML, and text files.
+- AJAX's most appealing characteristic is its "asynchronous" nature, which means it can communicate with the server, exchange data, and update the page without having to refresh the page.
+
+
+
+The two major features of AJAX allow you to do the following:
+
+- Make requests to the server without reloading the page;
+- Receive and work with data from the server.
+
+
+
+#### 1. How to make an HTTP request
+
+In order to make an [HTTP](https://developer.mozilla.org/en/HTTP) request to the server with JavaScript, you need an instance of an object with the necessary functionality. 
+
+- This is where `XMLHttpRequest` comes in. 
+- Its predecessor originated in Internet Explorer as an ActiveX object called `XMLHTTP`. 
+- Then, Mozilla, Safari, and other browsers followed, implementing an **`XMLHttpRequest`** object that supported the methods and properties of Microsoft's original ActiveX object. Meanwhile, Microsoft implemented `XMLHttpRequest` as well. 
+
+```js
+// Old compatibility code, no longer needed
+if(window.XMLHttpRequest){  // Mozilla, Safari, IE7+ ...
+    httpRequest = new XMLHttpRequest()
+} else if (window.ActiveXObject){  // IE 6 and older
+    httpRequest = new ActiveXObject("Microsoft.XMLHTTP")
+}
+```
+
+After making a request, you will receive a response back. At this stage, you need to tell the XMLHttp request object which JavaScript function will handle the response, by setting the **`onreadystatechange`** property of the object: 
+
+```js
+httpRequest.onreadystatechange = function(){
+    // Process the server response here.
+};
+```
+
+Next, after declaring what happens when you receive the response, you need to actually make the request, by calling the **`open()`** and **`send()`** methods of the HTTP request object, like this: 
+
+```js
+httpRequest.open("GET", "http://www.example.org/some.file")
+httpRequest.send()
+```
+
+- The first parameter of the call to `open()` is the HTTP request method – GET, POST, HEAD, or another method supported by your server. Keep the method all-capitals as per the HTTP standard, otherwise some browsers (like Firefox) might not process the request. For more information on the possible HTTP request methods, check the [W3C specs](http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html).
+- The second parameter is the URL you're sending the request to. *As a security feature, you cannot call URLs on 3rd-party domains by default*. Be sure to use the exact domain name on all of your pages or you will get a "permission denied" error when you call `open()`. A common pitfall is accessing your site by `domain.tld`, but attempting to call pages with `www.domain.tld`. *If you really need to send a request to another domain, see [HTTP access control (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).*
+- The optional third parameter sets whether the request is asynchronous. If `true` (the default), JavaScript execution will continue and the user can interact with the page while the server response has yet to arrive. This is the first A in AJAX.
+
+
+
+*The parameter to the `send()` method can be any data you want to send to the server if  **`POST`**-ing the request.*
+
+- *Form data should be sent in a format that the server can parse*, like a **query string**:
+
+  ```js
+  "name=value&anothername="+encodeURIComponent(myVar)+"&so=on"
+  ```
+
+  or other formats, like **`multipart/from-data`**, **JSON**, **XML**, and so on.
+
+- *Note that if you want to `POST` data, you may have to set the MIME type of the request*.
+
+  - For example, use the following before calling `send()` for form data sent as a query string:
+
+    ```js
+    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    ```
+
+    
+
+
+
+#### 2. Handling the server response
+
+When you sent the request, you provided the name of a JavaScript function to handle the response:
+
+```js
+httpRequest.onreadystatechange = nameOfTheFunction;
+```
+
+- First, the function needs to *check the request's state* **`.readyState`**. 
+
+  - If the state has the value of `XMLHttpRequest.DONE` (corresponding to 4), that means that the full server response was received and it's OK for you to continue processing it. 
+
+    ```js
+    if(httpRequest.readyState === 4){
+        // Everything is good, the response was received.
+    }else{
+        // Not ready yet.
+    }
+    ```
+
+  - The full list of the `readyState` values is documented at [XMLHTTPRequest.readyState](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState) and is as follows:
+
+    - `0` (uninitialized) or (request not initialized)
+    - `1` (loading) or (server connection established)
+    - `2` (loaded) or (request received)
+    - `3` (interactive) or (processing request)
+    - `4` (complete) or (request finished and response is ready)
+
+- Next, *check the [HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) of the HTTP response* **`.status`**. 
+
+  ```js
+  if (httpRequest.status === 200) {
+      // Perfect!
+  } else {
+      // There was a problem with the request.
+      // For example, the response may have a 404 (Not Found)
+      // or 500 (Internal Server Error) response code.
+  }
+  ```
+
+- After checking the state of the request and the HTTP status code of the response, *you can do whatever you want with the data the server sent*. 
+
+  *You have two options to access that data*:
+
+  - **`.responseText`** :  returns the server response as a string of text;
+  - **`.responseXML`** :  returns the response as an `XMLDocument` object you can traverse with JavaScript DOM functions.
+
+
+
+#### 3. A simple example
+
+```html
+<button id="ajaxButton" type="button">Make a request</button>
+
+<script>
+(function() {
+  var httpRequest;
+  document.getElementById("ajaxButton").addEventListener('click', makeRequest);
+
+  function makeRequest() {
+    httpRequest = new XMLHttpRequest();
+
+    if (!httpRequest) {
+      alert('Giving up :( Cannot create an XMLHTTP instance');
+      return false;
+    }
+    httpRequest.onreadystatechange = alertContents;
+    httpRequest.open('GET', 'test.html');
+    httpRequest.send();
+  }
+
+  function alertContents() {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (httpRequest.status === 200) {
+        alert(httpRequest.responseText);
+      } else {
+        alert('There was a problem with the request.');
+      }
+    }
+  }
+})();
+</script>
+```
+
+> **Note**: If you're sending a request to a piece of code that will return XML, rather than a static HTML file, you must set response headers to work in Internet Explorer. If you do not set header `Content-Type: application/xml`, IE will throw a JavaScript "Object Expected" error after the line where you tried to access an XML element. 
+
+> **Note 2**: If you do not set header `Cache-Control: no-cache` the browser will cache the response and never re-submit the request, making debugging challenging. You can also add an always-different GET parameter, like a timestamp or random number (see [bypassing the cache](https://developer.mozilla.org/en/DOM/XMLHttpRequest/Using_XMLHttpRequest#Bypassing_the_cache)) 
+
+> **Note 3**: *If the `httpRequest` variable is used globally, competing functions calling  `makeRequest()` can overwrite each other, causing a race condition*. Declaring the `httpRequest `variable local to a [closure](https://developer.mozilla.org/en/JavaScript/Guide/Closures) containing the AJAX functions avoids this. 
+
+In the event of a communication error (such as the server going down), an exception will be thrown in the `onreadystatechange` method when accessing the response status. To mitigate this problem, you could wrap your `if...then` statement in a **`try...catch`**: 
+
+```js
+function alertContents() {
+  try {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (httpRequest.status === 200) {
+        alert(httpRequest.responseText);
+      } else {
+        alert('There was a problem with the request.');
+      }
+    }
+  }
+  catch( e ) {
+    alert('Caught Exception: ' + e.description);
+  }
+}
+```
+
+
+
+#### 4. Working with the XML response
+
+In the previous example, after receiving the response to the HTTP request we used the request object's `responseText` property , which contained the contents of the `test.html`file. Now let's try the `responseXML` property. 
+
+First off, let's create a valid XML document that we'll request later on. The document (`test.xml`) contains the following:
+
+```xml
+<?xml version="1.0" ?>
+<root>
+    I'm a test.
+</root>
+```
+
+In the script we only need to change the request line to:
+
+```
+...
+onclick="makeRequest('test.xml')">
+...
+```
+
+Then in `alertContents()`, we need to replace the line `alert(httpRequest.responseText);` with:
+
+```js
+var xmldoc = httpRequest.responseXML;
+var root_node = xmldoc.getElementsByTagName('root').item(0);
+alert(root_node.firstChild.data);
+```
+
+This code takes the `XMLDocument` object given by `responseXML` and uses DOM methods to access some of the data contained in the XML document. You can see the `test.xml` [here](http://www.w3clubs.com/mozdev/test.xml) and the updated test script [here](http://www.w3clubs.com/mozdev/httprequest_test_xml.html).
+
+
+
+#### 5. Working with data
+
+Finally, let's send some data to the server and receive a response.
+
+Our JavaScript will request a dynamic page this time : `test.php`, which will take the data we send and return a "computed" string - "Hello, [user data]!" - which we'll `alert()`.
+
+- First, we'll add a text box to our HTML so the user can enter their name:
+
+  ```html
+  <label>Your name:
+  	<input type="text" id="ajaxTextbox" />
+  </label>
+  <span id="ajaxButton" style="cursor: pointer; text-decoration: underline">
+  	Make a request
+  </span>
+  ```
+
+- We'll also add a line to our event handler to get the user's data from the text box and send it to the `makeRequest()` function along with the URL of our server-side script:
+
+  ```js
+  document.getElementById("ajaxButton").onclick = function(){
+      let userName = document.getElementById("ajaxTextbox").value
+      makeRequest('test.php', userName)
+  }
+  ```
+
+- We need to modify `makeRequest()` to accept the user data and pass it along to the server.
+
+  ```js
+  function makeRequest(url, userName){
+      ...
+      
+      httpRequest.onreadystatechange = alertContents
+      httpRequest.open('POST', url)
+      httpRequest.setRequestHeader('Content-Type', 'application/x-www-from-urlencoded')
+      httpRequest.send('userName=' + encodeURIComponent(userName))
+  }
+  ```
+
+- The function `alertContents()` can be written the same way it was in Step 3 to alert our computed string, if that's all the server returns.
+
+  However, let's say the server is going to return both the computed string and the original user data. So if our user typed "Jane" in the text box, the server's response would look like this:
+
+  `{"userData":"Jane","computedString":"Hi, Jane!"}`
+
+- To use this data within `alertContents()`, we can't just alert the `responseText`, we have to parse it and alert `computedString`, the property we want:
+
+  ```js
+  function alertContent(){
+      if(httpRequest.readyState === XMLHttpRequest.DONE){
+          if(httpRequest.status === 200){
+              var response = JSON.parse(httpRequest.responseText)
+              alert(response.computedString)
+          }else{
+              alert('There was a problem with the request.')
+          }
+      }
+  }
+  ```
+
+- The `test.php` file should contain the following:
+
+  ```php
+  $name = (isset($_POST['userName'])) ? $_POST['userName'] : 'no name';
+  $computedString = "Hi, " . $name . "!";
+  $array = ['userName' => $name, 'computedString' => $computedString];
+  echo json_encode($array);
+  ```
+
+  
+
+  
+
+
+
+
+
+
+
+## CORS
+
+**Cross-Origin Resource Sharing** : 
+
+- User agents commonly apply *same-origin restrictions* to network requests.
+  - These restrictions prevent a client-side Web application running from one origin from obtaining data retrieved from another origin, and also limit unsafe HTTP requests that can be automatically launched toward destinations that differ from the running application's origin.
+- In user agents that follow this pattern, network requests typically include user credentials with cross-origin requests, including HTTP authentication and cookie information.
+
+
+
+Cross-Origin Resource Sharing (CORS) is a mechanism that uses *additional HTTP headers* to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.
+
+- A web application makes a *cross-origin HTTP request* when it requests a resource that has **a different origin (domain, protocol, and port)** than its own origin.
+
+> different origin means: domain/protocol/port, either one is different
+
+- *For security reasons, browsers restrict cross-origin HTTP requests initiated from within scripts.*
+  - For example, [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) and the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) follow the [same-origin policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy).  
+  - This means that a web application using those APIs can only request HTTP resources from the same origin the application was loaded from, *unless the response from the other origin includes the right CORS headers.* 
+  - The CORS mechanism supports secure cross-origin requests and data transfers between browsers and web servers. Modern browsers use CORS in an API container such as [`XMLHttpRequest `](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)or [Fetch ](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)to help mitigate the risks of cross-origin HTTP requests. 
+- Modern browsers handle the client-side components of cross-origin sharing, including headers and policy enforcement. But this new standard means servers have to handle new request and response headers. 
+
+
+
+*This [cross-origin sharing standard](https://fetch.spec.whatwg.org/#http-cors-protocol) is used to enable cross-site HTTP requests for:*
+
+- Invocations of the [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) or [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) APIs in a cross-site manner, as discussed above.
+- Web Fonts (for cross-domain font usage in `@font-face` within CSS), [so that servers can deploy TrueType fonts that can only be cross-site loaded and used by web sites that are permitted to do so.](https://www.w3.org/TR/css-fonts-3/#font-fetching-requirements)
+- [WebGL textures](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL).
+- Images/video frames drawn to a canvas using `drawImage`.
+- Stylesheets (for [CSSOM](https://developer.mozilla.org/en-US/docs/Web/CSS/CSSOM_View) access).
+- Scripts (for unmuted exceptions).
+
+#### Functional overview
 
 
 
@@ -1000,6 +1334,249 @@ JSONP(JSON with Padding or JSON-P) is *used to request data from a server residi
 
 
 
+
+
+## XMLHttpRequest
+
+Use `XMLHttpRequest`(XHR) objects to interact with servers. You can retrieve data from a URL without having to do a full page refresh.
+
+- Despite its name, `XMLHttpRequest` can be used to retrieve any type of data, not just XML, and it supports protocols other than HTTP (including `file` and `ftp`)
+
+- If your communication needs involve receiving event or message data from the server, consider using  [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)  through the [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) interface. For full-duplex communication,  [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) may be a better choice. 
+
+  > **WebSocket** API is an advanced technology that makes it possible to open a two-way interactive communication session between the user's browser and a server.
+
+#### Constructor
+
+`XMLHttpRequest()` : creates a new `XMLHttpRequest`.
+
+```js
+var request = new XMLHttpRequest()
+```
+
+- return value: A new [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) object. The object must be prepared by at least calling [`open()`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/open) to initialize it before calling [`send()`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send) to send the request to the server. 
+
+#### Basic using
+
+```js
+// create an XMLHttpRequest object
+var request = new XMLHttpRequest()
+
+// initialize the request
+request.open("GET", "http://www.example.org/example.txt")
+
+// send the request
+request.send()
+
+// After the transaction completes, the object will contain useful information such as the response body and the HTTP status of the result.
+```
+
+
+
+#### Event handlers (Monitoring progress)
+
+**`onreadystatechange`** as a property of the `XMLHttpRequest` instance is supported in all browsers. 
+
+Since then, a number of additional event handlers have been implemented in various browsers (`onload`, `onerror`, `onprogress`, etc.). 
+
+More recent browsers, including Firefox, also support listening to the `XMLHttpRequest`events via standard `addEventListener()` APIs in addition to setting `on*` properties to a handler function. 
+
+
+
+`XMLHttpRequest` provides the ability to listen to various events that can occur while the request is being processed. This includes periodic progress notifications, error notifications, and so forth.
+
+The actual events you can monitor to determine the state of an ongoing transfer are: 
+
+- `progress` : The amount of data that has been retrieved has changed. (是否可以用来做下载进度条)
+- `load` : The transfer is complete, all data is now in the `response`.
+
+```js
+var request = new XMLHttpRequest()
+
+request.addEventListener("progress", updateProgress)
+request.addEventListener("load", transferComplete)
+request.addEventListener("error", transferFailed)
+request.addEventListener("abort", transferCanceled)
+
+request.open()
+// ...
+```
+
+> Note: *You need to add the event listeners before calling `open()` on the request.* Otherwise these events will not fire. ???
+
+Progress events exist for both download and upload transfers.
+
+- The download events are fired on the `XMLHttpRequest` object itself as shown in the above sample.
+
+- The upload events are fired on the `XMLHttpRequest.upload` object, as shown below:
+
+  ```js
+  var oReq = new XMLHttpRequest();
+  
+  oReq.upload.addEventListener("progress", updateProgress);
+  oReq.upload.addEventListener("load", transferComplete);
+  oReq.upload.addEventListener("error", transferFailed);
+  oReq.upload.addEventListener("abort", transferCanceled);
+  
+  oReq.open();
+  // ...
+  ```
+
+  > Note: Progress events are not available for the `file:` protocol. 
+
+One can also detect all three load-ending conditions (`abort`, `load` or `error`) using the `loadend` event:
+
+```js
+req.addEventListener("loadend", loadEnd);
+
+function loadEnd(e) {
+  console.log("The transfer finished (although we don't know if it succeeded or not).");
+}
+```
+
+
+
+#### Submitting forms and uploading files
+
+Instances of `XMLHttpRequest` can be used to submit forms in two ways:
+
+- *using the `FromData` API*
+  - Using the `FromData` API is the simplest the fastest, but has the disadvantage that data collected can not be stringified.
+- *using only AJAX*
+  - Using only AJAX is more complex, but typically more flexible and powerful.
+
+
+
+###### Using nothing but `XMLHttpRequest` (only AJAX)
+
+Submitting forms without the `FormData` API does not require other APIs for most use cases. The only case case where you need an additional API is *if you want to upload one or more files*, where you use `FileReader` API.
+
+**A brief introduction to the submit methods**:
+
+- *An html `<form>` can be sent in four ways:*
+
+  - using the `POST` method and setting the `enctype` attribute to `application/x-www-form-urlencoded` (default);
+  - using the `POST` method and setting the `enctype` attribute to `text/plain`;
+  - using the `POST` method and setting the `enctype` attribute to `multipart/form-data`;
+  - using the `GET` method (the `enctype` will be ignored).
+
+- Now, consider the submission of a form containing only two fields, named `foo` and `baz`. 
+
+  -  If you are using the `POST` method the server will receive a string similar to one of the following three examples, depending on the encoding type you are using: 
+
+    - Method: `POST`; Encoding type: `application/x-www-form-urlencoded` (default): 
+
+      ```
+      Content-Type: application/x-www-form-urlencoded
+      
+      foo=bar&baz=The+first+line.%0D%0AThe+second+line.%0D%0A
+      ```
+
+    - Method: `POST`; Encoding type: `text/plain`: 
+
+      ```
+      Content-Type: text/plain
+      
+      foo=bar
+      baz=The first line.
+      The second line.
+      ```
+
+    - Method: `POST`; Encoding type: `multipart/form-data`: 
+
+      ```
+      Content-Type: multipart/form-data; boundary=---------------------------314911788813839
+      
+      -----------------------------314911788813839
+      Content-Disposition: form-data; name="foo"
+      
+      bar
+      -----------------------------314911788813839
+      Content-Disposition: form-data; name="baz"
+      
+      The first line.
+      The second line.
+      
+      -----------------------------314911788813839--
+      ```
+
+  - However, if you are using the `GET` method, a string like the following will be simply added to the URL:
+
+    ```
+    ?foo=bar&baz=The%20first%20line.%0AThe%20second%20line.
+    ```
+
+
+
+**A little vanilla framework** : 
+
+All these effects are done automatically by the web browser whenever you submit a [`<form>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form). 
+
+If you want to perform the same effects using JavaScript you have to instruct the interpreter about *everything*. 
+
+Therefore, how to send forms in *pure* AJAX is too complex to be explained here in detail. For this reason, here we place **a complete (yet didactic) framework**, able to use all four ways to *submit*, and to **upload files**: 
+
+```html
+//....
+```
+
+
+
+......
+
+
+
+###### Using FromData objects
+
+The `FormData` constructor lets you compile a set of key/value pairs to send using `XMLHttpRequest`.
+
+...... ???
+
+https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+
+
+
+
+#### Get last modified date
+
+```js
+function getHeaderTime(){
+    console.log(this.getResponseHeader("Last-Modified"))   /* A valid GMTString date or null */
+}
+
+var req = new XMLHttpRequest()
+req.open('HEAD' /*use HEAD if you only need the headers!*/, "yourpage.html")
+// the HEAD emthod asks for a response identical to that of a `GET` request, but without the response body.
+req.onload = getHeaderTime
+req.send()
+```
+
+###### Do something when last modified date changes
+
+Let's create two functions:
+
+
+
+
+
+
+
+
+
+https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+
+
+## WebSocket
+
+
+
+
+
+
+
+## 非编 h5
 
 
 
